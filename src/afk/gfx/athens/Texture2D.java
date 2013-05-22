@@ -1,3 +1,5 @@
+package afk.gfx.athens;
+
 
 import java.awt.image.BufferedImage;
 import java.io.File;

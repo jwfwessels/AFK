@@ -1,4 +1,8 @@
+package afk.gfx.athens;
 
+
+import afk.gfx.GfxEntity;
+import afk.gfx.GraphicsEngine;
 import com.hackoeur.jglm.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -6,7 +10,7 @@ import java.io.IOException;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-public class Athens
+public class Athens extends GraphicsEngine
 {
 
     /**
@@ -440,4 +444,30 @@ public class Athens
         
         sun = new Vec3(sun4.getX(),sun4.getY(), sun4.getZ());
     }
+
+    @Override
+    public void loadResource(int type, String resource)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void unloadResource(int type, String resource)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void unloadEverything()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public GfxEntity createEntity(int type, String resource)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 }

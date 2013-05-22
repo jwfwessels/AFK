@@ -1,3 +1,5 @@
+package afk.gfx.athens;
+
 
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;

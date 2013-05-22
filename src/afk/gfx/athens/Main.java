@@ -1,3 +1,5 @@
+package afk.gfx.athens;
+
 import com.jogamp.opengl.util.Animator;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;

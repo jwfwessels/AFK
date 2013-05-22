@@ -1,3 +1,5 @@
+package afk.gfx.athens;
+
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

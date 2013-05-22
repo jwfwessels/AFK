@@ -1,3 +1,5 @@
+package afk.gfx.athens;
+
 import javax.media.opengl.GL2;
 
 public class NDCQuad extends Mesh

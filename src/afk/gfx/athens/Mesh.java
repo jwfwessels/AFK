@@ -1,3 +1,5 @@
+package afk.gfx.athens;
+
 
 import com.jogamp.common.nio.Buffers;
 import java.nio.IntBuffer;
