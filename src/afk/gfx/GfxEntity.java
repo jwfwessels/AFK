@@ -12,7 +12,9 @@ import com.hackoeur.jglm.Vec3;
  */
 public abstract class GfxEntity
 {
-    public Vec3 position;
-    public Vec3 rotation;
-    public Vec3 scale;
+    // TODO: check performance issues regarding the use of Vec3.
+    // could be a problem to update seeing as their member variables are all finite...
+    public Vec3 position = new Vec3(0,0,0);
+    public Vec3 rotation = new Vec3(0,0,0);
+    public Vec3 scale = new Vec3(1,1,1);
 }

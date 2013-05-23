@@ -1,9 +1,5 @@
 package afk.gfx.athens;
 
-
-import com.jogamp.common.nio.Buffers;
-import java.nio.IntBuffer;
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 /**
