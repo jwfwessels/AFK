@@ -1,5 +1,4 @@
 import afk.gfx.*;
-import static afk.gfx.GraphicsEngine.NANOS_PER_SECOND;
 import static java.awt.event.KeyEvent.*;
 
 public class Main implements GfxInputListener, Updatable
