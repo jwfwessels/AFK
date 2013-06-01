@@ -19,5 +19,5 @@ public abstract class GameEngine
 
     protected abstract void updateGame();
 
-    protected abstract void render(float interp);
+    protected abstract void render();
 }

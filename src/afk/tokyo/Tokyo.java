@@ -16,10 +16,12 @@ public class Tokyo extends GameEngine
     ArrayList entities;
     boolean running = false;
     double GAME_SPEED = 30;
-    double TIME_BETWEEN_UPDATES = 1000000000 / GAME_SPEED;
+    final double dt = 1000000000 / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    double NUM_RENDERS = 60;
-    double TIME_BETWEEN_RENDERS = 1000000000 / NUM_RENDERS;
+    double TARGET_FPS = 60;
+    double MIN_FPS = 15;
+    double MIN_FRAMETIME = 1000000000 / TARGET_FPS;
+    double MAX_FRAMETIME = 1000000000 / MIN_FPS;
 
     @Override
     protected void loadResources()
@@ -30,17 +32,40 @@ public class Tokyo extends GameEngine
     @Override
     protected void gameLoop()
     {
-        double lastUpdate = System.nanoTime();
-        double lastRender = System.nanoTime();
-        while (running) {
-            double currTime = System.nanoTime();
-            if (currTime-lastUpdate > TIME_BETWEEN_UPDATES) {
-                updateGame();
-                lastUpdate = currTime;
+        double t = 0.0;
+        //        double lastRender = System.nanoTime();
+        double currentTime = System.nanoTime();
+        double accumulator = 0.0;
+
+        while (running)
+        {
+            double newTime = System.nanoTime();
+            double frameTime = newTime - currentTime;
+            if (frameTime > MAX_FRAMETIME)
+            {
+                frameTime = MAX_FRAMETIME;	  //max frame
             }
-            double interpolation = Math.min(1.0, (currTime - lastUpdate)/TIME_BETWEEN_UPDATES);
+            currentTime = newTime;
+
+            accumulator += frameTime;
+
+            while (accumulator >= dt)
+            {
+                //previousState = currentState
+                updateGame(); //integrate (currentState ,t ,td)
+                t += dt;
+                accumulator -= dt;
+            }
             
+            double alpha = accumulator / dt;
+
+            //State state = currentState * alpha = previousState* (1.0-alpha);
             
+            render();//render (state)
+
+
+
+//            double interpolation = Math.min(1.0, (newTime - currentTime) / dt);
         }
     }
 
@@ -51,7 +76,7 @@ public class Tokyo extends GameEngine
     }
 
     @Override
-    protected void render(float interp)
+    protected void render()
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
