@@ -2,8 +2,11 @@ package afk.gfx.athens;
 
 
 import afk.gfx.GfxEntity;
+import afk.gfx.GfxInputListener;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
+import afk.gfx.ResourceNotLoadedException;
+import afk.gfx.Updatable;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
@@ -18,10 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -35,7 +38,11 @@ public class Athens extends GraphicsEngine
 {
     
     // loading queue
-    private Queue<String>[] loadQueue = new Queue[Resource.NUM_RES_TYPES];
+    private Queue<Resource> loadQueue = new LinkedList<Resource>();
+    // TODO: unload queue as well
+    
+    // this gets called when loading is done
+    private Runnable onLoadCallback;
     
     // mesh resources
     private Map<String, Mesh>[] meshResources = new Map[Resource.NUM_MESH_TYPES];
@@ -54,17 +61,14 @@ public class Athens extends GraphicsEngine
     
     // TODO: add other resource types here later maybe
 
+    // flag indicating that the load queue has been dispatched
+    private boolean loadQueueDispatched = false;
     
-    // TODO: make the following input from the constructor
-    /** The window's initial width. */
-    static final int WINDOW_WIDTH = 1280;
-    /** The window's initial height. */
-    static final int WINDOW_HEIGHT = 768;
-    
-    private int w_width = WINDOW_WIDTH, w_height = WINDOW_HEIGHT;
+    private int w_width, w_height;
     private float aspect;
     
-    private boolean[] keys = new boolean[256];
+    // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
+    private boolean[] keys = new boolean[1024];
     
     private long lastUpdate;
     private float time = 0.0f;
@@ -96,15 +100,6 @@ public class Athens extends GraphicsEngine
     
     float daytime = 0.0f;
     
-    // TODO: move a lot of the following nonsense to separate classes!
-    //Texture tex;
-    Shader tankShader;
-    Mesh tankMesh;
-    
-    //Texture2D floor;
-    Shader floorShader;
-    Quad quad;
-    
     /*Shader sbShader;
     TextureCubeMap skymap;
     SkyBox skybox;*/
@@ -112,29 +107,6 @@ public class Athens extends GraphicsEngine
     static final float MOUSE_SENSITIVITY = 60.0f;
     /* Amount to move / scale by in one step. */
     static final float DELTA = 5f, ANGLE_DELTA = 30.0f;
-
-    /* Amount of rotation around the x axis. */
-    float xRot = 0.0f;
-    /* Amount of rotation around the y axis. */
-    float yRot = 0.0f;
-    /* Amount of rotation around the z axis. */
-    float zRot = 0.0f;
-
-    /* Amount to scale the x axis by. */
-    float xScale = 1.0f;
-    /* Amount to scale the y axis by. */
-    float yScale = 1.0f;
-    /* Amount to scale the z axis by. */
-    float zScale = 1.0f;
-
-    /* Amount to move on the x axis. */
-    float xMove = 0.0f;
-    /* Amount to move on the y axis. */
-    float yMove = 0.0f;
-    /* Amount to move on the z axis. */
-    float zMove = 0.0f;
-            
-    public static final long NANOS_PER_SECOND = 1000000000l;
 
     private JFrame jFrame;
     private GLProfile glProfile;
@@ -155,11 +127,6 @@ public class Athens extends GraphicsEngine
         }
         matResources = new HashMap<String, Object>();
         shaderResources = new HashMap<String, Shader>();
-        for (int i = 0; i < loadQueue.length; i++)
-        {
-            // TODO: decide on queue implementation.
-            loadQueue[i] = new LinkedBlockingQueue<String>();
-        }
         
         this.w_width = width;
         this.w_height = height;
@@ -248,7 +215,7 @@ public class Athens extends GraphicsEngine
             
             @Override
             public void dispose( GLAutoDrawable glautodrawable ) {
-                Athens.this.cleanUp( glautodrawable.getGL().getGL2() );
+                Athens.this.dispose( glautodrawable.getGL().getGL2() );
             }
             
             @Override
@@ -264,19 +231,19 @@ public class Athens extends GraphicsEngine
         animator.start();
     }
     
-    void cleanUp(GL2 gl)
+    private void dispose(GL2 gl)
     {
         // TODO: release meshes and shaders here. EEEK!!!
         // unloadEverything(gl); // maybe?
     }
 
-    protected void display(GL2 gl)
+    private void display(GL2 gl)
     {
         
         long nTime = System.nanoTime();
         long nanos = nTime-lastUpdate;
         lastUpdate = nTime;
-        float delta = nanos/(float)NANOS_PER_SECOND; 
+        float delta = nanos/(float)NANOS_PER_SECOND;
         time += delta;
         lastFPS += delta;
         
@@ -289,77 +256,86 @@ public class Athens extends GraphicsEngine
         // TODO: move loading into a loading state rather.
         // This should allow for loading progress bars and such.
         // just put it here for now.
-        loadResources(gl);
-        
-        update(delta); // TODO: remove this in favour of game engine's "update" functionality?
-        render(gl);
+        if (loadQueueDispatched)
+        {
+            loadResources(gl);
+            
+            loadQueueDispatched = false;
+            
+            // notify caller that load is complete
+            onLoadCallback.run();
+        }
+        else
+        {
+            update(delta);
+            
+            for (Updatable u :updatables)
+                u.update(delta);
+            
+            render(gl);
+        }
     }
     
     private void loadResources(GL2 gl)
     {
-        
-        for (int i = 0; i < loadQueue.length; i++)
+        while (!loadQueue.isEmpty())
         {
-            while (!loadQueue[i].isEmpty())
+            Resource resource = loadQueue.poll();
+            System.out.println("Loading: " + resource.getName() + " - " + resource.getType());
+            switch (resource.getType())
             {
-                String resource = loadQueue[i].remove();
-                switch (i)
-                {
-                    case Resource.WAVEFRONT_MESH:
-                        try {
-                            meshResources[i].put(resource, new WavefrontMesh(gl, resource+".obj"));
-                        } catch (IOException ioe)
-                        {
-                            // TODO: load "default" model, like a cube or something...
-                            System.err.println("Error loading mesh: " + ioe.getMessage());
-                        }
-                        break;
-                    case Resource.PRIMITIVE_MESH:
-                        if ("quad".equals(resource))
-                            meshResources[i].put(resource, new Quad(gl, 1, 1, 0));
-                        break;
-                        // TODO: add more primitive types
-                        // TODO: it may be feasible to have all primitive types preloaded at all times?
-                    case Resource.HEIGHTMAP_MESH:
-                        // TODO: for future use
-                        System.err.println("Could not load heightmap: feature not implemented");
-                        break;
-                    case Resource.TEXTURE_2D:
-                        try {
-                            texResources[i-Resource.TEXTURE_2D].put(resource, Texture2D.fromFile(gl, new File("textures/"+resource)));
-                        } catch (IOException ioe)
-                        {
-                            // TODO: load "default" texture, like a magenta checkerboard or something
-                            System.err.println("Error loading texture: " + ioe.getMessage());
-                        }
-                        break;
-                    case Resource.TEXTURE_CUBE:
-                        try
-                        {
-                            texResources[i-Resource.TEXTURE_2D].put(resource, TextureCubeMap.fromFiles(gl, new File[]{
-                                new File("textures/" + resource + "_positive_x"),
-                                new File("textures/" + resource + "_negative_x"),
-                                new File("textures/" + resource + "_positive_y"),
-                                new File("textures/" + resource + "_negative_y"),
-                                new File("textures/" + resource + "_positive_z"),
-                                new File("textures/" + resource + "_negative_z")
-                            }));
-                        } catch (IOException ioe)
-                        {
-                            // TODO: load a "default" texture, like a magenta checkerboard or something
-                            System.err.println("Error loading cube map: " + ioe.getMessage());
-                        }
-                        break;
-                    case Resource.MATERIAL:
-                        // TODO: for future use (maybe)
-                        System.err.println("Could not load heightmap: feature not implemented");
-                        break;
-                    case Resource.SHADER:
-                        shaderResources.put(resource, new Shader(gl, resource));
-                        break;
-                    default:
-                        break;
-                }
+                case Resource.WAVEFRONT_MESH:
+                    try {
+                        meshResources[resource.getType()].put(resource.getName(), new WavefrontMesh(gl, resource.getName()+".obj"));
+                    } catch (IOException ioe)
+                    {
+                        // TODO: load "default" model, like a cube or something...
+                        throw new RuntimeException("Error loading mesh: " + ioe.getMessage());
+                    }
+                    break;
+                case Resource.PRIMITIVE_MESH:
+                    if ("quad".equals(resource.getName()))
+                        meshResources[resource.getType()].put(resource.getName(), new Quad(gl, 1, 1, 0));
+                    break;
+                    // TODO: add more primitive types
+                    // TODO: it may be feasible to have all primitive types preloaded at all times?
+                case Resource.HEIGHTMAP_MESH:
+                    // TODO: for future use
+                    throw new RuntimeException("Could not load heightmap: feature not implemented");
+                case Resource.TEXTURE_2D:
+                    try {
+                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), Texture2D.fromFile(gl, new File("textures/"+resource)));
+                    } catch (IOException ioe)
+                    {
+                        // TODO: load "default" texture, like a magenta checkerboard or something
+                        throw new RuntimeException("Error loading texture: " + ioe.getMessage());
+                    }
+                    break;
+                case Resource.TEXTURE_CUBE:
+                    try
+                    {
+                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), TextureCubeMap.fromFiles(gl, new File[]{
+                            new File("textures/" + resource + "_positive_x"),
+                            new File("textures/" + resource + "_negative_x"),
+                            new File("textures/" + resource + "_positive_y"),
+                            new File("textures/" + resource + "_negative_y"),
+                            new File("textures/" + resource + "_positive_z"),
+                            new File("textures/" + resource + "_negative_z")
+                        }));
+                    } catch (IOException ioe)
+                    {
+                        // TODO: load a "default" texture, like a magenta checkerboard or something
+                        throw new RuntimeException("Error loading cube map: " + ioe.getMessage());
+                    }
+                    break;
+                case Resource.MATERIAL:
+                    // TODO: for future use (maybe)
+                    throw new RuntimeException("Could not load heightmap: feature not implemented");
+                case Resource.SHADER:
+                    shaderResources.put(resource.getName(), new Shader(gl, resource.getName()));
+                    break;
+                default:
+                    break;
             }
         }
         
@@ -412,31 +388,6 @@ public class Athens extends GraphicsEngine
             updateSun();
         }
         
-        float angle = -(float)Math.toRadians(yRot);
-        float sin = (float)Math.sin(angle);
-        float cos = (float)Math.cos(angle);
-        float tdelta = 5*delta;
-        
-        if (keys[KeyEvent.VK_UP])
-        {
-            xMove += -(tdelta*sin);
-            zMove += (tdelta*cos);
-        }
-        else if (keys[KeyEvent.VK_DOWN])
-        {
-            xMove -= -(tdelta*sin);
-            zMove -= (tdelta*cos);
-        }
-        if (keys[KeyEvent.VK_LEFT])
-        {
-            yRot += tdelta*ANGLE_DELTA;
-        }
-        else if (keys[KeyEvent.VK_RIGHT])
-        {
-            yRot -= tdelta*ANGLE_DELTA;
-        }
-        updateMonkeyWorld();
-        
         updateView();
     }
     
@@ -460,8 +411,8 @@ public class Athens extends GraphicsEngine
     private void renderScene(GL2 gl, Mat4 camera, Mat4 proj)
     {
         //renderSkybox(gl, camera, proj);
-        renderFloor(gl, camera, proj);
-        renderMesh(gl, camera, proj);
+        //renderFloor(gl, camera, proj);
+        //renderMesh(gl, camera, proj);
         
         for (AthensEntity entity :entities)
         {
@@ -486,7 +437,7 @@ public class Athens extends GraphicsEngine
         gl.glEnable(GL.GL_DEPTH_TEST);
     }*/
     
-    private void renderFloor(GL2 gl, Mat4 camera, Mat4 proj)
+    /*private void renderFloor(GL2 gl, Mat4 camera, Mat4 proj)
     {
         floorShader.use(gl);
         
@@ -516,9 +467,9 @@ public class Athens extends GraphicsEngine
         tankShader.updateUniform(gl, "eye", cameraEye); // TODO: not necessary as we don't render specular
         
         tankMesh.draw(gl);
-    }
+    } */
 
-    protected void init(GL2 gl)
+    private void init(GL2 gl)
     {
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
@@ -529,26 +480,8 @@ public class Athens extends GraphicsEngine
         //gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL2.GL_LINE );
         
         // set background colour to white
+        // TODO: allow this to be set through an interface
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-        
-        // load the tank model
-        String meshname = "tank.obj";
-        try
-        {
-            tankMesh = new WavefrontMesh(gl, meshname);
-        } catch (IOException ex)
-        {
-            System.out.println("Error reading " + meshname + ": " + ex.toString());
-        }
-        
-        // load shader for tank
-        tankShader = new Shader(gl, "monkey");
-        
-        // create the floor
-        quad = new Quad(gl, 100, 100, 0);
-        
-        // load shader for floor
-        floorShader = new Shader(gl, "floor");
         
         // load textures
         // not necessary now
@@ -579,15 +512,14 @@ public class Athens extends GraphicsEngine
         }*/
 
         // initial setup of matrices
-        updateProjection(WINDOW_WIDTH, WINDOW_HEIGHT);
+        updateProjection(w_width, w_height);
         updateView();
-        updateMonkeyWorld();
         
         // initialise update time with current time
         lastUpdate = System.nanoTime();
     }
 
-    protected void keyPressed(KeyEvent ke)
+    private void keyPressed(KeyEvent ke)
     {
         char key = ke.getKeyChar();
         if (ke.getKeyCode() < keys.length)
@@ -603,14 +535,20 @@ public class Athens extends GraphicsEngine
                 break;
         }
     }
+
+    @Override
+    public boolean isKeyDown(int keyCode)
+    {
+        return keys[keyCode];
+    }
     
-    protected void keyReleased(KeyEvent ke)
+    private void keyReleased(KeyEvent ke)
     {
         if (ke.getKeyCode() < keys.length)
             keys[ke.getKeyCode()] = false;
     }
 
-    protected void mouseMoved(int x, int y)
+    private void mouseMoved(int x, int y)
     {
         final float LEFT_RIGHT_ROT = (2.0f*(float)x/(float)w_width) * MOUSE_SENSITIVITY;
         final float UP_DOWN_ROT = (2.0f*(float)y/(float)w_height) * MOUSE_SENSITIVITY;
@@ -632,7 +570,28 @@ public class Athens extends GraphicsEngine
 
     }
 
-    protected void reshape(GL2 gl, int newWidth, int newHeight)
+    @Override
+    public boolean isMouseDown(int button)
+    {
+        // TODO: implement isMouseDown
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getMouseX()
+    {
+        // TODO: implement getMouseX
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getMouseY()
+    {
+        // TODO: implement getMouseY
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void reshape(GL2 gl, int newWidth, int newHeight)
     {
         w_width = newWidth;
         w_height = newHeight;
@@ -664,26 +623,6 @@ public class Athens extends GraphicsEngine
         // also scale it a bit so it doesn't intersect with near clip
         skyboxWorld = Matrices.scale(skyboxWorld, new Vec3(1.5f,1.5f,1.5f));
     }
-
-    private void updateMonkeyWorld()
-    {
-        monkeyWorld = new Mat4(1f);
-
-        Vec3 translation = new Vec3(xMove, yMove, zMove);
-        monkeyWorld = Matrices.translate(monkeyWorld, translation);
-
-        Vec3 yAxis = new Vec3(0, 1, 0);
-        monkeyWorld = Matrices.rotate(monkeyWorld, yRot, yAxis);
-        
-        Vec3 xAxis = new Vec3(1, 0, 0);
-        monkeyWorld = Matrices.rotate(monkeyWorld, xRot, xAxis);
-
-        Vec3 zAxis = new Vec3(0, 0, 1);
-        monkeyWorld = Matrices.rotate(monkeyWorld, zRot, zAxis);
-
-        Vec3 scales = new Vec3(xScale, yScale, zScale);
-        monkeyWorld = Matrices.scale(monkeyWorld, scales);
-    }
     
     private void updateSun()
     {
@@ -697,22 +636,32 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
-    public Resource loadResource(int type, String resource)
+    public Resource loadResource(int type, String name)
     {
-        loadQueue[type].add(resource);
+        if (loadQueueDispatched)
+        {
+            // TODO: throw something about already dispatchign a load queue
+            return null;
+        }
         
-        return new Resource(type, title);
+        Resource resource = new Resource(type, name);
+        
+        loadQueue.add(resource);
+        
+        return resource;
     }
 
     @Override
     public void unloadResource(Resource resource)
     {
+        // TODO: implement unloadResource
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void unloadEverything()
     {
+        // TODO: implement unloadEverything
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -720,6 +669,8 @@ public class Athens extends GraphicsEngine
     public GfxEntity createEntity()
     {
         AthensEntity entity = new AthensEntity();
+        
+        entities.add(entity);
         
         return entity;
     }
@@ -732,6 +683,7 @@ public class Athens extends GraphicsEngine
 
     @Override
     public void attachResource(GfxEntity entity, Resource resource)
+            throws ResourceNotLoadedException
     {
         AthensEntity athensEntity = (AthensEntity)entity;
         
@@ -745,7 +697,7 @@ public class Athens extends GraphicsEngine
             case Resource.HEIGHTMAP_MESH:
                 if (!meshResources[type].containsKey(resName))
                 {
-                    // TODO: throw something like a ResourceNotLoadedException?
+                    throw new ResourceNotLoadedException(resource);
                 }
                 athensEntity.mesh = meshResources[type].get(resName);
                 break;
@@ -753,21 +705,21 @@ public class Athens extends GraphicsEngine
             case Resource.TEXTURE_CUBE:
                 if (!texResources[type-Resource.TEXTURE_2D].containsKey(resName))
                 {
-                    // TODO: throw something like a ResourceNotLoadedException?
+                    throw new ResourceNotLoadedException(resource);
                 }
                 athensEntity.texture = texResources[type-Resource.TEXTURE_2D].get(resName);
                 break;
             case Resource.MATERIAL:
                 if (!matResources.containsKey(resName))
                 {
-                    // TODO: throw something like a ResourceNotLoadedException?
+                    throw new ResourceNotLoadedException(resource);
                 }
                 athensEntity.material = matResources.get(resName);
                 break;
             case Resource.SHADER:
                 if (!shaderResources.containsKey(resName))
                 {
-                    // TODO: throw something like a ResourceNotLoadedException?
+                    throw new ResourceNotLoadedException(resource);
                 }
                 athensEntity.shader = shaderResources.get(resName);
                 break;
@@ -778,15 +730,14 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
-    public void enterLoadingState()
+    public void dispatchLoadQueue(Runnable callback)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void enterDrawingState()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (loadQueue == null || loadQueue.isEmpty())
+        {
+            // TODO: throw something
+        }
+        loadQueueDispatched = true;
+        onLoadCallback = callback;
     }
     
     

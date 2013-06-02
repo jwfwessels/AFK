@@ -21,18 +21,18 @@ public class AthensEntity extends GfxEntity
     {
         Mat4 monkeyWorld = new Mat4(1f);
 
-        monkeyWorld = Matrices.translate(monkeyWorld, position);
+        monkeyWorld = Matrices.translate(monkeyWorld, getPosition());
 
         Vec3 yAxis = new Vec3(0, 1, 0);
-        monkeyWorld = Matrices.rotate(monkeyWorld, rotation.getY(), yAxis);
+        monkeyWorld = Matrices.rotate(monkeyWorld, yRot, yAxis);
         
         Vec3 xAxis = new Vec3(1, 0, 0);
-        monkeyWorld = Matrices.rotate(monkeyWorld, rotation.getX(), xAxis);
+        monkeyWorld = Matrices.rotate(monkeyWorld, xRot, xAxis);
 
         Vec3 zAxis = new Vec3(0, 0, 1);
-        monkeyWorld = Matrices.rotate(monkeyWorld, rotation.getZ(), zAxis);
+        monkeyWorld = Matrices.rotate(monkeyWorld, zRot, zAxis);
 
-        monkeyWorld = Matrices.scale(monkeyWorld, scale);
+        monkeyWorld = Matrices.scale(monkeyWorld, getScale());
         
         return monkeyWorld;
     }
