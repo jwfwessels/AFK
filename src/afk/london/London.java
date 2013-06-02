@@ -10,17 +10,23 @@ import java.util.ArrayList;
  *
  * @author Jessica
  */
-public class London 
+public class London
 {
+
     private static ArrayList<Robot> robots = new ArrayList<Robot>();
-    
+
+    private London()
+    {
+    }
+
     public static void registerBot(Robot bot)
     {
         robots.add(bot);
     }
-    
+
     public static ArrayList<Robot> getRobots()
     {
-        return (ArrayList<Robot>)robots.clone();
+        return robots;
+//        return (ArrayList<Robot>)robots.clone();
     }
 }

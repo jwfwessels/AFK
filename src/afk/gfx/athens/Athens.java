@@ -115,7 +115,7 @@ public class Athens extends GraphicsEngine
     private Animator animator;
     private String title;
     
-    public Athens(int width, int height, String title)
+    public Athens(int width, int height, String title, boolean autodraw)
     {
         for (int i = 0; i < meshResources.length; i++)
         {
@@ -139,8 +139,6 @@ public class Athens extends GraphicsEngine
         
         glCanvas = new GLCanvas(glCaps);
         glCanvas.setPreferredSize(new Dimension(width, height));
-        
-        animator = new Animator(glCanvas);
         
         jFrame = new JFrame(title);
         
@@ -228,7 +226,17 @@ public class Athens extends GraphicsEngine
         jFrame.pack();
         jFrame.setVisible(true);
         
-        animator.start();
+        if (autodraw)
+        {
+            animator = new Animator(glCanvas);
+            animator.start();
+        }
+    }
+
+    @Override
+    public void redisplay()
+    {
+        glCanvas.display();
     }
     
     private void dispose(GL2 gl)

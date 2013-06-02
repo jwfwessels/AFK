@@ -7,69 +7,80 @@ package afk.london;
 /**
  * @author Jessica
  */
-public abstract class Robot 
+public abstract class Robot
 {
     //Method user will have to implement
-    private final int NUM_ACTIONS = 3;
-    
+
+    private final int NUM_ACTIONS = 5;
     //Index mapping of flag array
-    private final int MOVE_ACTION = 0;
-    private final int TURN_ACTION = 1;
-    private final int ATTACK_ACTION = 2;  
-    
-    private int[] actionFlags;
-    
+    private final int MOVE_FRONT = 0;
+    private final int MOVE_BACK = 1;
+    private final int TURN_CLOCK = 2;
+    private final int TURN_ANTICLOCK = 3;
+    private final int ATTACK_ACTION = 4;
+    private boolean[] actionFlags;
+    private boolean[] eventFlags;
+
     /*
      * Abstract method that will be implemented by user
      */
     public abstract void run();
-    
+
     /*
      * Methods bot actions
      * Declared as final to prevent overriding
      */
     public Robot()
     {
-        actionFlags = new int[NUM_ACTIONS];  
-        London.registerBot(this);
+        actionFlags = new boolean[NUM_ACTIONS];
     }
-    
-    private void setFlag(int index, int value)
+
+    private void setFlag(int index)
     {
-        if(index <= NUM_ACTIONS && index >= 0)
+        if (index <= NUM_ACTIONS && index >= 0)
         {
-            actionFlags[index] = value;
+            actionFlags[index] = true;
         }
     }
-    
-    public int[] getFlags()
+
+    public boolean[] getActionFlags()
     {
-        return actionFlags.clone();
+        return actionFlags;
     }
-    
-    protected final void move(int units) 
-    {
-        //throw new UnsupportedOperationException();
-        setFlag(MOVE_ACTION, units);
-    }
-    
-    protected final void turn(int degrees)
+
+    protected final void moveForward()
     {
         //throw new UnsupportedOperationException();
-        setFlag(TURN_ACTION, degrees);
+        setFlag(MOVE_FRONT);
     }
-    
+
+    protected final void moveBackwards()
+    {
+        //throw new UnsupportedOperationException();
+        setFlag(MOVE_BACK);
+    }
+
+    protected final void turnClockwise()
+    {
+        //throw new UnsupportedOperationException();
+        setFlag(TURN_CLOCK);
+    }
+
+    protected final void turnAntiClockwise()
+    {
+        //throw new UnsupportedOperationException();
+        setFlag(TURN_ANTICLOCK);
+    }
     protected final void attack()
     {    
         //throw new UnsupportedOperationException();
-        setFlag(ATTACK_ACTION, 1);
+        setFlag(ATTACK_ACTION);
     }
-    
     public void clearFlags()
     {
         for(int x = 0; x < NUM_ACTIONS; x++)
         {
-            actionFlags[x] = 0;
+            actionFlags[x] = false;
         }
     }
 }
