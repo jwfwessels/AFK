@@ -59,7 +59,6 @@ public class SampleBot extends Robot
             }
             else
             {
-                System.out.println("what now?");
                 attack();
                 running = false;
             }
