@@ -15,6 +15,7 @@ public class Tokyo extends GameEngine
 {
 
     ArrayList<Entity> entities;
+
     boolean running = true;
     final static float GAME_SPEED = 30;
     float t = 0.0f;

@@ -19,6 +19,10 @@ public class Main implements GfxInputListener, Updatable
     private Resource floorMesh, floorShader;
     private GfxEntity tankGfxEntity, floorGfxEntity;
     private Entity tankEntity;
+    private static boolean[] flags = new boolean[]
+    {
+        false, false, false, false
+    };
 
     public Main()
     {
@@ -59,11 +63,11 @@ public class Main implements GfxInputListener, Updatable
                 }
 
 //                TODO: this is just for now, there must be a more elegant solution but this might work for now...
-//                renderer.addGfxEventListener(Main.this);
-//                renderer.addUpdatable(Main.this);
+                renderer.addGfxEventListener(Main.this);
+                renderer.addUpdatable(Main.this);
 
 
-                tankEntity = new Entity(tankGfxEntity);
+                tankEntity = new Entity(tankGfxEntity, flags);
                 engine.addEntity(tankEntity);
                 new Thread(engine).start();
 //                engine.run();
@@ -87,14 +91,16 @@ public class Main implements GfxInputListener, Updatable
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
         float tdelta = TANK_VELOCITY * delta;
-
+        
         if (renderer.isKeyDown(VK_UP))
         {
-
+            flags[0] = true;
+            System.out.println("flags[0]" + flags[0]);
             tankGfxEntity.xMove += -(tdelta * sin);
             tankGfxEntity.zMove += (tdelta * cos);
         } else if (renderer.isKeyDown(VK_DOWN))
         {
+            flags[1] = true;
             tankGfxEntity.xMove -= -(tdelta * sin);
             tankGfxEntity.zMove -= (tdelta * cos);
         }
@@ -105,6 +111,10 @@ public class Main implements GfxInputListener, Updatable
         {
             tankGfxEntity.yRot -= tdelta * TANK_ANGULAR_VELOCITY;
         }
+//        for (int i = 0; i < flags.length; i++)
+//        {
+//            flags[i] = false;
+//        }
     }
 
     @Override
