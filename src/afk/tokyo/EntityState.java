@@ -19,7 +19,7 @@ public class EntityState
     protected float mass;
     protected float inverseMass;
 
-    EntityState(EntityState instance)
+    protected EntityState(EntityState instance)
     {
         position = instance.position;
         momentum = instance.momentum;
