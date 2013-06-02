@@ -80,7 +80,7 @@ public class Tokyo extends GameEngine
             {
                 //previousState = currentState
                 boolean[] flags = getInputs();
-                System.out.println("falg[0] " + flags[0]);
+                //System.out.println("falg[0] " + flags[0]);
                 updateGame(flags); //integrate (currentState ,t ,td)
                 t += DELTA;
                 accumulator -= DELTA;

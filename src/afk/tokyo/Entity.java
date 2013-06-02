@@ -13,6 +13,8 @@ import com.hackoeur.jglm.Vec3;
  */
 public class Entity
 {
+    public static final float VELOCITY = 0.5f;
+    public static final float ANGULAR_VELOCITY = 1.0f;
 
     private float mass = 1;
     private float size = 1;
@@ -37,30 +39,38 @@ public class Entity
 
     void update(float t, float dt, boolean[] flags)
     {
+        float angle = -(float) Math.toRadians(current.rotation.getY());
+        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle);
+        
         previous = new EntityState(current);
-        current.velocity = new Vec3(0, 0, 0);
+        current.velocity = Vec3.VEC3_ZERO;
         
         if (flags[0])
         {
-            System.out.println("BLA");
-            System.out.println("!!!" + current.position.toString());
-            current.velocity = current.velocity.add(new Vec3(0, 0, 0.5f));
+            current.velocity = current.velocity.add(
+                    new Vec3(-(VELOCITY * sin),
+                    0,
+                    (VELOCITY * cos)));
         } else if (flags[1])
         {
-            current.velocity = current.velocity.add(new Vec3(0, 0, -0.5f));
+            current.velocity = current.velocity.add(
+                    new Vec3((VELOCITY * sin),
+                    0,
+                    -(VELOCITY * cos)));
         }
         if (flags[2])
         {
-            current.velocity = current.velocity.add(new Vec3(0.5f, 0, 0));
+            current.rotation = current.rotation.add(new Vec3(0, ANGULAR_VELOCITY, 0));
         } else if (flags[3])
         {
-            current.velocity = current.velocity.add(new Vec3(-0.5f, 0, 0));
+            current.rotation = current.rotation.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
         }
 
 
 //            dt = 10.0f;
         integrate(current, t, dt);
-        System.out.println("" + current.position.toString());
+        //System.out.println("" + current.position.toString());
 
     }
 
@@ -118,6 +128,7 @@ public class Entity
     {
         EntityState gfxState = interpolate(alpha);
         gfxPos.setPosition(gfxState.position);
+        gfxPos.setRotation(gfxState.rotation);
 //        System.out.println("gfxState.position " + gfxState.position.toString());
     }
 
