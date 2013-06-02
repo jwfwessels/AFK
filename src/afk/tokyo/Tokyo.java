@@ -4,12 +4,16 @@
  */
 package afk.tokyo;
 
+import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
+import afk.gfx.Resource;
+import afk.gfx.ResourceNotLoadedException;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -29,6 +33,8 @@ public class Tokyo extends GameEngine
     final static float MIN_FPS = 25;
     final static float MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
     final static float MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
+    
+    private AtomicBoolean loaded = new AtomicBoolean(false);
 
     public Tokyo(GraphicsEngine gfxEngine)
     {
@@ -39,19 +45,59 @@ public class Tokyo extends GameEngine
     @Override
     protected void loadResources()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final Resource tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
+        final Resource tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
+
+        final Resource floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
+        final Resource floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
+
+        gfxEngine.dispatchLoadQueue(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+
+                try
+                {
+
+                    GfxEntity floorGfxEntity = gfxEngine.createEntity();
+                    gfxEngine.attachResource(floorGfxEntity, floorMesh);
+                    gfxEngine.attachResource(floorGfxEntity, floorShader);
+                    floorGfxEntity.setScale(50, 50, 50);
+
+                    GfxEntity tankGfxEntity = gfxEngine.createEntity();
+                    gfxEngine.attachResource(tankGfxEntity, tankMesh);
+                    gfxEngine.attachResource(tankGfxEntity, tankShader);
+                    
+                    addEntity(new Entity(tankGfxEntity));
+                    
+                } catch (ResourceNotLoadedException ex)
+                {
+                    //System.err.println("Failed to load resource: " + ex.getMessage());
+                    throw new RuntimeException(ex);
+                }
+                
+                loaded.set(true);
+
+            }
+        });
     }
 
     @Override
-    public void addEntity(Entity tankEntity)
+    public void addEntity(Entity entity)
     {
-        entities.add(tankEntity);
+        entities.add(entity);
     }
 
     @Override
     public void run()
     {
-        System.out.println("run()");
+        //System.out.println("run()");
+        
+        loadResources();
+        
+        while (!loaded.get()) { /* spin */ }
+        
         gameLoop();
     }
 
