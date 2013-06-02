@@ -13,24 +13,56 @@ import com.hackoeur.jglm.Vec3;
  */
 public class Entity
 {
-    private GfxEntity gfxPos;
-    
-    private Vec3 position;
-    private Vec3 momentum;
-    
-    private Vec3 velocity;
-    
-    private float mass;
-    private float inverseMass;
 
-    void recalculate()
-    {
-        velocity = momentum.multiply(inverseMass);
-    }
+    private GfxEntity gfxPos;
+    private State current;
+    private State previous;
 
     protected class Derivative
     {
+
         Vec3 velocity;
         Vec3 force;
+    }
+
+    public Entity(GfxEntity gfxEntity)
+    {
+        gfxPos = gfxEntity;
+    }
+
+    void update(double t, double dt)
+    {
+        previous = new State(current);
+        integrate(current, t, dt);
+
+    }
+
+    private void integrate(State state, double t, double dt)
+    {
+        Derivative a = evaluate(state, t, 0.0, null);
+        Derivative b = evaluate(state, t, dt * 0.5, a);
+        Derivative c = evaluate(state, t, dt * 0.5, b);
+        Derivative d = evaluate(state, t, dt, c);
+
+        state.position.add(d.velocity.add(a.velocity.add((b.velocity.add(c.velocity)).multiply(2))).multiply((float) (1 / 6 * dt)));
+        //TODO
+        //state.momentum
+        //state.orientation
+        //state.angularMomentum
+        state.recalculate();
+    }
+
+    private Derivative evaluate(State state, double t, double dt, Derivative derivative)
+    {
+        if (derivative != null)
+        {
+        }
+        Derivative output = new Derivative();
+        output.velocity = state.velocity;
+        //TODO
+        //output.spin
+        //output.force
+        //output.torque
+        return output;
     }
 }

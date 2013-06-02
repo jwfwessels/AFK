@@ -4,7 +4,7 @@
  */
 package afk.tokyo;
 
-import java.util.ArrayList;
+import afk.gfx.GraphicsEngine;
 
 /**
  *
@@ -13,7 +13,13 @@ import java.util.ArrayList;
 public abstract class GameEngine
 {
 
+    protected GraphicsEngine gfxEngine;
+
     protected abstract void loadResources();
+
+    public abstract void addEntity(Entity tankEntity);
+
+    public abstract void run();
 
     protected abstract void gameLoop();
 

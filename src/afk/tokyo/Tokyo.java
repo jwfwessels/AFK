@@ -4,6 +4,7 @@
  */
 package afk.tokyo;
 
+import afk.gfx.GraphicsEngine;
 import java.util.ArrayList;
 
 /**
@@ -13,15 +14,21 @@ import java.util.ArrayList;
 public class Tokyo extends GameEngine
 {
 
-    ArrayList entities;
+    ArrayList<Entity> entities;
     boolean running = false;
     double GAME_SPEED = 30;
+    double t = 0.0;
     final double dt = 1000000000 / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     double TARGET_FPS = 60;
     double MIN_FPS = 15;
     double MIN_FRAMETIME = 1000000000 / TARGET_FPS;
     double MAX_FRAMETIME = 1000000000 / MIN_FPS;
+
+    public Tokyo(GraphicsEngine gfxEngine)
+    {
+        this.gfxEngine = gfxEngine;
+    }
 
     @Override
     protected void loadResources()
@@ -30,9 +37,21 @@ public class Tokyo extends GameEngine
     }
 
     @Override
+    public void addEntity(Entity tankEntity)
+    {
+        entities.add(tankEntity);
+    }
+
+    @Override
+    public void run()
+    {
+        gameLoop();
+    }
+
+    @Override
     protected void gameLoop()
     {
-        double t = 0.0;
+
         //        double lastRender = System.nanoTime();
         double currentTime = System.nanoTime();
         double accumulator = 0.0;
@@ -56,11 +75,11 @@ public class Tokyo extends GameEngine
                 t += dt;
                 accumulator -= dt;
             }
-            
+
             double alpha = accumulator / dt;
 
             //State state = currentState * alpha = previousState* (1.0-alpha);
-            
+
             render();//render (state)
 
 
@@ -72,12 +91,17 @@ public class Tokyo extends GameEngine
     @Override
     protected void updateGame()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (int i = 0; i < entities.size(); i++)
+        {
+            entities.get(i).update(t, dt);
+        }
     }
 
     @Override
     protected void render()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //there is no methode available in GraphicsEngine 
+        //that can be invocked to cause a display() sequecne to run.
+        //gfxEngine.update()
     }
 }
