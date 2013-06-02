@@ -1,14 +1,9 @@
 package afk.london;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import afk.london.Robot;
 
 /**
- *
- * @author Jessica Sample class of what coded bot will look like
+ * Sample class of what coded bot will look like
+ * @author Jessica
  *
  */
 public class SampleBot extends Robot
@@ -25,12 +20,6 @@ public class SampleBot extends Robot
     @Override
     public void run()
     {
-        if (true)
-        {
-            
-        }
-            System.out.println("turn" + turn);
-            System.out.println("move" + move);
         if (move > 50)
         {
             moveForward();
