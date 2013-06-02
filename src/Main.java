@@ -1,6 +1,5 @@
 
 import afk.gfx.*;
-import afk.tokyo.Entity;
 import afk.tokyo.GameEngine;
 import afk.tokyo.Tokyo;
 

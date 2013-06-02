@@ -8,10 +8,9 @@ import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
-import static java.awt.event.KeyEvent.VK_DOWN;
-import static java.awt.event.KeyEvent.VK_LEFT;
-import static java.awt.event.KeyEvent.VK_RIGHT;
-import static java.awt.event.KeyEvent.VK_UP;
+import afk.london.London;
+import afk.london.Robot;
+import afk.london.SampleBot;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -93,8 +92,9 @@ public class Tokyo extends GameEngine
     public void run()
     {
         //System.out.println("run()");
-        
         loadResources();
+
+        loadBots();
         
         while (!loaded.get()) { /* spin */ }
         
@@ -167,13 +167,26 @@ public class Tokyo extends GameEngine
 
     private boolean[] getInputs()
     {
-        boolean[] flags = new boolean[]
-        {
-            gfxEngine.isKeyDown(VK_UP),
-            gfxEngine.isKeyDown(VK_DOWN),
-            gfxEngine.isKeyDown(VK_LEFT),
-            gfxEngine.isKeyDown(VK_RIGHT)
-        };
-        return flags;
+//        boolean[] flags = new boolean[]
+//        {
+//            
+//            gfxEngine.isKeyDown(VK_UP),
+//            gfxEngine.isKeyDown(VK_DOWN),
+//            gfxEngine.isKeyDown(VK_LEFT),
+//            gfxEngine.isKeyDown(VK_RIGHT)
+//        };
+        
+        ArrayList<Robot> bots = London.getRobots();
+        bots.get(0).run();
+        boolean [] flags2 = bots.get(0).getActionFlags();
+        bots.get(0).clearFlags();
+        return flags2;
+    }
+
+    private void loadBots()
+    {
+
+        Robot bot = new SampleBot();
+        London.registerBot(bot);
     }
 }

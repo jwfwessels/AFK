@@ -5,6 +5,7 @@
 package afk.tokyo;
 
 import afk.gfx.GfxEntity;
+import static afk.london.Robot.*;
 import com.hackoeur.jglm.Vec3;
 
 /**
@@ -42,31 +43,35 @@ public class Entity
         float angle = -(float) Math.toRadians(current.rotation.getY());
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
-        
+
         previous = new EntityState(current);
         current.velocity = Vec3.VEC3_ZERO;
-        
-        if (flags[0])
+
+        if (flags[MOVE_FRONT])
         {
             current.velocity = current.velocity.add(
                     new Vec3(-(VELOCITY * sin),
                     0,
                     (VELOCITY * cos)));
-        } else if (flags[1])
+        } else if (flags[MOVE_BACK])
         {
             current.velocity = current.velocity.add(
                     new Vec3((VELOCITY * sin),
                     0,
                     -(VELOCITY * cos)));
         }
-        if (flags[2])
+        if (flags[TURN_CLOCK])
         {
             current.rotation = current.rotation.add(new Vec3(0, ANGULAR_VELOCITY, 0));
-        } else if (flags[3])
+        } else if (flags[TURN_ANTICLOCK])
         {
             current.rotation = current.rotation.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
         }
 
+        if (flags[ATTACK_ACTION])
+        {
+            System.out.println("BANG!!!");
+        }
 
 //            dt = 10.0f;
         integrate(current, t, dt);
