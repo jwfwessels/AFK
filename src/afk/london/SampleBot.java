@@ -1,5 +1,4 @@
 package afk.london;
-import afk.london.Robot;
 
 /**
  * Sample class of what coded bot will look like
@@ -9,8 +8,9 @@ import afk.london.Robot;
 public class SampleBot extends Robot
 {
 
-    int move = 200;
-    int turn = 100;
+    boolean running = true;
+    int move = 0;
+    int turn = 0;
 
     public SampleBot()
     {
@@ -20,32 +20,49 @@ public class SampleBot extends Robot
     @Override
     public void run()
     {
-        if (move > 50)
+        if (running)
         {
-            moveForward();
-            move--;
-        }
-        if (turn > 25 && move <= 50)
-        {
-            turnClockwise();
-            turn--;
-        }
-        if (turn <= 50 && turn > 0)
-        {
-            moveBackwards();
-            turnAntiClockwise();
-            move--;
-            turn--;
-        }
-        if (turn == 0 && move > 0)
-        {
-            moveBackwards();
-            move--;
-        }
-        if (turn == 0 && move == 0)
-        {
-            attack();
-
+            if (move < 200)
+            {
+                moveForward();
+                move++;
+            }
+            else if (turn < 90)
+            {
+                turnClockwise();
+                turn++;
+            }
+            else if (move < 400)
+            {
+                moveBackwards();
+                move++;
+            }
+            else if (move < 800 && turn < 270)
+            {
+                moveBackwards();
+                move++;
+                if (move % 2 == 0)
+                {
+                    turnAntiClockwise();
+                    turn++;
+                }
+            }
+            else if (turn < 360)
+            {
+                turnAntiClockwise();
+                turn++;
+            }
+            else if (move < 1000)
+            {
+                moveForward();
+                move++;
+            }
+            else
+            {
+                System.out.println("what now?");
+                attack();
+                running = false;
+            }
         }
 
     }
