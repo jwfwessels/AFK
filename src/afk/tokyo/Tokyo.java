@@ -16,15 +16,15 @@ public class Tokyo extends GameEngine
 
     ArrayList<Entity> entities;
     boolean running = false;
-    double GAME_SPEED = 30;
+    final static double GAME_SPEED = 30;
     double t = 0.0;
     public static final double NANOS_PER_SECOND = 1000000000;
-    final double dt = NANOS_PER_SECOND / GAME_SPEED;
+    final static double DELTA = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    double TARGET_FPS = 60;
-    double MIN_FPS = 25;
-    double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
-    double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
+    final static double TARGET_FPS = 60;
+    final static double MIN_FPS = 25;
+    final static double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
+    final static double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
 
     public Tokyo(GraphicsEngine gfxEngine)
     {
@@ -70,15 +70,15 @@ public class Tokyo extends GameEngine
 
             accumulator += frameTime;
 
-            while (accumulator >= dt)
+            while (accumulator >= DELTA)
             {
                 //previousState = currentState
                 updateGame(); //integrate (currentState ,t ,td)
-                t += dt;
-                accumulator -= dt;
+                t += DELTA;
+                accumulator -= DELTA;
             }
 
-            double alpha = accumulator / dt;
+            double alpha = accumulator / DELTA;
 
             //State state = currentState * alpha = previousState* (1.0-alpha);
 
@@ -95,7 +95,7 @@ public class Tokyo extends GameEngine
     {
         for (int i = 0; i < entities.size(); i++)
         {
-            entities.get(i).update(t, dt);
+            entities.get(i).update(t, DELTA);
         }
     }
 
