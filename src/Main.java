@@ -64,10 +64,10 @@ public class Main implements GfxInputListener, Updatable
 
 //                TODO: this is just for now, there must be a more elegant solution but this might work for now...
                 renderer.addGfxEventListener(Main.this);
-                renderer.addUpdatable(Main.this);
+//                renderer.addUpdatable(Main.this);
 
 
-                tankEntity = new Entity(tankGfxEntity, flags);
+                tankEntity = new Entity(tankGfxEntity);
                 engine.addEntity(tankEntity);
                 new Thread(engine).start();
 //                engine.run();
@@ -90,31 +90,33 @@ public class Main implements GfxInputListener, Updatable
         float angle = -(float) Math.toRadians(tankGfxEntity.yRot);
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
-        float tdelta = TANK_VELOCITY * delta;
+//        float tdelta = TANK_VELOCITY * delta;
+        
+        for (int i = 0; i < flags.length; i++)
+        {
+//            flags[i] = false;
+        }
         
         if (renderer.isKeyDown(VK_UP))
         {
-            flags[0] = true;
-            System.out.println("flags[0]" + flags[0]);
-            tankGfxEntity.xMove += -(tdelta * sin);
-            tankGfxEntity.zMove += (tdelta * cos);
+//            flags[0] = true;
+//            System.out.println("flags[0]" + flags[0]);
+//            tankGfxEntity.xMove += -(tdelta * sin);
+//            tankGfxEntity.zMove += (tdelta * cos);
         } else if (renderer.isKeyDown(VK_DOWN))
         {
             flags[1] = true;
-            tankGfxEntity.xMove -= -(tdelta * sin);
-            tankGfxEntity.zMove -= (tdelta * cos);
+//            tankGfxEntity.xMove -= -(tdelta * sin);
+//            tankGfxEntity.zMove -= (tdelta * cos);
         }
         if (renderer.isKeyDown(VK_LEFT))
         {
-            tankGfxEntity.yRot += tdelta * TANK_ANGULAR_VELOCITY;
+//            tankGfxEntity.yRot += tdelta * TANK_ANGULAR_VELOCITY;
         } else if (renderer.isKeyDown(VK_RIGHT))
         {
-            tankGfxEntity.yRot -= tdelta * TANK_ANGULAR_VELOCITY;
+//            tankGfxEntity.yRot -= tdelta * TANK_ANGULAR_VELOCITY;
         }
-//        for (int i = 0; i < flags.length; i++)
-//        {
-//            flags[i] = false;
-//        }
+
     }
 
     @Override

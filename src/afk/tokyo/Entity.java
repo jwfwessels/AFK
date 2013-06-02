@@ -19,7 +19,6 @@ public class Entity
     private GfxEntity gfxPos;
     private EntityState current;
     private EntityState previous;
-    boolean[] move;
 
     protected class Derivative
     {
@@ -28,41 +27,46 @@ public class Entity
         Vec3 force;
     }
 
-    public Entity(GfxEntity gfxEntity, boolean[] flags)
+    public Entity(GfxEntity gfxEntity)
     {
         gfxPos = gfxEntity;
         current = new EntityState(gfxPos.getPosition());
         previous = new EntityState(current);
-        move = flags;
 
     }
 
-    void update(float t, float dt)
+    void update(float t, float dt, boolean[] flags)
     {
         previous = new EntityState(current);
-        if (move[0])
+        current.velocity = new Vec3(0, 0, 0);
+        if (flags[0])
         {
-            current.velocity.add(new Vec3(1, 0, 0));
-//            System.out.println("update()- current" + current.velocity);
+            System.out.println("BLA");
+            System.out.println("!!!" + current.position.toString());
+            current.velocity = new Vec3(0, 1.0f, 0);
         }
+//            dt = 10.0f;
         integrate(current, t, dt);
+            System.out.println("" + current.position.toString());
 
     }
 
     private void integrate(EntityState state, float t, float dt)
     {
+//        state.velocity = new Vec3(0.01f, 0, 0);
+        
         Derivative a = evaluate(state, t, 0.0f, null);
         Derivative b = evaluate(state, t, dt * 0.5f, a);
         Derivative c = evaluate(state, t, dt * 0.5f, b);
         Derivative d = evaluate(state, t, dt, c);
 
-        state.position = state.position.add(d.velocity.add(a.velocity.add((b.velocity.add(c.velocity)).multiply(2))).multiply((float) (1 / 6 * dt)));
-        state.position = state.momentum.add(d.force.add(a.force.add((b.force.add(c.force)).multiply(2))).multiply((float) (1 / 6 * dt)));
+        state.position = state.position.add(d.velocity.add(a.velocity.add((b.velocity.add(c.velocity)).multiply(2))).multiply((float) ((1.0f / 6.0f) * dt)));
+        state.momentum = state.momentum.add(d.force.add(a.force.add((b.force.add(c.force)).multiply(2))).multiply((float) ((1.0f / 6.0f) * dt)));
 
         //TODO
         //state.orientation
         //state.angularMomentum
-        state.recalculate();
+//        state.recalculate();
 
     }
 
@@ -72,7 +76,7 @@ public class Entity
         {
             state.position = state.position.add(derivative.velocity.multiply(dt));
             state.momentum = state.momentum.add(derivative.force.multiply(dt));
-            state.recalculate();
+//            state.recalculate();
         }
         Derivative output = new Derivative();
         output.velocity = state.velocity;

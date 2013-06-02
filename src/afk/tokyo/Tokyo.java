@@ -5,6 +5,10 @@
 package afk.tokyo;
 
 import afk.gfx.GraphicsEngine;
+import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_UP;
 import java.util.ArrayList;
 
 /**
@@ -15,11 +19,10 @@ public class Tokyo extends GameEngine
 {
 
     ArrayList<Entity> entities;
-
     boolean running = true;
-    final static float GAME_SPEED = 30;
+    final static float GAME_SPEED = 5;
     float t = 0.0f;
-    public static final float NANOS_PER_SECOND = 1000000000;
+    public static final float NANOS_PER_SECOND = 1.0f;
     final static float DELTA = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     final static float TARGET_FPS = 60;
@@ -76,7 +79,9 @@ public class Tokyo extends GameEngine
             while (accumulator >= DELTA)
             {
                 //previousState = currentState
-                updateGame(); //integrate (currentState ,t ,td)
+                boolean[] flags = getInputs();
+                System.out.println("falg[0] " + flags[0]);
+                updateGame(flags); //integrate (currentState ,t ,td)
                 t += DELTA;
                 accumulator -= DELTA;
             }
@@ -94,11 +99,11 @@ public class Tokyo extends GameEngine
     }
 
     @Override
-    protected void updateGame()
+    protected void updateGame(boolean[] flags)
     {
         for (int i = 0; i < entities.size(); i++)
         {
-            entities.get(i).update(t, DELTA);
+            entities.get(i).update(t, DELTA, flags);
         }
     }
 
@@ -112,5 +117,17 @@ public class Tokyo extends GameEngine
         //there is no method available in GraphicsEngine 
         //that can be invoked to cause a display() sequence to run.
         gfxEngine.redisplay();
+    }
+
+    private boolean[] getInputs()
+    {
+        boolean[] flags = new boolean[]
+        {
+            gfxEngine.isKeyDown(VK_UP),
+            gfxEngine.isKeyDown(VK_DOWN),
+            gfxEngine.isKeyDown(VK_LEFT),
+            gfxEngine.isKeyDown(VK_RIGHT)
+        };
+        return flags;
     }
 }

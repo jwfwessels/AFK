@@ -24,7 +24,7 @@ public abstract class GameEngine implements Runnable
 
     protected abstract void gameLoop();
 
-    protected abstract void updateGame();
+    protected abstract void updateGame(boolean[] flags);
 
     protected abstract void render(float alpha);
 }
