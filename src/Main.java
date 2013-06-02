@@ -1,4 +1,7 @@
 import afk.gfx.*;
+import afk.tokyo.Entity;
+import afk.tokyo.GameEngine;
+import afk.tokyo.Tokyo;
 import static java.awt.event.KeyEvent.*;
 
 public class Main implements GfxInputListener, Updatable
@@ -9,28 +12,31 @@ public class Main implements GfxInputListener, Updatable
     public static final float TANK_ANGULAR_VELOCITY = 30.0f;
     public static final int TANK_VELOCITY = 5;
     
-    private GraphicsEngine engine;
+    private GraphicsEngine renderer;
+    private GameEngine engine;
     
     private Resource tankMesh, tankShader;
 
     private Resource floorMesh, floorShader;
     
-    private GfxEntity tankEntity, floorEntity;
+    private GfxEntity tankGfxEntity, floorGfxEntity;
+    private Entity tankEntity;
     
     public Main()
     {
-        engine = GraphicsEngine.getInstance(WIDTH, HEIGHT, TITLE);
+        renderer = GraphicsEngine.getInstance(WIDTH, HEIGHT, TITLE, false);
+        engine = new Tokyo(renderer);
     }
     
     public void start()
     {
-        tankMesh = engine.loadResource(Resource.WAVEFRONT_MESH, "tank");
-        tankShader = engine.loadResource(Resource.SHADER, "monkey");
+        tankMesh = renderer.loadResource(Resource.WAVEFRONT_MESH, "tank");
+        tankShader = renderer.loadResource(Resource.SHADER, "monkey");
         
-        floorMesh = engine.loadResource(Resource.PRIMITIVE_MESH, "quad");
-        floorShader = engine.loadResource(Resource.SHADER, "floor");
+        floorMesh = renderer.loadResource(Resource.PRIMITIVE_MESH, "quad");
+        floorShader = renderer.loadResource(Resource.SHADER, "floor");
         
-        engine.dispatchLoadQueue(new Runnable() {
+        renderer.dispatchLoadQueue(new Runnable() {
 
             @Override
             public void run()
@@ -38,14 +44,16 @@ public class Main implements GfxInputListener, Updatable
                 
                 try
                 {
-                    floorEntity = engine.createEntity();
-                    engine.attachResource(floorEntity, floorMesh);
-                    engine.attachResource(floorEntity, floorShader);
-                    floorEntity.setScale(50,50,50);
+                    
+                    floorGfxEntity = renderer.createEntity();
+                    renderer.attachResource(floorGfxEntity, floorMesh);
+                    renderer.attachResource(floorGfxEntity, floorShader);
+                    floorGfxEntity.setScale(50,50,50);
+                    
 
-                    tankEntity = engine.createEntity();
-                    engine.attachResource(tankEntity, tankMesh);
-                    engine.attachResource(tankEntity, tankShader);
+                    tankGfxEntity = renderer.createEntity();
+                    renderer.attachResource(tankGfxEntity, tankMesh);
+                    renderer.attachResource(tankGfxEntity, tankShader);
                 }
                 catch (ResourceNotLoadedException ex)
                 {
@@ -53,9 +61,16 @@ public class Main implements GfxInputListener, Updatable
                     throw new RuntimeException(ex);
                 }
                 
-                // TODO: this is just for now, there must be a more elegant solution but this might work for now...
-                engine.addGfxEventListener(Main.this);
-                engine.addUpdatable(Main.this);
+//                TODO: this is just for now, there must be a more elegant solution but this might work for now...
+//                renderer.addGfxEventListener(Main.this);
+                renderer.addUpdatable(Main.this);
+                
+                
+                tankEntity = new Entity(tankGfxEntity);
+                engine.addEntity(tankEntity);
+                engine.run();
+                
+                
             }
             
         });
@@ -73,28 +88,28 @@ public class Main implements GfxInputListener, Updatable
     @Override
     public void update(float delta)
     {
-        float angle = -(float)Math.toRadians(tankEntity.yRot);
+        float angle = -(float)Math.toRadians(tankGfxEntity.yRot);
         float sin = (float)Math.sin(angle);
         float cos = (float)Math.cos(angle);
         float tdelta = TANK_VELOCITY*delta;
 
-        if (engine.isKeyDown(VK_UP))
+        if (renderer.isKeyDown(VK_UP))
         {
-            tankEntity.xMove += -(tdelta*sin);
-            tankEntity.zMove += (tdelta*cos);
+            tankGfxEntity.xMove += -(tdelta*sin);
+            tankGfxEntity.zMove += (tdelta*cos);
         }
-        else if (engine.isKeyDown(VK_DOWN))
+        else if (renderer.isKeyDown(VK_DOWN))
         {
-            tankEntity.xMove -= -(tdelta*sin);
-            tankEntity.zMove -= (tdelta*cos);
+            tankGfxEntity.xMove -= -(tdelta*sin);
+            tankGfxEntity.zMove -= (tdelta*cos);
         }
-        if (engine.isKeyDown(VK_LEFT))
+        if (renderer.isKeyDown(VK_LEFT))
         {
-            tankEntity.yRot += tdelta*TANK_ANGULAR_VELOCITY;
+            tankGfxEntity.yRot += tdelta*TANK_ANGULAR_VELOCITY;
         }
-        else if (engine.isKeyDown(VK_RIGHT))
+        else if (renderer.isKeyDown(VK_RIGHT))
         {
-            tankEntity.yRot -= tdelta*TANK_ANGULAR_VELOCITY;
+            tankGfxEntity.yRot -= tdelta*TANK_ANGULAR_VELOCITY;
         }
     }
 
