@@ -73,7 +73,7 @@ public class Athens extends GraphicsEngine
 
     // TODO: move this into a camera object
     /* Camera location. */
-    Vec3 cameraEye = new Vec3(2f, 2f, 2f);
+    Vec3 cameraEye = new Vec3(10f, 10f, 10f);
     /* Vector the camera is looking along. */
     Vec3 cameraAt = new Vec3(0f, 0f, 0f);
     /* Up direction from the camera. */
