@@ -63,7 +63,7 @@ public class Main implements GfxInputListener, Updatable
                 
 //                TODO: this is just for now, there must be a more elegant solution but this might work for now...
 //                renderer.addGfxEventListener(Main.this);
-                renderer.addUpdatable(Main.this);
+//                renderer.addUpdatable(Main.this);
                 
                 
                 tankEntity = new Entity(tankGfxEntity);
@@ -95,6 +95,7 @@ public class Main implements GfxInputListener, Updatable
 
         if (renderer.isKeyDown(VK_UP))
         {
+            
             tankGfxEntity.xMove += -(tdelta*sin);
             tankGfxEntity.zMove += (tdelta*cos);
         }

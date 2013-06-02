@@ -15,16 +15,16 @@ public class Tokyo extends GameEngine
 {
 
     ArrayList<Entity> entities;
-    boolean running = false;
-    final static double GAME_SPEED = 30;
-    double t = 0.0;
-    public static final double NANOS_PER_SECOND = 1000000000;
-    final static double DELTA = NANOS_PER_SECOND / GAME_SPEED;
+    boolean running = true;
+    final static float GAME_SPEED = 30;
+    float t = 0.0f;
+    public static final float NANOS_PER_SECOND = 1000000000;
+    final static float DELTA = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    final static double TARGET_FPS = 60;
-    final static double MIN_FPS = 25;
-    final static double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
-    final static double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
+    final static float TARGET_FPS = 60;
+    final static float MIN_FPS = 25;
+    final static float MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
+    final static float MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
 
     public Tokyo(GraphicsEngine gfxEngine)
     {
@@ -47,21 +47,23 @@ public class Tokyo extends GameEngine
     @Override
     public void run()
     {
+        System.out.println("run()");
         gameLoop();
     }
 
     @Override
     protected void gameLoop()
     {
-
+//        System.out.println("gameLoop()");
         //        double lastRender = System.nanoTime();
-        double currentTime = System.nanoTime();
-        double accumulator = 0.0;
-
+        float currentTime = System.nanoTime();
+        float accumulator = 0.0f;
+        int i = 0;
         while (running)
         {
-            double newTime = System.nanoTime();
-            double frameTime = newTime - currentTime;
+//            System.out.println("loop: " + i);
+            float newTime = System.nanoTime();
+            float frameTime = newTime - currentTime;
             if (frameTime > MAX_FRAMETIME)
             {
                 frameTime = MAX_FRAMETIME;	  //max frame
@@ -78,13 +80,13 @@ public class Tokyo extends GameEngine
                 accumulator -= DELTA;
             }
 
-            double alpha = accumulator / DELTA;
+            float alpha = accumulator / DELTA;
 
             //State state = currentState * alpha = previousState* (1.0-alpha);
+            render(alpha);//render (state)
 
-            render();//render (state)
-
-
+//            System.out.println("render: " + i);
+//            i++;
 
 //            double interpolation = Math.min(1.0, (newTime - currentTime) / dt);
         }
@@ -100,10 +102,14 @@ public class Tokyo extends GameEngine
     }
 
     @Override
-    protected void render()
+    protected void render(float alpha)
     {
+        for (int i = 0; i < entities.size(); i++)
+        {
+            entities.get(i).render(alpha);
+        }
         //there is no method available in GraphicsEngine 
         //that can be invoked to cause a display() sequence to run.
-        //gfxEngine.update()
+        gfxEngine.redisplay();
     }
 }

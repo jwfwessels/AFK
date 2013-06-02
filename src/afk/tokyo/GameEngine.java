@@ -25,5 +25,5 @@ public abstract class GameEngine
 
     protected abstract void updateGame();
 
-    protected abstract void render();
+    protected abstract void render(float alpha);
 }

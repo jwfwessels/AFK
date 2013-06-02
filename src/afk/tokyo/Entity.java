@@ -14,6 +14,8 @@ import com.hackoeur.jglm.Vec3;
 public class Entity
 {
 
+    private float mass = 1;
+    private float size = 1;
     private GfxEntity gfxPos;
     private EntityState current;
     private EntityState previous;
@@ -21,48 +23,73 @@ public class Entity
     protected class Derivative
     {
 
-        Vec3 velocity;
-        Vec3 force;
+        Vec3 dPosition;
+        Vec3 dVelocity;
     }
 
     public Entity(GfxEntity gfxEntity)
     {
         gfxPos = gfxEntity;
+        current = new EntityState(gfxPos.getPosition());
+
     }
 
-    void update(double t, double dt)
+    void update(float t, float dt)
     {
         previous = new EntityState(current);
         integrate(current, t, dt);
 
     }
 
-    private void integrate(EntityState state, double t, double dt)
+    private void integrate(EntityState state, float t, float dt)
     {
-        Derivative a = evaluate(state, t, 0.0, null);
-        Derivative b = evaluate(state, t, dt * 0.5, a);
-        Derivative c = evaluate(state, t, dt * 0.5, b);
+        Derivative a = evaluate(state, t, 0.0f, null);
+        Derivative b = evaluate(state, t, dt * 0.5f, a);
+        Derivative c = evaluate(state, t, dt * 0.5f, b);
         Derivative d = evaluate(state, t, dt, c);
 
-        state.position.add(d.velocity.add(a.velocity.add((b.velocity.add(c.velocity)).multiply(2))).multiply((float) (1 / 6 * dt)));
+        state.position.add(d.dPosition.add(a.dPosition.add((b.dPosition.add(c.dPosition)).multiply(2))).multiply((float) (1 / 6 * dt)));
         //TODO
         //state.momentum
         //state.orientation
         //state.angularMomentum
-        state.recalculate();
+//        state.recalculate();
     }
 
-    private Derivative evaluate(EntityState state, double t, double dt, Derivative derivative)
+    private Derivative evaluate(EntityState state, float t, float dt, Derivative derivative)
     {
         if (derivative != null)
         {
+            state.position.add(derivative.dPosition.multiply(dt));
+
         }
         Derivative output = new Derivative();
-        output.velocity = state.velocity;
+        output.dPosition = state.velocity;
+        output.dVelocity = acceleration(state, t + dt);
         //TODO
         //output.spin
         //output.force
         //output.torque
         return output;
+    }
+
+    private Vec3 acceleration(EntityState state, float d)
+    {
+        float k = 10;
+        float b = 1;
+        return state.position.multiply(-k).subtract(state.velocity.multiply(b));
+    }
+
+    void render(float alpha)
+    {
+        EntityState gfxState = interpolate(previous, current, alpha);
+        gfxPos.setPosition(gfxState.position);
+    }
+
+    private EntityState interpolate(EntityState previous, EntityState current, float alpha)
+    {
+        EntityState tempState = new EntityState(current);
+        tempState.position = previous.position.multiply(1 - alpha).add(current.position.multiply(alpha));
+        return tempState;
     }
 }
