@@ -18,16 +18,18 @@ public class Tokyo extends GameEngine
     boolean running = false;
     double GAME_SPEED = 30;
     double t = 0.0;
-    final double dt = 1000000000 / GAME_SPEED;
+    public static final double NANOS_PER_SECOND = 1000000000;
+    final double dt = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     double TARGET_FPS = 60;
-    double MIN_FPS = 15;
-    double MIN_FRAMETIME = 1000000000 / TARGET_FPS;
-    double MAX_FRAMETIME = 1000000000 / MIN_FPS;
+    double MIN_FPS = 25;
+    double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
+    double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
 
     public Tokyo(GraphicsEngine gfxEngine)
     {
         this.gfxEngine = gfxEngine;
+        entities = new ArrayList<Entity>();
     }
 
     @Override
@@ -100,8 +102,8 @@ public class Tokyo extends GameEngine
     @Override
     protected void render()
     {
-        //there is no methode available in GraphicsEngine 
-        //that can be invocked to cause a display() sequecne to run.
+        //there is no method available in GraphicsEngine 
+        //that can be invoked to cause a display() sequence to run.
         //gfxEngine.update()
     }
 }

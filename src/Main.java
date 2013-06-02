@@ -61,12 +61,15 @@ public class Main implements GfxInputListener, Updatable
                     throw new RuntimeException(ex);
                 }
                 
+//                TODO: this is just for now, there must be a more elegant solution but this might work for now...
+//                renderer.addGfxEventListener(Main.this);
+                renderer.addUpdatable(Main.this);
+                
+                
                 tankEntity = new Entity(tankGfxEntity);
                 engine.addEntity(tankEntity);
                 engine.run();
-                // TODO: this is just for now, there must be a more elegant solution but this might work for now...
-//                engine.addGfxEventListener(Main.this);
-//                engine.addUpdatable(Main.this);
+                
                 
             }
             

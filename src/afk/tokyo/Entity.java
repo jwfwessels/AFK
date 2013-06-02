@@ -15,8 +15,8 @@ public class Entity
 {
 
     private GfxEntity gfxPos;
-    private State current;
-    private State previous;
+    private EntityState current;
+    private EntityState previous;
 
     protected class Derivative
     {
@@ -32,12 +32,12 @@ public class Entity
 
     void update(double t, double dt)
     {
-        previous = new State(current);
+        previous = new EntityState(current);
         integrate(current, t, dt);
 
     }
 
-    private void integrate(State state, double t, double dt)
+    private void integrate(EntityState state, double t, double dt)
     {
         Derivative a = evaluate(state, t, 0.0, null);
         Derivative b = evaluate(state, t, dt * 0.5, a);
@@ -52,7 +52,7 @@ public class Entity
         state.recalculate();
     }
 
-    private Derivative evaluate(State state, double t, double dt, Derivative derivative)
+    private Derivative evaluate(EntityState state, double t, double dt, Derivative derivative)
     {
         if (derivative != null)
         {

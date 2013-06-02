@@ -10,7 +10,7 @@ import com.hackoeur.jglm.Vec3;
  *
  * @author Jw
  */
-public class State
+public class EntityState
 {
 
     protected Vec3 position;
@@ -19,7 +19,7 @@ public class State
     protected float mass;
     protected float inverseMass;
 
-    State(State instance)
+    EntityState(EntityState instance)
     {
         position = instance.position;
         momentum = instance.momentum;
