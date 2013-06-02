@@ -10,7 +10,7 @@ import afk.gfx.GraphicsEngine;
  *
  * @author Jw
  */
-public abstract class GameEngine
+public abstract class GameEngine implements Runnable
 {
 
     protected GraphicsEngine gfxEngine;
@@ -19,6 +19,7 @@ public abstract class GameEngine
 
     public abstract void addEntity(Entity tankEntity);
 
+    @Override
     public abstract void run();
 
     protected abstract void gameLoop();

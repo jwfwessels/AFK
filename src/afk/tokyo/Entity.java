@@ -85,6 +85,7 @@ public class Entity
     {
         EntityState gfxState = interpolate(alpha);
         gfxPos.setPosition(gfxState.position);
+        System.out.println("gfxState.position " + gfxState.position.toString());
     }
 
     private EntityState interpolate(float alpha)
