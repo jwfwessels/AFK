@@ -24,7 +24,7 @@ public class Main implements GfxInputListener, Updatable
     
     public Main()
     {
-        renderer = GraphicsEngine.getInstance(WIDTH, HEIGHT, TITLE);
+        renderer = GraphicsEngine.getInstance(WIDTH, HEIGHT, TITLE, false);
         engine = new Tokyo(renderer);
     }
     

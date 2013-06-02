@@ -23,7 +23,7 @@ public abstract class GraphicsEngine
      * Get the singleton instance of the graphics engine.
      * @return The graphics engine.
      */
-    public static GraphicsEngine getInstance(int width, int height, String title)
+    public static GraphicsEngine getInstance(int width, int height, String title, boolean autodraw)
     {
         // TODO: find a better solution to double-checked locking!
         // this is how double-checked locking works
@@ -36,7 +36,7 @@ public abstract class GraphicsEngine
                 if (instance == null)
                 {
                     // TODO: detect best opengl version
-                    instance = new Athens(width, height, title);
+                    instance = new Athens(width, height, title, autodraw);
                 }
             }
         }
@@ -62,6 +62,8 @@ public abstract class GraphicsEngine
     {
         updatables.remove(u);
     }
+    
+    public abstract void redisplay();
     
     public abstract void dispatchLoadQueue(Runnable callback);
     
