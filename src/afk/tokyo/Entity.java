@@ -39,22 +39,35 @@ public class Entity
     {
         previous = new EntityState(current);
         current.velocity = new Vec3(0, 0, 0);
+        
         if (flags[0])
         {
             System.out.println("BLA");
             System.out.println("!!!" + current.position.toString());
-            current.velocity = new Vec3(0, 1.0f, 0);
+            current.velocity = current.velocity.add(new Vec3(0, 0, 0.5f));
+        } else if (flags[1])
+        {
+            current.velocity = current.velocity.add(new Vec3(0, 0, -0.5f));
         }
+        if (flags[2])
+        {
+            current.velocity = current.velocity.add(new Vec3(0.5f, 0, 0));
+        } else if (flags[3])
+        {
+            current.velocity = current.velocity.add(new Vec3(-0.5f, 0, 0));
+        }
+
+
 //            dt = 10.0f;
         integrate(current, t, dt);
-            System.out.println("" + current.position.toString());
+        System.out.println("" + current.position.toString());
 
     }
 
     private void integrate(EntityState state, float t, float dt)
     {
 //        state.velocity = new Vec3(0.01f, 0, 0);
-        
+
         Derivative a = evaluate(state, t, 0.0f, null);
         Derivative b = evaluate(state, t, dt * 0.5f, a);
         Derivative c = evaluate(state, t, dt * 0.5f, b);

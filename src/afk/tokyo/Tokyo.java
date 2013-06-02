@@ -20,12 +20,12 @@ public class Tokyo extends GameEngine
 
     ArrayList<Entity> entities;
     boolean running = true;
-    final static float GAME_SPEED = 5;
+    final static float GAME_SPEED = 60;
     float t = 0.0f;
     public static final float NANOS_PER_SECOND = 1.0f;
     final static float DELTA = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    final static float TARGET_FPS = 60;
+    final static float TARGET_FPS = 90;
     final static float MIN_FPS = 25;
     final static float MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
     final static float MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;

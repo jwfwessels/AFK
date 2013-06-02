@@ -26,7 +26,7 @@ public class EntityState
         System.out.println("this.postion" + this.position);
         this.momentum = new Vec3(0, 0, 0);
         this.velocity = new Vec3(0, 0, 0);
-        this.mass = 10000.0f;
+        this.mass = 1.0f;
         this.inverseMass = 1.0f / mass;
     }
 
