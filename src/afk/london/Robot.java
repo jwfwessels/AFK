@@ -5,7 +5,6 @@
 package afk.london;
 
 /**
- *
  * @author Jessica
  */
 public abstract class Robot 
@@ -31,8 +30,10 @@ public abstract class Robot
      */
     public Robot()
     {
-        actionFlags = new int[NUM_ACTIONS];          
+        actionFlags = new int[NUM_ACTIONS];  
+        London.registerBot(this);
     }
+    
     private void setFlag(int index, int value)
     {
         if(index <= NUM_ACTIONS && index >= 0)
