@@ -11,13 +11,13 @@ public abstract class Robot
 {
     //Method user will have to implement
 
-    private final int NUM_ACTIONS = 5;
+    public static final int NUM_ACTIONS = 5;
     //Index mapping of flag array
-    private final int MOVE_FRONT = 0;
-    private final int MOVE_BACK = 1;
-    private final int TURN_CLOCK = 2;
-    private final int TURN_ANTICLOCK = 3;
-    private final int ATTACK_ACTION = 4;
+    public static final int MOVE_FRONT = 0;
+    public static final int MOVE_BACK = 1;
+    public static final int TURN_CLOCK = 2;
+    public static final int TURN_ANTICLOCK = 3;
+    public static final int ATTACK_ACTION = 4;
     private boolean[] actionFlags;
     private boolean[] eventFlags;
 
