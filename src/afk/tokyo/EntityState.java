@@ -19,13 +19,11 @@ public class EntityState
 //    protected float mass;
 //    protected float inverseMass;
 
-    public EntityState()
-    {
-    }
-
     public EntityState(Vec3 position)
     {
         this.position = position;
+        System.out.println("postion"+ position);
+        System.out.println("this.postion"+ this.position);
 //        this.momentum = momentum;
         this.velocity = new Vec3(0, 0, 0);
 //        this.mass = mass;

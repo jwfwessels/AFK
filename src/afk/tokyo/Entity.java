@@ -31,6 +31,7 @@ public class Entity
     {
         gfxPos = gfxEntity;
         current = new EntityState(gfxPos.getPosition());
+        previous = new EntityState(current);
 
     }
 
@@ -82,11 +83,11 @@ public class Entity
 
     void render(float alpha)
     {
-        EntityState gfxState = interpolate(previous, current, alpha);
+        EntityState gfxState = interpolate(alpha);
         gfxPos.setPosition(gfxState.position);
     }
 
-    private EntityState interpolate(EntityState previous, EntityState current, float alpha)
+    private EntityState interpolate(float alpha)
     {
         EntityState tempState = new EntityState(current);
         tempState.position = previous.position.multiply(1 - alpha).add(current.position.multiply(alpha));
