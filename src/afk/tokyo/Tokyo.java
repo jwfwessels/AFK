@@ -184,6 +184,7 @@ public class Tokyo extends GameEngine
         ArrayList<Robot> bots = London.getRobots();
         bots.get(0).run();
         boolean [] flags2 = bots.get(0).getActionFlags();
+        bots.get(0).clearFlags();
         return flags2;
     }
 

@@ -45,7 +45,7 @@ public abstract class Robot
 
     public boolean[] getActionFlags()
     {
-        return actionFlags;
+        return actionFlags.clone();
     }
 
     protected final void moveForward()
