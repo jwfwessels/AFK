@@ -28,10 +28,10 @@ public class Tokyo extends GameEngine
     public static final float NANOS_PER_SECOND = 1.0f;
     final static float DELTA = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    final static float TARGET_FPS = 90;
-    final static float MIN_FPS = 25;
-    final static float MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
-    final static float MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
+    final static double TARGET_FPS = 90;
+    final static double MIN_FPS = 25;
+    final static double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
+    final static double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
     
     private AtomicBoolean loaded = new AtomicBoolean(false);
 
@@ -106,14 +106,14 @@ public class Tokyo extends GameEngine
     {
 //        System.out.println("gameLoop()");
         //        double lastRender = System.nanoTime();
-        float currentTime = System.nanoTime();
+        double currentTime = System.nanoTime();
         float accumulator = 0.0f;
         int i = 0;
         while (running)
         {
 //            System.out.println("loop: " + i);
-            float newTime = System.nanoTime();
-            float frameTime = newTime - currentTime;
+            double newTime = System.nanoTime();
+            double frameTime = newTime - currentTime;
             if (frameTime > MAX_FRAMETIME)
             {
                 frameTime = MAX_FRAMETIME;	  //max frame
