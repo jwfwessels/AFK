@@ -17,7 +17,7 @@ public abstract class GameEngine implements Runnable
 
     protected abstract void loadResources();
 
-    public abstract void addEntity(Entity tankEntity);
+    public abstract void addEntity(AbstractEntity tankEntity);
 
     @Override
     public abstract void run();

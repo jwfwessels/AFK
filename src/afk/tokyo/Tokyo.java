@@ -11,6 +11,7 @@ import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.SampleBot;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Tokyo extends GameEngine
 {
 
-    ArrayList<Entity> entities;
+    ArrayList<AbstractEntity> entities;
     boolean running = true;
     final static float GAME_SPEED = 60;
     float t = 0.0f;
@@ -32,13 +33,12 @@ public class Tokyo extends GameEngine
     final static double MIN_FPS = 25;
     final static double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
     final static double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
-    
     private AtomicBoolean loaded = new AtomicBoolean(false);
 
     public Tokyo(GraphicsEngine gfxEngine)
     {
         this.gfxEngine = gfxEngine;
-        entities = new ArrayList<Entity>();
+        entities = new ArrayList<AbstractEntity>();
     }
 
     @Override
@@ -67,15 +67,26 @@ public class Tokyo extends GameEngine
                     GfxEntity tankGfxEntity = gfxEngine.createEntity();
                     gfxEngine.attachResource(tankGfxEntity, tankMesh);
                     gfxEngine.attachResource(tankGfxEntity, tankShader);
-                    
-                    addEntity(new Entity(tankGfxEntity));
-                    
+
+                    //dont have a projectile model yet, mini tank will be bullet XD
+                    GfxEntity projectileGfxEntity = gfxEngine.createEntity();
+                    gfxEngine.attachResource(projectileGfxEntity, tankMesh);
+                    gfxEngine.attachResource(projectileGfxEntity, tankShader);
+                    projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
+                    projectileGfxEntity.setPosition(5, 10, 5);
+
+                    TankEntity tank = new TankEntity(tankGfxEntity);
+                    ProjectileEntity bullet = new ProjectileEntity(projectileGfxEntity);
+                    addEntity(tank);
+                    tank.setProjectile(bullet);
+//                    addEntity(bullet);
+
                 } catch (ResourceNotLoadedException ex)
                 {
                     //System.err.println("Failed to load resource: " + ex.getMessage());
                     throw new RuntimeException(ex);
                 }
-                
+
                 loaded.set(true);
 
             }
@@ -83,7 +94,7 @@ public class Tokyo extends GameEngine
     }
 
     @Override
-    public void addEntity(Entity entity)
+    public void addEntity(AbstractEntity entity)
     {
         entities.add(entity);
     }
@@ -95,9 +106,10 @@ public class Tokyo extends GameEngine
         loadResources();
 
         loadBots();
-        
-        while (!loaded.get()) { /* spin */ }
-        
+
+        while (!loaded.get())
+        { /* spin */ }
+
         gameLoop();
     }
 
@@ -124,7 +136,7 @@ public class Tokyo extends GameEngine
 
             while (accumulator >= DELTA)
             {
-                //previousState = currentState
+//                previousState = currentState;
                 boolean[] flags = getInputs();
                 //System.out.println("falg[0] " + flags[0]);
                 updateGame(flags); //integrate (currentState ,t ,td)
@@ -151,6 +163,7 @@ public class Tokyo extends GameEngine
         {
             entities.get(i).update(t, DELTA, flags);
         }
+//        entities.get(0).update(t, DELTA, flags);
     }
 
     @Override
@@ -175,10 +188,12 @@ public class Tokyo extends GameEngine
 //            gfxEngine.isKeyDown(VK_LEFT),
 //            gfxEngine.isKeyDown(VK_RIGHT)
 //        };
-        
+
         ArrayList<Robot> bots = London.getRobots();
         bots.get(0).run();
-        boolean [] flags2 = bots.get(0).getActionFlags();
+        boolean[] temp = bots.get(0).getActionFlags();
+        boolean[] flags2 = new boolean[temp.length];
+        System.arraycopy(temp, 0, flags2, 0, temp.length);
         bots.get(0).clearFlags();
         return flags2;
     }
