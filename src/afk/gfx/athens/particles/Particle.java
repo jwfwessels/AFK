@@ -1,6 +1,11 @@
 package afk.gfx.athens.particles;
 
+import afk.gfx.athens.BillboardMesh;
+import afk.gfx.athens.Shader;
+import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import javax.media.opengl.GL2;
 
 /**
  *
@@ -13,8 +18,12 @@ public class Particle
     float lifetime;
     boolean alive = false;
 
-    public Particle()
-    { }
+    public static BillboardMesh BBMESH = null;
+    
+    public Particle(GL2 gl)
+    {
+        if (BBMESH == null) BBMESH = new BillboardMesh(gl);
+    }
     
     public void set(Vec3 position, Vec3 velocity)
     {
@@ -32,5 +41,32 @@ public class Particle
         lifetime += delta;
         
         // TODO: check stopping conditions
+        // for now we just destroy when reaching y=0
+        if (position.getY() < 0)
+            alive = false;
+    }
+    
+    protected Mat4 createWorldMatrix()
+    {
+        Mat4 world = new Mat4(1f);
+
+        world = Matrices.translate(world, position);
+
+        //m TODO: onkeyWorld = Matrices.scale(monkeyWorld, getScale());
+        
+        return world;
+    }
+    
+    protected void draw(GL2 gl, Shader shader)
+    {
+        shader.use(gl);
+        
+        // TODO: figure out how to do texturing. May only allow single texture, but could allow multitexturing or bump/normal mapping later
+        //tex.use(gl, GL.GL_TEXTURE0);
+        //shader.updateUniform(gl, "tex", 0);
+        
+        shader.updateUniform(gl, "world", createWorldMatrix());
+        
+        BBMESH.draw(gl);
     }
 }

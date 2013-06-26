@@ -17,7 +17,6 @@ public class AthensEntity extends GfxEntity
     protected Object material = null; // TODO: placeholder for materials in future
     protected Shader shader = null;
     
-    
     protected Mat4 createWorldMatrix()
     {
         Mat4 monkeyWorld = new Mat4(1f);

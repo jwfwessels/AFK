@@ -40,7 +40,7 @@ public class ParticleEmitter
 
     public ParticleEmitter(Vec3 position, Vec3 positionJitter, Vec3 direction,
             float angleJitter, float speed, float speedJitter, Vec3 acceleration,
-            int maxParticles, float spawnRate)
+            int maxParticles, float spawnRate, GL2 gl)
     {
         minPosition = position.subtract(positionJitter);
         maxPosition = position.add(positionJitter);
@@ -70,7 +70,7 @@ public class ParticleEmitter
         particles = new Particle[maxParticles];
         for (int i = 0; i < maxParticles; i++)
         {
-            particles[i] = new Particle();
+            particles[i] = new Particle(gl);
             available.add(particles[i]);
         }
     }
