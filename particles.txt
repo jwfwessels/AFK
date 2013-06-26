@@ -10,3 +10,5 @@ position + jitter
 initial speed + jitter
 initial direction + jitter
 stopping condition (lifetime ends, velocity reaches X, position reaches X)
+spawn rate (use 0 for "explosion")
+max number of particles (to do object pooling and the like)
