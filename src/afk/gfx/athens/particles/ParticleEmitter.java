@@ -64,7 +64,7 @@ public class ParticleEmitter
             cardinal = new Vec3(1,0,0);
         
         tangent = direction.cross(cardinal).getUnitVector();
-        bitangent = direction.cross(bitangent).getUnitVector();
+        bitangent = direction.cross(tangent).getUnitVector();
         
         this.angleJitter = angleJitter;
         minSpeed = speed - speedJitter;
@@ -118,14 +118,9 @@ public class ParticleEmitter
     
     public void draw(GL2 gl, Mat4 camera, Mat4 proj, Vec3 sun, Vec3 eye) // TODO: replace with Camera and Sun/Light objects later
     {
-        Mat4 newCamera = new Mat4(
-                    new Vec4(1, 0, 0, camera.<Vec4>getColumn(0).getW()),
-                    new Vec4(0, 1, 0, camera.<Vec4>getColumn(1).getW()),
-                    new Vec4(0, 0, 1, camera.<Vec4>getColumn(2).getW()),
-                    camera.<Vec4>getColumn(3)
-                );
+        shader.use(gl);
         
-        shader.updateUniform(gl, "view", newCamera);
+        shader.updateUniform(gl, "view", camera);
         shader.updateUniform(gl, "projection", proj);
         
         shader.updateUniform(gl, "sun", sun);
@@ -140,18 +135,28 @@ public class ParticleEmitter
         }
     }
     
+    private float randomLerp(float a, float b)
+    {
+        return a + (b - a) * rand.nextFloat();
+    }
+    
     private void spawn()
     {
         Particle p = available.poll();
         if (p != null)
         {
-            Vec3 pos = minPosition.lerp(maxPosition, (float)Math.random());
+            Vec3 pos = new Vec3(
+                    randomLerp(minPosition.getX(), maxPosition.getX()),
+                    randomLerp(minPosition.getY(), maxPosition.getY()),
+                    randomLerp(minPosition.getZ(), maxPosition.getZ())
+                );
             
             Vec3 dir;
             
             if (angleJitter > 0)
             {
                 // uniform cone distribution
+                // TODO: doesn't seem to work right
                 
                 float phi = (rand.nextFloat()*2.0f-1.0f)*(float)Math.PI;
                 float theta = rand.nextFloat()*angleJitter;
@@ -175,7 +180,7 @@ public class ParticleEmitter
                     .getUnitVector();
             }
             
-            float speed = minSpeed + (maxSpeed - minSpeed) * (float)Math.random();
+            float speed = randomLerp(minSpeed, maxSpeed);
             
             p.set(pos, dir.scale(speed));
         }

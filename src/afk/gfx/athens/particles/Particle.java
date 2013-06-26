@@ -1,10 +1,13 @@
 package afk.gfx.athens.particles;
 
+import afk.gfx.athens.Mesh;
 import afk.gfx.athens.NDCQuad;
 import afk.gfx.athens.Shader;
+import afk.gfx.athens.WavefrontMesh;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import java.io.IOException;
 import javax.media.opengl.GL2;
 
 /**
@@ -18,11 +21,13 @@ public class Particle
     float lifetime;
     boolean alive = false;
 
-    public static NDCQuad BBMESH = null;
+    public static Mesh BBMESH = null;
     
     public Particle(GL2 gl)
     {
-        if (BBMESH == null) BBMESH = new NDCQuad(gl);
+        if (BBMESH == null) 
+            try { BBMESH = new WavefrontMesh(gl, "tank.obj"); }
+            catch (IOException ex) { ex.printStackTrace(System.err); }
     }
     
     public void set(Vec3 position, Vec3 velocity)
@@ -30,6 +35,7 @@ public class Particle
         this.position = position;
         this.velocity = velocity;
         this.lifetime = 0;
+        alive = true;
     }
     
     public void update(float delta, Vec3 acceleration)
@@ -60,7 +66,6 @@ public class Particle
     
     protected void draw(GL2 gl, Shader shader)
     {
-        shader.use(gl);
         
         // TODO: figure out how to do texturing. May only allow single texture, but could allow multitexturing or bump/normal mapping later
         //tex.use(gl, GL.GL_TEXTURE0);

@@ -531,15 +531,15 @@ public class Athens extends GraphicsEngine
         /// TESTING ///
         
         emitter = new ParticleEmitter(
-                new Vec3(0, 50.0f, 0),
-                new Vec3(30.0f, 0, 30.0f),
-                new Vec3(0, -1, 0),
-                10.0f,
-                0.1f,
-                0.02f,
-                new Vec3(0, 0.01f, 0),
-                500,
-                0.5f,
+                new Vec3(0, 50.0f, 0),  // position
+                new Vec3(30.0f, 0, 30.0f), // pos jitter
+                new Vec3(0, -1, 0), // direction
+                (float)Math.toRadians(10.0f), // dir jitter
+                1f, // speed
+                0.2f, // speed jitter
+                new Vec3(0, -1f, 0), // acceleration
+                1000, // num particles
+                0.03f, // rate
                 gl
             );
         emitter.shader = new Shader(gl, "particle");
