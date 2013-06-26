@@ -17,6 +17,7 @@ public class AthensEntity extends GfxEntity
     protected Object material = null; // TODO: placeholder for materials in future
     protected Shader shader = null;
     
+    
     protected Mat4 createWorldMatrix()
     {
         Mat4 monkeyWorld = new Mat4(1f);
@@ -51,6 +52,9 @@ public class AthensEntity extends GfxEntity
         
         shader.updateUniform(gl, "sun", sun);
         shader.updateUniform(gl, "eye", eye);
+        
+        if (colour != null)
+            shader.updateUniform(gl, "colour", colour);
         
         mesh.draw(gl);
     }

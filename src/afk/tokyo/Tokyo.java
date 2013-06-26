@@ -11,6 +11,7 @@ import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.SampleBot;
+import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -67,6 +68,7 @@ public class Tokyo extends GameEngine
                     GfxEntity tankGfxEntity = gfxEngine.createEntity();
                     gfxEngine.attachResource(tankGfxEntity, tankMesh);
                     gfxEngine.attachResource(tankGfxEntity, tankShader);
+                    tankGfxEntity.colour = new Vec3(0.0f,0.5f,1.0f);
                     
                     addEntity(new Entity(tankGfxEntity));
                     
