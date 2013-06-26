@@ -7,6 +7,7 @@ import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.Updatable;
+import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
@@ -114,6 +115,10 @@ public class Athens extends GraphicsEngine
     private GLCanvas glCanvas;
     private Animator animator;
     private String title;
+    
+    /// TESTING STUFF ///
+    
+    ParticleEmitter emitter;
     
     public Athens(int width, int height, String title, boolean autodraw)
     {
@@ -397,6 +402,8 @@ public class Athens extends GraphicsEngine
         }
         
         updateView();
+        
+        emitter.update(delta);
     }
     
     private void render(GL2 gl)
@@ -426,6 +433,8 @@ public class Athens extends GraphicsEngine
         {
             entity.draw(gl, camera, proj, sun, cameraEye);
         }
+        
+        emitter.draw(gl, camera, proj, sun, cameraEye);
     }
     
     /*void renderSkybox(GL2 gl, Mat4 camera, Mat4 proj)
@@ -518,6 +527,25 @@ public class Athens extends GraphicsEngine
         {
             System.err.println("Could not load texture: " + ex.toString());
         }*/
+        
+        /// TESTING ///
+        
+        emitter = new ParticleEmitter(
+                new Vec3(0, 50.0f, 0),
+                new Vec3(30.0f, 0, 30.0f),
+                new Vec3(0, -1, 0),
+                10.0f,
+                0.1f,
+                0.02f,
+                new Vec3(0, 0.01f, 0),
+                500,
+                0.5f,
+                gl
+            );
+        emitter.shader = new Shader(gl, "particle");
+        emitter.active = true;
+        
+        /// ....... ///
 
         // initial setup of matrices
         updateProjection(w_width, w_height);

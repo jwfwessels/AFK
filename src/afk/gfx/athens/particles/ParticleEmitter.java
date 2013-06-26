@@ -29,12 +29,12 @@ public class ParticleEmitter
     
     /// STUFF ///
     
-    Shader shader;
+    public Shader shader;
     
     Vec3 tangent, bitangent;
     
     private float timeSinceLastSpawn = 0;
-    boolean active = false;
+    public boolean active = false;
     
     int numParticles = 0;
     
