@@ -1,7 +1,9 @@
 package afk.gfx.athens.particles;
 
+import afk.gfx.athens.Shader;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,6 +28,8 @@ public class ParticleEmitter
     float spawnRate;
     
     /// STUFF ///
+    
+    Shader shader;
     
     Vec3 tangent, bitangent;
     
@@ -114,11 +118,24 @@ public class ParticleEmitter
     
     public void draw(GL2 gl, Mat4 camera, Mat4 proj, Vec3 sun, Vec3 eye) // TODO: replace with Camera and Sun/Light objects later
     {
+        Mat4 newCamera = new Mat4(
+                    new Vec4(1, 0, 0, camera.<Vec4>getColumn(0).getW()),
+                    new Vec4(0, 1, 0, camera.<Vec4>getColumn(1).getW()),
+                    new Vec4(0, 0, 1, camera.<Vec4>getColumn(2).getW()),
+                    camera.<Vec4>getColumn(3)
+                );
+        
+        shader.updateUniform(gl, "view", newCamera);
+        shader.updateUniform(gl, "projection", proj);
+        
+        shader.updateUniform(gl, "sun", sun);
+        shader.updateUniform(gl, "eye", eye);
+        
         for (int i = 0; i < particles.length; i++)
         {
             if (particles[i].alive)
             {
-                // TODO: draw particle
+                particles[i].draw(gl, shader);
             }
         }
     }

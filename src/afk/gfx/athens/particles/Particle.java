@@ -1,6 +1,6 @@
 package afk.gfx.athens.particles;
 
-import afk.gfx.athens.BillboardMesh;
+import afk.gfx.athens.NDCQuad;
 import afk.gfx.athens.Shader;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
@@ -18,11 +18,11 @@ public class Particle
     float lifetime;
     boolean alive = false;
 
-    public static BillboardMesh BBMESH = null;
+    public static NDCQuad BBMESH = null;
     
     public Particle(GL2 gl)
     {
-        if (BBMESH == null) BBMESH = new BillboardMesh(gl);
+        if (BBMESH == null) BBMESH = new NDCQuad(gl);
     }
     
     public void set(Vec3 position, Vec3 velocity)
@@ -52,7 +52,8 @@ public class Particle
 
         world = Matrices.translate(world, position);
 
-        //m TODO: onkeyWorld = Matrices.scale(monkeyWorld, getScale());
+        //TODO: world = Matrices.scale(world, getScale());
+        world = Matrices.scale(world, new Vec3(0.5f,0.5f,0.5f));
         
         return world;
     }
