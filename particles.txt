@@ -1,0 +1,12 @@
+Particle stuff:
+---------------
+position
+velocity
+lifetime
+
+Emitter stuff:
+--------------
+position + jitter
+initial speed + jitter
+initial direction + jitter
+stopping condition (lifetime ends, velocity reaches X, position reaches X)
