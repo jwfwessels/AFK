@@ -1,6 +1,7 @@
 package afk.gfx.athens;
 
 
+import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxInputListener;
 import afk.gfx.GraphicsEngine;
@@ -75,23 +76,8 @@ public class Athens extends GraphicsEngine
     private float time = 0.0f;
     private float lastFPS = 0.0f;
     private float fpsInterval = 1.0f;
-
-    // TODO: move this into a camera object
-    /* Camera location. */
-    Vec3 cameraEye = new Vec3(10f, 10f, 10f);
-    /* Vector the camera is looking along. */
-    Vec3 cameraAt = new Vec3(0f, 0f, 0f);
-    /* Up direction from the camera. */
-    Vec3 cameraUp = new Vec3(0f, 1f, 0f);
-
-    /* Vertical field-of-view. */
-    float FOVY = 60.0f;
-    /* Near clipping plane. */
-    float NEAR = 0.1f;
-    /* Far clipping plane. */
-    float FAR = 200.0f;
-           
-    Mat4 view, projection;
+    
+    Camera camera;
     
     Mat4 monkeyWorld, skyboxWorld;
     
@@ -362,33 +348,26 @@ public class Athens extends GraphicsEngine
     private void update(float delta)
     {
         
-        float step = DELTA;
+        float amount = DELTA*delta;
         
-        if (keys[KeyEvent.VK_SHIFT]) step *= 5;
-        
-        Vec3 d = cameraAt.subtract(cameraEye).getUnitVector().multiply(step*delta);
-        Vec3 r = d.cross(cameraUp).getUnitVector().multiply(step*delta);
+        if (keys[KeyEvent.VK_SHIFT]) amount *= 5;
 
         if (keys[KeyEvent.VK_W])
         {
-           cameraEye = cameraEye.add(d);
-           cameraAt = cameraAt.add(d);
+           camera.moveForward(amount);
         }
         else if (keys[KeyEvent.VK_S])
         {
-           cameraEye = cameraEye.subtract(d);
-           cameraAt = cameraAt.subtract(d);
+           camera.moveForward(-amount);
         }
 
         if (keys[KeyEvent.VK_D])
         {
-           cameraEye = cameraEye.add(r);
-           cameraAt = cameraAt.add(r);
+           camera.moveRight(amount);
         }
         else if (keys[KeyEvent.VK_A])
         {
-           cameraEye = cameraEye.subtract(r);
-           cameraAt = cameraAt.subtract(r);
+           camera.moveRight(-amount);
         }
         else if (keys[KeyEvent.VK_2])
         {
@@ -417,13 +396,9 @@ public class Athens extends GraphicsEngine
     
     private void renderScene(GL2 gl)
     {
-        renderScene(gl, view);
+        renderScene(gl, camera);
     }
-    private void renderScene(GL2 gl, Mat4 camera)
-    {
-        renderScene(gl, camera, projection);
-    }
-    private void renderScene(GL2 gl, Mat4 camera, Mat4 proj)
+    private void renderScene(GL2 gl, Camera cam)
     {
         //renderSkybox(gl, camera, proj);
         //renderFloor(gl, camera, proj);
@@ -431,7 +406,7 @@ public class Athens extends GraphicsEngine
         
         for (AthensEntity entity :entities)
         {
-            entity.draw(gl, camera, proj, sun, cameraEye);
+            entity.draw(gl, cam, sun);
         }
         
         emitter.draw(gl, camera, proj, sun, cameraEye);
@@ -499,6 +474,15 @@ public class Athens extends GraphicsEngine
         // set background colour to white
         // TODO: allow this to be set through an interface
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        
+        // initialize camera
+        // TODO: allow this to be done through an interface and let additional cameras be set
+        camera = new Camera(
+                new Vec3(10f, 10f, 10f),
+                new Vec3(0f, 0f, 0f),
+                new Vec3(0f, 1f, 0f),
+                60.0f, 0.1f, 200.0f
+            );
         
         // load textures
         // not necessary now
@@ -589,18 +573,7 @@ public class Athens extends GraphicsEngine
         final float LEFT_RIGHT_ROT = (2.0f*(float)x/(float)w_width) * MOUSE_SENSITIVITY;
         final float UP_DOWN_ROT = (2.0f*(float)y/(float)w_height) * MOUSE_SENSITIVITY;
 
-        Vec3 tempD = cameraAt.subtract(cameraEye);
-        Vec4 d = new Vec4(tempD.getX(), tempD.getY(), tempD.getZ(), 0.0f);
-
-        Vec3 right = tempD.cross(cameraUp);
-
-        Mat4 rot = new Mat4(1.0f);
-        rot = Matrices.rotate(rot, UP_DOWN_ROT, right);
-        rot = Matrices.rotate(rot, LEFT_RIGHT_ROT, cameraUp);
-
-        d = rot.multiply(d);
-
-        cameraAt = cameraEye.add(new Vec3(d.getX(),d.getY(),d.getZ()));
+        camera.rotate(LEFT_RIGHT_ROT, UP_DOWN_ROT);
         
         updateView();
 
@@ -646,16 +619,16 @@ public class Athens extends GraphicsEngine
     {
         aspect = (float) width / (float) height;
 
-        projection = Matrices.perspective(FOVY, aspect, NEAR, FAR);
+        camera.updateProjection(aspect);
     }
 
     private void updateView()
     {
-        view = Matrices.lookAt(cameraEye, cameraAt, cameraUp);
+        camera.updateView();
         
         // shift skybox with camera
         skyboxWorld = new Mat4(1.0f);
-        skyboxWorld = Matrices.translate(skyboxWorld, cameraEye);
+        skyboxWorld = Matrices.translate(skyboxWorld, camera.eye);
         // also scale it a bit so it doesn't intersect with near clip
         skyboxWorld = Matrices.scale(skyboxWorld, new Vec3(1.5f,1.5f,1.5f));
     }

@@ -1,5 +1,6 @@
 package afk.gfx.athens;
 
+import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
@@ -37,7 +38,7 @@ public class AthensEntity extends GfxEntity
         return monkeyWorld;
     }
     
-    protected void draw(GL2 gl, Mat4 camera, Mat4 proj, Vec3 sun, Vec3 eye) // TODO: replace with Camera and Sun/Light objects later
+    protected void draw(GL2 gl, Camera camera, Vec3 sun) // TODO: replace with Camera and Sun/Light objects later
     {
         shader.use(gl);
         
@@ -46,11 +47,11 @@ public class AthensEntity extends GfxEntity
         //shader.updateUniform(gl, "tex", 0);
         
         shader.updateUniform(gl, "world", createWorldMatrix());
-        shader.updateUniform(gl, "view", camera);
-        shader.updateUniform(gl, "projection", proj);
+        shader.updateUniform(gl, "view", camera.view);
+        shader.updateUniform(gl, "projection", camera.projection);
         
         shader.updateUniform(gl, "sun", sun);
-        shader.updateUniform(gl, "eye", eye);
+        shader.updateUniform(gl, "eye", camera.eye);
         
         if (colour != null)
             shader.updateUniform(gl, "colour", colour);
