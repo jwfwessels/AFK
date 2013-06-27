@@ -409,7 +409,7 @@ public class Athens extends GraphicsEngine
             entity.draw(gl, cam, sun);
         }
         
-        emitter.draw(gl, camera, proj, sun, cameraEye);
+        emitter.draw(gl, camera, sun);
     }
     
     /*void renderSkybox(GL2 gl, Mat4 camera, Mat4 proj)
@@ -519,9 +519,9 @@ public class Athens extends GraphicsEngine
                 new Vec3(30.0f, 0, 30.0f), // pos jitter
                 new Vec3(0, -1, 0), // direction
                 (float)Math.toRadians(10.0f), // dir jitter
-                1f, // speed
-                0.2f, // speed jitter
-                new Vec3(0, -1f, 0), // acceleration
+                0.5f, // speed
+                0.1f, // speed jitter
+                new Vec3(0, -0.3f, 0), // acceleration
                 1000, // num particles
                 0.03f, // rate
                 gl
