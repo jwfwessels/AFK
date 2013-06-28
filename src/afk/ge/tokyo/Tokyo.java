@@ -4,7 +4,6 @@
  */
 package afk.ge.tokyo;
 
-import afk.ge.EntityFactory;
 import afk.ge.GameEngine;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
@@ -13,7 +12,6 @@ import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.SampleBot;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -23,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Tokyo extends GameEngine
 {
 
-    ArrayList<AbstractEntity> entities;
+    EntityManager entityManager;
     boolean running = true;
     final static float GAME_SPEED = 60;
     float t = 0.0f;
@@ -39,7 +37,7 @@ public class Tokyo extends GameEngine
     public Tokyo(GraphicsEngine gfxEngine)
     {
         this.gfxEngine = gfxEngine;
-        entities = EntityFactory.getEntityList();
+        entityManager = new EntityManager();
     }
 
     @Override
@@ -57,7 +55,8 @@ public class Tokyo extends GameEngine
             public void run()
             {
 
-                try {
+                try
+                {
 
                     GfxEntity floorGfxEntity = gfxEngine.createEntity();
                     gfxEngine.attachResource(floorGfxEntity, floorMesh);
@@ -72,17 +71,17 @@ public class Tokyo extends GameEngine
                     GfxEntity projectileGfxEntity = gfxEngine.createEntity();
                     gfxEngine.attachResource(projectileGfxEntity, tankMesh);
                     gfxEngine.attachResource(projectileGfxEntity, tankShader);
-                    projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
+                    projectileGfxEntity.setScale(0.5f, 0.5f, 0.5f);
                     projectileGfxEntity.setPosition(5, 10, 5);
 
-                    TankEntity tank;//new TankEntity(tankGfxEntity);
-                    tank = (TankEntity) TankFactory.createEntity(tankGfxEntity);
-                    ProjectileEntity bullet = (ProjectileEntity) EntityFactory.createEntity(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
+                    TankEntity tank = (TankEntity) entityManager.createTank(tankGfxEntity);
+                    ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
 //                  addEntity(tank);
-                    tank.setProjectile(bullet);
+                    tank.setProjectileGfx(bullet);
 //                  addEntity(bullet);
 
-                } catch (ResourceNotLoadedException ex) {
+                } catch (ResourceNotLoadedException ex)
+                {
                     //System.err.println("Failed to load resource: " + ex.getMessage());
                     throw new RuntimeException(ex);
                 }
@@ -94,20 +93,14 @@ public class Tokyo extends GameEngine
     }
 
     @Override
-    public void addEntity(AbstractEntity entity)
-    {
-        entities.add(entity);
-    }
-
-    @Override
     public void run()
     {
-        //System.out.println("run()");
         loadResources();
 
         loadBots();
 
-        while (!loaded.get()) { /* spin */ }
+        while (!loaded.get())
+        { /* spin */ }
 
         gameLoop();
     }
@@ -115,86 +108,63 @@ public class Tokyo extends GameEngine
     @Override
     protected void gameLoop()
     {
-//        System.out.println("gameLoop()");
-        //        double lastRender = System.nanoTime();
         double currentTime = System.nanoTime();
         float accumulator = 0.0f;
         int i = 0;
-        while (running) {
-//            System.out.println("loop: " + i);
+        while (running)
+        {
             double newTime = System.nanoTime();
             double frameTime = newTime - currentTime;
-            if (frameTime > MAX_FRAMETIME) {
-                frameTime = MAX_FRAMETIME;	  //max frame
+            if (frameTime > MAX_FRAMETIME)
+            {
+                frameTime = MAX_FRAMETIME;
             }
             currentTime = newTime;
 
             accumulator += frameTime;
 
-            while (accumulator >= DELTA) {
-//                previousState = currentState;
-                boolean[] flags = getInputs();
-                //System.out.println("falg[0] " + flags[0]);
-                updateGame(flags); //integrate (currentState ,t ,td)
+            while (accumulator >= DELTA)
+            {
+//                ArrayList flags = getInputs();
+//                System.out.println("flags " + flags);
+//                updateGame(flags);
+                updateGame();
                 t += DELTA;
                 accumulator -= DELTA;
             }
-
             float alpha = accumulator / DELTA;
-
-            //State state = currentState * alpha = previousState* (1.0-alpha);
-            render(alpha);//render (state)
-
-//            System.out.println("render: " + i);
-//            i++;
-
-//            double interpolation = Math.min(1.0, (newTime - currentTime) / dt);
+            render(alpha);
         }
     }
 
     @Override
-    protected void updateGame(boolean[] flags)
+    protected void updateGame()
     {
-        for (int i = 0; i < entities.size(); i++) {
-            entities.get(i).update(t, DELTA, flags);
-        }
-//        entities.get(0).update(t, DELTA, flags);
+        entityManager.updateEntities(t, DELTA);
     }
 
     @Override
     protected void render(float alpha)
     {
-        for (int i = 0; i < entities.size(); i++) {
-            entities.get(i).render(alpha);
-        }
-        //there is no method available in GraphicsEngine 
-        //that can be invoked to cause a display() sequence to run.
+        entityManager.renderEntities(alpha);
         gfxEngine.redisplay();
     }
 
-    private boolean[] getInputs()
-    {
-//        boolean[] flags = new boolean[]
-//        {
-//            
-//            gfxEngine.isKeyDown(VK_UP),
-//            gfxEngine.isKeyDown(VK_DOWN),
-//            gfxEngine.isKeyDown(VK_LEFT),
-//            gfxEngine.isKeyDown(VK_RIGHT)
-//        };
-
-        ArrayList<Robot> bots = London.getRobots();
-        bots.get(0).run();
-        boolean[] temp = bots.get(0).getActionFlags();
-        boolean[] flags2 = new boolean[temp.length];
-        System.arraycopy(temp, 0, flags2, 0, temp.length);
-        bots.get(0).clearFlags();
-        return flags2;
-    }
-
+//    private ArrayList getInputs()
+//    {
+//        ArrayList<Robot> bots = London.getRobots();
+//        bots.get(0).run();
+//        boolean[] temp = bots.get(0).getActionFlags();
+//        boolean[] flags2 = new boolean[temp.length];
+//        System.arraycopy(temp, 0, flags2, 0, temp.length);
+//        bots.get(0).clearFlags();
+//        ArrayList tempFlags = new ArrayList();
+//        tempFlags.add(flags2);
+//        return tempFlags;
+//    }
     private void loadBots()
     {
-
+        //TODO refactor load bots
         Robot bot = new SampleBot();
         London.registerBot(bot);
     }

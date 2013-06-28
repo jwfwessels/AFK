@@ -26,7 +26,7 @@ public class TankEntity extends AbstractEntity
         mass = 2.0f;
     }
 
-    void setProjectile(ProjectileEntity projectileEntity)
+    void setProjectileGfx(ProjectileEntity projectileEntity)
     {
         this.bullet = projectileEntity;
     }
@@ -69,11 +69,11 @@ public class TankEntity extends AbstractEntity
     void render(float alpha)
     {
         super.render(alpha);
-        if (shoot)
-        {
-            bullet.render(alpha);
-            System.out.println("boom");
-            shoot = false;
-        }
+//        if (shoot)
+//        {
+//            bullet.render(alpha);
+//            System.out.println("boom");
+//            shoot = false;
+//        }
     }
 }

@@ -15,7 +15,7 @@ public abstract class AbstractEntity
 {
 
     public static final float ANGULAR_VELOCITY = 1.0f;
-    public static final float VELOCITY = 0.5f;
+    public static final float VELOCITY = 0.1f;
     protected GfxEntity gfxPos;
     protected EntityState current;
     protected EntityState previous;
@@ -79,6 +79,7 @@ public abstract class AbstractEntity
     protected EntityState interpolate(float alpha)
     {
         EntityState tempState = new EntityState(current);
+        //state = currentState * alpha = previousState* (1.0-alpha);
         tempState.position = previous.position.multiply(1 - alpha).add(current.position.multiply(alpha));
         tempState.momentum = previous.momentum.multiply(1 - alpha).add(current.momentum.multiply(alpha));
         tempState.recalculate();

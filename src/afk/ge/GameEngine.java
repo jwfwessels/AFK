@@ -4,7 +4,6 @@
  */
 package afk.ge;
 
-import afk.ge.tokyo.AbstractEntity;
 import afk.gfx.GraphicsEngine;
 
 /**
@@ -18,14 +17,14 @@ public abstract class GameEngine implements Runnable
 
     protected abstract void loadResources();
 
-    public abstract void addEntity(AbstractEntity tankEntity);
+//    public abstract void addEntity(AbstractEntity tankEntity); //done by entityManager now
 
     @Override
     public abstract void run();
 
     protected abstract void gameLoop();
 
-    protected abstract void updateGame(boolean[] flags);
+    protected abstract void updateGame();
 
     protected abstract void render(float alpha);
 }
