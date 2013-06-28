@@ -24,11 +24,10 @@ public class EntityManager
     private static ArrayList<AbstractEntity> entities;
     private static ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
-    
-    final Resource tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
-    final Resource tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
-    final Resource floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
-    final Resource floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
+    Resource tankMesh;
+    Resource tankShader;
+    Resource floorMesh;
+    Resource floorShader;
 
     public EntityManager()
     {
@@ -121,6 +120,10 @@ public class EntityManager
             @Override
             public void run()
             {
+                tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
+                tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
+                floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
+                floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
                 try
                 {
                     GfxEntity floorGfxEntity = gfxEngine.createEntity();
