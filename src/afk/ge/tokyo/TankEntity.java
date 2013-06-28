@@ -17,19 +17,19 @@ import com.hackoeur.jglm.Vec3;
 public class TankEntity extends AbstractEntity
 {
 
-    protected ProjectileEntity bullet;
-    boolean shoot = false;
+//    protected GfxEntity projectileGfxEntity;
+//    boolean shoot = false;
 
-    public TankEntity(GfxEntity gfxEntity)
+    public TankEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
-        super(gfxEntity);
+        super(gfxEntity, entityManager);
         mass = 2.0f;
     }
 
-    void setProjectileGfx(ProjectileEntity projectileEntity)
-    {
-        this.bullet = projectileEntity;
-    }
+//    void setProjectileGfx(GfxEntity projectileEntity)
+//    {
+//        this.bullet = projectileEntity;
+//    }
 
     @Override
     void update(float t, float dt, boolean[] flags)
@@ -55,9 +55,9 @@ public class TankEntity extends AbstractEntity
         }
         if (flags[Robot.ATTACK_ACTION])
         {
+            ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile();
             bullet.setOrigin(current);
-//            bullet.update(t, dt, flags);
-            shoot = true;
+//            shoot = true;
             System.out.println("BANG!!!");
         }
         //            dt = 10.0f;

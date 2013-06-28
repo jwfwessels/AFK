@@ -16,9 +16,9 @@ public class TankFactory extends EntityFactory
 {
 
     @Override
-    public AbstractEntity createEntity(GfxEntity gfxEntity)
+    public AbstractEntity createEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
-        TankEntity tank = new TankEntity(gfxEntity);
+        TankEntity tank = new TankEntity(gfxEntity, entityManager);
         entities.add(tank);
         return tank;
     }

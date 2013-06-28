@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package afk.ge.tokyo;
+
 import afk.gfx.GfxEntity;
 import static afk.ge.tokyo.AbstractEntity.VELOCITY;
 import com.hackoeur.jglm.Vec3;
@@ -14,9 +15,9 @@ import com.hackoeur.jglm.Vec3;
 public class ProjectileEntity extends AbstractEntity
 {
 
-    public ProjectileEntity(GfxEntity gfxEntity)
+    public ProjectileEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
-        super(gfxEntity);
+        super(gfxEntity, entityManager);
         mass = 0.5f;
     }
 

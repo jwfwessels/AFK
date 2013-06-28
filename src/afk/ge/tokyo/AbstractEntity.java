@@ -21,7 +21,7 @@ public abstract class AbstractEntity
     protected EntityState previous;
     protected float mass;
     protected float size;
-
+    protected EntityManager entityManager;
     protected class Derivative
     {
 
@@ -29,11 +29,12 @@ public abstract class AbstractEntity
         Vec3 force;
     }
 
-    public AbstractEntity(GfxEntity gfxEntity)
+    public AbstractEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         gfxPos = gfxEntity;
         current = new EntityState(gfxPos.getPosition());
         previous = new EntityState(current);
+        this.entityManager = entityManager;
 
     }
 

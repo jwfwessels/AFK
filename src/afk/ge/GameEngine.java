@@ -15,7 +15,7 @@ public abstract class GameEngine implements Runnable
 
     protected GraphicsEngine gfxEngine;
 
-    protected abstract void loadResources();
+//    protected abstract void loadResources();
 
 //    public abstract void addEntity(AbstractEntity tankEntity); //done by entityManager now
 

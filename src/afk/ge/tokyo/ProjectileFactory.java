@@ -16,9 +16,9 @@ public class ProjectileFactory extends EntityFactory
 {
 
     @Override
-    public AbstractEntity createEntity(GfxEntity gfxEntity)
+    public AbstractEntity createEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
-        ProjectileEntity bullet = new ProjectileEntity(gfxEntity);
+        ProjectileEntity bullet = new ProjectileEntity(gfxEntity, entityManager);
         entities.add(bullet);
         return bullet;
     }

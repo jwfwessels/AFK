@@ -5,9 +5,14 @@
 package afk.ge.tokyo;
 
 import afk.gfx.GfxEntity;
+import afk.gfx.GraphicsEngine;
+import afk.gfx.Resource;
+import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,25 +21,55 @@ import java.util.ArrayList;
 public class EntityManager
 {
 
-    public ArrayList<AbstractEntity> entities;
-    public ArrayList<AbstractEntity> subEntities;
+    private static ArrayList<AbstractEntity> entities;
+    private static ArrayList<AbstractEntity> subEntities;
+    private GraphicsEngine gfxEngine;
+    
+    final Resource tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
+    final Resource tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
+    final Resource floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
+    final Resource floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
 
     public EntityManager()
     {
-        this.entities = new ArrayList<AbstractEntity>();
-        this.subEntities = new ArrayList<AbstractEntity>();
+        entities = new ArrayList<AbstractEntity>();
+        subEntities = new ArrayList<AbstractEntity>();
+        //TODO; getinstance still needs to be refactored
+        gfxEngine = GraphicsEngine.getInstance(0, 0, null, true);
     }
 
-    AbstractEntity createTank(GfxEntity gfxEntity)
+    public AbstractEntity createTank()
     {
-        AbstractEntity tank = new TankEntity(gfxEntity);
+        GfxEntity tankGfxEntity = gfxEngine.createEntity();
+        try
+        {
+            gfxEngine.attachResource(tankGfxEntity, tankMesh);
+            gfxEngine.attachResource(tankGfxEntity, tankShader);
+        } catch (ResourceNotLoadedException ex)
+        {
+            Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        AbstractEntity tank = new TankEntity(tankGfxEntity, this);
         entities.add(tank);
         return tank;
     }
 
-    AbstractEntity createProjectile(GfxEntity gfxEntity)
+    public AbstractEntity createProjectile()
     {
-        AbstractEntity projectile = new ProjectileEntity(gfxEntity);
+
+        //dont have a projectile model yet, mini tank will be bullet XD
+        GfxEntity projectileGfxEntity = gfxEngine.createEntity();
+        try
+        {
+            gfxEngine.attachResource(projectileGfxEntity, tankMesh);
+            gfxEngine.attachResource(projectileGfxEntity, tankShader);
+            projectileGfxEntity.setScale(0.5f, 0.5f, 0.5f);
+            projectileGfxEntity.setPosition(5, 10, 5);
+        } catch (ResourceNotLoadedException ex)
+        {
+            Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        AbstractEntity projectile = new ProjectileEntity(projectileGfxEntity, this);
         subEntities.add(projectile);
         return projectile;
     }
@@ -77,5 +112,37 @@ public class EntityManager
         {
             subEntities.get(i).render(alpha);
         }
+    }
+
+    protected boolean loadResources()
+    {
+        gfxEngine.dispatchLoadQueue(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    GfxEntity floorGfxEntity = gfxEngine.createEntity();
+                    gfxEngine.attachResource(floorGfxEntity, floorMesh);
+                    gfxEngine.attachResource(floorGfxEntity, floorShader);
+                    floorGfxEntity.setScale(50, 50, 50);
+
+                    TankEntity tank = (TankEntity) createTank();
+//                    ProjectileEntity bullet = (ProjectileEntity) createProjectile(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
+//                  addEntity(tank);
+//                    tank.setProjectileGfx(projectileGfxEntity);
+//                  addEntity(bullet);
+
+                } catch (ResourceNotLoadedException ex)
+                {
+                    //System.err.println("Failed to load resource: " + ex.getMessage());
+                    throw new RuntimeException(ex);
+                }
+
+
+            }
+        });
+        return true;
     }
 }
