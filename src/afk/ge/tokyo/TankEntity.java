@@ -26,11 +26,6 @@ public class TankEntity extends AbstractEntity
         mass = 2.0f;
     }
 
-//    void setProjectileGfx(GfxEntity projectileEntity)
-//    {
-//        this.bullet = projectileEntity;
-//    }
-
     @Override
     void update(float t, float dt, boolean[] flags)
     {
@@ -57,23 +52,8 @@ public class TankEntity extends AbstractEntity
         {
             ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile();
             bullet.setOrigin(current);
-//            shoot = true;
             System.out.println("BANG!!!");
         }
-        //            dt = 10.0f;
         integrate(current, t, dt);
-        //System.out.println("" + current.position.toString());
     }
-
-//    @Override
-//    void render(float alpha)
-//    {
-//        super.render(alpha);
-////        if (shoot)
-////        {
-////            bullet.render(alpha);
-////            System.out.println("boom");
-////            shoot = false;
-////        }
-//    }
 }

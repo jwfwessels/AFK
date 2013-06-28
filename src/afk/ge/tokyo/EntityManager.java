@@ -37,7 +37,7 @@ public class EntityManager
         gfxEngine = GraphicsEngine.getInstance(0, 0, null, true);
     }
 
-    public AbstractEntity createTank()
+    public TankEntity createTank()
     {
         GfxEntity tankGfxEntity = gfxEngine.createEntity();
         try
@@ -48,12 +48,12 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        AbstractEntity tank = new TankEntity(tankGfxEntity, this);
+        TankEntity tank = new TankEntity(tankGfxEntity, this);
         entities.add(tank);
         return tank;
     }
 
-    public AbstractEntity createProjectile()
+    public ProjectileEntity createProjectile()
     {
 
         //dont have a projectile model yet, mini tank will be bullet XD
@@ -68,7 +68,7 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        AbstractEntity projectile = new ProjectileEntity(projectileGfxEntity, this);
+        ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this);
         subEntities.add(projectile);
         return projectile;
     }
