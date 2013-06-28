@@ -295,6 +295,8 @@ public class Athens extends GraphicsEngine
                 case Resource.PRIMITIVE_MESH:
                     if ("quad".equals(resource.getName()))
                         meshResources[resource.getType()].put(resource.getName(), new Quad(gl, 1, 1, 0));
+                    else if ("billboard".equals(resource.getName()))
+                        meshResources[resource.getType()].put(resource.getName(), new BillboardQuad(gl));
                     break;
                     // TODO: add more primitive types
                     // TODO: it may be feasible to have all primitive types preloaded at all times?
@@ -523,10 +525,10 @@ public class Athens extends GraphicsEngine
                 0.1f, // speed jitter
                 new Vec3(0, -0.3f, 0), // acceleration
                 1000, // num particles
-                0.03f, // rate
-                gl
+                0.03f // rate
             );
         emitter.shader = new Shader(gl, "particle");
+        emitter.mesh = new BillboardQuad(gl);
         emitter.active = true;
         
         /// ....... ///

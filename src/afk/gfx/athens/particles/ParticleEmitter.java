@@ -1,7 +1,9 @@
 package afk.gfx.athens.particles;
 
 import afk.gfx.Camera;
+import afk.gfx.athens.Mesh;
 import afk.gfx.athens.Shader;
+import afk.gfx.athens.Texture;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import java.util.Queue;
@@ -22,14 +24,19 @@ public class ParticleEmitter
     float angleJitter;
     float minSpeed, maxSpeed;
     
-    Random rand = new Random();
-    
     /** Time between spawns. Use zero for "explosion" */
     float spawnRate;
     
+    /// RESOURCES ///
+    
+    public Mesh mesh;
+    public Texture texture;
+    public Shader shader;
+    
     /// STUFF ///
     
-    public Shader shader;
+    Random rand = new Random();
+    
     
     Vec3 tangent, bitangent;
     
@@ -44,7 +51,7 @@ public class ParticleEmitter
 
     public ParticleEmitter(Vec3 position, Vec3 positionJitter, Vec3 direction,
             float angleJitter, float speed, float speedJitter, Vec3 acceleration,
-            int maxParticles, float spawnRate, GL2 gl)
+            int maxParticles, float spawnRate)
     {
         minPosition = position.subtract(positionJitter);
         maxPosition = position.add(positionJitter);
@@ -74,7 +81,7 @@ public class ParticleEmitter
         particles = new Particle[maxParticles];
         for (int i = 0; i < maxParticles; i++)
         {
-            particles[i] = new Particle(gl);
+            particles[i] = new Particle();
             available.add(particles[i]);
         }
     }
@@ -130,7 +137,7 @@ public class ParticleEmitter
         {
             if (particles[i].alive)
             {
-                particles[i].draw(gl, camera, shader);
+                particles[i].draw(gl, mesh, camera, shader);
             }
         }
     }

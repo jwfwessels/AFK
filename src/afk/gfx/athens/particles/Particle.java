@@ -1,16 +1,12 @@
 package afk.gfx.athens.particles;
 
 import afk.gfx.Camera;
-import afk.gfx.athens.BillboardQuad;
 import afk.gfx.athens.Mesh;
-import afk.gfx.athens.NDCQuad;
 import afk.gfx.athens.Shader;
-import afk.gfx.athens.WavefrontMesh;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
-import java.io.IOException;
 import javax.media.opengl.GL2;
 
 /**
@@ -23,16 +19,9 @@ public class Particle
     Vec3 velocity;
     float lifetime;
     boolean alive = false;
-
-    // TODO: sort this nonsense out:
-    protected static Mesh BBMESH = null;
     
-    protected Particle(GL2 gl)
+    protected Particle()
     {
-        if (BBMESH == null) 
-//            try { BBMESH = new WavefrontMesh(gl, "tank.obj"); }
-//            catch (IOException ex) { ex.printStackTrace(System.err); }
-            BBMESH = new BillboardQuad(gl);
     }
     
     protected void set(Vec3 position, Vec3 velocity)
@@ -93,7 +82,7 @@ public class Particle
         return world;
     }
     
-    protected void draw(GL2 gl, Camera camera, Shader shader)
+    protected void draw(GL2 gl, Mesh mesh, Camera camera, Shader shader)
     {
         
         // TODO: figure out how to do texturing. May only allow single texture, but could allow multitexturing or bump/normal mapping later
@@ -102,6 +91,6 @@ public class Particle
         
         shader.updateUniform(gl, "world", createWorldMatrix(camera));
         
-        BBMESH.draw(gl);
+        mesh.draw(gl);
     }
 }
