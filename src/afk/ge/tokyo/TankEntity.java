@@ -56,7 +56,7 @@ public class TankEntity extends AbstractEntity
         if (flags[Robot.ATTACK_ACTION])
         {
             bullet.setOrigin(current);
-            bullet.update(t, dt, flags);
+//            bullet.update(t, dt, flags);
             shoot = true;
             System.out.println("BANG!!!");
         }
@@ -65,15 +65,15 @@ public class TankEntity extends AbstractEntity
         //System.out.println("" + current.position.toString());
     }
 
-    @Override
-    void render(float alpha)
-    {
-        super.render(alpha);
-//        if (shoot)
-//        {
-//            bullet.render(alpha);
-//            System.out.println("boom");
-//            shoot = false;
-//        }
-    }
+//    @Override
+//    void render(float alpha)
+//    {
+//        super.render(alpha);
+////        if (shoot)
+////        {
+////            bullet.render(alpha);
+////            System.out.println("boom");
+////            shoot = false;
+////        }
+//    }
 }

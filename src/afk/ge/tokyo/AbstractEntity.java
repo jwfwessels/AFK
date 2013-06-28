@@ -15,7 +15,7 @@ public abstract class AbstractEntity
 {
 
     public static final float ANGULAR_VELOCITY = 1.0f;
-    public static final float VELOCITY = 0.1f;
+    public static final float VELOCITY = 0.5f;
     protected GfxEntity gfxPos;
     protected EntityState current;
     protected EntityState previous;

@@ -27,7 +27,6 @@ public class EntityManager
 
     AbstractEntity createTank(GfxEntity gfxEntity)
     {
-        //todo create and add to list
         AbstractEntity tank = new TankEntity(gfxEntity);
         entities.add(tank);
         return tank;
@@ -35,7 +34,6 @@ public class EntityManager
 
     AbstractEntity createProjectile(GfxEntity gfxEntity)
     {
-        //todo create and add to list
         AbstractEntity projectile = new ProjectileEntity(gfxEntity);
         subEntities.add(projectile);
         return projectile;
@@ -43,16 +41,15 @@ public class EntityManager
 
     void updateEntities(float t, float delta)
     {
-        //todo 
         ArrayList commands = getInputs();
         for (int i = 0; i < entities.size(); i++)
         {
 //            boolean[] flags = (boolean[]) commands.get(i);
-            entities.get(i).update(t, t, (boolean[]) commands.get(i));
+            entities.get(i).update(t, delta, (boolean[]) commands.get(i));
         }
         for (int i = 0; i < subEntities.size(); i++)
         {
-            subEntities.get(i).update(t, t, null);
+            subEntities.get(i).update(t, delta, null);
         }
 
     }
@@ -72,7 +69,6 @@ public class EntityManager
 
     void renderEntities(float alpha)
     {
-        //todo
         for (int i = 0; i < entities.size(); i++)
         {
             entities.get(i).render(alpha);

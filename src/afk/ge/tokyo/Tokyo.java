@@ -125,9 +125,6 @@ public class Tokyo extends GameEngine
 
             while (accumulator >= DELTA)
             {
-//                ArrayList flags = getInputs();
-//                System.out.println("flags " + flags);
-//                updateGame(flags);
                 updateGame();
                 t += DELTA;
                 accumulator -= DELTA;
@@ -150,18 +147,6 @@ public class Tokyo extends GameEngine
         gfxEngine.redisplay();
     }
 
-//    private ArrayList getInputs()
-//    {
-//        ArrayList<Robot> bots = London.getRobots();
-//        bots.get(0).run();
-//        boolean[] temp = bots.get(0).getActionFlags();
-//        boolean[] flags2 = new boolean[temp.length];
-//        System.arraycopy(temp, 0, flags2, 0, temp.length);
-//        bots.get(0).clearFlags();
-//        ArrayList tempFlags = new ArrayList();
-//        tempFlags.add(flags2);
-//        return tempFlags;
-//    }
     private void loadBots()
     {
         //TODO refactor load bots
