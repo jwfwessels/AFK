@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.tokyo;
+package afk.ge.tokyo;
 import afk.gfx.GfxEntity;
-import static afk.tokyo.AbstractEntity.VELOCITY;
+import static afk.ge.tokyo.AbstractEntity.VELOCITY;
 import com.hackoeur.jglm.Vec3;
 
 /**

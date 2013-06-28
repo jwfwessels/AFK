@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.tokyo;
+package afk.ge.tokyo;
 
+import afk.ge.EntityFactory;
+import afk.ge.GameEngine;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
@@ -11,7 +13,6 @@ import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.SampleBot;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,7 +39,7 @@ public class Tokyo extends GameEngine
     public Tokyo(GraphicsEngine gfxEngine)
     {
         this.gfxEngine = gfxEngine;
-        entities = new ArrayList<AbstractEntity>();
+        entities = EntityFactory.getEntityList();
     }
 
     @Override
@@ -56,8 +57,7 @@ public class Tokyo extends GameEngine
             public void run()
             {
 
-                try
-                {
+                try {
 
                     GfxEntity floorGfxEntity = gfxEngine.createEntity();
                     gfxEngine.attachResource(floorGfxEntity, floorMesh);
@@ -75,14 +75,14 @@ public class Tokyo extends GameEngine
                     projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
                     projectileGfxEntity.setPosition(5, 10, 5);
 
-                    TankEntity tank = new TankEntity(tankGfxEntity);
-                    ProjectileEntity bullet = new ProjectileEntity(projectileGfxEntity);
-                    addEntity(tank);
+                    TankEntity tank;//new TankEntity(tankGfxEntity);
+                    tank = (TankEntity) TankFactory.createEntity(tankGfxEntity);
+                    ProjectileEntity bullet = (ProjectileEntity) EntityFactory.createEntity(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
+//                  addEntity(tank);
                     tank.setProjectile(bullet);
-//                    addEntity(bullet);
+//                  addEntity(bullet);
 
-                } catch (ResourceNotLoadedException ex)
-                {
+                } catch (ResourceNotLoadedException ex) {
                     //System.err.println("Failed to load resource: " + ex.getMessage());
                     throw new RuntimeException(ex);
                 }
@@ -107,8 +107,7 @@ public class Tokyo extends GameEngine
 
         loadBots();
 
-        while (!loaded.get())
-        { /* spin */ }
+        while (!loaded.get()) { /* spin */ }
 
         gameLoop();
     }
@@ -121,21 +120,18 @@ public class Tokyo extends GameEngine
         double currentTime = System.nanoTime();
         float accumulator = 0.0f;
         int i = 0;
-        while (running)
-        {
+        while (running) {
 //            System.out.println("loop: " + i);
             double newTime = System.nanoTime();
             double frameTime = newTime - currentTime;
-            if (frameTime > MAX_FRAMETIME)
-            {
+            if (frameTime > MAX_FRAMETIME) {
                 frameTime = MAX_FRAMETIME;	  //max frame
             }
             currentTime = newTime;
 
             accumulator += frameTime;
 
-            while (accumulator >= DELTA)
-            {
+            while (accumulator >= DELTA) {
 //                previousState = currentState;
                 boolean[] flags = getInputs();
                 //System.out.println("falg[0] " + flags[0]);
@@ -159,8 +155,7 @@ public class Tokyo extends GameEngine
     @Override
     protected void updateGame(boolean[] flags)
     {
-        for (int i = 0; i < entities.size(); i++)
-        {
+        for (int i = 0; i < entities.size(); i++) {
             entities.get(i).update(t, DELTA, flags);
         }
 //        entities.get(0).update(t, DELTA, flags);
@@ -169,8 +164,7 @@ public class Tokyo extends GameEngine
     @Override
     protected void render(float alpha)
     {
-        for (int i = 0; i < entities.size(); i++)
-        {
+        for (int i = 0; i < entities.size(); i++) {
             entities.get(i).render(alpha);
         }
         //there is no method available in GraphicsEngine 
