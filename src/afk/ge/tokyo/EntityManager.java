@@ -115,15 +115,16 @@ public class EntityManager
 
     protected boolean loadResources()
     {
+        tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
+        tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
+        floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
+        floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
+        
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
             @Override
             public void run()
             {
-                tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
-                tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
-                floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
-                floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
                 try
                 {
                     GfxEntity floorGfxEntity = gfxEngine.createEntity();
