@@ -483,7 +483,7 @@ public class Athens extends GraphicsEngine
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
-                60.0f, 0.1f, 200.0f
+                60.0f, 0.1f, 100.0f
             );
         
         // load textures
@@ -517,16 +517,17 @@ public class Athens extends GraphicsEngine
         /// TESTING ///
         
         emitter = new ParticleEmitter(
-                new Vec3(0, 50.0f, 0),  // position
-                new Vec3(30.0f, 0, 30.0f), // pos jitter
-                new Vec3(0, -1, 0), // direction
-                (float)Math.toRadians(10.0f), // dir jitter
+                null,//new Vec3(0, -1, 0), // direction
+                (float)Math.toRadians(5.0f), // dir jitter
                 0.5f, // speed
                 0.1f, // speed jitter
-                new Vec3(0, -0.3f, 0), // acceleration
+                new Vec3(0, 0, 0), // acceleration
                 1000, // num particles
-                0.03f // rate
+                0.0f // rate
             );
+        emitter.setPosition(0, 50.0f, 0.0f);
+        emitter.setScale(0, 0, 0);
+        
         emitter.shader = new Shader(gl, "particle");
         emitter.mesh = new BillboardQuad(gl);
         emitter.active = true;
