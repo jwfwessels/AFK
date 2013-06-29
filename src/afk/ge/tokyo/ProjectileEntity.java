@@ -18,7 +18,7 @@ public class ProjectileEntity extends AbstractEntity
     public ProjectileEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         super(gfxEntity, entityManager);
-        size = 0.001f;
+        size = 0.14f;
         mass = 0.5f;
     }
 

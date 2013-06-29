@@ -63,7 +63,7 @@ public class EntityManager
         {
             gfxEngine.attachResource(projectileGfxEntity, tankMesh);
             gfxEngine.attachResource(projectileGfxEntity, tankShader);
-            projectileGfxEntity.setScale(0.2f, 0.2f, 0.2f);
+            projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
             projectileGfxEntity.setPosition(5, 10, 5);
         } catch (ResourceNotLoadedException ex)
         {

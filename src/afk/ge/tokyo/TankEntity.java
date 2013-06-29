@@ -23,7 +23,7 @@ public class TankEntity extends AbstractEntity
     public TankEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         super(gfxEntity, entityManager);
-        size = 0.1f;
+        size = 1.4f;
         mass = 2.0f;
     }
 
