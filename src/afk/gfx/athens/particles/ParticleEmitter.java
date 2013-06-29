@@ -38,7 +38,7 @@ public class ParticleEmitter extends AthensEntity
     }
 
     @Override
-    public void attachResource(ParticleParams particleParams)
+    public void attachResource(ParticleParameters particleParams)
     {
         super.attachResource(particleParams);
         

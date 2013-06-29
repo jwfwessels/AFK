@@ -9,9 +9,8 @@ import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.Updatable;
 import afk.gfx.athens.particles.ParticleEmitter;
-import afk.gfx.athens.particles.ParticleParams;
+import afk.gfx.athens.particles.ParticleParameters;
 import com.hackoeur.jglm.*;
-import com.jogamp.graph.geom.AABBox;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -59,6 +58,8 @@ public class Athens extends GraphicsEngine
     private Map<String, Object> matResources;
 
     private Map<String, Shader> shaderResources;
+    
+    private Map<String, ParticleParameters> particleResources;
     
     // TODO: decide on list implementation
     private List<AthensEntity> entities = new ArrayList<AthensEntity>();
@@ -118,6 +119,7 @@ public class Athens extends GraphicsEngine
         }
         matResources = new HashMap<String, Object>();
         shaderResources = new HashMap<String, Shader>();
+        particleResources = new HashMap<String, ParticleParameters>();
         
         this.w_width = width;
         this.w_height = height;
@@ -335,6 +337,9 @@ public class Athens extends GraphicsEngine
                 case Resource.SHADER:
                     shaderResources.put(resource.getName(), new Shader(gl, resource.getName()));
                     break;
+                case Resource.PARTICLE_PARAMETERS:
+                    particleResources.put(resource.getName(), null); // TODO: load particles from file
+                    break;
                 default:
                     break;
             }
@@ -515,7 +520,7 @@ public class Athens extends GraphicsEngine
         
         /// TESTING ///
         
-        ParticleParams paticleParams = new ParticleParams(
+        ParticleParameters paticleParams = new ParticleParameters(
                 new Vec3(0, -9.81f, 0), // acceleration
                 new Vec3(5,5,5), // dir jitter
                 15f, // speed
@@ -766,6 +771,14 @@ public class Athens extends GraphicsEngine
                     throw new ResourceNotLoadedException(resource);
                 }
                 athensEntity.shader = shaderResources.get(resName);
+                break;
+            case Resource.PARTICLE_PARAMETERS:
+                if (!particleResources.containsKey(resName))
+                {
+                    throw new ResourceNotLoadedException(resName);
+                }
+                athensEntity.attachResource(particleResources.get(resName));
+                // TODO: if entity is not particle emitter, throw an exception
                 break;
             default:
                 // TODO: throw something here as well?

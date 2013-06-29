@@ -11,7 +11,7 @@ import com.jogamp.graph.geom.AABBox;
  *
  * @author Daniel
  */
-public class ParticleParams
+public class ParticleParameters
 {
     /** Uniform linear acceleration of particles. Useful for gravity and maybe wind. */
     Vec3 acceleration;
@@ -40,7 +40,7 @@ public class ParticleParams
     
 
     // TODO: allow loading from file
-    public ParticleParams(Vec3 acceleration, Vec3 angleJitter, float speed,
+    public ParticleParameters(Vec3 acceleration, Vec3 angleJitter, float speed,
             float speedJitter, float spawnInterval, float maxLife, int numParticles,
             boolean noDirection, Vec3[] bb)
     {

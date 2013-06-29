@@ -1,6 +1,6 @@
 package afk.gfx.athens;
 
-import afk.gfx.athens.particles.ParticleParams;
+import afk.gfx.athens.particles.ParticleParameters;
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Mat4;
@@ -22,7 +22,7 @@ public class AthensEntity extends GfxEntity
     protected Texture texture = null;
     protected Object material = null; // TODO: placeholder for materials in future
     protected Shader shader = null;
-    protected ParticleParams particleParams;
+    protected ParticleParameters particleParams;
     
     public boolean active = true;
     
@@ -74,7 +74,7 @@ public class AthensEntity extends GfxEntity
     
     // TODO: add more functions for attaching each kind of resource
     
-    public void attachResource(ParticleParams particleParams)
+    public void attachResource(ParticleParameters particleParams)
     {
         this.particleParams = particleParams;
     }
