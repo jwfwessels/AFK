@@ -1,0 +1,11 @@
+; For testing purposes.
+; author Daniel Smith
+acceleration 	= 0 -9.81 0
+angleJitter 	= 5 5 5
+speed 			= 15
+speedJitter 	= 5
+spawnInterval 	= 0.05
+;maxLife = x ; leaving at default +inf
+numParticles 	= 150
+noDirection 	= false
+boundingBox 	= -30 32.5 -30	30 0 30

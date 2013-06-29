@@ -8,6 +8,7 @@ import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
+import afk.gfx.athens.particles.ParticleEmitter;
 import afk.london.London;
 import afk.london.Robot;
 import com.hackoeur.jglm.Vec3;
@@ -29,6 +30,11 @@ public class EntityManager
     Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
+    // TESTING
+    Resource fountainParams;
+    Resource fountainShader;
+    Resource fountainMesh;
+    GfxEntity emitter;
 
     public EntityManager()
     {
@@ -124,6 +130,11 @@ public class EntityManager
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
 
+        // TESTING
+        fountainParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "fountain");
+        fountainShader = gfxEngine.loadResource(Resource.SHADER, "particle");
+        fountainMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
+
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
             @Override
@@ -145,7 +156,18 @@ public class EntityManager
 //                  addEntity(tank);
 //                    tank.setProjectileGfx(projectileGfxEntity);
 //                  addEntity(bullet);
-
+                    
+                    emitter = (ParticleEmitter)
+                            gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
+                    
+                    gfxEngine.attachResource(emitter, fountainParams);
+                    gfxEngine.attachResource(emitter, fountainShader);
+                    gfxEngine.attachResource(emitter, fountainMesh);
+                    emitter.setRotation(0, 0, 90);
+                    emitter.setPosition(-10, 0, -10);
+                    emitter.setScale(1, 0, 1);
+                    emitter.active = true;
+                    
                 } catch (ResourceNotLoadedException ex)
                 {
                     //System.err.println("Failed to load resource: " + ex.getMessage());

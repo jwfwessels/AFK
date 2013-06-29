@@ -23,11 +23,13 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -62,7 +64,7 @@ public class Athens extends GraphicsEngine
     private Map<String, ParticleParameters> particleResources;
     
     // TODO: decide on list implementation
-    private List<AthensEntity> entities = new ArrayList<AthensEntity>();
+    private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
     
     // TODO: add other resource types here later maybe
 
@@ -338,7 +340,14 @@ public class Athens extends GraphicsEngine
                     shaderResources.put(resource.getName(), new Shader(gl, resource.getName()));
                     break;
                 case Resource.PARTICLE_PARAMETERS:
-                    particleResources.put(resource.getName(), null); // TODO: load particles from file
+                    try
+                    {
+                        particleResources.put(resource.getName(),
+                                ParticleParameters.loadFromFile("particles/"+resource.getName()+".px")); // TODO: load particles from file
+                    } catch (IOException ioe)
+                    {
+                         throw new RuntimeException("Error loading particle parameters: " + ioe.getMessage());
+                    }
                     break;
                 default:
                     break;
@@ -517,39 +526,6 @@ public class Athens extends GraphicsEngine
         {
             System.err.println("Could not load texture: " + ex.toString());
         }*/
-        
-        /// TESTING ///
-        
-        ParticleParameters paticleParams = new ParticleParameters(
-                new Vec3(0, -9.81f, 0), // acceleration
-                new Vec3(5,5,5), // dir jitter
-                15f, // speed
-                5f, // speed jitter
-                0.05f, // spawn interval
-                Float.POSITIVE_INFINITY, // max life
-                150, // num particles
-                false, // no direction?
-                
-                // bounding box
-                new Vec3[]{
-                    new Vec3(-30, 32.5f, -30),
-                    new Vec3(30, 0, 30)
-                }
-            );
-        
-        ParticleEmitter emitter = new ParticleEmitter();
-        emitter.attachResource(paticleParams);
-        emitter.setRotation(0, 0, 90);
-        emitter.setPosition(-10, 0, -10);
-        emitter.setScale(1, 0, 1);
-        
-        emitter.shader = new Shader(gl, "particle");
-        emitter.mesh = new BillboardQuad(gl);
-        emitter.active = true;
-        
-        entities.add(emitter);
-        
-        /// ....... ///
 
         // initial setup of matrices
         updateProjection(w_width, w_height);

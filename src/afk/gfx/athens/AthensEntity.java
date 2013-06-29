@@ -24,8 +24,6 @@ public class AthensEntity extends GfxEntity
     protected Shader shader = null;
     protected ParticleParameters particleParams;
     
-    public boolean active = true;
-    
     protected Mat4 createWorldMatrix()
     {
         Mat4 monkeyWorld = new Mat4(1f);

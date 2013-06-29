@@ -16,6 +16,8 @@ public abstract class GfxEntity
     public float xScale = 1, yScale = 1, zScale = 1;
     
     public Vec3 colour = null; // TODO: this may become more generic in the future
+    
+    public boolean active = true;
 
     public Vec3 getPosition()
     {
