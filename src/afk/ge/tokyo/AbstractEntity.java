@@ -126,17 +126,17 @@ public abstract class AbstractEntity
         double d2 = aSqr - (aDotbSqr / bSqr);
 
 
-        System.out.println("B: " + B.toString());
-        System.out.println("A: " + A.toString());
-        System.out.println("A^2: " + aSqr);
-        System.out.println("B^2: " + bSqr);
-        System.out.println("aDotb: " + aDotb);
-        System.out.println("aDotbSqr: " + aDotbSqr);
-        System.out.println("rrSqr: " + rrSqr);
-        System.out.println("d2: " + d2);
+//        System.out.println("B: " + B.toString());
+//        System.out.println("A: " + A.toString());
+//        System.out.println("A^2: " + aSqr);
+//        System.out.println("B^2: " + bSqr);
+//        System.out.println("aDotb: " + aDotb);
+//        System.out.println("aDotbSqr: " + aDotbSqr);
+//        System.out.println("rrSqr: " + rrSqr);
+//        System.out.println("d2: " + d2);
         if (Double.compare(d2, rrSqr) > 0)
         {
-            System.out.println("");
+//            System.out.println("");
             return false;
         }
 
@@ -144,11 +144,11 @@ public abstract class AbstractEntity
         if (Double.compare(t, 0) >= 0 && Double.compare(t, 1) < 0)
         {
             System.out.println("HIT!");
-            System.out.println("");
+//            System.out.println("");
             return true;
         }
 
-        System.out.println("");
+//        System.out.println("");
         return false;
     }
 }
