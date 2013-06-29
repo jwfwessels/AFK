@@ -12,6 +12,8 @@ import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -34,6 +36,9 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import javax.swing.JPanel;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 public class Athens extends GraphicsEngine
 {
@@ -100,6 +105,7 @@ public class Athens extends GraphicsEngine
     private GLCanvas glCanvas;
     private Animator animator;
     private String title;
+    private JTabbedPane jTPane;
     
     public Athens(int width, int height, String title, boolean autodraw)
     {
@@ -127,6 +133,45 @@ public class Athens extends GraphicsEngine
         glCanvas.setPreferredSize(new Dimension(width, height));
         
         jFrame = new JFrame(title);
+        jFrame.setBounds(0, 0, width, height);
+        
+        jTPane = new JTabbedPane();
+        JPanel pnlBotSelection = new JPanel();
+        JPanel pnlArena = new JPanel();
+        
+        jTPane.add(pnlBotSelection, 0);
+        jTPane.add(pnlArena, 1);
+        
+        // Removes some stupid stuff from swing. It's services are not required
+        jTPane.setUI(new BasicTabbedPaneUI() 
+        {  
+            @Override  
+            protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) 
+            {   
+                    return 0;  
+            }  
+            @Override
+            protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) 
+            {  
+
+            } 
+            @Override
+            protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex)
+            {
+                
+            }
+        }); 
+        
+        jTPane.setEnabledAt(0, false);
+        jTPane.setEnabledAt(1, false);
+        
+        //jTPane.getTabComponentAt(0).setVisible(false);
+        //jTPane.getTabComponentAt(1).setVisible(false);
+       
+        //jTPane.removeTabAt(0);
+        //jTPane.removeTabAt(0);
+        
+        jTPane.setSelectedComponent(pnlArena);
         
         jFrame.addWindowListener( new WindowAdapter() {
             @Override
@@ -208,8 +253,10 @@ public class Athens extends GraphicsEngine
             }
         });
 
-        jFrame.getContentPane().add( glCanvas, BorderLayout.CENTER );
-        jFrame.pack();
+        pnlArena.add(glCanvas, BorderLayout.CENTER);
+        jFrame.getContentPane().add(jTPane);
+        //jFrame.getContentPane().add( glCanvas, BorderLayout.CENTER );
+        //jFrame.pack();
         jFrame.setVisible(true);
         
         if (autodraw)
