@@ -29,7 +29,7 @@ public class ProjectileEntity extends AbstractEntity
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
         previous = new EntityState(current);
-        current.velocity = current.velocity.add(new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos));
+        current.velocity = new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos);
         integrate(current, t, dt);
 //        for (int i = 0; i < entityManager.entities.size(); i++)
 //        {
