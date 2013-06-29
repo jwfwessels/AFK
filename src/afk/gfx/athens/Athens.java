@@ -11,8 +11,12 @@ import afk.gfx.Updatable;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -24,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +40,16 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicBorders;
 
 public class Athens extends GraphicsEngine
 {
@@ -105,7 +116,10 @@ public class Athens extends GraphicsEngine
     private GLCanvas glCanvas;
     private Animator animator;
     private String title;
+    
     private JTabbedPane jTPane;
+    
+    private HashMap<String, String> botMap = new HashMap<String, String>();
     
     public Athens(int width, int height, String title, boolean autodraw)
     {
@@ -165,13 +179,47 @@ public class Athens extends GraphicsEngine
         jTPane.setEnabledAt(0, false);
         jTPane.setEnabledAt(1, false);
         
-        //jTPane.getTabComponentAt(0).setVisible(false);
-        //jTPane.getTabComponentAt(1).setVisible(false);
-       
-        //jTPane.removeTabAt(0);
-        //jTPane.removeTabAt(0);
+        jTPane.setSelectedComponent(pnlBotSelection);
         
-        jTPane.setSelectedComponent(pnlArena);
+        pnlBotSelection.setLayout(new GridLayout(1, 3));
+        
+        JPanel pnlBotSelButtons = new JPanel();
+        pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
+        pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
+        
+        JButton btnAddBot = new JButton(">");
+        JButton btnAddAllBots = new JButton(">>");
+        JButton btnRemoveBot = new JButton("<");
+        JButton btnRemoveAllBots = new JButton("<<");
+        JButton btnStartMatch = new JButton("Start");
+        
+        //TODO: Add action listeners for buttons
+        
+        pnlBotSelButtons.add(btnAddBot);
+        pnlBotSelButtons.add(btnAddAllBots);
+        pnlBotSelButtons.add(btnRemoveBot);
+        pnlBotSelButtons.add(btnRemoveAllBots);
+        pnlBotSelButtons.add(btnStartMatch);
+        
+        JList<String> lstAvailableBots = new JList();
+        JList<String> lstSelectedBots = new JList();
+        DefaultListModel<String> lsAvailableModel = new DefaultListModel();
+        DefaultListModel<String> lsSelectedModel = new DefaultListModel();
+        
+        //TODO: Put list boxes on scroll panes and give them borders
+        
+        botMap.put("Random bot", "Some path");
+        Iterator it = botMap.keySet().iterator();
+        
+        while(it.hasNext())
+        {
+            lsAvailableModel.addElement((String)it.next());
+        }
+        lstAvailableBots.setModel(lsAvailableModel);
+        
+        pnlBotSelection.add(lstAvailableBots);
+        pnlBotSelection.add(pnlBotSelButtons);
+        pnlBotSelection.add(lstSelectedBots);
         
         jFrame.addWindowListener( new WindowAdapter() {
             @Override
