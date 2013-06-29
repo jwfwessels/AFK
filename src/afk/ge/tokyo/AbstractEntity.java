@@ -14,8 +14,8 @@ import com.hackoeur.jglm.Vec3;
 public abstract class AbstractEntity
 {
 
-    public static final float ANGULAR_VELOCITY = 1.0f;
-    public static final float VELOCITY = 0.5f;
+    public float ANGULAR_VELOCITY = 1.0f;
+    public float VELOCITY = 0.5f;
     protected GfxEntity gfxPos;
     protected EntityState current;
     protected EntityState previous;
@@ -115,18 +115,19 @@ public abstract class AbstractEntity
         double bSqr = B.getLengthSquared();
         if (Double.compare(bSqr, 0.0f) == 0)
         {
-//            System.out.println("error");
             return false;
         }
         Vec3 A = a.previous.position.subtract(b.previous.position);
         double aSqr = A.getLengthSquared();
         double rrSqr = (a.size + b.size) * (a.size + b.size);
-        double aDotbSqr = (A.dot(B)) * (A.dot(B));
+        double aDotb = (A.dot(B));
+        double aDotbSqr = aDotb * aDotb;
         double d2 = aSqr - (aDotbSqr / bSqr);
 
         System.out.println("A^2: " + aSqr);
         System.out.println("B^2: " + bSqr);
-        System.out.println("AdotB: " + (A.dot(B))*(A.dot(B)));
+        System.out.println("aDotb: " + aDotb);
+        System.out.println("aDotbSqr: " + aDotbSqr);
         System.out.println("rrSqr: " + rrSqr);
         System.out.println("d2: " + d2);
         if (Double.compare(d2, rrSqr) > 0)

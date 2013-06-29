@@ -5,7 +5,6 @@
 package afk.ge.tokyo;
 
 import afk.gfx.GfxEntity;
-import static afk.ge.tokyo.AbstractEntity.VELOCITY;
 import com.hackoeur.jglm.Vec3;
 
 /**
@@ -20,6 +19,7 @@ public class ProjectileEntity extends AbstractEntity
         super(gfxEntity, entityManager);
         size = 0.14f;
         mass = 0.5f;
+        VELOCITY = 1.0f;
     }
 
     @Override
@@ -29,7 +29,6 @@ public class ProjectileEntity extends AbstractEntity
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
         previous = new EntityState(current);
-        current.velocity = Vec3.VEC3_ZERO;
         current.velocity = current.velocity.add(new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos));
         integrate(current, t, dt);
 //        for (int i = 0; i < entityManager.entities.size(); i++)

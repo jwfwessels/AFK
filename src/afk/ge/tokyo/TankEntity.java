@@ -6,8 +6,6 @@ package afk.ge.tokyo;
 
 import afk.gfx.GfxEntity;
 import afk.london.Robot;
-import static afk.ge.tokyo.AbstractEntity.ANGULAR_VELOCITY;
-import static afk.ge.tokyo.AbstractEntity.VELOCITY;
 import com.hackoeur.jglm.Vec3;
 
 /**
