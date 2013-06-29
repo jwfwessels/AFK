@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.tokyo;
+package afk.ge;
 
 import afk.gfx.GraphicsEngine;
 
@@ -15,16 +15,16 @@ public abstract class GameEngine implements Runnable
 
     protected GraphicsEngine gfxEngine;
 
-    protected abstract void loadResources();
+//    protected abstract void loadResources();
 
-    public abstract void addEntity(Entity tankEntity);
+//    public abstract void addEntity(AbstractEntity tankEntity); //done by entityManager now
 
     @Override
     public abstract void run();
 
     protected abstract void gameLoop();
 
-    protected abstract void updateGame(boolean[] flags);
+    protected abstract void updateGame();
 
     protected abstract void render(float alpha);
 }
