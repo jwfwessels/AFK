@@ -9,7 +9,9 @@ import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.Updatable;
 import afk.gfx.athens.particles.ParticleEmitter;
+import afk.gfx.athens.particles.ParticleParams;
 import com.hackoeur.jglm.*;
+import com.jogamp.graph.geom.AABBox;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -516,17 +518,28 @@ public class Athens extends GraphicsEngine
         
         /// TESTING ///
         
-        emitter = new ParticleEmitter(
-                null,//new Vec3(0, -1, 0), // direction
-                (float)Math.toRadians(5.0f), // dir jitter
-                0.5f, // speed
-                0.1f, // speed jitter
-                new Vec3(0, 0, 0), // acceleration
-                1000, // num particles
-                0.0f // rate
+        ParticleParams paticleParams = new ParticleParams(
+                new Vec3(0, -9.81f, 0), // acceleration
+                new Vec3(5,5,5), // dir jitter
+                15f, // speed
+                5f, // speed jitter
+                0.05f, // spawn interval
+                Float.POSITIVE_INFINITY, // max life
+                150, // num particles
+                false, // no direction?
+                
+                // bounding box
+                new Vec3[]{
+                    new Vec3(-30, 32.5f, -30),
+                    new Vec3(30, 0, 30)
+                }
             );
-        emitter.setPosition(0, 50.0f, 0.0f);
-        emitter.setScale(0, 0, 0);
+        
+        emitter = new ParticleEmitter();
+        emitter.attachResource(paticleParams);
+        emitter.setRotation(0, 0, 90);
+        emitter.setPosition(-10, 0, -10);
+        emitter.setScale(1, 0, 1);
         
         emitter.shader = new Shader(gl, "particle");
         emitter.mesh = new BillboardQuad(gl);

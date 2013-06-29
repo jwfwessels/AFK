@@ -7,6 +7,7 @@ import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
+import com.jogamp.graph.geom.AABBox;
 import javax.media.opengl.GL2;
 
 /**
@@ -32,7 +33,7 @@ public class Particle
         alive = true;
     }
     
-    protected void update(float delta, Vec3 acceleration)
+    protected void update(float delta, Vec3 acceleration, float maxLife, AABBox bbox)
     {
         // TODO: possibly do interpolation or other fancy physics stuff
         position = position.add(velocity.scale(delta));
@@ -40,13 +41,19 @@ public class Particle
         
         lifetime += delta;
         
+        if (lifetime > maxLife
+                || (bbox != null
+                    && !bbox.contains(
+                        position.getX(), position.getY(), position.getZ())))
+            alive = false;
+        
         // TODO: check stopping conditions
         // for now (testing) we'll just destroy when reaching y=0
         if (position.getY() < 0)
             alive = false;
     }
     
-    protected Mat4 createWorldMatrix(Camera camera)
+    private Mat4 createWorldMatrix(Camera camera)
     {
         Mat4 world = new Mat4(1f);
 

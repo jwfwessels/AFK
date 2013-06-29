@@ -2,7 +2,10 @@ package afk.gfx.athens.particles;
 
 import afk.gfx.Camera;
 import afk.gfx.athens.AthensEntity;
+import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -14,42 +17,28 @@ import javax.media.opengl.GL2;
  */
 public class ParticleEmitter extends AthensEntity
 {
-    /// PARAMETERS ///
-    
-    Vec3 direction, acceleration;
-    float angleJitter;
-    float minSpeed, maxSpeed;
-    
-    /** Time between spawns. Use zero for "explosion" */
-    float spawnRate;
+    // direction vector to be rotated
+    // represents a rotation of 0, 0, 0 degrees
+    // TODO: this whole thing should probably be sorted out with quaternions :/
+    private static final Vec4 ANCHOR = new Vec4(1.0f,0.0f,0.0f,0.0f);
     
     /// STUFF ///
     
-    Random rand = new Random();
+    private Random rand = new Random();
     
     private float timeSinceLastSpawn = 0;
-    public boolean active = false;
-    
-    int numParticles = 0;
     
     // TODO: make a global object pool?
-    Particle[] particles;
+    private Particle[] particles;
     private Queue<Particle> available = new ConcurrentLinkedQueue<Particle>();
 
-    public ParticleEmitter(Vec3 direction,
-            float angleJitter, float speed, float speedJitter, Vec3 acceleration,
-            int maxParticles, float spawnRate)
+    @Override
+    public void attachResource(ParticleParams particleParams)
     {
-        this.direction = direction;
-        this.acceleration = acceleration;
+        super.attachResource(particleParams);
         
-        this.angleJitter = angleJitter;
-        minSpeed = speed - speedJitter;
-        maxSpeed = speed + speedJitter;
-        this.spawnRate = spawnRate;
-        
-        particles = new Particle[maxParticles];
-        for (int i = 0; i < maxParticles; i++)
+        particles = new Particle[particleParams.numParticles];
+        for (int i = 0; i < particles.length; i++)
         {
             particles[i] = new Particle();
             available.add(particles[i]);
@@ -62,7 +51,8 @@ public class ParticleEmitter extends AthensEntity
         for (int i = 0; i < particles.length; i++)
         {
             if (particles[i].alive)
-                particles[i].update(delta, acceleration);
+                particles[i].update(delta, particleParams.acceleration,
+                        particleParams.maxLife, particleParams.boundingBox);
             
             // check if particle still alive after update
             if (!particles[i].alive)
@@ -72,13 +62,13 @@ public class ParticleEmitter extends AthensEntity
         // spawn new particles
         if (active)
         {
-            if (spawnRate > 0)
+            if (particleParams.spawnInterval > 0)
             {
                 timeSinceLastSpawn += delta;
 
-                while (timeSinceLastSpawn > spawnRate)
+                while (timeSinceLastSpawn > particleParams.spawnInterval)
                 {
-                    timeSinceLastSpawn -= spawnRate;
+                    timeSinceLastSpawn -= particleParams.spawnInterval;
                     spawn(timeSinceLastSpawn);
                 }
             }
@@ -113,6 +103,11 @@ public class ParticleEmitter extends AthensEntity
         }
     }
     
+    private float jitter(float x, float j)
+    {
+        return randomLerp(x-j, x+j);
+    }
+    
     private float randomLerp(float a, float b)
     {
         return a + (b - a) * rand.nextFloat();
@@ -121,67 +116,47 @@ public class ParticleEmitter extends AthensEntity
     private void spawn(float delta)
     {
         Particle p = available.poll();
-        if (p != null)
+        if (p == null) return;
+        if (p.alive)
         {
-            
-            Vec3 pos = new Vec3(
-                    xMove+randomLerp(-xScale, xScale),
-                    yMove+randomLerp(-yScale, yScale),
-                    zMove+randomLerp(-zScale, zScale)
-                );
-        
-            
-            
-            Vec3 dir;
-            
-            if (direction != null)
-            {
-                // uniform cone distribution
-                // TODO: doesn't seem to work right
-                
-                Vec3 tangent, bitangent;
-
-                // find best cardinal axis
-                float xs = pos.getX(); xs *= xs;
-                float ys = pos.getY(); ys *= ys;
-                float zs = pos.getZ(); zs *= zs;
-                Vec3 cardinal;
-                if (ys < zs && ys < xs)
-                    cardinal = new Vec3(0,1,0);
-                else if (zs < xs && zs < ys)
-                    cardinal = new Vec3(0,0,1);
-                else
-                    cardinal = new Vec3(1,0,0);
-
-                tangent = direction.cross(cardinal).getUnitVector();
-                bitangent = direction.cross(tangent).getUnitVector();
-                
-                float phi = (rand.nextFloat()*2.0f-1.0f)*(float)Math.PI;
-                float theta = rand.nextFloat()*angleJitter;
-
-                // sinθ(cosϕu+sinϕv)+cosθa 
-                dir = (
-                        tangent.scale((float)Math.cos(phi))
-                        .add(bitangent.scale((float)Math.sin(phi)))
-                    ).scale((float)Math.sin(theta))
-                    .add(direction.scale((float)Math.sin(theta)))
-                    .getUnitVector();
-            }
-            else
-            {
-                // uniform sphere distribution
-                dir = new Vec3(
-                        (float)rand.nextGaussian(),
-                        (float)rand.nextGaussian(),
-                        (float)rand.nextGaussian()
-                    )
-                    .getUnitVector();
-            }
-            
-            float speed = randomLerp(minSpeed, maxSpeed);
-            
-            p.set(pos, dir.scale(speed));
-            p.update(delta, acceleration);
+            available.add(p);
+            return;
         }
+            
+        Vec3 pos = new Vec3(
+                jitter(xMove, xScale),
+                jitter(yMove, yScale),
+                jitter(zMove, zScale)
+            );
+
+        Vec3 dir;
+
+
+        if (particleParams.noDirection)
+        {
+            // uniform sphere distribution
+            dir = new Vec3(
+                    (float)rand.nextGaussian(),
+                    (float)rand.nextGaussian(),
+                    (float)rand.nextGaussian()
+                )
+                .getUnitVector();
+        }
+        else
+        {
+            Mat4 rotation = Matrices.rotate(new Mat4(1.0f), jitter(xRot, particleParams.angleJitter.getX()), X_AXIS);
+            rotation = Matrices.rotate(rotation, jitter(yRot, particleParams.angleJitter.getY()), Y_AXIS);
+            rotation = Matrices.rotate(rotation, jitter(zRot, particleParams.angleJitter.getZ()), Z_AXIS);
+
+            Vec4 newRotation = rotation.multiply(ANCHOR);
+
+            dir = new Vec3(newRotation.getX(),newRotation.getY(),newRotation.getZ());
+        }
+
+        float speed = jitter(particleParams.speed, particleParams.speedJitter);
+
+        p.set(pos, dir.scale(speed));
+        p.update(delta, particleParams.acceleration, particleParams.maxLife,
+                particleParams.boundingBox);
     }
 }
