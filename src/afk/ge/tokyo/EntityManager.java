@@ -155,4 +155,10 @@ public class EntityManager
         });
         return true;
     }
+
+    void RomoveSubEntity(AbstractEntity entity)
+    {
+        gfxEngine.deleteEntity(entity.gfxPos);
+        subEntities.remove(entity);
+    }
 }

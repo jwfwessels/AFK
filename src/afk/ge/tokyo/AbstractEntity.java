@@ -125,30 +125,17 @@ public abstract class AbstractEntity
         double aDotbSqr = aDotb * aDotb;
         double d2 = aSqr - (aDotbSqr / bSqr);
 
-
-//        System.out.println("B: " + B.toString());
-//        System.out.println("A: " + A.toString());
-//        System.out.println("A^2: " + aSqr);
-//        System.out.println("B^2: " + bSqr);
-//        System.out.println("aDotb: " + aDotb);
-//        System.out.println("aDotbSqr: " + aDotbSqr);
-//        System.out.println("rrSqr: " + rrSqr);
-//        System.out.println("d2: " + d2);
         if (Double.compare(d2, rrSqr) > 0)
         {
-//            System.out.println("");
             return false;
         }
-
+//find fastInv double implimentation
         double t = (-(aDotb) - FastMath.sqrtFast((float) ((aDotbSqr) - bSqr * (aSqr - (rrSqr))))) / bSqr;
-        if (Double.compare(t, 0) >= 0 && Double.compare(t, 1) < 0)
+        if (Double.compare(t, 0) < 0 || Double.compare(t, 1) >= 0)
         {
-            System.out.println("HIT!");
-//            System.out.println("");
-            return true;
+            return false;
         }
-
-//        System.out.println("");
-        return false;
+        System.out.println("HIT!");
+        return true;
     }
 }

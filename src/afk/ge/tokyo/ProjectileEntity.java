@@ -19,7 +19,7 @@ public class ProjectileEntity extends AbstractEntity
         super(gfxEntity, entityManager);
         size = 0.14f;
         mass = 0.5f;
-        VELOCITY = 1.0f;
+        VELOCITY = 2.5f;
     }
 
     @Override
@@ -31,12 +31,13 @@ public class ProjectileEntity extends AbstractEntity
         previous = new EntityState(current);
         current.velocity = new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos);
         integrate(current, t, dt);
-//        for (int i = 0; i < entityManager.entities.size(); i++)
-//        {
-            if (intersectionTesting(this, entityManager.entities.get(1)))
+        for (int i = 0; i < entityManager.entities.size(); i++)
+        {
+            if (intersectionTesting(this, entityManager.entities.get(i)))
             {
-//                System.out.println(this + " --> " + entityManager.entities.get(i));
+                System.out.println(this + " --> " + i);
+                entityManager.RomoveSubEntity(this);
             }
-//        }
+        }
     }
 }
