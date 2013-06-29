@@ -32,9 +32,10 @@ public class EntityManager
     Resource floorShader;
     // TESTING
     Resource fountainParams;
-    Resource fountainShader;
-    Resource fountainMesh;
-    GfxEntity emitter;
+    Resource explosionParams;
+    Resource particleShader;
+    Resource billboardMesh;
+    GfxEntity fountain;
 
     public EntityManager()
     {
@@ -131,9 +132,10 @@ public class EntityManager
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
 
         // TESTING
+        explosionParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosion");
         fountainParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "fountain");
-        fountainShader = gfxEngine.loadResource(Resource.SHADER, "particle");
-        fountainMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
+        particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
+        billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
 
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
@@ -157,21 +159,20 @@ public class EntityManager
 //                    tank.setProjectileGfx(projectileGfxEntity);
 //                  addEntity(bullet);
                     
-                    emitter = (ParticleEmitter)
+                    fountain = (ParticleEmitter)
                             gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
                     
-                    gfxEngine.attachResource(emitter, fountainParams);
-                    gfxEngine.attachResource(emitter, fountainShader);
-                    gfxEngine.attachResource(emitter, fountainMesh);
-                    emitter.setRotation(0, 0, 90);
-                    emitter.setPosition(-10, 0, -10);
-                    emitter.setScale(1, 0, 1);
-                    emitter.active = true;
+                    gfxEngine.attachResource(fountain, fountainParams);
+                    gfxEngine.attachResource(fountain, particleShader);
+                    gfxEngine.attachResource(fountain, billboardMesh);
+                    fountain.setRotation(0, 0, 90);
+                    fountain.setPosition(-10, 0, -10);
+                    fountain.setScale(1, 0, 1);
+                    fountain.active = true;
                     
                 } catch (ResourceNotLoadedException ex)
                 {
-                    //System.err.println("Failed to load resource: " + ex.getMessage());
-                    throw new RuntimeException(ex);
+                    System.err.println(ex.getMessage());
                 }
 
 
@@ -184,5 +185,25 @@ public class EntityManager
     {
         gfxEngine.deleteEntity(entity.gfxPos);
         subEntities.remove(entity);
+    }
+
+    // TODO: This is horrible! It's just for testing!
+    // Please optimise/refactor before the universe ends!
+    void makeExplosion(Vec3 where)
+    {
+        GfxEntity bang = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
+        try
+        {
+            gfxEngine.attachResource(bang, explosionParams);
+            gfxEngine.attachResource(bang, particleShader);
+            gfxEngine.attachResource(bang, billboardMesh);
+            
+            bang.setScale(Vec3.VEC3_ZERO);
+            bang.setPosition(where);
+            bang.active = true;
+        } catch (ResourceNotLoadedException ex)
+        {
+            System.err.println(ex.getMessage());
+        }
     }
 }

@@ -58,7 +58,7 @@ public class ParticleEmitter extends AthensEntity
         {
             if (particles[i].alive)
                 particles[i].update(delta, particleParams.acceleration,
-                        particleParams.maxLife, particleParams.boundingBox);
+                        particleParams.boundingBox);
             
             // check if particle still alive after update
             if (!particles[i].alive)
@@ -161,8 +161,9 @@ public class ParticleEmitter extends AthensEntity
 
         float speed = jitter(particleParams.speed, particleParams.speedJitter);
 
-        p.set(pos, dir.scale(speed));
-        p.update(delta, particleParams.acceleration, particleParams.maxLife,
+        p.set(pos, dir.scale(speed),
+                jitter(particleParams.maxLife, particleParams.lifeJitter));
+        p.update(delta, particleParams.acceleration,
                 particleParams.boundingBox);
     }
 }

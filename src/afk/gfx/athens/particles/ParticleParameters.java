@@ -18,26 +18,40 @@ public class ParticleParameters
 {
     /** Uniform linear acceleration of particles. Useful for gravity and maybe wind. */
     Vec3 acceleration = Vec3.VEC3_ZERO;
+    
     /** Deviation of initial direction of particles. */
     Vec3 angleJitter = Vec3.VEC3_ZERO;
+    
     /** Base initial speed (magnitude of velocity) of particles. */
     float speed = 0;
+    
     /** Deviation of initial speed of particles. */
     float speedJitter = 0;
+    
     /**
      * Time between particle spawns (in seconds). If this is set to exactly zero, the emitter
      * will become and explosion, effectively emitting all particles at once and
      * then deactivating.
      */
     float spawnInterval = 0;
+    
     /** Maximum lifetime (in seconds) that a particle may exist for. */
     float maxLife = Float.POSITIVE_INFINITY;
+    
+    /** Deviation of maximum lifetime (in seconds). */
+    float lifeJitter = 0;
+    
     /** Maximum number of particles. */
+    
     int numParticles = 1; // TODO: maybe replace with a "density factor" to allow global control of particle count
+    
     /** If true, particles will disperse in a uniform direction. */
     boolean noDirection = false;
-    /** Bounding box within which particles are allowed to exists.
-     Can be null to represent infinite space. */
+    
+    /**
+     * Bounding box within which particles are allowed to exists.
+     * Can be null to represent infinite space.
+     */
     AABBox boundingBox = null;
     
     /**
@@ -80,6 +94,8 @@ public class ParticleParameters
                         params.spawnInterval = Float.parseFloat(value);
                     else if ("maxLife".equals(param))
                         params.maxLife = Float.parseFloat(value);
+                    else if ("lifeJitter".equals(param))
+                        params.lifeJitter = Float.parseFloat(value);
                     else if ("numParticles".equals(param))
                         params.numParticles = Integer.parseInt(value);
                     else if ("noDirection".equals(param))

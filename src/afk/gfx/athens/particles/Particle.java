@@ -18,22 +18,23 @@ public class Particle
 {
     Vec3 position;
     Vec3 velocity;
-    float lifetime;
+    float lifetime, maxLife;
     boolean alive = false;
     
     protected Particle()
     {
     }
     
-    protected void set(Vec3 position, Vec3 velocity)
+    protected void set(Vec3 position, Vec3 velocity, float maxLife)
     {
         this.position = position;
         this.velocity = velocity;
         this.lifetime = 0;
+        this.maxLife = maxLife;
         alive = true;
     }
     
-    protected void update(float delta, Vec3 acceleration, float maxLife, AABBox bbox)
+    protected void update(float delta, Vec3 acceleration, AABBox bbox)
     {
         // TODO: possibly do interpolation or other fancy physics stuff
         position = position.add(velocity.scale(delta));

@@ -37,6 +37,8 @@ public class ProjectileEntity extends AbstractEntity
             {
                 System.out.println(this + " --> " + i);
                 entityManager.RomoveSubEntity(this);
+                // TODO: possible create explosion at the /exact/ location of impact?
+                entityManager.makeExplosion(this.current.position.add(new Vec3(0,1,0)));
             }
         }
     }
