@@ -30,8 +30,7 @@ public class EntityManager
     Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
-    // TESTING
-    Resource fountainParams;
+    
     Resource explosionParams;
     Resource particleShader;
     Resource billboardMesh;
@@ -131,9 +130,7 @@ public class EntityManager
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
 
-        // TESTING
         explosionParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosion");
-        fountainParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "fountain");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
 
@@ -158,17 +155,6 @@ public class EntityManager
 //                  addEntity(tank);
 //                    tank.setProjectileGfx(projectileGfxEntity);
 //                  addEntity(bullet);
-                    
-                    fountain = (ParticleEmitter)
-                            gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
-                    
-                    gfxEngine.attachResource(fountain, fountainParams);
-                    gfxEngine.attachResource(fountain, particleShader);
-                    gfxEngine.attachResource(fountain, billboardMesh);
-                    fountain.setRotation(0, 0, 90);
-                    fountain.setPosition(-10, 0, -10);
-                    fountain.setScale(1, 0, 1);
-                    fountain.active = true;
                     
                 } catch (ResourceNotLoadedException ex)
                 {
