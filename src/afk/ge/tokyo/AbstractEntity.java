@@ -37,7 +37,11 @@ public abstract class AbstractEntity
         current = new EntityState(gfxPos.getPosition());
         previous = new EntityState(current);
         this.entityManager = entityManager;
+    }
 
+    public void setColour(Vec3 colour)
+    {
+        gfxPos.colour = colour;
     }
 
     public void setState(EntityState state)

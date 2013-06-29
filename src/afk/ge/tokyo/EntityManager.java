@@ -137,7 +137,9 @@ public class EntityManager
                     floorGfxEntity.setScale(50, 50, 50);
 
                     TankEntity tank = createTank();
+                    tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));
                     TankEntity tank2 = createTank();
+                    tank2.setColour(new Vec3(0.0f, 0.0f, 0.8f));
                     tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
 //                    ProjectileEntity bullet = (ProjectileEntity) createProjectile(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
 //                  addEntity(tank);

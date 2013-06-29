@@ -50,6 +50,7 @@ public class TankEntity extends AbstractEntity
         if (flags[Robot.ATTACK_ACTION])
         {
             ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile();
+            bullet.setColour(new Vec3(0.8f, 0.0f, 0.0f));
             bullet.setState(current);
             System.out.println("BANG!!!");
         }
