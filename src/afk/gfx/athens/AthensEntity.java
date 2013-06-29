@@ -43,6 +43,11 @@ public class AthensEntity extends GfxEntity
         return monkeyWorld;
     }
     
+    protected void update(float delta)
+    {
+        // do nothing
+    }
+    
     protected void draw(GL2 gl, Camera camera, Vec3 sun) // TODO: replace with Camera and Sun/Light objects later
     {
         // by default, active sets visibility of entity

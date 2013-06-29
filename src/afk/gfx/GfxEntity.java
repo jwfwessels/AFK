@@ -8,6 +8,9 @@ import com.hackoeur.jglm.Vec3;
  */
 public abstract class GfxEntity
 {
+    public static final int NORMAL = 0, BILLBOARD_SPHERICAL = 1,
+            BILLBOARD_CYLINDRICAL = 2, PARTICLE_EMITTER = 3;
+    
     public float xMove = 0, yMove = 0, zMove = 0;
     public float xRot = 0, yRot = 0, zRot = 0;
     public float xScale = 1, yScale = 1, zScale = 1;

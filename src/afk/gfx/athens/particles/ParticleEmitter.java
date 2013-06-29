@@ -32,6 +32,11 @@ public class ParticleEmitter extends AthensEntity
     private Particle[] particles;
     private Queue<Particle> available = new ConcurrentLinkedQueue<Particle>();
 
+    public ParticleEmitter()
+    {
+        active = false;
+    }
+
     @Override
     public void attachResource(ParticleParams particleParams)
     {
@@ -45,7 +50,8 @@ public class ParticleEmitter extends AthensEntity
         }
     }
     
-    public void update(float delta)
+    @Override
+    protected void update(float delta)
     {
         // update each particle
         for (int i = 0; i < particles.length; i++)

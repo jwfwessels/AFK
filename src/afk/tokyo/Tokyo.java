@@ -60,12 +60,12 @@ public class Tokyo extends GameEngine
                 try
                 {
 
-                    GfxEntity floorGfxEntity = gfxEngine.createEntity();
+                    GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
                     gfxEngine.attachResource(floorGfxEntity, floorMesh);
                     gfxEngine.attachResource(floorGfxEntity, floorShader);
                     floorGfxEntity.setScale(50, 50, 50);
 
-                    GfxEntity tankGfxEntity = gfxEngine.createEntity();
+                    GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
                     gfxEngine.attachResource(tankGfxEntity, tankMesh);
                     gfxEngine.attachResource(tankGfxEntity, tankShader);
                     tankGfxEntity.colour = new Vec3(0.0f,0.5f,1.0f);

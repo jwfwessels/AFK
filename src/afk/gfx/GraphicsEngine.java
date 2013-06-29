@@ -73,7 +73,7 @@ public abstract class GraphicsEngine
     
     public abstract void unloadEverything();
     
-    public abstract GfxEntity createEntity();
+    public abstract GfxEntity createEntity(int behaviour);
     
     public abstract void deleteEntity(GfxEntity entity);
     

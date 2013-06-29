@@ -106,8 +106,6 @@ public class Athens extends GraphicsEngine
     
     /// TESTING STUFF ///
     
-    ParticleEmitter emitter;
-    
     public Athens(int width, int height, String title, boolean autodraw)
     {
         for (int i = 0; i < meshResources.length; i++)
@@ -386,7 +384,8 @@ public class Athens extends GraphicsEngine
         
         updateView();
         
-        emitter.update(delta);
+        for (AthensEntity entity : entities)
+            entity.update(delta);
     }
     
     private void render(GL2 gl)
@@ -412,8 +411,6 @@ public class Athens extends GraphicsEngine
         {
             entity.draw(gl, cam, sun);
         }
-        
-        emitter.draw(gl, camera, sun);
     }
     
     /*void renderSkybox(GL2 gl, Mat4 camera, Mat4 proj)
@@ -535,7 +532,7 @@ public class Athens extends GraphicsEngine
                 }
             );
         
-        emitter = new ParticleEmitter();
+        ParticleEmitter emitter = new ParticleEmitter();
         emitter.attachResource(paticleParams);
         emitter.setRotation(0, 0, 90);
         emitter.setPosition(-10, 0, -10);
@@ -544,6 +541,8 @@ public class Athens extends GraphicsEngine
         emitter.shader = new Shader(gl, "particle");
         emitter.mesh = new BillboardQuad(gl);
         emitter.active = true;
+        
+        entities.add(emitter);
         
         /// ....... ///
 
@@ -691,9 +690,29 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
-    public GfxEntity createEntity()
+    public GfxEntity createEntity(int behaviour)
     {
-        AthensEntity entity = new AthensEntity();
+        // TODO: research possible performance hit is we use Class.newInstance() instead of using ints
+        
+        AthensEntity entity;
+        switch (behaviour)
+        {
+            case GfxEntity.NORMAL:
+                entity = new AthensEntity();
+                break;
+            case GfxEntity.BILLBOARD_SPHERICAL:
+                // TODO: entity = new BillboardSpherical();
+                return null; // break;
+            case GfxEntity.BILLBOARD_CYLINDRICAL:
+                // TODO: entity = new BillboardCylindrical();
+                return null; // break;
+            case GfxEntity.PARTICLE_EMITTER:
+                entity = new ParticleEmitter();
+                break;
+            default:
+                // TODO: throw new InvalidEntityBehaviourException();
+                return null;
+        }
         
         entities.add(entity);
         
