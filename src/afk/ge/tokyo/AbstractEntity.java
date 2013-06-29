@@ -6,6 +6,7 @@ package afk.ge.tokyo;
 
 import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.support.FastMath;
 
 /**
  *
@@ -123,7 +124,7 @@ public abstract class AbstractEntity
         double aDotb = (A.dot(B));
         double aDotbSqr = aDotb * aDotb;
         double d2 = aSqr - (aDotbSqr / bSqr);
-        
+
 
         System.out.println("B: " + B.toString());
         System.out.println("A: " + A.toString());
@@ -135,10 +136,18 @@ public abstract class AbstractEntity
         System.out.println("d2: " + d2);
         if (Double.compare(d2, rrSqr) > 0)
         {
+            System.out.println("");
+            return false;
+        }
+
+        double t = (-(aDotb) - FastMath.sqrtFast((float) ((aDotbSqr) - bSqr * (aSqr - (rrSqr))))) / bSqr;
+        if (Double.compare(t, 0) >= 0 && Double.compare(t, 1) < 0)
+        {
             System.out.println("HIT!");
             System.out.println("");
             return true;
         }
+
         System.out.println("");
         return false;
     }
