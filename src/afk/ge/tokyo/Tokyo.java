@@ -5,13 +5,11 @@
 package afk.ge.tokyo;
 
 import afk.ge.GameEngine;
-import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
-import afk.gfx.Resource;
-import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.SampleBot;
+import afk.london.SampleBot2;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -154,5 +152,7 @@ public class Tokyo extends GameEngine
         //TODO refactor load bots
         Robot bot = new SampleBot();
         London.registerBot(bot);
+        Robot bot2 = new SampleBot2();
+        London.registerBot(bot2);
     }
 }

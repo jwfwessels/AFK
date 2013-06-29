@@ -5,7 +5,7 @@ package afk.london;
  * @author Jessica
  *
  */
-public class SampleBot extends Robot
+public class SampleBot2 extends Robot
 {
 
     boolean running = true;
@@ -13,7 +13,7 @@ public class SampleBot extends Robot
     int turn = 0;
     int shoot = 0;
 
-    public SampleBot()
+    public SampleBot2()
     {
         super();
     }
@@ -60,14 +60,14 @@ public class SampleBot extends Robot
 //            }
 //            else
 //            {
-                shoot++;
-                if (shoot > 2)
-                {
-                    System.out.println("test");
-                running = false;
-                    
-                }
-                attack();
+//                shoot++;
+//                if (shoot > 240)
+//                {
+//                    System.out.println("test");
+//                running = false;
+//                    
+//                }
+//                attack();
 //            }
         }
 

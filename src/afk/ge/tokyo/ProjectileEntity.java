@@ -18,12 +18,8 @@ public class ProjectileEntity extends AbstractEntity
     public ProjectileEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         super(gfxEntity, entityManager);
+        size = 0.001f;
         mass = 0.5f;
-    }
-
-    public void setOrigin(EntityState origin)
-    {
-        current = new EntityState(origin);
     }
 
     @Override
@@ -36,5 +32,12 @@ public class ProjectileEntity extends AbstractEntity
         current.velocity = Vec3.VEC3_ZERO;
         current.velocity = current.velocity.add(new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos));
         integrate(current, t, dt);
+//        for (int i = 0; i < entityManager.entities.size(); i++)
+//        {
+            if (intersectionTesting(this, entityManager.entities.get(1)))
+            {
+//                System.out.println(this + " --> " + entityManager.entities.get(i));
+            }
+//        }
     }
 }

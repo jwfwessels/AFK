@@ -22,6 +22,7 @@ public abstract class AbstractEntity
     protected float mass;
     protected float size;
     protected EntityManager entityManager;
+
     protected class Derivative
     {
 
@@ -36,6 +37,11 @@ public abstract class AbstractEntity
         previous = new EntityState(current);
         this.entityManager = entityManager;
 
+    }
+
+    public void setState(EntityState state)
+    {
+        current = new EntityState(state);
     }
 
     protected Derivative evaluate(EntityState state, float t, float dt, Derivative derivative)
@@ -102,4 +108,34 @@ public abstract class AbstractEntity
     }
 
     abstract void update(float t, float dt, boolean[] flags);
+
+    boolean intersectionTesting(AbstractEntity a, AbstractEntity b)
+    {
+        Vec3 B = (a.current.position.subtract(a.previous.position)).subtract(b.current.position.subtract(b.previous.position));
+        double bSqr = B.getLengthSquared();
+        if (Double.compare(bSqr, 0.0f) == 0)
+        {
+//            System.out.println("error");
+            return false;
+        }
+        Vec3 A = a.previous.position.subtract(b.previous.position);
+        double aSqr = A.getLengthSquared();
+        double rrSqr = (a.size + b.size) * (a.size + b.size);
+        double aDotbSqr = (A.dot(B)) * (A.dot(B));
+        double d2 = aSqr - (aDotbSqr / bSqr);
+
+        System.out.println("A^2: " + aSqr);
+        System.out.println("B^2: " + bSqr);
+        System.out.println("AdotB: " + (A.dot(B))*(A.dot(B)));
+        System.out.println("rrSqr: " + rrSqr);
+        System.out.println("d2: " + d2);
+        if (Double.compare(d2, rrSqr) > 0)
+        {
+            System.out.println("HIT!");
+            System.out.println("");
+            return true;
+        }
+        System.out.println("");
+        return false;
+    }
 }

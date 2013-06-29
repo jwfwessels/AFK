@@ -23,6 +23,7 @@ public class TankEntity extends AbstractEntity
     public TankEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         super(gfxEntity, entityManager);
+        size = 0.1f;
         mass = 2.0f;
     }
 
@@ -51,7 +52,7 @@ public class TankEntity extends AbstractEntity
         if (flags[Robot.ATTACK_ACTION])
         {
             ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile();
-            bullet.setOrigin(current);
+            bullet.setState(current);
             System.out.println("BANG!!!");
         }
         integrate(current, t, dt);

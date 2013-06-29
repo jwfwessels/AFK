@@ -10,6 +10,7 @@ import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
+import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,8 +22,8 @@ import java.util.logging.Logger;
 public class EntityManager
 {
 
-    private static ArrayList<AbstractEntity> entities;
-    private static ArrayList<AbstractEntity> subEntities;
+    public ArrayList<AbstractEntity> entities;
+    private ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
     Resource tankMesh;
     Resource tankShader;
@@ -62,7 +63,7 @@ public class EntityManager
         {
             gfxEngine.attachResource(projectileGfxEntity, tankMesh);
             gfxEngine.attachResource(projectileGfxEntity, tankShader);
-            projectileGfxEntity.setScale(0.5f, 0.5f, 0.5f);
+            projectileGfxEntity.setScale(0.2f, 0.2f, 0.2f);
             projectileGfxEntity.setPosition(5, 10, 5);
         } catch (ResourceNotLoadedException ex)
         {
@@ -78,7 +79,7 @@ public class EntityManager
         ArrayList commands = getInputs();
         for (int i = 0; i < entities.size(); i++)
         {
-//            boolean[] flags = (boolean[]) commands.get(i);
+            boolean[] flags = (boolean[]) commands.get(i);
             entities.get(i).update(t, delta, (boolean[]) commands.get(i));
         }
         for (int i = 0; i < subEntities.size(); i++)
@@ -90,14 +91,17 @@ public class EntityManager
 
     private ArrayList getInputs()
     {
-        ArrayList<Robot> bots = London.getRobots();
-        bots.get(0).run();
-        boolean[] temp = bots.get(0).getActionFlags();
-        boolean[] flags2 = new boolean[temp.length];
-        System.arraycopy(temp, 0, flags2, 0, temp.length);
-        bots.get(0).clearFlags();
         ArrayList tempFlags = new ArrayList();
-        tempFlags.add(flags2);
+        ArrayList<Robot> bots = London.getRobots();
+        for (int i = 0; i < bots.size(); i++)
+        {
+            bots.get(i).run();
+            boolean[] temp = bots.get(i).getActionFlags();
+            boolean[] tempArr = new boolean[temp.length];
+            System.arraycopy(temp, 0, tempArr, 0, temp.length);
+            bots.get(i).clearFlags();
+            tempFlags.add(tempArr);
+        }
         return tempFlags;
     }
 
@@ -119,7 +123,7 @@ public class EntityManager
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
-        
+
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
             @Override
@@ -132,7 +136,9 @@ public class EntityManager
                     gfxEngine.attachResource(floorGfxEntity, floorShader);
                     floorGfxEntity.setScale(50, 50, 50);
 
-                    TankEntity tank = (TankEntity) createTank();
+                    TankEntity tank = createTank();
+                    TankEntity tank2 = createTank();
+                    tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
 //                    ProjectileEntity bullet = (ProjectileEntity) createProjectile(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
 //                  addEntity(tank);
 //                    tank.setProjectileGfx(projectileGfxEntity);
