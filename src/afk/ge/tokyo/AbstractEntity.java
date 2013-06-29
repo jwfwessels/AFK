@@ -123,7 +123,10 @@ public abstract class AbstractEntity
         double aDotb = (A.dot(B));
         double aDotbSqr = aDotb * aDotb;
         double d2 = aSqr - (aDotbSqr / bSqr);
+        
 
+        System.out.println("B: " + B.toString());
+        System.out.println("A: " + A.toString());
         System.out.println("A^2: " + aSqr);
         System.out.println("B^2: " + bSqr);
         System.out.println("aDotb: " + aDotb);
