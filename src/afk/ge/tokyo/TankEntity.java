@@ -4,6 +4,8 @@
  */
 package afk.ge.tokyo;
 
+import afk.ge.EntityState;
+import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.london.Robot;
 import com.hackoeur.jglm.Vec3;
@@ -26,7 +28,7 @@ public class TankEntity extends AbstractEntity
     }
 
     @Override
-    void update(float t, float dt, boolean[] flags)
+    public void update(float t, float dt, boolean[] flags)
     {
         float angle = -(float) Math.toRadians(current.rotation.getY());
         float sin = (float) Math.sin(angle);
