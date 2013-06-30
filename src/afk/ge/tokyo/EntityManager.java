@@ -12,6 +12,7 @@ import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
+import afk.london.RobotEvent;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
 public class EntityManager
 {
 
-    public ArrayList<AbstractEntity> entities;
+    public ArrayList<TankEntity> entities;
     private ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
     Resource tankMesh;
@@ -42,7 +43,7 @@ public class EntityManager
     public EntityManager(London botEngine)
     {
         this.botEngine = botEngine;
-        entities = new ArrayList<AbstractEntity>();
+        entities = new ArrayList<TankEntity>();
         subEntities = new ArrayList<AbstractEntity>();
         //TODO; getinstance still needs to be refactored
         gfxEngine = GraphicsEngine.getInstance(0, 0, null, true);
@@ -102,6 +103,15 @@ public class EntityManager
         {
             subEntities.get(i).update(t, delta, null);
         }
+        
+        ArrayList<RobotEvent> events = new ArrayList<RobotEvent>();
+        for (int i = 0; i < entities.size(); i++)
+        {
+            ArrayList<Float> visible = entities.get(i).checkVisible();
+            RobotEvent event = new RobotEvent(visible, false, false, false);
+            events.add(event);
+        }
+        botEngine.feedback(events);
 
     }
 

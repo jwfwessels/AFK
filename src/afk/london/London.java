@@ -31,6 +31,19 @@ public class London
     {
         robots.add(bot);
     }
+    
+    /**
+     * Give feedback to all the bots.
+     * @param events List of RobotEvent objects to give to each robot.
+     */
+    public void feedback(ArrayList<RobotEvent> events)
+    {
+        for (int i = 0; i < events.size(); i++)
+        {
+            Robot robot = robots.get(i);
+            robot.events = events.get(i);
+        }
+    }
 
     public ArrayList<Robot> getRobots()
     {

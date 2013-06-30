@@ -59,11 +59,7 @@ public class TankEntity extends AbstractEntity
         }
         if (flags[Robot.ATTACK_ACTION])
         {
-            ArrayList targets;
-            if ((targets = checkVisible()).size() > 0)
-            {
-                fireProjectile(t);
-            }
+            fireProjectile(t);
         }
         integrate(current, t, dt);
 //        checkVisible();
@@ -82,10 +78,10 @@ public class TankEntity extends AbstractEntity
         }
     }
 
-    private ArrayList checkVisible()
+    protected ArrayList<Float> checkVisible()
     {
         float halfFOV = FOV / 2;
-        ArrayList targets = new ArrayList();
+        ArrayList<Float> targets = new ArrayList();
         for (int i = 0; i < entityManager.entities.size(); i++)
         {
             AbstractEntity b = entityManager.entities.get(i);

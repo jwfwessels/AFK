@@ -11,10 +11,9 @@ import afk.london.Robot;
 public class SampleBot2 extends Robot
 {
 
-    boolean running = true;
-    int move = 0;
-    int turn = 0;
-    int shoot = 0;
+    int movement = 0;
+    int rotation = 0;
+    boolean turning = true;
 
     public SampleBot2()
     {
@@ -24,55 +23,41 @@ public class SampleBot2 extends Robot
     @Override
     public void run()
     {
-        if (running)
+        if (turning)
         {
-//            if (move < 200)
-//            {
-//                moveForward();
-//                move++;
-//            }
-//            else if (turn < 90)
-//            {
-//                turnClockwise();
-//                turn++;
-//            }
-//            else if (move < 400)
-//            {
-//                moveBackwards();
-//                move++;
-//            }
-//            else if (move < 800 && turn < 270)
-//            {
-//                moveBackwards();
-//                move++;
-//                if (move % 2 == 0)
-//                {
-//                    turnAntiClockwise();
-//                    turn++;
-//                }
-//            }
-//            else if (turn < 360)
-//            {
-//                turnAntiClockwise();
-//                turn++;
-//            }
-//            else if (move < 1000)
-//            {
-//                moveForward();
-//                move++;
-//            }
-//            else
-//            {
-//                shoot++;
-//                if (shoot > 240)
-//                {
-//                    System.out.println("test");
-//                running = false;
-//                    
-//                }
-//                attack();
-//            }
+            turn();
         }
-
+        else
+        {
+            move();
+        }
+    }
+    
+    public void turn()
+    {
+        if (rotation < 90)
+        {
+            turnAntiClockwise();
+            rotation++;
+        }
+        else
+        {
+            rotation = 0;
+            turning = false;
+        }
+    }
+    
+    public void move()
+    {
+        if (movement < 1600)
+        {
+            moveForward();
+            movement++;
+        }
+        else
+        {
+            movement = 0;
+            turning = true;
+        }
     }
 }

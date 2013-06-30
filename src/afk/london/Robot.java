@@ -19,7 +19,7 @@ public abstract class Robot
     public static final int TURN_ANTICLOCK = 3;
     public static final int ATTACK_ACTION = 4;
     private boolean[] actionFlags;
-    private boolean[] eventFlags;
+    protected RobotEvent events;
 
     /*
      * Abstract method that will be implemented by user
