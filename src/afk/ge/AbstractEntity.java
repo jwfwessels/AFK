@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.ge.tokyo;
+package afk.ge;
 
+import afk.ge.tokyo.EntityManager;
 import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
@@ -15,14 +16,19 @@ import com.hackoeur.jglm.support.FastMath;
 public abstract class AbstractEntity
 {
 
-    public float ANGULAR_VELOCITY = 1.0f;
-    public float VELOCITY = 0.5f;
+    protected float ANGULAR_VELOCITY = 1.0f;
+    protected float VELOCITY = 0.5f;
     protected GfxEntity gfxPos;
     protected EntityState current;
     protected EntityState previous;
     protected float mass;
     protected float size;
     protected EntityManager entityManager;
+
+    public GfxEntity getgfxEntity()
+    {
+        return gfxPos;
+    }
 
     protected class Derivative
     {
@@ -104,7 +110,7 @@ public abstract class AbstractEntity
     //        float b = 1;
     //        return state.position.multiply(-k).subtract(state.velocity.multiply(b));
     //    }
-    void render(float alpha)
+    public void render(float alpha)
     {
         EntityState gfxState = interpolate(alpha);
         gfxPos.setPosition(gfxState.position);
@@ -112,9 +118,9 @@ public abstract class AbstractEntity
         //        System.out.println("gfxState.position " + gfxState.position.toString());
     }
 
-    abstract void update(float t, float dt, boolean[] flags);
+    public abstract void update(float t, float dt, boolean[] flags);
 
-    boolean intersectionTesting(AbstractEntity a, AbstractEntity b)
+    protected boolean intersectionTesting(AbstractEntity a, AbstractEntity b)
     {
         Vec3 B = (a.current.position.subtract(a.previous.position)).subtract(b.current.position.subtract(b.previous.position));
         double bSqr = B.getLengthSquared();

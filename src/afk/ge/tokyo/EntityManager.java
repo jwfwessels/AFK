@@ -4,11 +4,12 @@
  */
 package afk.ge.tokyo;
 
+import afk.ge.EntityState;
+import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
-import afk.gfx.athens.particles.ParticleEmitter;
 import afk.london.London;
 import afk.london.Robot;
 import com.hackoeur.jglm.Vec3;
@@ -169,7 +170,7 @@ public class EntityManager
 
     void RomoveSubEntity(AbstractEntity entity)
     {
-        gfxEngine.deleteEntity(entity.gfxPos);
+        gfxEngine.deleteEntity(entity.getgfxEntity());
         subEntities.remove(entity);
     }
 
