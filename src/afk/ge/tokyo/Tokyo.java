@@ -82,11 +82,13 @@ public class Tokyo extends GameEngine
     @Override
     protected void gameLoop()
     {
+        while (!gameInProgress.get()) { /* spin! */}
         double currentTime = System.nanoTime();
         float accumulator = 0.0f;
         int i = 0;
         while (running)
         {
+            
             double newTime = System.nanoTime();
             double frameTime = newTime - currentTime;
             if (frameTime > MAX_FRAMETIME)
@@ -118,6 +120,7 @@ public class Tokyo extends GameEngine
     protected void render(float alpha)
     {
         entityManager.renderEntities(alpha);
+        
         gfxEngine.redisplay();
     }
 
@@ -127,12 +130,19 @@ public class Tokyo extends GameEngine
         ArrayList<String> bots = getParticipatingBots();
         for (int i = 0; i < bots.size(); i++)
         {
-            String path = botMap.get(bots.get(i));
+            String path = bots.get(i);
             Robot loadedBot = botEngine.loadBot(path);
             botEngine.registerBot(loadedBot);
             entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
         }
     }
+    
+    private void startGame()
+    {
+        gameInProgress.set(true);
+    }
+    
+    private AtomicBoolean gameInProgress = new AtomicBoolean(false);
     
     private static final Vec3[] BOT_COLOURS = {
         new Vec3(1,0,0),
@@ -145,13 +155,13 @@ public class Tokyo extends GameEngine
     };
     
     private static final Vec3[] SPAWN_POINTS = {
-        new Vec3(-40,0,-40),
-        new Vec3(40,0,40),
-        new Vec3(-40,0,40),
-        new Vec3(40,0,-40),
-        new Vec3(-40,0,0),
-        new Vec3(0,0,-40),
-        new Vec3(-40,0,0)
+        new Vec3(-20,0,-20),
+        new Vec3(20,0,20),
+        new Vec3(-20,0,20),
+        new Vec3(20,0,-20),
+        new Vec3(-20,0,0),
+        new Vec3(0,0,-20),
+        new Vec3(-20,0,0)
     };
         
     private JFrame jFrame;
@@ -160,7 +170,7 @@ public class Tokyo extends GameEngine
     private HashMap<String, String> botMap = new HashMap<String, String>();
     private JPanel pnlBotSelection = new JPanel();
     private JPanel pnlArena = new JPanel();
-    private JFileChooser fileChooser = new JFileChooser();
+    private JFileChooser fileChooser = new JFileChooser(".");
     private JList<String> lstAvailableBots = new JList();
     private JList<String> lstSelectedBots = new JList();
     private DefaultListModel<String> lsAvailableModel = new DefaultListModel();
@@ -224,7 +234,7 @@ public class Tokyo extends GameEngine
         JButton btnLoadBot = new JButton("Load Bot");
         
         fileChooser.setDialogTitle("Load Bot");
-        fileChooser.setFileFilter(new FileNameExtensionFilter(".class", "java class file"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class"));
         
         btnAddBot.addActionListener(new ActionListener() 
         {
@@ -298,6 +308,7 @@ public class Tokyo extends GameEngine
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
                 loadBots();
+                startGame();
                 
                 jTPane.setSelectedComponent(pnlArena);
             }
