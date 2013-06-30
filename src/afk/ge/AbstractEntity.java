@@ -6,7 +6,11 @@ package afk.ge;
 
 import afk.ge.tokyo.EntityManager;
 import afk.gfx.GfxEntity;
+import afk.gfx.athens.AthensEntity;
+import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -147,5 +151,38 @@ public abstract class AbstractEntity
         }
         System.out.println("HIT!");
         return true;
+    }
+
+    protected float isVisible(AbstractEntity a, AbstractEntity b, float halfFOV, float viewingDistanceSqr)
+    {
+        float yRot = a.current.rotation.getY();
+        float xRot = a.current.rotation.getX();
+        float zRot = a.current.rotation.getZ();
+//        Vec3 aToB = a.current.position.subtract(b.current.position);
+        Vec3 aToB = b.current.position.subtract(a.current.position);
+        float adistB = aToB.getLengthSquared();
+        if (Float.compare(adistB, viewingDistanceSqr) > 0)
+        {
+            return Float.NaN;
+        }
+        Mat4 rotationMatrix = new Mat4(1.0f);
+        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, AthensEntity.X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
+        Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
+        Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
+        float theta = A.getUnitVector().dot(aToB.getUnitVector());
+        theta = (float) FastMath.toDegrees(FastMath.acos(theta));
+        System.out.println("A: " + A.getUnitVector().toString());
+        System.out.println("B: " + aToB.getUnitVector().toString());
+        System.out.println("theta: " + theta);
+        System.out.println("");
+        float absTheta = Math.abs(theta);
+        
+        if (Float.compare(absTheta, halfFOV) > 0)
+        {
+            return Float.NaN;
+        }
+        return theta;
     }
 }
