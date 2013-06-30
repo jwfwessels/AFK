@@ -1,11 +1,14 @@
-package afk.london;
+
+import afk.london.Robot;
+
+
 
 /**
  * Sample class of what coded bot will look like
  * @author Jessica
  *
  */
-public class SampleBot2 extends Robot
+public class SampleBot extends Robot
 {
 
     boolean running = true;
@@ -13,7 +16,7 @@ public class SampleBot2 extends Robot
     int turn = 0;
     int shoot = 0;
 
-    public SampleBot2()
+    public SampleBot()
     {
         super();
     }
@@ -23,11 +26,11 @@ public class SampleBot2 extends Robot
     {
         if (running)
         {
-//            if (move < 200)
-//            {
-//                moveForward();
-//                move++;
-//            }
+            if (move < 205)
+            {
+                moveForward();
+                move++;
+            }
 //            else if (turn < 90)
 //            {
 //                turnClockwise();
@@ -60,14 +63,13 @@ public class SampleBot2 extends Robot
 //            }
 //            else
 //            {
-//                shoot++;
-//                if (shoot > 240)
-//                {
-//                    System.out.println("test");
-//                running = false;
-//                    
-//                }
-//                attack();
+                if (shoot > 600)
+                {
+                    System.out.println("test");
+                running = false;
+                }
+                shoot++;
+                attack();
 //            }
         }
 
