@@ -60,7 +60,7 @@ public class ProjectileEntity extends AbstractEntity
                 b.hit(DAMAGE);
                 hit(DAMAGE);
                 // TODO: possible create explosion at the /exact/ location of impact?
-                entityManager.makeExplosion(this.current.position.add(new Vec3(0, 1, 0)));
+                entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0.75f, 0)), this.parent, 0);
             }
         }
     }

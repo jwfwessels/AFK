@@ -31,7 +31,8 @@ public class EntityManager
     Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
-    Resource explosionParams;
+    Resource explosionProjectile;
+    Resource explosionTank;
     Resource particleShader;
     Resource billboardMesh;
     GfxEntity fountain;
@@ -134,7 +135,8 @@ public class EntityManager
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
 
-        explosionParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosion");
+        explosionProjectile = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionProjectile");
+        explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
 
@@ -180,18 +182,25 @@ public class EntityManager
 
     // TODO: This is horrible! It's just for testing!
     // Please optimise/refactor before the universe ends!
-    void makeExplosion(Vec3 where)
+    void makeExplosion(Vec3 where, AbstractEntity parent, int type)
     {
-        GfxEntity bang = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
+        GfxEntity explostion = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
         try
         {
-            gfxEngine.attachResource(bang, explosionParams);
-            gfxEngine.attachResource(bang, particleShader);
-            gfxEngine.attachResource(bang, billboardMesh);
+            if (type == 0)
+            {
+                gfxEngine.attachResource(explostion, explosionProjectile);
+            } else if (type == 1)
+            {
+                gfxEngine.attachResource(explostion, explosionTank);
+            }
+            gfxEngine.attachResource(explostion, particleShader);
+            gfxEngine.attachResource(explostion, billboardMesh);
 
-            bang.setScale(Vec3.VEC3_ZERO);
-            bang.setPosition(where);
-            bang.active = true;
+            explostion.setScale(Vec3.VEC3_ZERO);
+            explostion.setPosition(where);
+
+            explostion.active = true;
         } catch (ResourceNotLoadedException ex)
         {
             System.err.println(ex.getMessage());
