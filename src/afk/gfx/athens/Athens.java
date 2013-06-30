@@ -682,11 +682,11 @@ public class Athens extends GraphicsEngine
                 entity = new AthensEntity();
                 break;
             case GfxEntity.BILLBOARD_SPHERICAL:
-                // TODO: entity = new BillboardSpherical();
-                return null; // break;
+                entity = new Billboard(true);
+                break;
             case GfxEntity.BILLBOARD_CYLINDRICAL:
-                // TODO: entity = new BillboardCylindrical();
-                return null; // break;
+                entity = new Billboard(false);
+                break;
             case GfxEntity.PARTICLE_EMITTER:
                 entity = new ParticleEmitter();
                 break;
