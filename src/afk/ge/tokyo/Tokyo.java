@@ -8,8 +8,6 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.london.London;
 import afk.london.Robot;
-import afk.london.SampleBot;
-import afk.london.SampleBot2;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -57,7 +55,9 @@ public class Tokyo extends GameEngine
     public Tokyo(GraphicsEngine gfxEngine)
     {
         this.gfxEngine = gfxEngine;
-        entityManager = new EntityManager();
+        this.botEngine = new London();
+        
+        entityManager = new EntityManager(botEngine);
         
         constructGUI();
     }
@@ -123,10 +123,7 @@ public class Tokyo extends GameEngine
     private void loadBots()
     {
         //TODO refactor load bots
-        Robot bot = new SampleBot();
-        London.registerBot(bot);
-        Robot bot2 = new SampleBot2();
-        London.registerBot(bot2);
+        getParticipatingBots();
     }
     
         
@@ -273,6 +270,8 @@ public class Tokyo extends GameEngine
             public void actionPerformed(ActionEvent e) 
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
+                loadBots();
+                
                 jTPane.setSelectedComponent(pnlArena);
             }
         });

@@ -36,9 +36,12 @@ public class EntityManager
     Resource particleShader;
     Resource billboardMesh;
     GfxEntity fountain;
+    
+    London botEngine;
 
-    public EntityManager()
+    public EntityManager(London botEngine)
     {
+        this.botEngine = botEngine;
         entities = new ArrayList<AbstractEntity>();
         subEntities = new ArrayList<AbstractEntity>();
         //TODO; getinstance still needs to be refactored
@@ -103,7 +106,7 @@ public class EntityManager
     private ArrayList getInputs()
     {
         ArrayList tempFlags = new ArrayList();
-        ArrayList<Robot> bots = London.getRobots();
+        ArrayList<Robot> bots = botEngine.getRobots();
         for (int i = 0; i < bots.size(); i++)
         {
             bots.get(i).run();
@@ -152,11 +155,13 @@ public class EntityManager
                     gfxEngine.attachResource(floorGfxEntity, floorShader);
                     floorGfxEntity.setScale(50, 50, 50);
 
+                    /*
                     TankEntity tank = createTank();
                     tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));
                     TankEntity tank2 = createTank();
                     tank2.setColour(new Vec3(0.0f, 0.0f, 0.8f));
                     tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
+                    */
                 } catch (ResourceNotLoadedException ex)
                 {
                     System.err.println(ex.getMessage());

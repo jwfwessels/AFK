@@ -13,18 +13,26 @@ import java.util.ArrayList;
 public class London
 {
 
-    private static ArrayList<Robot> robots = new ArrayList<Robot>();
+    private ArrayList<Robot> robots;
+    private RobotLoader botLoader;
 
-    private London()
+    public London()
     {
+        robots = new ArrayList<Robot>();
+        botLoader = new RobotLoader();
+    }
+    
+    public Robot loadBot(String path)
+    {
+        return botLoader.LoadRobot(path);
     }
 
-    public static void registerBot(Robot bot)
+    public void registerBot(Robot bot)
     {
         robots.add(bot);
     }
 
-    public static ArrayList<Robot> getRobots()
+    public ArrayList<Robot> getRobots()
     {
         return robots;
 //        return (ArrayList<Robot>)robots.clone();

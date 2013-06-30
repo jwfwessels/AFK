@@ -5,6 +5,7 @@
 package afk.ge;
 
 import afk.gfx.GraphicsEngine;
+import afk.london.London;
 
 /**
  *
@@ -14,6 +15,7 @@ public abstract class GameEngine implements Runnable
 {
 
     protected GraphicsEngine gfxEngine;
+    protected London botEngine;
 
 //    protected abstract void loadResources();
 
