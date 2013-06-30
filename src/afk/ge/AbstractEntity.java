@@ -20,6 +20,7 @@ import com.hackoeur.jglm.support.FastMath;
 public abstract class AbstractEntity
 {
 
+    public String name;
     protected float ANGULAR_VELOCITY = 1.0f;
     protected float VELOCITY = 0.5f;
     protected GfxEntity gfxPos;
@@ -28,10 +29,17 @@ public abstract class AbstractEntity
     protected float mass;
     protected float size;
     protected EntityManager entityManager;
+    protected float TOTAL_LIFE;
+    protected float life;
 
     public GfxEntity getgfxEntity()
     {
         return gfxPos;
+    }
+
+    public void hit(float DAMAGE)
+    {
+        life -= DAMAGE;
     }
 
     protected class Derivative
@@ -171,14 +179,11 @@ public abstract class AbstractEntity
         rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
         Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
         Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
+
         float theta = A.getUnitVector().dot(aToB.getUnitVector());
         theta = (float) FastMath.toDegrees(FastMath.acos(theta));
-        System.out.println("A: " + A.getUnitVector().toString());
-        System.out.println("B: " + aToB.getUnitVector().toString());
-        System.out.println("theta: " + theta);
-        System.out.println("");
         float absTheta = Math.abs(theta);
-        
+
         if (Float.compare(absTheta, halfFOV) > 0)
         {
             return Float.NaN;

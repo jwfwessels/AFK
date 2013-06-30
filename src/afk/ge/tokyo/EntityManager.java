@@ -31,7 +31,6 @@ public class EntityManager
     Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
-    
     Resource explosionParams;
     Resource particleShader;
     Resource billboardMesh;
@@ -47,6 +46,7 @@ public class EntityManager
 
     public TankEntity createTank()
     {
+        float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         try
         {
@@ -56,14 +56,16 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        TankEntity tank = new TankEntity(tankGfxEntity, this);
+        TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
+        tank.name = "tank" + (entities.size() - 1);
         return tank;
     }
 
-    public ProjectileEntity createProjectile()
+    public ProjectileEntity createProjectile(AbstractEntity parent)
     {
 
+        float DAMAGE = 1.5f;
         //dont have a projectile model yet, mini tank will be bullet XD
         GfxEntity projectileGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         try
@@ -76,8 +78,9 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this);
+        ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
         subEntities.add(projectile);
+        projectile.name = parent.name + "projectile";
         return projectile;
     }
 
@@ -87,7 +90,7 @@ public class EntityManager
         for (int i = 0; i < entities.size(); i++)
         {
             boolean[] flags = (boolean[]) commands.get(i);
-            entities.get(i).update(t, delta, (boolean[]) commands.get(i));
+            entities.get(i).update(t, delta, flags);
         }
         for (int i = 0; i < subEntities.size(); i++)
         {
@@ -152,11 +155,6 @@ public class EntityManager
                     TankEntity tank2 = createTank();
                     tank2.setColour(new Vec3(0.0f, 0.0f, 0.8f));
                     tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
-//                    ProjectileEntity bullet = (ProjectileEntity) createProjectile(projectileGfxEntity);//new ProjectileEntity(projectileGfxEntity);
-//                  addEntity(tank);
-//                    tank.setProjectileGfx(projectileGfxEntity);
-//                  addEntity(bullet);
-                    
                 } catch (ResourceNotLoadedException ex)
                 {
                     System.err.println(ex.getMessage());
@@ -174,6 +172,12 @@ public class EntityManager
         subEntities.remove(entity);
     }
 
+    void RomoveEntity(TankEntity entity)
+    {
+        gfxEngine.deleteEntity(entity.getgfxEntity());
+        entities.remove(entity);
+    }
+
     // TODO: This is horrible! It's just for testing!
     // Please optimise/refactor before the universe ends!
     void makeExplosion(Vec3 where)
@@ -184,7 +188,7 @@ public class EntityManager
             gfxEngine.attachResource(bang, explosionParams);
             gfxEngine.attachResource(bang, particleShader);
             gfxEngine.attachResource(bang, billboardMesh);
-            
+
             bang.setScale(Vec3.VEC3_ZERO);
             bang.setPosition(where);
             bang.active = true;

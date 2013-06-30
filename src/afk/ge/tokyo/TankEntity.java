@@ -9,6 +9,7 @@ import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.london.Robot;
 import com.hackoeur.jglm.Vec3;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,9 +23,10 @@ public class TankEntity extends AbstractEntity
     protected float FOV;
     private final int viewingDistanceSqr;
 
-    public TankEntity(GfxEntity gfxEntity, EntityManager entityManager)
+    public TankEntity(GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
     {
         super(gfxEntity, entityManager);
+        life = TOTAL_LIFE = totalLife;
         size = 1.4f;
         mass = 2.0f;
         RateOfFire = Tokyo.DELTA * 120;
@@ -57,7 +59,8 @@ public class TankEntity extends AbstractEntity
         }
         if (flags[Robot.ATTACK_ACTION])
         {
-            if (checkVisible())
+            ArrayList targets;
+            if ((targets = checkVisible()).size() > 0)
             {
                 fireProjectile(t);
             }
@@ -72,16 +75,17 @@ public class TankEntity extends AbstractEntity
         if (Float.compare(ready, RateOfFire) >= 0)
         {
             lastShot = t;
-            ProjectileEntity bullet = entityManager.createProjectile();
+            ProjectileEntity bullet = entityManager.createProjectile(this);
             bullet.setColour(new Vec3(0.75f, 0.0f, 0.0f));
             bullet.setState(current);
             System.out.println("BANG!!!");
         }
     }
 
-    private boolean checkVisible()
+    private ArrayList checkVisible()
     {
         float halfFOV = FOV / 2;
+        ArrayList targets = new ArrayList();
         for (int i = 0; i < entityManager.entities.size(); i++)
         {
             AbstractEntity b = entityManager.entities.get(i);
@@ -91,11 +95,22 @@ public class TankEntity extends AbstractEntity
                 float theta = isVisible(this, b, halfFOV, viewingDistanceSqr);
                 if (!Float.isNaN(theta))
                 {
-                    System.out.println(this + " <(©)> " + i);
-                    return true;
+                    System.out.println(this.name + " <(©)> " + b.name);
+                    targets.add(theta);
                 }
             }
         }
-        return false;
+        return targets;
+    }
+
+    @Override
+    public void hit(float DAMAGE)
+    {
+        life -= DAMAGE;
+        System.out.println(name + " life: " + life);
+        if (Float.compare(life, 0) <= 0)
+        {
+            entityManager.RomoveEntity(this);
+        }
     }
 }

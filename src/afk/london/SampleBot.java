@@ -60,7 +60,7 @@ public class SampleBot extends Robot
 //            }
 //            else
 //            {
-                if (shoot > 260)
+                if (shoot > 600)
                 {
                     System.out.println("test");
                 running = false;
