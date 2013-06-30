@@ -17,14 +17,20 @@ import com.hackoeur.jglm.Vec3;
 public class TankEntity extends AbstractEntity
 {
 
-//    protected GfxEntity projectileGfxEntity;
-//    boolean shoot = false;
+    protected float RateOfFire;
+    protected float lastShot;
+    protected float FOV;
+    private final int viewingDistanceSqr;
 
     public TankEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         super(gfxEntity, entityManager);
         size = 1.4f;
         mass = 2.0f;
+        RateOfFire = Tokyo.DELTA * 120;
+        lastShot = 0;
+        FOV = 60;
+        viewingDistanceSqr = 5 * 5;
     }
 
     @Override
@@ -51,11 +57,45 @@ public class TankEntity extends AbstractEntity
         }
         if (flags[Robot.ATTACK_ACTION])
         {
+            if (checkVisible())
+            {
+                fireProjectile(t);
+            }
+        }
+        integrate(current, t, dt);
+//        checkVisible();
+    }
+
+    private void fireProjectile(float t)
+    {
+        float ready = t - lastShot;
+        if (Float.compare(ready, RateOfFire) >= 0)
+        {
+            lastShot = t;
             ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile();
             bullet.setColour(new Vec3(0.8f, 0.0f, 0.0f));
             bullet.setState(current);
             System.out.println("BANG!!!");
         }
-        integrate(current, t, dt);
+    }
+
+    private boolean checkVisible()
+    {
+        float halfFOV = FOV / 2;
+        for (int i = 0; i < entityManager.entities.size(); i++)
+        {
+            AbstractEntity b = entityManager.entities.get(i);
+            if (b != this)
+            {
+
+                float theta = isVisible(this, b, halfFOV, viewingDistanceSqr);
+                if (!Float.isNaN(theta))
+                {
+                    System.out.println(this + " <(©)> " + i);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

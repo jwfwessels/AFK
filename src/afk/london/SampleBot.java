@@ -23,11 +23,11 @@ public class SampleBot extends Robot
     {
         if (running)
         {
-//            if (move < 200)
-//            {
-//                moveForward();
-//                move++;
-//            }
+            if (move < 205)
+            {
+                moveForward();
+                move++;
+            }
 //            else if (turn < 90)
 //            {
 //                turnClockwise();
@@ -60,13 +60,12 @@ public class SampleBot extends Robot
 //            }
 //            else
 //            {
-                shoot++;
-                if (shoot > 20)
+                if (shoot > 260)
                 {
                     System.out.println("test");
                 running = false;
-                    
                 }
+                shoot++;
                 attack();
 //            }
         }

@@ -22,8 +22,6 @@ public class EntityState
     public EntityState(Vec3 position)
     {
         this.position = position;
-        System.out.println("postion" + position);
-        System.out.println("this.postion" + this.position);
         this.momentum = Vec3.VEC3_ZERO;
         this.velocity = Vec3.VEC3_ZERO;
         this.rotation = Vec3.VEC3_ZERO;

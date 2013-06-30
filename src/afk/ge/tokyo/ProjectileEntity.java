@@ -33,6 +33,11 @@ public class ProjectileEntity extends AbstractEntity
         previous = new EntityState(current);
         current.velocity = new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos);
         integrate(current, t, dt);
+        checkColision();
+    }
+
+    private void checkColision()
+    {
         for (int i = 0; i < entityManager.entities.size(); i++)
         {
             if (intersectionTesting(this, entityManager.entities.get(i)))
@@ -40,7 +45,7 @@ public class ProjectileEntity extends AbstractEntity
                 System.out.println(this + " --> " + i);
                 entityManager.RomoveSubEntity(this);
                 // TODO: possible create explosion at the /exact/ location of impact?
-                entityManager.makeExplosion(this.current.position.add(new Vec3(0,1,0)));
+                entityManager.makeExplosion(this.current.position.add(new Vec3(0, 1, 0)));
             }
         }
     }
