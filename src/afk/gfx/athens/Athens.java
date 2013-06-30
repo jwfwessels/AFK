@@ -309,7 +309,9 @@ public class Athens extends GraphicsEngine
                     throw new RuntimeException("Could not load heightmap: feature not implemented");
                 case Resource.TEXTURE_2D:
                     try {
-                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), Texture2D.fromFile(gl, new File("textures/"+resource.getName()+".png")));
+                        Texture2D loadedTexture = Texture2D.fromFile(gl, new File("textures/"+resource.getName()+".png"));
+                        loadedTexture.setParameters(gl, Texture.texParamsDefault);
+                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), loadedTexture);
                     } catch (IOException ioe)
                     {
                         // TODO: load "default" texture, like a magenta checkerboard or something
