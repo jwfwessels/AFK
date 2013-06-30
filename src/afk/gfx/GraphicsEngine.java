@@ -87,4 +87,6 @@ public abstract class GraphicsEngine
     public abstract int getMouseX();
     
     public abstract int getMouseY();
+    
+    public abstract ArrayList<String> getParticipatingBots();
 }

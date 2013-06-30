@@ -213,7 +213,7 @@ public class Athens extends GraphicsEngine
         JButton btnLoadBot = new JButton("Load Bot");
         
         fileChooser.setDialogTitle("Load Bot");
-        fileChooser.setFileFilter(new FileNameExtensionFilter(".java", "java"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter(".class", "java class file"));
         
         btnAddBot.addActionListener(new ActionListener() 
         {
@@ -913,5 +913,13 @@ public class Athens extends GraphicsEngine
         onLoadCallback = callback;
     }
     
-    
+    public ArrayList<String> getParticipatingBots()
+    {
+        ArrayList<String> bots = new ArrayList<String>();
+        for(int x = 0; x < lsSelectedModel.size(); x++)
+        {
+            bots.add(botMap.get(lsSelectedModel.getElementAt(x)));
+        }
+        return bots;
+    }
 }

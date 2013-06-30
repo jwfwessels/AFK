@@ -14,6 +14,7 @@ import afk.london.SampleBot;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import afk.london.RobotLoader;
 
 /**
  *
@@ -187,8 +188,13 @@ public class Tokyo extends GameEngine
 
     private void loadBots()
     {
-
-        Robot bot = new SampleBot();
-        London.registerBot(bot);
+        ArrayList<String> bots = gfxEngine.getParticipatingBots();
+        RobotLoader botLoader = new RobotLoader();
+        for(int x = 0; x < bots.size(); x++)
+        {
+            London.registerBot(botLoader.LoadRobot(bots.get(x)));
+        }
+        //Robot bot = new SampleBot();
+        //London.registerBot(bot);
     }
 }
