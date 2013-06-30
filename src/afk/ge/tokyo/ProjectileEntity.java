@@ -16,9 +16,15 @@ import com.hackoeur.jglm.Vec3;
 public class ProjectileEntity extends AbstractEntity
 {
 
-    public ProjectileEntity(GfxEntity gfxEntity, EntityManager entityManager)
+    AbstractEntity parent;
+    private final float DAMAGE;
+
+    public ProjectileEntity(GfxEntity gfxEntity, EntityManager entityManager, AbstractEntity parent, float damage)
     {
         super(gfxEntity, entityManager);
+        this.parent = parent;
+        DAMAGE = damage;
+        life = TOTAL_LIFE = damage;
         size = 0.14f;
         mass = 0.5f;
         VELOCITY = 2.5f;
@@ -35,9 +41,9 @@ public class ProjectileEntity extends AbstractEntity
         integrate(current, t, dt);
         checkColision();
     }
-    
+
     @Override
-        public void setState(EntityState state)
+    public void setState(EntityState state)
     {
         current = new EntityState(state);
         current.position = current.position.add(new Vec3(0, 0.8f, 0));
@@ -47,13 +53,26 @@ public class ProjectileEntity extends AbstractEntity
     {
         for (int i = 0; i < entityManager.entities.size(); i++)
         {
-            if (intersectionTesting(this, entityManager.entities.get(i)))
+            AbstractEntity b = entityManager.entities.get(i);
+            if (intersectionTesting(this, b))
             {
-                System.out.println(this + " --> " + i);
-                entityManager.RomoveSubEntity(this);
+                System.out.println(this.parent.name + " ==> " + b.name);
+                b.hit(DAMAGE);
+                hit(DAMAGE);
                 // TODO: possible create explosion at the /exact/ location of impact?
                 entityManager.makeExplosion(this.current.position.add(new Vec3(0, 1, 0)));
             }
+        }
+    }
+
+    @Override
+    public void hit(float DAMAGE)
+    {
+        life -= DAMAGE;
+        System.out.println(name + " life: " + life);
+        if (Float.compare(life, 0) <= 0)
+        {
+            entityManager.RomoveSubEntity(this);
         }
     }
 }
