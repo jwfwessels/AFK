@@ -94,11 +94,20 @@ public class ParticleEmitter extends AthensEntity
     {
         shader.use(gl);
         
+        if (texture != null)
+        {
+            texture.use(gl, GL2.GL_TEXTURE0);
+            shader.updateUniform(gl, "tex", 0);
+        }
+        
         shader.updateUniform(gl, "view", camera.view);
         shader.updateUniform(gl, "projection", camera.projection);
         
         shader.updateUniform(gl, "sun", sun);
         shader.updateUniform(gl, "eye", camera.eye);
+        
+        if (colour != null)
+            shader.updateUniform(gl, "colour", colour);
         
         for (int i = 0; i < particles.length; i++)
         {

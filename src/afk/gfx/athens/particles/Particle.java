@@ -93,10 +93,6 @@ public class Particle
     protected void draw(GL2 gl, Mesh mesh, Camera camera, Shader shader)
     {
         
-        // TODO: figure out how to do texturing. May only allow single texture, but could allow multitexturing or bump/normal mapping later
-        //tex.use(gl, GL.GL_TEXTURE0);
-        //shader.updateUniform(gl, "tex", 0);
-        
         shader.updateUniform(gl, "world", createWorldMatrix(camera));
         
         mesh.draw(gl);

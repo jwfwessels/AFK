@@ -309,23 +309,25 @@ public class Athens extends GraphicsEngine
                     throw new RuntimeException("Could not load heightmap: feature not implemented");
                 case Resource.TEXTURE_2D:
                     try {
-                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), Texture2D.fromFile(gl, new File("textures/"+resource)));
+                        Texture2D loadedTexture = Texture2D.fromFile(gl, new File("textures/"+resource.getName()+".png"));
+                        loadedTexture.setParameters(gl, Texture.texParamsDefault);
+                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), loadedTexture);
                     } catch (IOException ioe)
                     {
                         // TODO: load "default" texture, like a magenta checkerboard or something
-                        throw new RuntimeException("Error loading texture: " + ioe.getMessage());
+                        throw new RuntimeException("Error loading texture " + resource.getName() + ": " + ioe.getMessage());
                     }
                     break;
                 case Resource.TEXTURE_CUBE:
                     try
                     {
                         texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), TextureCubeMap.fromFiles(gl, new File[]{
-                            new File("textures/" + resource + "_positive_x"),
-                            new File("textures/" + resource + "_negative_x"),
-                            new File("textures/" + resource + "_positive_y"),
-                            new File("textures/" + resource + "_negative_y"),
-                            new File("textures/" + resource + "_positive_z"),
-                            new File("textures/" + resource + "_negative_z")
+                            new File("textures/" + resource + "_positive_x.png"),
+                            new File("textures/" + resource + "_negative_x.png"),
+                            new File("textures/" + resource + "_positive_y.png"),
+                            new File("textures/" + resource + "_negative_y.png"),
+                            new File("textures/" + resource + "_positive_z.png"),
+                            new File("textures/" + resource + "_negative_z.png")
                         }));
                     } catch (IOException ioe)
                     {

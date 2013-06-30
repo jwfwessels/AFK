@@ -68,9 +68,11 @@ public class Billboard extends AthensEntity
         
         shader.use(gl);
         
-        // TODO: figure out how to do texturing. May only allow single texture, but could allow multitexturing or bump/normal mapping later
-        //tex.use(gl, GL.GL_TEXTURE0);
-        //shader.updateUniform(gl, "tex", 0);
+        if (texture != null)
+        {
+            texture.use(gl, GL2.GL_TEXTURE0);
+            shader.updateUniform(gl, "tex", 0);
+        }
         
         shader.updateUniform(gl, "world", createWorldMatrix(camera));
         shader.updateUniform(gl, "view", camera.view);
