@@ -48,9 +48,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicBorders;
 
 public class Athens extends GraphicsEngine
@@ -124,6 +127,7 @@ public class Athens extends GraphicsEngine
     private HashMap<String, String> botMap = new HashMap<String, String>();
     private JPanel pnlBotSelection = new JPanel();
     private JPanel pnlArena = new JPanel();
+    private JFileChooser fileChooser = new JFileChooser();
     private JList<String> lstAvailableBots = new JList();
     private JList<String> lstSelectedBots = new JList();
     private DefaultListModel<String> lsAvailableModel = new DefaultListModel();
@@ -191,8 +195,12 @@ public class Athens extends GraphicsEngine
         
         JPanel pnlBotSelButtons = new JPanel();
         JPanel pnlAvailable = new JPanel();
+        JPanel pnlSelected = new JPanel();
+        JLabel lblAvailable = new JLabel("Available Bots");
+        JLabel lblSelected = new JLabel("Selected Bots");
         
         pnlAvailable.setLayout(new BorderLayout());
+        pnlSelected.setLayout(new BorderLayout());
         
         pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
         pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
@@ -203,6 +211,9 @@ public class Athens extends GraphicsEngine
         JButton btnRemoveAllBots = new JButton("<<");
         JButton btnStartMatch = new JButton("Start");
         JButton btnLoadBot = new JButton("Load Bot");
+        
+        fileChooser.setDialogTitle("Load Bot");
+        fileChooser.setFileFilter(new FileNameExtensionFilter(".java", "java"));
         
         btnAddBot.addActionListener(new ActionListener() 
         {
@@ -249,7 +260,6 @@ public class Athens extends GraphicsEngine
                     lsAvailableModel.addElement(lsSelectedModel.getElementAt(0));
                     lsSelectedModel.removeElementAt(0);
                 }
-                // TODO: Move all bots from selected list to available list
             }
         });
         
@@ -258,7 +268,15 @@ public class Athens extends GraphicsEngine
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                // TODO: Load bot from file, .jar or .java
+                int option = fileChooser.showOpenDialog(jFrame);
+                if(option != JFileChooser.APPROVE_OPTION)
+                {
+                    return;
+                }
+                String botPath = fileChooser.getSelectedFile().getAbsolutePath();
+                String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
+                botMap.put(botName, botPath);
+                lsAvailableModel.addElement(botName);
             }
         });
         
@@ -267,7 +285,7 @@ public class Athens extends GraphicsEngine
             @Override
             public void actionPerformed(ActionEvent e) 
             {
-                // TODO: Change tab - use selected list model as bots for match
+                // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
                 jTPane.setSelectedComponent(pnlArena);
             }
         });
@@ -280,9 +298,6 @@ public class Athens extends GraphicsEngine
         
         //TODO: Put list boxes on scroll panes and give them borders
         
-        botMap.put("Random bot", "Some path");
-        botMap.put("Thing", "thingsPath");
-        botMap.put("Stuff", "stuffsPath");
         Iterator it = botMap.keySet().iterator();
         
         while(it.hasNext())
@@ -292,12 +307,16 @@ public class Athens extends GraphicsEngine
         lstAvailableBots.setModel(lsAvailableModel);
         lstSelectedBots.setModel(lsSelectedModel);
         
+        pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
         pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
         pnlAvailable.add(btnLoadBot, BorderLayout.SOUTH);
         
+        pnlSelected.add(lblSelected, BorderLayout.NORTH);
+        pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
+        
         pnlBotSelection.add(pnlAvailable);
         pnlBotSelection.add(pnlBotSelButtons);
-        pnlBotSelection.add(lstSelectedBots);
+        pnlBotSelection.add(pnlSelected);
         
         jFrame.addWindowListener( new WindowAdapter() {
             @Override
