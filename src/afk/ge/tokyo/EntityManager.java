@@ -196,7 +196,7 @@ public class EntityManager
             }
             gfxEngine.attachResource(explostion, particleShader);
             gfxEngine.attachResource(explostion, billboardMesh);
-
+            explostion.colour = parent.getgfxEntity().colour;
             explostion.setScale(Vec3.VEC3_ZERO);
             explostion.setPosition(where);
 

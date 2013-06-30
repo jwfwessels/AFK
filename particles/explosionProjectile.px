@@ -7,6 +7,6 @@ speedJitter 	= 10
 spawnInterval 	= 0 ; explosion
 maxLife		= 0.3
 lifeJitter 	= 0.2
-numParticles 	= 3
+numParticles 	= 7
 noDirection 	= false
 boundingBox 	= -30 32.5 -30	30 0 30
