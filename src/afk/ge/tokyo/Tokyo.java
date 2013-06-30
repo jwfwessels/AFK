@@ -8,6 +8,7 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.london.London;
 import afk.london.Robot;
+import com.hackoeur.jglm.Vec3;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -123,9 +124,35 @@ public class Tokyo extends GameEngine
     private void loadBots()
     {
         //TODO refactor load bots
-        getParticipatingBots();
+        ArrayList<String> bots = getParticipatingBots();
+        for (int i = 0; i < bots.size(); i++)
+        {
+            String path = botMap.get(bots.get(i));
+            Robot loadedBot = botEngine.loadBot(path);
+            botEngine.registerBot(loadedBot);
+            entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
+        }
     }
     
+    private static final Vec3[] BOT_COLOURS = {
+        new Vec3(1,0,0),
+        new Vec3(0,0,1),
+        new Vec3(0,1,0),
+        new Vec3(1,1,0),
+        new Vec3(1,0,1),
+        new Vec3(1,0,1),
+        new Vec3(0.6f,0.6f,0.6f),
+    };
+    
+    private static final Vec3[] SPAWN_POINTS = {
+        new Vec3(-40,0,-40),
+        new Vec3(40,0,40),
+        new Vec3(-40,0,40),
+        new Vec3(40,0,-40),
+        new Vec3(-40,0,0),
+        new Vec3(0,0,-40),
+        new Vec3(-40,0,0)
+    };
         
     private JFrame jFrame;
     private JTabbedPane jTPane;

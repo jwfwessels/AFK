@@ -48,7 +48,7 @@ public class EntityManager
         gfxEngine = GraphicsEngine.getInstance(0, 0, null, true);
     }
 
-    public TankEntity createTank()
+    public TankEntity createTank(Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
@@ -60,6 +60,8 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        tankGfxEntity.colour = colour;
+        tankGfxEntity.setPosition(spawnPoint);
         TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
