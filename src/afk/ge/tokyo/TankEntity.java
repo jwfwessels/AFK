@@ -57,10 +57,13 @@ public class TankEntity extends AbstractEntity
         }
         if (flags[Robot.ATTACK_ACTION])
         {
-            fireProjectile(t);
+            if (checkVisible())
+            {
+                fireProjectile(t);
+            }
         }
         integrate(current, t, dt);
-        checkVisible();
+//        checkVisible();
     }
 
     private void fireProjectile(float t)
@@ -89,6 +92,7 @@ public class TankEntity extends AbstractEntity
                 if (!Float.isNaN(theta))
                 {
                     System.out.println(this + " <(©)> " + i);
+                    return true;
                 }
             }
         }
