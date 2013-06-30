@@ -72,8 +72,8 @@ public class TankEntity extends AbstractEntity
         if (Float.compare(ready, RateOfFire) >= 0)
         {
             lastShot = t;
-            ProjectileEntity bullet = (ProjectileEntity) entityManager.createProjectile();
-            bullet.setColour(new Vec3(0.8f, 0.0f, 0.0f));
+            ProjectileEntity bullet = entityManager.createProjectile();
+            bullet.setColour(new Vec3(0.75f, 0.0f, 0.0f));
             bullet.setState(current);
             System.out.println("BANG!!!");
         }

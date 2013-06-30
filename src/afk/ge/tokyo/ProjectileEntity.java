@@ -35,6 +35,13 @@ public class ProjectileEntity extends AbstractEntity
         integrate(current, t, dt);
         checkColision();
     }
+    
+    @Override
+        public void setState(EntityState state)
+    {
+        current = new EntityState(state);
+        current.position = current.position.add(new Vec3(0, 0.8f, 0));
+    }
 
     private void checkColision()
     {
