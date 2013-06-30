@@ -1,6 +1,7 @@
 package afk.gfx;
 
 import afk.gfx.athens.Athens;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -63,6 +64,8 @@ public abstract class GraphicsEngine
         updatables.remove(u);
     }
     
+    public abstract Component getAWTComponent();
+    
     public abstract void redisplay();
     
     public abstract void dispatchLoadQueue(Runnable callback);
@@ -88,5 +91,4 @@ public abstract class GraphicsEngine
     
     public abstract int getMouseY();
     
-    public abstract ArrayList<String> getParticipatingBots();
 }
