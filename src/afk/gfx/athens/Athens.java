@@ -8,6 +8,8 @@ import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.Updatable;
+import afk.gfx.athens.particles.ParticleEmitter;
+import afk.gfx.athens.particles.ParticleParameters;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.BorderLayout;
@@ -29,12 +31,14 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -78,8 +82,10 @@ public class Athens extends GraphicsEngine
 
     private Map<String, Shader> shaderResources;
     
+    private Map<String, ParticleParameters> particleResources;
+    
     // TODO: decide on list implementation
-    private List<AthensEntity> entities = new ArrayList<AthensEntity>();
+    private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
     
     // TODO: add other resource types here later maybe
 
@@ -121,6 +127,8 @@ public class Athens extends GraphicsEngine
     private Animator animator;
     private String title;
     
+    /// TESTING STUFF ///
+    
     public Athens(int width, int height, String title, boolean autodraw)
     {
         for (int i = 0; i < meshResources.length; i++)
@@ -133,6 +141,7 @@ public class Athens extends GraphicsEngine
         }
         matResources = new HashMap<String, Object>();
         shaderResources = new HashMap<String, Shader>();
+        particleResources = new HashMap<String, ParticleParameters>();
         
         this.w_width = width;
         this.w_height = height;
@@ -304,6 +313,8 @@ public class Athens extends GraphicsEngine
                 case Resource.PRIMITIVE_MESH:
                     if ("quad".equals(resource.getName()))
                         meshResources[resource.getType()].put(resource.getName(), new Quad(gl, 1, 1, 0));
+                    else if ("billboard".equals(resource.getName()))
+                        meshResources[resource.getType()].put(resource.getName(), new BillboardQuad(gl));
                     break;
                     // TODO: add more primitive types
                     // TODO: it may be feasible to have all primitive types preloaded at all times?
@@ -312,23 +323,25 @@ public class Athens extends GraphicsEngine
                     throw new RuntimeException("Could not load heightmap: feature not implemented");
                 case Resource.TEXTURE_2D:
                     try {
-                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), Texture2D.fromFile(gl, new File("textures/"+resource)));
+                        Texture2D loadedTexture = Texture2D.fromFile(gl, new File("textures/"+resource.getName()+".png"));
+                        loadedTexture.setParameters(gl, Texture.texParamsDefault);
+                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), loadedTexture);
                     } catch (IOException ioe)
                     {
                         // TODO: load "default" texture, like a magenta checkerboard or something
-                        throw new RuntimeException("Error loading texture: " + ioe.getMessage());
+                        throw new RuntimeException("Error loading texture " + resource.getName() + ": " + ioe.getMessage());
                     }
                     break;
                 case Resource.TEXTURE_CUBE:
                     try
                     {
                         texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), TextureCubeMap.fromFiles(gl, new File[]{
-                            new File("textures/" + resource + "_positive_x"),
-                            new File("textures/" + resource + "_negative_x"),
-                            new File("textures/" + resource + "_positive_y"),
-                            new File("textures/" + resource + "_negative_y"),
-                            new File("textures/" + resource + "_positive_z"),
-                            new File("textures/" + resource + "_negative_z")
+                            new File("textures/" + resource + "_positive_x.png"),
+                            new File("textures/" + resource + "_negative_x.png"),
+                            new File("textures/" + resource + "_positive_y.png"),
+                            new File("textures/" + resource + "_negative_y.png"),
+                            new File("textures/" + resource + "_positive_z.png"),
+                            new File("textures/" + resource + "_negative_z.png")
                         }));
                     } catch (IOException ioe)
                     {
@@ -341,6 +354,16 @@ public class Athens extends GraphicsEngine
                     throw new RuntimeException("Could not load heightmap: feature not implemented");
                 case Resource.SHADER:
                     shaderResources.put(resource.getName(), new Shader(gl, resource.getName()));
+                    break;
+                case Resource.PARTICLE_PARAMETERS:
+                    try
+                    {
+                        particleResources.put(resource.getName(),
+                                ParticleParameters.loadFromFile("particles/"+resource.getName()+".px")); // TODO: load particles from file
+                    } catch (IOException ioe)
+                    {
+                         throw new RuntimeException("Error loading particle parameters: " + ioe.getMessage());
+                    }
                     break;
                 default:
                     break;
@@ -390,6 +413,9 @@ public class Athens extends GraphicsEngine
         }
         
         updateView();
+        
+        for (AthensEntity entity : entities)
+            entity.update(delta);
     }
     
     private void render(GL2 gl)
@@ -486,7 +512,7 @@ public class Athens extends GraphicsEngine
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
-                60.0f, 0.1f, 200.0f
+                60.0f, 0.1f, 100.0f
             );
         
         // load textures
@@ -661,9 +687,29 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
-    public GfxEntity createEntity()
+    public GfxEntity createEntity(int behaviour)
     {
-        AthensEntity entity = new AthensEntity();
+        // TODO: research possible performance hit is we use Class.newInstance() instead of using ints
+        
+        AthensEntity entity;
+        switch (behaviour)
+        {
+            case GfxEntity.NORMAL:
+                entity = new AthensEntity();
+                break;
+            case GfxEntity.BILLBOARD_SPHERICAL:
+                entity = new Billboard(true);
+                break;
+            case GfxEntity.BILLBOARD_CYLINDRICAL:
+                entity = new Billboard(false);
+                break;
+            case GfxEntity.PARTICLE_EMITTER:
+                entity = new ParticleEmitter();
+                break;
+            default:
+                // TODO: throw new InvalidEntityBehaviourException();
+                return null;
+        }
         
         entities.add(entity);
         
@@ -717,6 +763,14 @@ public class Athens extends GraphicsEngine
                     throw new ResourceNotLoadedException(resource);
                 }
                 athensEntity.shader = shaderResources.get(resName);
+                break;
+            case Resource.PARTICLE_PARAMETERS:
+                if (!particleResources.containsKey(resName))
+                {
+                    throw new ResourceNotLoadedException(resName);
+                }
+                athensEntity.attachResource(particleResources.get(resName));
+                // TODO: if entity is not particle emitter, throw an exception
                 break;
             default:
                 // TODO: throw something here as well?

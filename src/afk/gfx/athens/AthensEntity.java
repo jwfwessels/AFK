@@ -1,5 +1,6 @@
 package afk.gfx.athens;
 
+import afk.gfx.athens.particles.ParticleParameters;
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Mat4;
@@ -13,11 +14,15 @@ import javax.media.opengl.GL2;
  */
 public class AthensEntity extends GfxEntity
 {
+    public static final Vec3 X_AXIS = new Vec3(1,0,0);
+    public static final Vec3 Y_AXIS = new Vec3(0,1,0);
+    public static final Vec3 Z_AXIS = new Vec3(0,0,1);
+    
     protected Mesh mesh = null;
     protected Texture texture = null;
     protected Object material = null; // TODO: placeholder for materials in future
     protected Shader shader = null;
-    
+    protected ParticleParameters particleParams;
     
     protected Mat4 createWorldMatrix()
     {
@@ -25,27 +30,34 @@ public class AthensEntity extends GfxEntity
 
         monkeyWorld = Matrices.translate(monkeyWorld, getPosition());
 
-        Vec3 yAxis = new Vec3(0, 1, 0);
-        monkeyWorld = Matrices.rotate(monkeyWorld, yRot, yAxis);
+        monkeyWorld = Matrices.rotate(monkeyWorld, yRot, Y_AXIS);
         
-        Vec3 xAxis = new Vec3(1, 0, 0);
-        monkeyWorld = Matrices.rotate(monkeyWorld, xRot, xAxis);
+        monkeyWorld = Matrices.rotate(monkeyWorld, xRot, X_AXIS);
 
-        Vec3 zAxis = new Vec3(0, 0, 1);
-        monkeyWorld = Matrices.rotate(monkeyWorld, zRot, zAxis);
+        monkeyWorld = Matrices.rotate(monkeyWorld, zRot, Z_AXIS);
 
         monkeyWorld = Matrices.scale(monkeyWorld, getScale());
         
         return monkeyWorld;
     }
     
+    protected void update(float delta)
+    {
+        // do nothing
+    }
+    
     protected void draw(GL2 gl, Camera camera, Vec3 sun) // TODO: replace with Camera and Sun/Light objects later
     {
+        // by default, active sets visibility of entity
+        if (!active) return;
+        
         shader.use(gl);
         
-        // TODO: figure out how to do texturing. May only allow single texture, but could allow multitexturing or bump/normal mapping later
-        //tex.use(gl, GL.GL_TEXTURE0);
-        //shader.updateUniform(gl, "tex", 0);
+        if (texture != null)
+        {
+            texture.use(gl, GL2.GL_TEXTURE0);
+            shader.updateUniform(gl, "tex", 0);
+        }
         
         shader.updateUniform(gl, "world", createWorldMatrix());
         shader.updateUniform(gl, "view", camera.view);
@@ -58,5 +70,12 @@ public class AthensEntity extends GfxEntity
             shader.updateUniform(gl, "colour", colour);
         
         mesh.draw(gl);
+    }
+    
+    // TODO: add more functions for attaching each kind of resource
+    
+    public void attachResource(ParticleParameters particleParams)
+    {
+        this.particleParams = particleParams;
     }
 }

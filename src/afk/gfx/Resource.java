@@ -7,7 +7,9 @@ package afk.gfx;
 public class Resource // TODO: make abstract and stuff
 {
     // TODO: types to add: bilboards and imposters, sounds (although not necessarily part of the gfx engine)
-    public static final int WAVEFRONT_MESH = 0, PRIMITIVE_MESH = 1, HEIGHTMAP_MESH = 2, TEXTURE_2D = 3, TEXTURE_CUBE = 4, MATERIAL = 5, SHADER = 6;
+    public static final int WAVEFRONT_MESH = 0, PRIMITIVE_MESH = 1,
+            HEIGHTMAP_MESH = 2, TEXTURE_2D = 3, TEXTURE_CUBE = 4, MATERIAL = 5,
+            SHADER = 6, PARTICLE_PARAMETERS = 7;
     
     public static final int NUM_MESH_TYPES = 3;
     public static final int NUM_TEX_TYPES = 2;
@@ -32,6 +34,12 @@ public class Resource // TODO: make abstract and stuff
     public String getName()
     {
         return name;
+    }
+
+    @Override
+    public String toString()
+    {
+        return getName();
     }
 
     public int getType()

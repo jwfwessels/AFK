@@ -1,7 +1,7 @@
 
 import afk.gfx.*;
-import afk.tokyo.GameEngine;
-import afk.tokyo.Tokyo;
+import afk.ge.GameEngine;
+import afk.ge.tokyo.Tokyo;
 
 public class Main
 {

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.tokyo;
+package afk.ge;
 
 import com.hackoeur.jglm.Vec3;
 
@@ -12,18 +12,16 @@ import com.hackoeur.jglm.Vec3;
  */
 public class EntityState
 {
-    protected Vec3 position;
-    protected Vec3 momentum;
-    protected Vec3 velocity;
-    protected Vec3 rotation;
+    public Vec3 position;
+    public Vec3 momentum;
+    public Vec3 velocity;
+    public Vec3 rotation;
     protected float mass;
     protected float inverseMass;
 
     public EntityState(Vec3 position)
     {
         this.position = position;
-        System.out.println("postion" + position);
-        System.out.println("this.postion" + this.position);
         this.momentum = Vec3.VEC3_ZERO;
         this.velocity = Vec3.VEC3_ZERO;
         this.rotation = Vec3.VEC3_ZERO;
@@ -31,7 +29,7 @@ public class EntityState
         this.inverseMass = 1.0f / mass;
     }
 
-    protected EntityState(EntityState instance)
+    public EntityState(EntityState instance)
     {
         this.position = instance.position;
         this.momentum = instance.momentum;
