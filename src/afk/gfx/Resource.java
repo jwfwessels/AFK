@@ -36,6 +36,12 @@ public class Resource // TODO: make abstract and stuff
         return name;
     }
 
+    @Override
+    public String toString()
+    {
+        return getName();
+    }
+
     public int getType()
     {
         return type;

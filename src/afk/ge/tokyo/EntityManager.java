@@ -36,6 +36,11 @@ public class EntityManager
     Resource particleShader;
     Resource billboardMesh;
     GfxEntity fountain;
+    
+    // TESTING
+    Resource monkeyFace;
+    Resource texShader;
+    GfxEntity billboard;
 
     public EntityManager()
     {
@@ -134,6 +139,10 @@ public class EntityManager
         explosionParams = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosion");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
+        
+         // TESTING
+        monkeyFace = gfxEngine.loadResource(Resource.TEXTURE_2D, "monkey");
+        texShader = gfxEngine.loadResource(Resource.SHADER, "texturedParticle");
 
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
@@ -156,6 +165,15 @@ public class EntityManager
 //                  addEntity(tank);
 //                    tank.setProjectileGfx(projectileGfxEntity);
 //                  addEntity(bullet);
+                    
+                    // TESTING
+                    billboard = gfxEngine.createEntity(GfxEntity.BILLBOARD_CYLINDRICAL);
+                    gfxEngine.attachResource(billboard, billboardMesh);
+                    gfxEngine.attachResource(billboard, texShader);
+                    gfxEngine.attachResource(billboard, monkeyFace);
+                    
+                    billboard.setPosition(-10, 2, -10);
+                    billboard.setScale(2,2,2);
                     
                 } catch (ResourceNotLoadedException ex)
                 {
