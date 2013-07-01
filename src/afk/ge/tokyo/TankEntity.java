@@ -35,7 +35,7 @@ public class TankEntity extends AbstractEntity
         RateOfFire = Tokyo.DELTA * 120;
         lastShot = 0;
         FOV = 60;
-        viewingDistanceSqr = 5 * 5;
+        viewingDistanceSqr = 20 * 20;
     }
 
     @Override
