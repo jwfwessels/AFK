@@ -20,17 +20,40 @@ public class RobotEvent
     protected boolean gotHit; // TODO: change to reflect where hit came from
     
     /** True if bot successfully hit another. */
-    protected boolean hit;
+    protected boolean didHit;
     
     /** true if bot drove into a wall. */
     protected boolean hitWall;
 
-    public RobotEvent(ArrayList<Float> visibleBots, boolean gotHit, boolean hit, boolean hitWall)
+    public RobotEvent(ArrayList<Float> visibleBots, boolean gotHit, boolean didHit, boolean hitWall)
     {
         this.visibleBots = visibleBots;
         this.gotHit = gotHit;
-        this.hit = hit;
+        this.didHit = didHit;
         this.hitWall = hitWall;
+    }
+    
+    public float[] getVisibleBots()
+    {
+        float[] v = new float[visibleBots.size()];
+        for (int i = 0; i < v.length; i++)
+            v[i] = visibleBots.get(i);
+        return v;
+    }
+
+    public boolean gotHit()
+    {
+        return gotHit;
+    }
+
+    public boolean didHit()
+    {
+        return didHit;
+    }
+
+    public boolean hitWall()
+    {
+        return hitWall;
     }
     
 }

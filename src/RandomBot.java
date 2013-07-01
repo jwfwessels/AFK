@@ -8,14 +8,13 @@ import afk.london.Robot;
  * @author Jessica
  *
  */
-public class SampleBot2 extends Robot
+public class RandomBot extends Robot
 {
-
     int movement = 0;
     int rotation = 0;
     boolean turning = true;
 
-    public SampleBot2()
+    public RandomBot()
     {
         super();
     }
@@ -23,6 +22,17 @@ public class SampleBot2 extends Robot
     @Override
     public void run()
     {
+        if (events.hitWall())
+        {
+            movement = 200;
+            rotation = 180;
+            turning = true;
+        }
+        
+        float[] visibles = events.getVisibleBots();
+        if (visibles.length > 0)
+            attack();
+        
         if (turning)
         {
             turn();
@@ -35,28 +45,28 @@ public class SampleBot2 extends Robot
     
     public void turn()
     {
-        if (rotation < 90)
+        if (rotation > 0)
         {
             turnAntiClockwise();
-            rotation++;
+            rotation--;
         }
         else
         {
-            rotation = 0;
+            rotation = (int)(Math.random()*360);
             turning = false;
         }
     }
     
     public void move()
     {
-        if (movement < 1600)
+        if (movement > 0)
         {
             moveForward();
-            movement++;
+            movement--;
         }
         else
         {
-            movement = 0;
+            movement = (int)(Math.random()*800);
             turning = true;
         }
     }

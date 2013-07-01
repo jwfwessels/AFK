@@ -163,6 +163,8 @@ public class Tokyo extends GameEngine
         new Vec3(0,0,-20),
         new Vec3(-20,0,0)
     };
+    
+    public static final float BOARD_SIZE = 50;
         
     private JFrame jFrame;
     private JTabbedPane jTPane;

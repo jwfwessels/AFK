@@ -4,6 +4,8 @@
  */
 package afk.london;
 
+import java.util.ArrayList;
+
 /**
  * @author Jessica
  */
@@ -33,6 +35,7 @@ public abstract class Robot
     public Robot()
     {
         actionFlags = new boolean[NUM_ACTIONS];
+        events = new RobotEvent(new ArrayList<Float>(), false, false, false);
     }
 
     private void setFlag(int index)

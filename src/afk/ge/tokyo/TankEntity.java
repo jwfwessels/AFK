@@ -22,6 +22,9 @@ public class TankEntity extends AbstractEntity
     protected float lastShot;
     protected float FOV;
     private final int viewingDistanceSqr;
+    
+    // TODO: just a quick temp hack variable to get feedback working...
+    protected boolean hitwall;
 
     public TankEntity(GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
     {
@@ -63,6 +66,9 @@ public class TankEntity extends AbstractEntity
         }
         integrate(current, t, dt);
 //        checkVisible();
+        
+        // TODO: temporary? doing quick-and-dirty bounds checking...
+        checkWalls();
     }
 
     private void fireProjectile(float t)
@@ -109,5 +115,37 @@ public class TankEntity extends AbstractEntity
             entityManager.RomoveEntity(this);
             entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0, 0)), this, 1);
         }
+    }
+    
+    // TODO: rudimentary bounds checking, just to make sure tanks don't venture off into the wild.
+    
+    private void checkWalls()
+    {
+        hitwall = false;
+        
+        float x = checkWall(current.position.getX());
+        float y = checkWall(current.position.getY());
+        float z = checkWall(current.position.getZ());
+        
+        if (hitwall)
+            current.position = new Vec3(x,y,z);
+    }
+    
+    private float checkWall(float comp)
+    {
+        float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
+        
+        if (comp < -halfBoardSize)
+        {
+            hitwall = true;
+            comp = -halfBoardSize;
+        }
+        else if (comp > halfBoardSize)
+        {
+            hitwall = true;
+            comp = halfBoardSize;
+        }
+        
+        return comp;
     }
 }

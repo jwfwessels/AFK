@@ -108,7 +108,8 @@ public class EntityManager
         for (int i = 0; i < entities.size(); i++)
         {
             ArrayList<Float> visible = entities.get(i).checkVisible();
-            RobotEvent event = new RobotEvent(visible, false, false, false);
+            // TODO: need to check hits as well.
+            RobotEvent event = new RobotEvent(visible, false, false, entities.get(i).hitwall);
             events.add(event);
         }
         botEngine.feedback(events);
@@ -165,7 +166,11 @@ public class EntityManager
                     GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
                     gfxEngine.attachResource(floorGfxEntity, floorMesh);
                     gfxEngine.attachResource(floorGfxEntity, floorShader);
-                    floorGfxEntity.setScale(50, 50, 50);
+                    floorGfxEntity.setScale(
+                            Tokyo.BOARD_SIZE,
+                            Tokyo.BOARD_SIZE,
+                            Tokyo.BOARD_SIZE
+                        );
 
                     /*
                     TankEntity tank = createTank();
