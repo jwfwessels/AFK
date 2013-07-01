@@ -51,7 +51,6 @@ public class Tokyo extends GameEngine
     final static double MIN_FPS = 25;
     final static double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
     final static double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
-    private AtomicBoolean loaded = new AtomicBoolean(false);
 
     public Tokyo(GraphicsEngine gfxEngine)
     {
@@ -66,14 +65,9 @@ public class Tokyo extends GameEngine
     @Override
     public void run()
     {
-        if (entityManager.loadResources())
-        {
-            loaded.set(true);
-        }
+        entityManager.loadResources();
 
-        loadBots();
-
-        while (!loaded.get())
+        while (!entityManager.loaded.get())
         { /* spin */ }
 
         gameLoop();
@@ -83,6 +77,7 @@ public class Tokyo extends GameEngine
     protected void gameLoop()
     {
         while (!gameInProgress.get()) { /* spin! */}
+        loadBots();
         double currentTime = System.nanoTime();
         float accumulator = 0.0f;
         int i = 0;
@@ -309,7 +304,6 @@ public class Tokyo extends GameEngine
             public void actionPerformed(ActionEvent e) 
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
-                loadBots();
                 startGame();
                 
                 jTPane.setSelectedComponent(pnlArena);

@@ -15,6 +15,7 @@ import afk.london.Robot;
 import afk.london.RobotEvent;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +40,8 @@ public class EntityManager
     GfxEntity fountain;
     
     London botEngine;
+    
+    protected AtomicBoolean loaded = new AtomicBoolean(false);
 
     public EntityManager(London botEngine)
     {
@@ -144,7 +147,7 @@ public class EntityManager
         }
     }
 
-    protected boolean loadResources()
+    protected void loadResources()
     {
         tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
@@ -183,11 +186,11 @@ public class EntityManager
                 {
                     System.err.println(ex.getMessage());
                 }
-
-
+                
+                loaded.set(true);
             }
         });
-        return true;
+        
     }
 
     void RomoveSubEntity(AbstractEntity entity)
