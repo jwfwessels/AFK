@@ -166,7 +166,6 @@ public abstract class AbstractEntity
         float yRot = a.current.rotation.getY();
         float xRot = a.current.rotation.getX();
         float zRot = a.current.rotation.getZ();
-//        Vec3 aToB = a.current.position.subtract(b.current.position);
         Vec3 aToB = b.current.position.subtract(a.current.position);
         float adistB = aToB.getLengthSquared();
         if (Float.compare(adistB, viewingDistanceSqr) > 0)
@@ -174,20 +173,44 @@ public abstract class AbstractEntity
             return Float.NaN;
         }
         Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.X_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, xRot, AthensEntity.X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.Y_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
         Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
         Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
-
         float theta = A.getUnitVector().dot(aToB.getUnitVector());
+        
         theta = (float) FastMath.toDegrees(FastMath.acos(theta));
         float absTheta = Math.abs(theta);
-
         if (Float.compare(absTheta, halfFOV) > 0)
         {
             return Float.NaN;
         }
+        theta = getSign(theta, aToB);
         return theta;
+    }
+
+    private float getSign(float theta, Vec3 aToB)
+    {
+        int sign = 0;
+        float x = aToB.getX();
+        float y = aToB.getY();
+        float z = aToB.getZ();
+        if (Float.compare(x, 0) < 0)
+        {
+            sign++;
+        }
+        if (Float.compare(z, 0) < 0)
+        {
+            sign++;
+        }
+        if ((sign % 2) > 0)
+        {
+            return theta;
+        } else
+        {
+            return -theta;
+        }
+
     }
 }

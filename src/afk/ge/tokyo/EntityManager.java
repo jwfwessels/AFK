@@ -4,7 +4,6 @@
  */
 package afk.ge.tokyo;
 
-import afk.ge.EntityState;
 import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;

@@ -384,8 +384,8 @@ public class Tokyo extends GameEngine
         SPAWN_POINTS = new Vec3[]
         {
             new Vec3(0, 0, 0),
-            new Vec3(0, 0, 10),
-            new Vec3(-20, 0, 20),
+            new Vec3(5, 0, -6),
+            new Vec3(-3, 0, 10),
             new Vec3(20, 0, -20),
             new Vec3(-20, 0, 0),
             new Vec3(0, 0, -20),

@@ -22,7 +22,6 @@ public class TankEntity extends AbstractEntity
     protected float lastShot;
     protected float FOV;
     private final int viewingDistanceSqr;
-    
     // TODO: just a quick temp hack variable to get feedback working...
     protected boolean hitwall;
 
@@ -33,9 +32,9 @@ public class TankEntity extends AbstractEntity
         size = 1.4f;
         mass = 2.0f;
         RateOfFire = Tokyo.DELTA * 120;
-        lastShot = 0;
-        FOV = 60;
-        viewingDistanceSqr = 20 * 20;
+        lastShot = -1;
+        FOV = 90;
+        viewingDistanceSqr = 10 * 10;
     }
 
     @Override
@@ -66,7 +65,7 @@ public class TankEntity extends AbstractEntity
         }
         integrate(current, t, dt);
 //        checkVisible();
-        
+
         // TODO: temporary? doing quick-and-dirty bounds checking...
         checkWalls();
     }
@@ -74,7 +73,7 @@ public class TankEntity extends AbstractEntity
     private void fireProjectile(float t)
     {
         float ready = t - lastShot;
-        if (Float.compare(ready, RateOfFire) >= 0)
+        if (lastShot == -1 || Float.compare(ready, RateOfFire) >= 0)
         {
             lastShot = t;
             ProjectileEntity bullet = entityManager.createProjectile(this);
@@ -97,7 +96,7 @@ public class TankEntity extends AbstractEntity
                 float theta = isVisible(this, b, halfFOV, viewingDistanceSqr);
                 if (!Float.isNaN(theta))
                 {
-                    System.out.println(this.name + " <(©)> " + b.name);
+                    System.out.println(this.name + " <(©)> " + b.name + "  " + theta + "°");
                     targets.add(theta);
                 }
             }
@@ -116,36 +115,36 @@ public class TankEntity extends AbstractEntity
             entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0, 0)), this, 1);
         }
     }
-    
+
     // TODO: rudimentary bounds checking, just to make sure tanks don't venture off into the wild.
-    
     private void checkWalls()
     {
         hitwall = false;
-        
+
         float x = checkWall(current.position.getX());
         float y = checkWall(current.position.getY());
         float z = checkWall(current.position.getZ());
-        
+
         if (hitwall)
-            current.position = new Vec3(x,y,z);
+        {
+            current.position = new Vec3(x, y, z);
+        }
     }
-    
+
     private float checkWall(float comp)
     {
         float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
-        
+
         if (comp < -halfBoardSize)
         {
             hitwall = true;
             comp = -halfBoardSize;
-        }
-        else if (comp > halfBoardSize)
+        } else if (comp > halfBoardSize)
         {
             hitwall = true;
             comp = halfBoardSize;
         }
-        
+
         return comp;
     }
 }
