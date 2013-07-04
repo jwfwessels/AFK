@@ -37,14 +37,15 @@ public class SampleBot2 extends Robot
                 turns++;
                 float[] visibles = events.getVisibleBots();
                 if (visibles.length > 0)
+//                if (visibles.length > 0)
                 {
                     turn = visibles[0];
                     System.out.println("turn: " + turn);
                     float diff = FastMath.abs(turn);
 
-                    if (Float.compare(diff, 1) < 0)
+                    if (Float.compare(diff, 0.5f) < 0)
                     {
-                        attack();
+//                        attack();
                     } else
                     {
                         if (Float.compare(turn, 0) < 0)
@@ -59,6 +60,9 @@ public class SampleBot2 extends Robot
                             turn--;
                         }
                     }
+                } else
+                {
+                    turnClockwise();
                 }
             }
 

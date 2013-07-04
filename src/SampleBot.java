@@ -44,7 +44,9 @@ public class SampleBot extends Robot
 
                     if (Float.compare(diff, 0.5f) < 0)
                     {
-                        attack();
+//                        attack();
+                        System.out.println("BANG!");
+                        running = false;
                     } else
                     {
                         if (Float.compare(turn, 0) < 0)
@@ -59,6 +61,9 @@ public class SampleBot extends Robot
                             turn--;
                         }
                     }
+                } else
+                {
+                    turnClockwise();
                 }
             }
 

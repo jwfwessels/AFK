@@ -178,39 +178,31 @@ public abstract class AbstractEntity
         rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
         Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
         Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
+
         float theta = A.getUnitVector().dot(aToB.getUnitVector());
-        
         theta = (float) FastMath.toDegrees(FastMath.acos(theta));
+        System.out.println("" + aToB.toString());
+        System.out.println(a.name + "    " + getSign(theta, A, aToB));
         float absTheta = Math.abs(theta);
         if (Float.compare(absTheta, halfFOV) > 0)
         {
             return Float.NaN;
         }
-        theta = getSign(theta, aToB);
+        theta = getSign(theta, A, aToB);
         return theta;
     }
 
-    private float getSign(float theta, Vec3 aToB)
+    private float getSign(float theta, Vec3 A, Vec3 B)
     {
-        int sign = 0;
-        float x = aToB.getX();
-        float y = aToB.getY();
-        float z = aToB.getZ();
-        if (Float.compare(x, 0) < 0)
-        {
-            sign++;
-        }
-        if (Float.compare(z, 0) < 0)
-        {
-            sign++;
-        }
-        if ((sign % 2) > 0)
-        {
-            return theta;
-        } else
+        Vec3 Aup = A.add(new Vec3(0, 1, 0));
+        Vec3 ARightref = A.cross(Aup);
+        float sign = B.dot(ARightref);
+        if (Float.compare(sign, 0) < 0)
         {
             return -theta;
+        } else
+        {
+            return theta;
         }
-
     }
 }
