@@ -36,34 +36,32 @@ public class SampleBot2 extends Robot
                 System.out.println("");
                 turns++;
                 float[] visibles = events.getVisibleBots();
-                if (visibles.length > 0)
 //                if (visibles.length > 0)
-                {
-                    turn = visibles[0];
-                    System.out.println("turn: " + turn);
-                    float diff = FastMath.abs(turn);
-
-                    if (Float.compare(diff, 0.5f) < 0)
-                    {
+//                {
+//                    turn = visibles[0];
+//                    float diff = FastMath.abs(turn);
+//
+//                    if (Float.compare(diff, 0.5f) < 0)
+//                    {
 //                        attack();
-                    } else
-                    {
-                        if (Float.compare(turn, 0) < 0)
-                        {
-
-                            turnClockwise();
-                            turn++;
-                        }
-                        if (Float.compare(turn, 0) > 0)
-                        {
-                            turnAntiClockwise();
-                            turn--;
-                        }
-                    }
-                } else
-                {
-                    turnClockwise();
-                }
+//                    } else
+//                    {
+//                        if (Float.compare(turn, 0) < 0)
+//                        {
+//
+//                            turnClockwise();
+//                            turn++;
+//                        }
+//                        if (Float.compare(turn, 0) > 0)
+//                        {
+//                            turnAntiClockwise();
+//                            turn--;
+//                        }
+//                    }
+//                } else
+//                {
+//                    turnClockwise();
+//                }
             }
 
         }

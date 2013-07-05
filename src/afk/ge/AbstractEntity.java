@@ -181,7 +181,6 @@ public abstract class AbstractEntity
 
         float theta = A.getUnitVector().dot(aToB.getUnitVector());
         theta = (float) FastMath.toDegrees(FastMath.acos(theta));
-        System.out.println("" + aToB.toString());
         System.out.println(a.name + "    " + getSign(theta, A, aToB));
         float absTheta = Math.abs(theta);
         if (Float.compare(absTheta, halfFOV) > 0)

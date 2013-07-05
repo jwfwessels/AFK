@@ -18,6 +18,9 @@ public class ProjectileEntity extends AbstractEntity
 
     AbstractEntity parent;
     private final float DAMAGE;
+    private float RANGE;
+    private EntityState origin;
+    float dist = 0;
 
     public ProjectileEntity(GfxEntity gfxEntity, EntityManager entityManager, AbstractEntity parent, float damage)
     {
@@ -28,6 +31,7 @@ public class ProjectileEntity extends AbstractEntity
         size = 0.14f;
         mass = 0.5f;
         VELOCITY = 2.5f;
+        RANGE = 10;
     }
 
     @Override
@@ -40,13 +44,15 @@ public class ProjectileEntity extends AbstractEntity
         current.velocity = new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos);
         integrate(current, t, dt);
         checkColision();
+        checkRange();
     }
 
     @Override
     public void setState(EntityState state)
     {
-        current = new EntityState(state);
-        current.position = current.position.add(new Vec3(0, 0.8f, 0));
+        origin = new EntityState(state);
+        origin.position = origin.position.add(new Vec3(0, 0.8f, 0));
+        current = new EntityState(origin);
     }
 
     private void checkColision()
@@ -59,7 +65,7 @@ public class ProjectileEntity extends AbstractEntity
                 System.out.println(this.parent.name + " ==> " + b.name);
                 b.hit(DAMAGE);
                 hit(DAMAGE);
-                
+
                 // TODO: possible create explosion at the /exact/ location of impact?
                 entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0.75f, 0)), this.parent, 0);
             }
@@ -72,6 +78,19 @@ public class ProjectileEntity extends AbstractEntity
         life -= DAMAGE;
         System.out.println(name + " life: " + life);
         if (Float.compare(life, 0) <= 0)
+        {
+            entityManager.RomoveSubEntity(this);
+        }
+    }
+
+    private void checkRange()
+    {
+        dist = current.position.subtract(previous.position).getLength();
+        //for testing
+//        float totaldist = current.position.subtract(origin.position).getLength();
+//        System.out.println("totaldist: " + totaldist);
+        RANGE -= dist;
+        if (Float.compare(RANGE, 0) <= 0)
         {
             entityManager.RomoveSubEntity(this);
         }
