@@ -33,7 +33,6 @@ public class SampleBot2 extends Robot
                     moveForward();
                     move++;
                 }
-                System.out.println("");
                 turns++;
                 float[] visibles = events.getVisibleBots();
 //                if (visibles.length > 0)

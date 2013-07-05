@@ -38,7 +38,6 @@ public class SampleBot extends Robot
                 attack();
                     shoot++;
                 }
-                System.out.println("");
                 turns++;
                 float[] visibles = events.getVisibleBots();
 //                if (visibles.length > 0)

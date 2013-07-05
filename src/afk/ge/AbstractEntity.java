@@ -127,7 +127,6 @@ public abstract class AbstractEntity
         EntityState gfxState = interpolate(alpha);
         gfxPos.setPosition(gfxState.position);
         gfxPos.setRotation(gfxState.rotation);
-        //        System.out.println("gfxState.position " + gfxState.position.toString());
     }
 
     public abstract void update(float t, float dt, boolean[] flags);
@@ -181,7 +180,8 @@ public abstract class AbstractEntity
 
         float theta = A.getUnitVector().dot(aToB.getUnitVector());
         theta = (float) FastMath.toDegrees(FastMath.acos(theta));
-        System.out.println(a.name + "    " + getSign(theta, A, aToB));
+        //for testing
+//        System.out.println(a.name + "    " + getSign(theta, A, aToB));
         float absTheta = Math.abs(theta);
         if (Float.compare(absTheta, halfFOV) > 0)
         {

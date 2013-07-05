@@ -64,8 +64,6 @@ public class TankEntity extends AbstractEntity
             fireProjectile(t);
         }
         integrate(current, t, dt);
-//        checkVisible();
-
         // TODO: temporary? doing quick-and-dirty bounds checking...
         checkWalls();
     }
