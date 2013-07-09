@@ -373,9 +373,9 @@ public class Tokyo extends GameEngine
 
     private void TestMove()
     {
-        String botPath1 = "E:\\Documents\\GitHub\\AFK\\build\\classes\\SampleBot.class";
+        String botPath1 = "./build/classes/SampleBot.class";
         String botName1 = "SampleBot";
-        String botPath2 = "E:\\Documents\\GitHub\\AFK\\build\\classes\\SampleBot2.class";
+        String botPath2 = "./build/classes/SampleBot2.class";
         String botName2 = "SampleBot2";
         lsSelectedModel.addElement(botName1);
         lsSelectedModel.addElement(botName2);
