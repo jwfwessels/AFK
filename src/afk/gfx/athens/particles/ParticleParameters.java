@@ -97,7 +97,7 @@ public class ParticleParameters extends AthensResource
     @Override
     public void load(GL2 gl) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader(name));
+        BufferedReader br = new BufferedReader(new FileReader("particles/"+name+".px"));
         try
         {
             

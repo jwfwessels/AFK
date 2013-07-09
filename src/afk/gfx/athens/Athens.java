@@ -8,7 +8,6 @@ import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.Updatable;
 import afk.gfx.athens.particles.ParticleEmitter;
-import afk.gfx.athens.particles.ParticleParameters;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.Component;
@@ -19,15 +18,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -257,6 +252,7 @@ public class Athens extends GraphicsEngine
             try
             {
                 resource.load(gl);
+                resources.add(resource);
             } catch (IOException ex)
             {
                 System.err.println("Unable to load " + resource + ": " + ex.getMessage());
@@ -622,12 +618,9 @@ public class Athens extends GraphicsEngine
         AthensEntity athensEntity = (AthensEntity)entity;
         AthensResource athensResource = (AthensResource)resource;
         
-        int type = resource.getType();
-        String resName = resource.getName();
-        
         if (resources.contains(athensResource))
         {
-            // TODO: attach resource here!
+            athensEntity.attachResource(athensResource);
         }
         else throw new ResourceNotLoadedException(resource);
     }

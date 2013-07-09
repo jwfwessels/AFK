@@ -1,8 +1,8 @@
 package afk.gfx.athens;
 
-import afk.gfx.athens.particles.ParticleParameters;
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
+import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -22,7 +22,6 @@ public class AthensEntity extends GfxEntity
     protected Texture texture = null;
     protected Object material = null; // TODO: placeholder for materials in future
     protected Shader shader = null;
-    protected ParticleParameters particleParams;
     
     protected Mat4 createWorldMatrix()
     {
@@ -72,10 +71,28 @@ public class AthensEntity extends GfxEntity
         mesh.draw(gl);
     }
     
-    // TODO: add more functions for attaching each kind of resource
-    
-    public void attachResource(ParticleParameters particleParams)
+    public void attachResource(AthensResource resource)
     {
-        this.particleParams = particleParams;
+        switch (resource.getType())
+        {
+            case Resource.WAVEFRONT_MESH:
+            case Resource.PRIMITIVE_MESH:
+            case Resource.HEIGHTMAP_MESH:
+                mesh = (Mesh)resource;
+                break;
+            case Resource.TEXTURE_2D:
+            case Resource.TEXTURE_CUBE:
+                texture = (Texture)resource;
+                break;
+            case Resource.SHADER:
+                shader = (Shader)resource;
+                break;
+            case Resource.MATERIAL:
+                material = resource; // TODO: change this when we create an actual Material class.
+                break;
+            default:
+                // TODO: throw new ResourceNotCompatableException();
+                break;
+        }
     }
 }

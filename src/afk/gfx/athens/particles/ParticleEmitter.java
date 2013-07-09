@@ -1,7 +1,9 @@
 package afk.gfx.athens.particles;
 
 import afk.gfx.Camera;
+import afk.gfx.Resource;
 import afk.gfx.athens.AthensEntity;
+import afk.gfx.athens.AthensResource;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -31,6 +33,8 @@ public class ParticleEmitter extends AthensEntity
     // TODO: make a global object pool?
     private Particle[] particles;
     private Queue<Particle> available = new ConcurrentLinkedQueue<Particle>();
+    
+    private ParticleParameters particleParams;
 
     public ParticleEmitter()
     {
@@ -38,16 +42,20 @@ public class ParticleEmitter extends AthensEntity
     }
 
     @Override
-    public void attachResource(ParticleParameters particleParams)
+    public void attachResource(AthensResource resource)
     {
-        super.attachResource(particleParams);
-        
-        particles = new Particle[particleParams.numParticles];
-        for (int i = 0; i < particles.length; i++)
+        if (resource.getType() == Resource.PARTICLE_PARAMETERS)
         {
-            particles[i] = new Particle();
-            available.add(particles[i]);
+            particleParams = (ParticleParameters)resource;
+            
+            particles = new Particle[particleParams.numParticles];
+            for (int i = 0; i < particles.length; i++)
+            {
+                particles[i] = new Particle();
+                available.add(particles[i]);
+            }
         }
+        else super.attachResource(resource);
     }
     
     @Override
