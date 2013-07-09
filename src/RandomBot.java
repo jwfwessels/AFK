@@ -1,18 +1,20 @@
 
 import afk.london.Robot;
-
-
+import com.hackoeur.jglm.support.FastMath;
 
 /**
  * Sample class of what coded bot will look like
+ *
  * @author Jessica
  *
  */
 public class RandomBot extends Robot
 {
+
     int movement = 0;
     int rotation = 0;
     boolean turning = true;
+    private float thetaAngle;
 
     public RandomBot()
     {
@@ -28,45 +30,61 @@ public class RandomBot extends Robot
             rotation = 180;
             turning = true;
         }
-        
+
         float[] visibles = events.getVisibleBots();
         if (visibles.length > 0)
-            attack();
-        
-        if (turning)
+        {
+            thetaAngle = visibles[0];
+            float diff = FastMath.abs(thetaAngle);
+
+            if (Float.compare(diff, 0.5f) < 0)
+            {
+                attack();
+            } else
+            {
+                if (Float.compare(thetaAngle, 0) < 0)
+                {
+
+                    turnClockwise();
+                    thetaAngle++;
+                }
+                if (Float.compare(thetaAngle, 0) > 0)
+                {
+                    turnAntiClockwise();
+                    thetaAngle--;
+                }
+            }
+        } else if (turning)
         {
             turn();
-        }
-        else
+        } else
         {
             move();
         }
     }
-    
+
     public void turn()
     {
         if (rotation > 0)
         {
             turnAntiClockwise();
             rotation--;
-        }
-        else
+        } else
         {
-            rotation = (int)(Math.random()*360);
+            rotation = (int) (Math.random() * 360);
             turning = false;
         }
     }
-    
+
     public void move()
     {
         if (movement > 0)
         {
             moveForward();
             movement--;
-        }
-        else
+        } else
         {
-            movement = (int)(Math.random()*800);
+            movement = (int) (Math.random() * 800);
             turning = true;
         }
     }

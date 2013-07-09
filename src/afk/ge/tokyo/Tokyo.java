@@ -373,9 +373,11 @@ public class Tokyo extends GameEngine
 
     private void TestMove()
     {
-        String botPath1 = "./build/classes/SampleBot.class";
+//        String botPath1 = "./build/classes/SampleBot.class";
+        String botPath1 = "./build/classes/RandomBot.class";
         String botName1 = "SampleBot";
-        String botPath2 = "./build/classes/SampleBot2.class";
+//        String botPath2 = "./build/classes/SampleBot2.class";
+        String botPath2 = "./build/classes/CircleBot.class";
         String botName2 = "SampleBot2";
         lsSelectedModel.addElement(botName1);
         lsSelectedModel.addElement(botName2);
@@ -383,8 +385,8 @@ public class Tokyo extends GameEngine
         botMap.put(botName2, botPath2);
         SPAWN_POINTS = new Vec3[]
         {
-            new Vec3(0, 0, 0),
-            new Vec3(5, 0, -5),
+            new Vec3(-20, 0, -20),
+            new Vec3(20, 0, 20),
             new Vec3(-3, 0, 10),
             new Vec3(20, 0, -20),
             new Vec3(-20, 0, 0),
