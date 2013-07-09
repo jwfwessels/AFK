@@ -17,17 +17,18 @@ import javax.media.opengl.GL2;
 public class WavefrontMesh extends Mesh
 {
 
-    /**
-     * Constructs a Mesh object from a specified wavefront OBJ file.
-     * @param gl The GL implementation to use to bind the object.
-     * @param name The filename to load from.
-     */
-    public WavefrontMesh(GL2 gl, String name)
+    public WavefrontMesh(String name)
+    {
+        super(WAVEFRONT_MESH, name);
+    }
+
+    @Override
+    public void load(GL2 gl)
             throws IOException
     {
-        super(gl);
+        super.load(gl);
         
-        String fileName = "meshes/"+name;
+        String fileName = "meshes/"+name+".obj";
 
         ArrayList<float[]> pos = new ArrayList<float[]>(); // Read in vertices
         ArrayList<float[]> tex = new ArrayList<float[]>(); // Read in texcoords

@@ -1,13 +1,22 @@
 package afk.gfx.athens;
 
+import java.io.IOException;
 import javax.media.opengl.GL2;
 
 public class BillboardQuad extends Mesh
 {
+    public static final String NAME = "billboard";
 
-    public BillboardQuad(GL2 gl)
+    public BillboardQuad()
     {
-        super(gl);
+        super(PRIMITIVE_MESH, NAME);
+    }
+
+    @Override
+    public void load(GL2 gl)
+            throws IOException
+    {
+        super.load(gl);
         
         gl.glNewList(handle, GL2.GL_COMPILE);
         {

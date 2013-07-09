@@ -4,26 +4,28 @@ package afk.gfx.athens;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
+import java.io.IOException;
 import javax.media.opengl.GL2;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
- * @author daniel
+ * @author Daniel
  */
-public class Shader
+public class Shader extends AthensResource
 {
     public static final int POSITION_LOC = 1, NORMAL_LOC = 2;
     
-    protected int program;
+    private int program;
     private int vertexShader;
     private int fragmentShader;
+
+    public Shader(String name)
+    {
+        super(SHADER, name);
+    }
     
-    public Shader(GL2 gl, String name)
+    @Override
+    public void load(GL2 gl) throws IOException
     {
         vertexShader = Utils.loadShaderProgram(gl, "shaders/"+name+"/vertex.glsl", GL2.GL_VERTEX_SHADER);
         fragmentShader = Utils.loadShaderProgram(gl, "shaders/"+name+"/fragment.glsl", GL2.GL_FRAGMENT_SHADER);
@@ -40,6 +42,12 @@ public class Shader
 
        /* Check if it linked  properly. */
        Utils.checkProgramLogInfo(gl, program);
+    }
+
+    @Override
+    public void unload(GL2 gl)
+    {
+        gl.glDeleteShader(program);
     }
     
     public void use(GL2 gl)

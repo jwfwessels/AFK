@@ -2,9 +2,9 @@ package afk.gfx;
 
 /**
  *
- * @author daniel
+ * @author Daniel
  */
-public class Resource // TODO: make abstract and stuff
+public abstract class Resource
 {
     // TODO: types to add: bilboards and imposters, sounds (although not necessarily part of the gfx engine)
     public static final int WAVEFRONT_MESH = 0, PRIMITIVE_MESH = 1,
@@ -26,10 +26,6 @@ public class Resource // TODO: make abstract and stuff
         this.type = type;
         this.name = name;
     }
-    
-    // TODO: when this becomes some abstract superclass, the following should be uncommented
-    //public abstract void load();
-    //public abstract void unload();
 
     public String getName()
     {
@@ -45,6 +41,32 @@ public class Resource // TODO: make abstract and stuff
     public int getType()
     {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj instanceof Resource)
+        {
+            Resource other = (Resource) obj;
+            if (this.name == null)
+            {
+                if (other.name != null) return false;
+            }
+            else if (!this.name.equalsIgnoreCase(other.name)) return false;
+            
+            return other.type == this.type;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 37 * hash + this.type;
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
     
 }

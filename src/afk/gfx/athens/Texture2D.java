@@ -1,7 +1,5 @@
 package afk.gfx.athens;
 
-
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,16 +10,22 @@ import javax.media.opengl.GL2;
 
 public class Texture2D extends Texture
 {
-    public static Texture2D fromFile(GL2 gl, File file)
+
+    public Texture2D(String name)
+    {
+        super(TEXTURE_2D, name, GL.GL_TEXTURE_2D);
+    }
+
+    @Override
+    public void load(GL2 gl)
             throws IOException
     {
-        return new Texture2D(gl, ImageIO.read(file));
-    }
-    
-    private Texture2D(GL2 gl)
-    {
-        super(gl, GL.GL_TEXTURE_2D);
-        bind(gl);
+        super.load(gl);
+        
+        int[] w_h = new int[2];
+        ByteBuffer data = imageToBytes(ImageIO.read(new File("./textures/"+name+".png")), w_h);
+        
+        setup(gl, data, w_h[0], w_h[1]);
     }
     
     private void setup(GL2 gl, ByteBuffer data, int width, int height)
@@ -36,28 +40,6 @@ public class Texture2D extends Texture
     public void generateMipmap(GL2 gl)
     {
         gl.glGenerateMipmap(GL.GL_TEXTURE_2D);
-    }
-    
-    public Texture2D(GL2 gl, ByteBuffer data, int width, int height)
-    {
-        this(gl);
-        
-        setup(gl, data, width, height);
-    }
-
-    public Texture2D(GL2 gl, BufferedImage input)
-    {
-        this(gl);
-        
-        int[] w_h = new int[2];
-        ByteBuffer data = imageToBytes(input, w_h);
-        
-        setup(gl, data, w_h[0], w_h[1]);
-    }
-    
-    public Texture2D(GL2 gl, int width, int height)
-    {
-        this(gl, null, width, height);
     }
     
 }

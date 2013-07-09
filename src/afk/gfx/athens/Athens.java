@@ -3,7 +3,6 @@ package afk.gfx.athens;
 
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
-import afk.gfx.GfxInputListener;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
@@ -12,33 +11,23 @@ import afk.gfx.athens.particles.ParticleEmitter;
 import afk.gfx.athens.particles.ParticleParameters;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -46,43 +35,19 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicBorders;
 
 public class Athens extends GraphicsEngine
 {
     
     // loading queue
-    private Queue<Resource> loadQueue = new LinkedList<Resource>();
+    private Queue<AthensResource> loadQueue = new LinkedList<AthensResource>();
     // TODO: unload queue as well
     
     // this gets called when loading is done
     private Runnable onLoadCallback;
     
-    // mesh resources
-    private Map<String, Mesh>[] meshResources = new Map[Resource.NUM_MESH_TYPES];
-    
-    // texture resources
-    private Map<String, Texture>[] texResources = new Map[Resource.NUM_TEX_TYPES];
-    
-    // TODO: placeholder for material resources in the future
-    // could add more here dependant on different shader types and whatnot...?
-    private Map<String, Object> matResources;
-
-    private Map<String, Shader> shaderResources;
-    
-    private Map<String, ParticleParameters> particleResources;
+    // resources
+    private Set<AthensResource> resources;
     
     // TODO: decide on list implementation
     private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
@@ -131,17 +96,7 @@ public class Athens extends GraphicsEngine
     
     public Athens(int width, int height, String title, boolean autodraw)
     {
-        for (int i = 0; i < meshResources.length; i++)
-        {
-            meshResources[i] = new HashMap<String, Mesh>();
-        }
-        for (int i = 0; i < texResources.length; i++)
-        {
-            texResources[i] = new HashMap<String, Texture>();
-        }
-        matResources = new HashMap<String, Object>();
-        shaderResources = new HashMap<String, Shader>();
-        particleResources = new HashMap<String, ParticleParameters>();
+        resources = new HashSet<AthensResource>();
         
         this.w_width = width;
         this.w_height = height;
@@ -297,76 +252,14 @@ public class Athens extends GraphicsEngine
     {
         while (!loadQueue.isEmpty())
         {
-            Resource resource = loadQueue.poll();
+            AthensResource resource = loadQueue.poll();
             System.out.println("Loading: " + resource.getName() + " - " + resource.getType());
-            switch (resource.getType())
+            try
             {
-                case Resource.WAVEFRONT_MESH:
-                    try {
-                        meshResources[resource.getType()].put(resource.getName(), new WavefrontMesh(gl, resource.getName()+".obj"));
-                    } catch (IOException ioe)
-                    {
-                        // TODO: load "default" model, like a cube or something...
-                        throw new RuntimeException("Error loading mesh: " + ioe.getMessage());
-                    }
-                    break;
-                case Resource.PRIMITIVE_MESH:
-                    if ("quad".equals(resource.getName()))
-                        meshResources[resource.getType()].put(resource.getName(), new Quad(gl, 1, 1, 0));
-                    else if ("billboard".equals(resource.getName()))
-                        meshResources[resource.getType()].put(resource.getName(), new BillboardQuad(gl));
-                    break;
-                    // TODO: add more primitive types
-                    // TODO: it may be feasible to have all primitive types preloaded at all times?
-                case Resource.HEIGHTMAP_MESH:
-                    // TODO: for future use
-                    throw new RuntimeException("Could not load heightmap: feature not implemented");
-                case Resource.TEXTURE_2D:
-                    try {
-                        Texture2D loadedTexture = Texture2D.fromFile(gl, new File("textures/"+resource.getName()+".png"));
-                        loadedTexture.setParameters(gl, Texture.texParamsDefault);
-                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), loadedTexture);
-                    } catch (IOException ioe)
-                    {
-                        // TODO: load "default" texture, like a magenta checkerboard or something
-                        throw new RuntimeException("Error loading texture " + resource.getName() + ": " + ioe.getMessage());
-                    }
-                    break;
-                case Resource.TEXTURE_CUBE:
-                    try
-                    {
-                        texResources[resource.getType()-Resource.TEXTURE_2D].put(resource.getName(), TextureCubeMap.fromFiles(gl, new File[]{
-                            new File("textures/" + resource + "_positive_x.png"),
-                            new File("textures/" + resource + "_negative_x.png"),
-                            new File("textures/" + resource + "_positive_y.png"),
-                            new File("textures/" + resource + "_negative_y.png"),
-                            new File("textures/" + resource + "_positive_z.png"),
-                            new File("textures/" + resource + "_negative_z.png")
-                        }));
-                    } catch (IOException ioe)
-                    {
-                        // TODO: load a "default" texture, like a magenta checkerboard or something
-                        throw new RuntimeException("Error loading cube map: " + ioe.getMessage());
-                    }
-                    break;
-                case Resource.MATERIAL:
-                    // TODO: for future use (maybe)
-                    throw new RuntimeException("Could not load heightmap: feature not implemented");
-                case Resource.SHADER:
-                    shaderResources.put(resource.getName(), new Shader(gl, resource.getName()));
-                    break;
-                case Resource.PARTICLE_PARAMETERS:
-                    try
-                    {
-                        particleResources.put(resource.getName(),
-                                ParticleParameters.loadFromFile("particles/"+resource.getName()+".px")); // TODO: load particles from file
-                    } catch (IOException ioe)
-                    {
-                         throw new RuntimeException("Error loading particle parameters: " + ioe.getMessage());
-                    }
-                    break;
-                default:
-                    break;
+                resource.load(gl);
+            } catch (IOException ex)
+            {
+                System.err.println("Unable to load " + resource + ": " + ex.getMessage());
             }
         }
         
@@ -665,7 +558,7 @@ public class Athens extends GraphicsEngine
             return null;
         }
         
-        Resource resource = new Resource(type, name);
+        AthensResource resource = AthensResource.create(type, name);
         
         loadQueue.add(resource);
         
@@ -727,55 +620,16 @@ public class Athens extends GraphicsEngine
             throws ResourceNotLoadedException
     {
         AthensEntity athensEntity = (AthensEntity)entity;
+        AthensResource athensResource = (AthensResource)resource;
         
         int type = resource.getType();
         String resName = resource.getName();
         
-        switch (type)
+        if (resources.contains(athensResource))
         {
-            case Resource.WAVEFRONT_MESH:
-            case Resource.PRIMITIVE_MESH:
-            case Resource.HEIGHTMAP_MESH:
-                if (!meshResources[type].containsKey(resName))
-                {
-                    throw new ResourceNotLoadedException(resource);
-                }
-                athensEntity.mesh = meshResources[type].get(resName);
-                break;
-            case Resource.TEXTURE_2D:
-            case Resource.TEXTURE_CUBE:
-                if (!texResources[type-Resource.TEXTURE_2D].containsKey(resName))
-                {
-                    throw new ResourceNotLoadedException(resource);
-                }
-                athensEntity.texture = texResources[type-Resource.TEXTURE_2D].get(resName);
-                break;
-            case Resource.MATERIAL:
-                if (!matResources.containsKey(resName))
-                {
-                    throw new ResourceNotLoadedException(resource);
-                }
-                athensEntity.material = matResources.get(resName);
-                break;
-            case Resource.SHADER:
-                if (!shaderResources.containsKey(resName))
-                {
-                    throw new ResourceNotLoadedException(resource);
-                }
-                athensEntity.shader = shaderResources.get(resName);
-                break;
-            case Resource.PARTICLE_PARAMETERS:
-                if (!particleResources.containsKey(resName))
-                {
-                    throw new ResourceNotLoadedException(resName);
-                }
-                athensEntity.attachResource(particleResources.get(resName));
-                // TODO: if entity is not particle emitter, throw an exception
-                break;
-            default:
-                // TODO: throw something here as well?
-                break;
+            // TODO: attach resource here!
         }
+        else throw new ResourceNotLoadedException(resource);
     }
 
     @Override

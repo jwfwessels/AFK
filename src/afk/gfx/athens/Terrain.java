@@ -1,14 +1,11 @@
 package afk.gfx.athens;
 
 import com.hackoeur.jglm.Vec3;
-import com.jogamp.common.nio.Buffers;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
+// TODO: make this "Resource friendly".
 public class Terrain extends Mesh
 {
     private BufferedImage heightmap;
@@ -52,7 +49,7 @@ public class Terrain extends Mesh
     public Terrain(GL2 gl, float width, float length, float height,
             int xGrid, int yGrid, BufferedImage heightmap)
     {
-        super(gl);
+        super(0,null);
         
         this.xGrid = xGrid;
         this.yGrid = yGrid;

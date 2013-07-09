@@ -1,7 +1,6 @@
 package afk.gfx.athens;
 
-
-import java.awt.image.BufferedImage;
+import static afk.gfx.athens.Texture.imageToBytes;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,22 +11,33 @@ import javax.media.opengl.GL2;
 
 public class TextureCubeMap extends Texture
 {
-    public static TextureCubeMap fromFiles(GL2 gl, File[] files)
-            throws IOException
+    public static final String[] SUFFIXES = {
+            "_positive_x.png",
+            "_negative_x.png",
+            "_positive_y.png",
+            "_negative_y.png",
+            "_positive_z.png",
+            "_negative_z.png"
+    };
+
+    public TextureCubeMap(String name)
     {
-        BufferedImage[] images = new BufferedImage[6];
+        super(TEXTURE_CUBE, name, GL.GL_TEXTURE_CUBE_MAP);
+    }
+
+    @Override
+    public void load(GL2 gl) throws IOException
+    {
+        super.load(gl);
+        
+        ByteBuffer[] data = new ByteBuffer[6];
+        int[] w_h = new int[2];
         for (int i = 0; i < 6; i++)
         {
-            images[i] = ImageIO.read(files[i]);
+            data[i] = imageToBytes(ImageIO.read(new File("./textures/"+name+SUFFIXES[i])), w_h);
         }
         
-        return new TextureCubeMap(gl, images);
-    }
-    
-    private TextureCubeMap(GL2 gl)
-    {
-        super(gl, GL.GL_TEXTURE_CUBE_MAP);
-        bind(gl);
+        setup(gl, data, w_h[0], w_h[1]);
     }
     
     private void setup(GL2 gl, ByteBuffer[] data, int width, int height)
@@ -60,31 +70,5 @@ public class TextureCubeMap extends Texture
                     GL.GL_UNSIGNED_BYTE,
                     data == null ? null : data[i]);
         }
-    }
-    
-    public TextureCubeMap(GL2 gl, ByteBuffer[] data, int width, int height)
-    {
-        this(gl);
-        
-        setup(gl, data, width, height);
-    }
-
-    public TextureCubeMap(GL2 gl, BufferedImage[] input)
-    {
-        this(gl);
-        
-        ByteBuffer[] data = new ByteBuffer[6];
-        int[] w_h = new int[2];
-        for (int i = 0; i < 6; i++)
-        {
-            data[i] = imageToBytes(input[i], w_h);
-        }
-        
-        setup(gl, data, w_h[0], w_h[1]);
-    }
-    
-    public TextureCubeMap(GL2 gl, int width, int height)
-    {
-        this(gl, null, width, height);
     }
 }

@@ -3,18 +3,18 @@ package afk.gfx.athens;
 
 import com.jogamp.common.nio.Buffers;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import javax.media.opengl.GL2;
 
-public abstract class Texture
+public abstract class Texture extends AthensResource
 {
     protected int handle;
     
     protected int target;
-    
     
     public static final HashMap<Integer, Integer> texParamsDefault = new HashMap<Integer, Integer>();
     static
@@ -66,15 +66,28 @@ public abstract class Texture
         texParamsSkyMap.put(GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_EDGE);
     }
     
-    public Texture(GL2 gl, int target)
+    public Texture(int type, String name, int target)
     {
-        this.target = target;
+        super(type, name);
         
+        this.target = target;
+    }
+
+    @Override
+    public void load(GL2 gl)
+            throws IOException
+    {
         IntBuffer handleBuffer = Buffers.newDirectIntBuffer(1);
         
         gl.glGenTextures(1, handleBuffer);
         
         handle = handleBuffer.get();
+    }
+
+    @Override
+    public void unload(GL2 gl)
+    {
+        gl.glDeleteTextures(1, new int[]{handle}, 0);
     }
     
     public void bind(GL2 gl)
