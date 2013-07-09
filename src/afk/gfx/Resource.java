@@ -11,6 +11,8 @@ public abstract class Resource
             HEIGHTMAP_MESH = 2, TEXTURE_2D = 3, TEXTURE_CUBE = 4, MATERIAL = 5,
             SHADER = 6, PARTICLE_PARAMETERS = 7;
     
+    public static final int NUM_RESOURCE_TYPES = 8;
+    
     protected int type;
     protected String name;
 

@@ -18,10 +18,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -34,15 +34,16 @@ import javax.media.opengl.awt.GLCanvas;
 public class Athens extends GraphicsEngine
 {
     
-    // loading queue
+    // loading queues
     private Queue<AthensResource> loadQueue = new LinkedList<AthensResource>();
-    // TODO: unload queue as well
+    private Queue<AthensResource> unloadQueue = new LinkedList<AthensResource>();
     
     // this gets called when loading is done
     private Runnable onLoadCallback;
     
     // resources
-    private Set<AthensResource> resources;
+    private Map<String, AthensResource>[] resources
+            = new Map[Resource.NUM_RESOURCE_TYPES];
     
     // TODO: decide on list implementation
     private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
@@ -91,7 +92,8 @@ public class Athens extends GraphicsEngine
     
     public Athens(int width, int height, String title, boolean autodraw)
     {
-        resources = new HashSet<AthensResource>();
+        for (int i = 0; i < resources.length; i++)
+            resources[i] = new HashMap<String, AthensResource>();
         
         this.w_width = width;
         this.w_height = height;
@@ -104,8 +106,6 @@ public class Athens extends GraphicsEngine
         
         glCanvas = new GLCanvas(glCaps);
         glCanvas.setPreferredSize(new Dimension(width, height));
-        
-        
         
         glCanvas.addKeyListener(new KeyAdapter()
         {
@@ -199,8 +199,14 @@ public class Athens extends GraphicsEngine
     
     private void dispose(GL2 gl)
     {
-        // TODO: release meshes and shaders here. EEEK!!!
-        // unloadEverything(gl); // maybe?
+        for (int i = 0; i < resources.length; i++)
+        {
+            for (Map.Entry<String,AthensResource> entry :resources[i].entrySet())
+            {
+                AthensResource resource = entry.getValue();
+                resource.unload(gl);
+            }
+        }
     }
 
     private void display(GL2 gl)
@@ -243,8 +249,20 @@ public class Athens extends GraphicsEngine
         }
     }
     
+    // helper function to load/unload all necessary/unnecessary resources
     private void loadResources(GL2 gl)
     {
+        
+        // unload resources in unload queue
+        while (!unloadQueue.isEmpty())
+        {
+            AthensResource resource = unloadQueue.poll();
+            System.out.println("Unloading: " + resource.getName() + " - " + resource.getType());
+            
+            resources[resource.getType()].remove(resource.getName()).unload(gl);
+        }
+        
+        // load resources in load queue
         while (!loadQueue.isEmpty())
         {
             AthensResource resource = loadQueue.poll();
@@ -252,18 +270,12 @@ public class Athens extends GraphicsEngine
             try
             {
                 resource.load(gl);
-                resources.add(resource);
+                resources[resource.getType()].put(resource.getName(),resource);
             } catch (IOException ex)
             {
                 System.err.println("Unable to load " + resource + ": " + ex.getMessage());
             }
         }
-        
-        // TODO: unload resources as well?
-        // do similar thing but with an unloadQueue
-        
-        // TODO: on a similar note, unload everything?
-        // if (shouldUnloadEverything) unloadEverything(gl); // <- something like?
     }
     
     private void update(float delta)
@@ -550,13 +562,22 @@ public class Athens extends GraphicsEngine
     {
         if (loadQueueDispatched)
         {
-            // TODO: throw something about already dispatchign a load queue
+            // TODO: throw something about already dispatching a load queue
             return null;
         }
         
-        AthensResource resource = AthensResource.create(type, name);
+        AthensResource resource = resources[type].get(name);
         
-        loadQueue.add(resource);
+        // don't bother loading something that's already loaded
+        if (resource != null)
+            return resource;
+            
+        resource = AthensResource.create(type, name);
+        
+        if (!unloadQueue.remove(resource))
+        {
+            loadQueue.add(resource);
+        }
         
         return resource;
     }
@@ -564,15 +585,41 @@ public class Athens extends GraphicsEngine
     @Override
     public void unloadResource(Resource resource)
     {
-        // TODO: implement unloadResource
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (loadQueueDispatched)
+        {
+            // TODO: throw something about already dispatching a load queue
+            return;
+        }
+        
+        // can't unload resource that isn't loaded
+        if (!resources[resource.getType()].containsKey(resource.getName()))
+            return;
+        
+        if (!loadQueue.remove((AthensResource)resource))
+        {
+            unloadQueue.add((AthensResource)resource);
+        }
     }
 
     @Override
     public void unloadEverything()
     {
-        // TODO: implement unloadEverything
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (loadQueueDispatched)
+        {
+            // TODO: throw something about already dispatching a load queue
+            return;
+        }
+        
+        loadQueue.clear();
+        
+        // add every single loaded resource to unload queue
+        for (int i = 0; i < resources.length; i++)
+        {
+            for (Map.Entry<String,AthensResource> entry :resources[i].entrySet())
+            {
+                unloadQueue.add(entry.getValue());
+            }
+        }
     }
 
     @Override
@@ -616,11 +663,10 @@ public class Athens extends GraphicsEngine
             throws ResourceNotLoadedException
     {
         AthensEntity athensEntity = (AthensEntity)entity;
-        AthensResource athensResource = (AthensResource)resource;
         
-        if (resources.contains(athensResource))
+        if (resources[resource.getType()].containsKey(resource.getName()))
         {
-            athensEntity.attachResource(athensResource);
+            athensEntity.attachResource((AthensResource)resource);
         }
         else throw new ResourceNotLoadedException(resource);
     }
