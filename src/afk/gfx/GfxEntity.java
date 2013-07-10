@@ -3,7 +3,15 @@ package afk.gfx;
 import com.hackoeur.jglm.Vec3;
 
 /**
- * Interface to a graphics entity.
+ * Interface to a graphics entity. A Graphics entity is a visual object with
+ * position, rotation, scale and colour. Individual implementations and
+ * specialisations may interpret each of these differently, but their
+ * meanings should all be straightforward.
+ * <br/>
+ * <em>Note:</em> A graphics entity has an "active" flag, which in most cases
+ * will determine the visibility of the entity, but in some cases will mean
+ * other things. Please refer to specific implementation documentation for
+ * additional information.
  * @author Daniel
  */
 public abstract class GfxEntity
@@ -28,7 +36,7 @@ public abstract class GfxEntity
     public boolean active = true;
 
     /**
-     * Get's the entity's position as a Vec3.
+     * Gets the entity's position as a Vec3.
      * @return the entity's position.
      */
     public Vec3 getPosition()
@@ -37,7 +45,7 @@ public abstract class GfxEntity
     }
     
     /**
-     * Get's the entity's rotation as a Vec3.
+     * Gets the entity's rotation as a Vec3.
      * @return the entity's rotation.
      */
     public Vec3 getRotation()
@@ -46,7 +54,7 @@ public abstract class GfxEntity
     }
     
     /**
-     * Get's the entity's scale as a Vec3.
+     * Gets the entity's scale as a Vec3.
      * @return the entity's scale.
      */
     public Vec3 getScale()
