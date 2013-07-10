@@ -10,11 +10,16 @@ import afk.london.London;
 import afk.london.Robot;
 import com.hackoeur.jglm.Vec3;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ContainerAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -57,7 +62,7 @@ public class Tokyo extends GameEngine
         this.gfxEngine = gfxEngine;
         this.botEngine = new London();
 
-        entityManager = new EntityManager(botEngine);
+        entityManager = new EntityManager(botEngine, gfxEngine);
 
         constructGUI();
         //set true if your doing testing and dont need the gui. use TestMove() to set parameters
@@ -352,9 +357,19 @@ public class Tokyo extends GameEngine
                 System.exit(0);
             }
         });
-        jFrame.setResizable(false);
+        //jFrame.setResizable(false);
 
-        pnlArena.add(gfxEngine.getAWTComponent(), BorderLayout.CENTER);
+        final Component glCanvas = gfxEngine.getAWTComponent();
+        pnlArena.add(glCanvas, BorderLayout.CENTER);
+        pnlArena.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e)
+            {
+                super.componentResized(e);
+                glCanvas.setSize(pnlArena.getSize());
+            }
+        });
 
         jFrame.getContentPane().add(jTPane);
 

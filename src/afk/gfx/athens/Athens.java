@@ -31,6 +31,10 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 
+/**
+ * OpenGL 2.0 Implementation of the AFK Graphics Engine.
+ * @author Daniel
+ */
 public class Athens extends GraphicsEngine
 {
     
@@ -45,10 +49,8 @@ public class Athens extends GraphicsEngine
     private Map<String, AthensResource>[] resources
             = new Map[Resource.NUM_RESOURCE_TYPES];
     
-    // TODO: decide on list implementation
+    // graphics entities that are part of the scene
     private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
-    
-    // TODO: add other resource types here later maybe
 
     // flag indicating that the load queue has been dispatched
     private boolean loadQueueDispatched = false;
@@ -73,10 +75,6 @@ public class Athens extends GraphicsEngine
     Vec3 sun = new Vec3(origin_sun);
     
     float daytime = 0.0f;
-    
-    /*Shader sbShader;
-    TextureCubeMap skymap;
-    SkyBox skybox;*/
 
     static final float MOUSE_SENSITIVITY = 60.0f;
     /* Amount to move / scale by in one step. */
@@ -86,18 +84,13 @@ public class Athens extends GraphicsEngine
     private GLCapabilities glCaps;
     private GLCanvas glCanvas;
     private Animator animator;
-    private String title;
     
-    /// TESTING STUFF ///
-    
-    public Athens(int width, int height, String title, boolean autodraw)
+    public Athens(boolean autodraw)
     {
+        System.out.println("Creating instance");
+        
         for (int i = 0; i < resources.length; i++)
             resources[i] = new HashMap<String, AthensResource>();
-        
-        this.w_width = width;
-        this.w_height = height;
-        this.title = title;
         
         glProfile = GLProfile.getDefault();
         
@@ -105,11 +98,9 @@ public class Athens extends GraphicsEngine
         glCaps.setDoubleBuffered(true);
         
         glCanvas = new GLCanvas(glCaps);
-        glCanvas.setPreferredSize(new Dimension(width, height));
         
         glCanvas.addKeyListener(new KeyAdapter()
         {
-            // TODO: rather make Athens implement KeyListener
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -124,7 +115,6 @@ public class Athens extends GraphicsEngine
             
         });
         
-        // TODO: rather make Athens implement MouseListener and MouseMotionListener
         MouseAdapter mouse = new MouseAdapter()
         {
             int cx = glCanvas.getWidth()/2;
@@ -152,9 +142,9 @@ public class Athens extends GraphicsEngine
         glCanvas.addMouseListener(mouse);
         glCanvas.addMouseMotionListener(mouse);
 
-        glCanvas.addGLEventListener( new GLEventListener() {
+        glCanvas.addGLEventListener( new GLEventListener()
+        {
 
-            // TODO: rather make Athens implement GLEventListener
             @Override
             public void reshape( GLAutoDrawable glautodrawable, int x, int y, int width, int height ) {
                 Athens.this.reshape( glautodrawable.getGL().getGL2(), width, height );
@@ -303,7 +293,8 @@ public class Athens extends GraphicsEngine
         {
            camera.moveRight(-amount);
         }
-        else if (keys[KeyEvent.VK_2])
+        
+        if (keys[KeyEvent.VK_2])
         {
             daytime += 1.0f;
             updateSun();
@@ -324,85 +315,25 @@ public class Athens extends GraphicsEngine
     {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-        renderScene(gl);
+        renderScene(gl, camera);
 
         gl.glFlush();
     }
     
-    private void renderScene(GL2 gl)
-    {
-        renderScene(gl, camera);
-    }
     private void renderScene(GL2 gl, Camera cam)
     {
-        //renderSkybox(gl, camera, proj);
-        //renderFloor(gl, camera, proj);
-        //renderMesh(gl, camera, proj);
-        
         for (AthensEntity entity :entities)
         {
             entity.draw(gl, cam, sun);
         }
     }
-    
-    /*void renderSkybox(GL2 gl, Mat4 camera, Mat4 proj)
-    {
-        gl.glDisable(GL.GL_DEPTH_TEST);
-        sbShader.use(gl);
-        
-        skymap.use(gl, GL.GL_TEXTURE0);
-        
-        shader.updateUniform(gl, "tex", 0);
-        sbShader.updateUniform(gl, "view", camera);
-        sbShader.updateUniform(gl, "projection", proj);
-        sbShader.updateUniform(gl, "world", skyboxWorld);
-        sbShader.updateUniform(gl, "sun", sun);
-        
-        skybox.draw(gl);
-        gl.glEnable(GL.GL_DEPTH_TEST);
-    }*/
-    
-    /*private void renderFloor(GL2 gl, Mat4 camera, Mat4 proj)
-    {
-        floorShader.use(gl);
-        
-        //floor.use(gl, GL.GL_TEXTURE0);
-        
-        //floorShader.updateUniform(gl, "skymap", 0);
-        floorShader.updateUniform(gl, "world", new Mat4(1.0f));
-        floorShader.updateUniform(gl, "view", camera);
-        floorShader.updateUniform(gl, "projection", proj);
-        
-        quad.draw(gl);
-        
-    }
-    
-    private void renderMesh(GL2 gl, Mat4 camera, Mat4 proj)
-    {
-        tankShader.use(gl);
-        
-        //tex.use(gl, GL.GL_TEXTURE0);
-        
-        //shader.updateUniform(gl, "tex", 0);
-        tankShader.updateUniform(gl, "world", monkeyWorld);
-        tankShader.updateUniform(gl, "view", camera);
-        tankShader.updateUniform(gl, "projection", proj);
-        
-        tankShader.updateUniform(gl, "sun", sun);
-        tankShader.updateUniform(gl, "eye", cameraEye); // TODO: not necessary as we don't render specular
-        
-        tankMesh.draw(gl);
-    } */
 
     private void init(GL2 gl)
     {
+        System.out.println("Initialising");
+        
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
-        /*gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);*/
-        //gl.glEnable(GL.GL_MULTISAMPLE);
-        //gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
-        //gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL2.GL_LINE );
         
         // set background colour to white
         // TODO: allow this to be set through an interface
@@ -416,34 +347,6 @@ public class Athens extends GraphicsEngine
                 new Vec3(0f, 1f, 0f),
                 60.0f, 0.1f, 100.0f
             );
-        
-        // load textures
-        // not necessary now
-        /*sbShader = new Shader(gl, "skybox");
-        skybox = new SkyBox(gl);
-        
-        try
-        {
-            skymap = TextureCubeMap.fromFiles(gl, new File[]{
-                new File("textures/siege/siege_front.jpg"),
-                new File("textures/siege/siege_back.jpg"),
-                new File("textures/siege/siege_top.jpg"),
-                new File("textures/siege/siege_top.jpg"),
-                new File("textures/siege/siege_left.jpg"),
-                new File("textures/siege/siege_right.jpg")
-            });
-            skymap.setParameters(gl, Texture.texParamsSkyMap);
-            
-            floor = Texture2D.fromFile(gl, new File("textures/floor.jpg"));
-            floor.setParameters(gl, Texture.texParamsDefault);
-            
-            tex = Texture2D.fromFile(gl, new File("textures/tank.jpg"));
-            tex.setParameters(gl, Texture.texParamsDefault);
-            
-        } catch (IOException ex)
-        {
-            System.err.println("Could not load texture: " + ex.toString());
-        }*/
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
@@ -455,7 +358,6 @@ public class Athens extends GraphicsEngine
 
     private void keyPressed(KeyEvent ke)
     {
-        char key = ke.getKeyChar();
         if (ke.getKeyCode() < keys.length)
             keys[ke.getKeyCode()] = true;
 
@@ -493,21 +395,21 @@ public class Athens extends GraphicsEngine
     public boolean isMouseDown(int button)
     {
         // TODO: implement isMouseDown
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public int getMouseX()
     {
         // TODO: implement getMouseX
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public int getMouseY()
     {
         // TODO: implement getMouseY
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void reshape(GL2 gl, int newWidth, int newHeight)

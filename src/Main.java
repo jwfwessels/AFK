@@ -16,7 +16,7 @@ public class Main
 
     public Main()
     {
-        renderer = GraphicsEngine.getInstance(WIDTH, HEIGHT, TITLE, false);
+        renderer = GraphicsEngine.createInstance(false);
         engine = new Tokyo(renderer);
     }
 

@@ -42,13 +42,12 @@ public class EntityManager
     
     protected AtomicBoolean loaded = new AtomicBoolean(false);
 
-    public EntityManager(London botEngine)
+    public EntityManager(London botEngine, GraphicsEngine gfxEngine)
     {
         this.botEngine = botEngine;
+        this.gfxEngine = gfxEngine;
         entities = new ArrayList<TankEntity>();
         subEntities = new ArrayList<AbstractEntity>();
-        //TODO; getinstance still needs to be refactored
-        gfxEngine = GraphicsEngine.getInstance(0, 0, null, true);
     }
 
     public TankEntity createTank(Vec3 spawnPoint, Vec3 colour)
