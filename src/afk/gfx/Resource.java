@@ -1,27 +1,43 @@
 package afk.gfx;
 
 /**
- *
+ * Represents a graphical resource that can be loaded, unloaded, and attached to
+ * a graphics entity.
  * @author Daniel
  */
 public abstract class Resource
 {
-    // TODO: types to add: bilboards and imposters, sounds (although not necessarily part of the gfx engine)
+    // TODO: types to add: imposters, sounds (although not necessarily part of the gfx engine)
+    /**
+     * Resource types.
+     */
     public static final int WAVEFRONT_MESH = 0, PRIMITIVE_MESH = 1,
             HEIGHTMAP_MESH = 2, TEXTURE_2D = 3, TEXTURE_CUBE = 4, MATERIAL = 5,
             SHADER = 6, PARTICLE_PARAMETERS = 7;
     
+    /** The number of resource types currently accounted for. */
     public static final int NUM_RESOURCE_TYPES = 8;
     
+    /** The type of this resource. */
     protected int type;
+    /** The name of this resource. */
     protected String name;
 
+    /**
+     * Creates a new resource with the specified type and name.
+     * @param type the resource type.
+     * @param name the resource name.
+     */
     public Resource(int type, String name)
     {
         this.type = type;
         this.name = name;
     }
 
+    /**
+     * Gets the resource name.
+     * @return the resource name.
+     */
     public String getName()
     {
         return name;
@@ -33,6 +49,10 @@ public abstract class Resource
         return getName();
     }
 
+    /**
+     * Gets the resource type.
+     * @return the resource type.
+     */
     public int getType()
     {
         return type;

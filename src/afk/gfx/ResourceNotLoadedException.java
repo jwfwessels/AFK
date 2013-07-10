@@ -1,8 +1,11 @@
 package afk.gfx;
 
 /**
- *
- * @author daniel
+ * This exception is typically throws when a graphical resource is used before
+ * it has been loaded. This can occur if the resource has been added to the load
+ * queue but the load queue has not yet been dispatched, or if the resource was
+ * loaded but has subsequently been unloaded since then.
+ * @author Daniel
  */
 public class ResourceNotLoadedException extends Exception
 {
@@ -30,7 +33,9 @@ public class ResourceNotLoadedException extends Exception
     }
 
     /**
-     * 
+     * Constructs an instance of
+     * <code>ResourceNotLoadedException</code> with the specified
+     * associated resource.
      * @param resource 
      */
     public ResourceNotLoadedException(Resource resource)
@@ -41,7 +46,9 @@ public class ResourceNotLoadedException extends Exception
     }
 
     /**
-     * 
+     * Constructs an instance of
+     * <code>ResourceNotLoadedException</code> with the specified detail
+     * message and associated resource.
      * @param resource
      * @param msg 
      */
@@ -53,8 +60,8 @@ public class ResourceNotLoadedException extends Exception
     }
 
     /**
-     * 
-     * @return 
+     * Gets the resource that this exception refers to.
+     * @return the resource.
      */
     public Resource getResource()
     {
