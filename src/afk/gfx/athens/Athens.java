@@ -11,7 +11,6 @@ import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
