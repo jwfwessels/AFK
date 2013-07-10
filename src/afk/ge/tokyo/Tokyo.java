@@ -63,12 +63,10 @@ public class Tokyo extends GameEngine
         entityManager = new EntityManager(botEngine, gfxEngine);
 
         constructGUI();
-        //set true if your doing testing and dont need the gui. use TestMove() to set parameters
-        if (true)
-        {
-            System.out.println("Testing Enabled, GUI disabled. line 66 Tokyo");
-            TestMove();
-        }
+        
+        //uncomment if your doing testing and dont need the gui. use TestMove() to set parameters
+        /*System.out.println("Testing Enabled, GUI disabled. line 69 Tokyo");
+        TestMove();*/
     }
 
     @Override
