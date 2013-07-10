@@ -3,10 +3,10 @@ package afk.gfx.athens;
 
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
+import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
-import afk.gfx.Updatable;
 import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
@@ -86,8 +86,6 @@ public class Athens extends GraphicsEngine
     
     public Athens(boolean autodraw)
     {
-        System.out.println("Creating instance");
-        
         for (int i = 0; i < resources.length; i++)
             resources[i] = new HashMap<String, AthensResource>();
         
@@ -232,8 +230,8 @@ public class Athens extends GraphicsEngine
         {
             update(delta);
             
-            for (Updatable u :updatables)
-                u.update(delta);
+            for (GfxListener l :listeners)
+                l.update(delta);
             
             render(gl);
         }

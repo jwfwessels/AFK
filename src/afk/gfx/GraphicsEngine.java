@@ -14,8 +14,7 @@ public abstract class GraphicsEngine
     // TODO: maybe put this constant in a utils class later if there end up being lots of them
     public static final long NANOS_PER_SECOND = 1000000000l;
     
-    protected Collection<GfxInputListener> listeners = new ArrayList<GfxInputListener>();
-    protected Collection<Updatable> updatables = new ArrayList<Updatable>();
+    protected Collection<GfxListener> listeners = new ArrayList<GfxListener>();
     
     /**
      * Constructs an appropriate implementation of GraphicsEngine based on the
@@ -34,7 +33,7 @@ public abstract class GraphicsEngine
      * graphics engine.
      * @param listener the graphics event listener. 
      */
-    public void addGfxEventListener(GfxInputListener listener)
+    public void addGfxEventListener(GfxListener listener)
     {
         listeners.add(listener);
     }
@@ -44,32 +43,9 @@ public abstract class GraphicsEngine
      * receives graphics events from this graphics engine.
      * @param listener 
      */
-    public void removeGfxEventListener(GfxInputListener listener)
+    public void removeGfxEventListener(GfxListener listener)
     {
         listeners.remove(listener);
-    }
-
-    /**
-     * Adds the specified updatable to receive update events from this graphics
-     * engine.
-     * <br/>
-     * <em>Note:</em> This is pointless is autodraw is false as the graphics
-     * engine will not generate update events.
-     * @param u the updatable
-     */
-    public void addUpdatable(Updatable u)
-    {
-        updatables.add(u);
-    }
-    
-    /**
-     * Removes the specified updatable so that is not longer receives update
-     * events from the graphics engine.
-     * @param u the updatable.
-     */
-    public void removeUpdatable(Updatable u)
-    {
-        updatables.remove(u);
     }
     
     /**
