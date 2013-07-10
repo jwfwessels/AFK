@@ -58,7 +58,6 @@ public class ParticleParameters extends AthensResource
     
     private static Vec3 parseVec3(String values)
     {
-        System.out.println("Parsing [" + values + "] as Vec3.");
         String[] split = values.split("\\s+");
         
         if (split.length != 3)

@@ -204,6 +204,7 @@ public class Athens extends GraphicsEngine
             for (Map.Entry<String,AthensResource> entry :resources[i].entrySet())
             {
                 AthensResource resource = entry.getValue();
+                System.out.println("Unloading " + resource);
                 resource.unload(gl);
             }
         }
@@ -257,7 +258,7 @@ public class Athens extends GraphicsEngine
         while (!unloadQueue.isEmpty())
         {
             AthensResource resource = unloadQueue.poll();
-            System.out.println("Unloading: " + resource.getName() + " - " + resource.getType());
+            System.out.println("Unloading " + resource);
             
             resources[resource.getType()].remove(resource.getName()).unload(gl);
         }
@@ -266,7 +267,7 @@ public class Athens extends GraphicsEngine
         while (!loadQueue.isEmpty())
         {
             AthensResource resource = loadQueue.poll();
-            System.out.println("Loading: " + resource.getName() + " - " + resource.getType());
+            System.out.println("Loading " + resource);
             try
             {
                 resource.load(gl);
@@ -460,10 +461,6 @@ public class Athens extends GraphicsEngine
 
         switch (ke.getKeyCode())
         {
-            case KeyEvent.VK_ESCAPE:
-                System.out.printf("Bye!\n");
-                System.exit(0);
-                break;
             default:
                 break;
         }
