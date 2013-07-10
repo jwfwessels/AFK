@@ -2,6 +2,7 @@ package afk.gfx.athens;
 
 
 import afk.gfx.Camera;
+import afk.gfx.CompositeGfxEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
@@ -542,6 +543,16 @@ public class Athens extends GraphicsEngine
                 // TODO: throw new InvalidEntityBehaviourException();
                 return null;
         }
+        
+        entities.add(entity);
+        
+        return entity;
+    }
+
+    @Override
+    public CompositeGfxEntity createCompositeEntity()
+    {
+        CompositeAthensEntity entity = new CompositeAthensEntity();
         
         entities.add(entity);
         

@@ -47,26 +47,34 @@ public class AthensEntity extends GfxEntity
     
     protected void draw(GL2 gl, Camera camera, Vec3 sun) // TODO: replace with Camera and Sun/Light objects later
     {
+        this.draw(gl,camera,sun,createWorldMatrix());
+    }
+    
+    protected void draw(GL2 gl, Camera camera, Vec3 sun, Mat4 worldMatrix)
+    {
         // by default, active sets visibility of entity
         if (!active) return;
         
-        shader.use(gl);
-        
-        if (texture != null)
+        if (shader != null)
         {
-            texture.use(gl, GL2.GL_TEXTURE0);
-            shader.updateUniform(gl, "tex", 0);
+            shader.use(gl);
+
+            if (texture != null)
+            {
+                texture.use(gl, GL2.GL_TEXTURE0);
+                shader.updateUniform(gl, "tex", 0);
+            }
+
+            shader.updateUniform(gl, "world", worldMatrix);
+            shader.updateUniform(gl, "view", camera.view);
+            shader.updateUniform(gl, "projection", camera.projection);
+
+            shader.updateUniform(gl, "sun", sun);
+            shader.updateUniform(gl, "eye", camera.eye);
+
+            if (colour != null)
+                shader.updateUniform(gl, "colour", colour);
         }
-        
-        shader.updateUniform(gl, "world", createWorldMatrix());
-        shader.updateUniform(gl, "view", camera.view);
-        shader.updateUniform(gl, "projection", camera.projection);
-        
-        shader.updateUniform(gl, "sun", sun);
-        shader.updateUniform(gl, "eye", camera.eye);
-        
-        if (colour != null)
-            shader.updateUniform(gl, "colour", colour);
         
         mesh.draw(gl);
     }

@@ -109,6 +109,13 @@ public abstract class GraphicsEngine
     public abstract GfxEntity createEntity(int behaviour);
     
     /**
+     * Creates a CompositeGfxEntity and adds it to the list of drawable
+     * entities.
+     * @return The created CompositeGfxEntity.
+     */
+    public abstract CompositeGfxEntity createCompositeEntity();
+    
+    /**
      * Removes the specified entity from the list of drawable entities. This
      * will render the entity useless with regard to the graphics engine in
      * question. The reference should be discarded afterward/
