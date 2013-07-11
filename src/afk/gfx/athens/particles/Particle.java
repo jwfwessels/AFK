@@ -93,7 +93,8 @@ public class Particle
     protected void draw(GL2 gl, Mesh mesh, Camera camera, Shader shader)
     {
         
-        shader.updateUniform(gl, "world", createWorldMatrix(camera));
+        if (shader != null)
+            shader.updateUniform(gl, "world", createWorldMatrix(camera));
         
         mesh.draw(gl);
     }

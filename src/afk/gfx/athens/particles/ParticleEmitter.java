@@ -100,28 +100,31 @@ public class ParticleEmitter extends AthensEntity
     @Override
     public void draw(GL2 gl, Camera camera, Vec3 sun)
     {
-        shader.use(gl);
-        
-        if (texture != null)
+        if (shader != null)
         {
-            texture.use(gl, GL2.GL_TEXTURE0);
-            shader.updateUniform(gl, "tex", 0);
+            shader.use(gl);
+
+            if (texture != null)
+            {
+                texture.use(gl, GL2.GL_TEXTURE0);
+                shader.updateUniform(gl, "tex", 0);
+            }
+
+            shader.updateUniform(gl, "view", camera.view);
+            shader.updateUniform(gl, "projection", camera.projection);
+
+            shader.updateUniform(gl, "sun", sun);
+            shader.updateUniform(gl, "eye", camera.eye);
+
+            if (colour != null)
+                shader.updateUniform(gl, "colour", colour);
         }
-        
-        shader.updateUniform(gl, "view", camera.view);
-        shader.updateUniform(gl, "projection", camera.projection);
-        
-        shader.updateUniform(gl, "sun", sun);
-        shader.updateUniform(gl, "eye", camera.eye);
-        
-        if (colour != null)
-            shader.updateUniform(gl, "colour", colour);
         
         for (int i = 0; i < particles.length; i++)
         {
             if (particles[i].alive)
             {
-                particles[i].draw(gl, mesh, camera, shader);
+                particles[i].draw(gl, mesh, camera, getShader());
             }
         }
     }

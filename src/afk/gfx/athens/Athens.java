@@ -2,7 +2,6 @@ package afk.gfx.athens;
 
 
 import afk.gfx.Camera;
-import afk.gfx.CompositeGfxEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
@@ -531,10 +530,10 @@ public class Athens extends GraphicsEngine
                 entity = new AthensEntity();
                 break;
             case GfxEntity.BILLBOARD_SPHERICAL:
-                entity = new Billboard(true);
+                entity = new BillboardEntity(true);
                 break;
             case GfxEntity.BILLBOARD_CYLINDRICAL:
-                entity = new Billboard(false);
+                entity = new BillboardEntity(false);
                 break;
             case GfxEntity.PARTICLE_EMITTER:
                 entity = new ParticleEmitter();
@@ -550,18 +549,9 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
-    public CompositeGfxEntity createCompositeEntity()
-    {
-        CompositeAthensEntity entity = new CompositeAthensEntity();
-        
-        entities.add(entity);
-        
-        return entity;
-    }
-
-    @Override
     public void deleteEntity(GfxEntity entity)
     {
+        super.deleteEntity(entity);
         entities.remove((AthensEntity)entity);
     }
 
@@ -587,6 +577,24 @@ public class Athens extends GraphicsEngine
         }
         loadQueueDispatched = true;
         onLoadCallback = callback;
+    }
+
+    @Override
+    public Collection<? extends GfxEntity> removeAllChildren(GfxEntity parent)
+    {
+        Collection<? extends GfxEntity> removedEntities = super.removeAllChildren(parent);
+        for (GfxEntity entity :removedEntities)
+        {
+            entities.add((AthensEntity)entity);
+        }
+        return removedEntities;
+    }
+
+    @Override
+    public void removeChildEntity(GfxEntity child)
+    {
+        super.removeChildEntity(child);
+        entities.add((AthensEntity)child);
     }
     
 }

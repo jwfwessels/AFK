@@ -15,11 +15,11 @@ import javax.media.opengl.GL2;
  *
  * @author Daniel
  */
-public class Billboard extends AthensEntity
+public class BillboardEntity extends AthensEntity
 {
     private boolean spherical;
 
-    protected Billboard(boolean spherical)
+    protected BillboardEntity(boolean spherical)
     {
         this.spherical = spherical;
     }
@@ -66,25 +66,29 @@ public class Billboard extends AthensEntity
     {
         if (!active) return;
         
-        shader.use(gl);
-        
-        if (texture != null)
+        if (shader != null)
         {
-            texture.use(gl, GL2.GL_TEXTURE0);
-            shader.updateUniform(gl, "tex", 0);
+            shader.use(gl);
+
+            if (texture != null)
+            {
+                texture.use(gl, GL2.GL_TEXTURE0);
+                shader.updateUniform(gl, "tex", 0);
+            }
+
+            shader.updateUniform(gl, "world", createWorldMatrix(camera));
+            shader.updateUniform(gl, "view", camera.view);
+            shader.updateUniform(gl, "projection", camera.projection);
+
+            shader.updateUniform(gl, "sun", sun);
+            shader.updateUniform(gl, "eye", camera.eye);
+
+            if (colour != null)
+                shader.updateUniform(gl, "colour", colour);
         }
         
-        shader.updateUniform(gl, "world", createWorldMatrix(camera));
-        shader.updateUniform(gl, "view", camera.view);
-        shader.updateUniform(gl, "projection", camera.projection);
-        
-        shader.updateUniform(gl, "sun", sun);
-        shader.updateUniform(gl, "eye", camera.eye);
-        
-        if (colour != null)
-            shader.updateUniform(gl, "colour", colour);
-        
-        mesh.draw(gl);
+        if (mesh != null)
+            mesh.draw(gl);
     }
     
 }

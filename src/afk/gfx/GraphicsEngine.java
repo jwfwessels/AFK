@@ -109,19 +109,47 @@ public abstract class GraphicsEngine
     public abstract GfxEntity createEntity(int behaviour);
     
     /**
-     * Creates a CompositeGfxEntity and adds it to the list of drawable
-     * entities.
-     * @return The created CompositeGfxEntity.
-     */
-    public abstract CompositeGfxEntity createCompositeEntity();
-    
-    /**
      * Removes the specified entity from the list of drawable entities. This
      * will render the entity useless with regard to the graphics engine in
      * question. The reference should be discarded afterward/
      * @param entity The entity to delete from the graphics engine.
      */
-    public abstract void deleteEntity(GfxEntity entity);
+    public void deleteEntity(GfxEntity entity)
+    {
+        removeChildEntity(entity);
+    }
+    
+    /**
+     * Adds an entity to another entity. If the child entity already belongs to
+     * a parent, it is removed from its previous parent.
+     * @param parent the parent entity to add to.
+     * @param child the child entity to add to the parent.
+     */
+    public void addChildEntity(GfxEntity parent, GfxEntity child)
+    {
+        removeChildEntity(child);
+        parent.addEntity(child);
+    }
+    
+    /**
+     * Remove the child entity from its parent.
+     * @param child the child entity to remove.
+     */
+    public void removeChildEntity(GfxEntity child)
+    {
+        GfxEntity parent = child.getParent();
+        if (parent != null)
+            parent.removeEntity(child);
+    }
+    
+    /**
+     * Removes all children from the specified parent entity.
+     * @param parent the parent entity from which to remove all children. 
+     */
+    public Collection<? extends GfxEntity> removeAllChildren(GfxEntity parent)
+    {
+        return parent.removeAllEntities();
+    }
     
     /**
      * Attach the specified resource to the specified entity.

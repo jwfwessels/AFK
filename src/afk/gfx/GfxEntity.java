@@ -1,6 +1,7 @@
 package afk.gfx;
 
 import com.hackoeur.jglm.Vec3;
+import java.util.Collection;
 
 /**
  * Interface to a graphics entity. A Graphics entity is a visual object with
@@ -127,4 +128,9 @@ public abstract class GfxEntity
     {
         this.setScale(scale.getX(), scale.getY(), scale.getZ());
     }
+    
+    protected abstract void addEntity(GfxEntity entity);
+    protected abstract void removeEntity(GfxEntity entity);
+    protected abstract Collection<? extends GfxEntity> removeAllEntities();
+    protected abstract GfxEntity getParent();
 }
