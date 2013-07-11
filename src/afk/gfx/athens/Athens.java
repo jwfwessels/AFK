@@ -580,6 +580,13 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
+    public void addChildEntity(GfxEntity parent, GfxEntity child)
+    {
+        entities.remove((AthensEntity)child);
+        super.addChildEntity(parent, child);
+    }
+
+    @Override
     public Collection<? extends GfxEntity> removeAllChildren(GfxEntity parent)
     {
         Collection<? extends GfxEntity> removedEntities = super.removeAllChildren(parent);

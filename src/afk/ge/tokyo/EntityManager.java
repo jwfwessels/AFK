@@ -54,16 +54,25 @@ public class EntityManager
     {
         float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankLabelEntity = gfxEngine.createEntity(GfxEntity.BILLBOARD_SPHERICAL);
         try
         {
             gfxEngine.attachResource(tankGfxEntity, tankMesh);
             gfxEngine.attachResource(tankGfxEntity, tankShader);
+            gfxEngine.attachResource(tankLabelEntity, billboardMesh);
+            gfxEngine.attachResource(tankLabelEntity, particleShader);
         } catch (ResourceNotLoadedException ex)
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
+        
+        tankLabelEntity.colour = new Vec3(1,0,1); // magenta, the colour of debugging!
+        tankLabelEntity.setPosition(0, 2, 0); // sitting above his head...
+        tankLabelEntity.setScale(1.5f, 0.5f, 1);
+        gfxEngine.addChildEntity(tankGfxEntity, tankLabelEntity);
+        
         TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
