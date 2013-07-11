@@ -141,6 +141,10 @@ public class ParticleEmitter extends AthensEntity
     
     private void spawn(float delta)
     {
+        Vec3 move = getWorldPosition();
+        Vec3 rot = getWorldRotation();
+        Vec3 scale = getWorldScale();
+        
         Particle p = available.poll();
         if (p == null) return;
         if (p.alive)
@@ -150,9 +154,9 @@ public class ParticleEmitter extends AthensEntity
         }
             
         Vec3 pos = new Vec3(
-                jitter(xMove, xScale),
-                jitter(yMove, yScale),
-                jitter(zMove, zScale)
+                jitter(move.getX(), scale.getX()),
+                jitter(move.getY(), scale.getY()),
+                jitter(move.getZ(), scale.getZ())
             );
 
         Vec3 dir;
@@ -170,9 +174,9 @@ public class ParticleEmitter extends AthensEntity
         }
         else
         {
-            Mat4 rotation = Matrices.rotate(new Mat4(1.0f), jitter(xRot, particleParams.angleJitter.getX()), X_AXIS);
-            rotation = Matrices.rotate(rotation, jitter(yRot, particleParams.angleJitter.getY()), Y_AXIS);
-            rotation = Matrices.rotate(rotation, jitter(zRot, particleParams.angleJitter.getZ()), Z_AXIS);
+            Mat4 rotation = Matrices.rotate(new Mat4(1.0f), jitter(rot.getX(), particleParams.angleJitter.getX()), X_AXIS);
+            rotation = Matrices.rotate(rotation, jitter(rot.getY(), particleParams.angleJitter.getY()), Y_AXIS);
+            rotation = Matrices.rotate(rotation, jitter(rot.getZ(), particleParams.angleJitter.getZ()), Z_AXIS);
 
             Vec4 newRotation = rotation.multiply(ANCHOR);
 

@@ -85,6 +85,11 @@ public final class Vec3 extends AbstractVec {
 	public Vec3 multiply(final float scalar) {
 		return new Vec3( x * scalar, y * scalar, z * scalar );
 	}
+        
+        public Vec3 multiply(final Vec3 vec)
+        {
+            return new Vec3(x*vec.x,y*vec.y,z*vec.z);
+        }
 	
 	public Vec3 scale(final float scalar) {
 		return multiply(scalar);

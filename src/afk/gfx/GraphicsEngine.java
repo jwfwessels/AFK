@@ -111,7 +111,7 @@ public abstract class GraphicsEngine
     /**
      * Removes the specified entity from the list of drawable entities. This
      * will render the entity useless with regard to the graphics engine in
-     * question. The reference should be discarded afterward/
+     * question. The reference should be discarded afterward.
      * @param entity The entity to delete from the graphics engine.
      */
     public void deleteEntity(GfxEntity entity)

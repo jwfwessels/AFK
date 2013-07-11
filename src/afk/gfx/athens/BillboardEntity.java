@@ -28,7 +28,7 @@ public class BillboardEntity extends AthensEntity
     {
         Mat4 world = new Mat4(1f);
 
-        world = Matrices.translate(world, new Vec3(xMove,yMove,zMove));
+        world = Matrices.translate(world, getWorldPosition());
         
         float x = camera.dir.getX();
         float y = camera.dir.getY();
@@ -45,6 +45,8 @@ public class BillboardEntity extends AthensEntity
             rotr = -(float)FastMath.toDegrees(FastMath.atan2(-y, FastMath.sqrtFast(x*x+z*z)));
         else
             rotr = (float)FastMath.toDegrees(FastMath.atan2(y, FastMath.sqrtFast(x*x+z*z)));
+        
+        // TODO: zRot must have an effect on the rotation of the billboard
         
         if (spherical)
             world = Matrices.rotate(

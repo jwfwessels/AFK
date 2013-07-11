@@ -552,7 +552,9 @@ public class Athens extends GraphicsEngine
     public void deleteEntity(GfxEntity entity)
     {
         super.deleteEntity(entity);
-        entities.remove((AthensEntity)entity);
+        AthensEntity athensEntity = (AthensEntity)entity;
+        athensEntity.removeAllEntities();
+        entities.remove(athensEntity);
     }
 
     @Override
@@ -582,8 +584,8 @@ public class Athens extends GraphicsEngine
     @Override
     public void addChildEntity(GfxEntity parent, GfxEntity child)
     {
-        entities.remove((AthensEntity)child);
         super.addChildEntity(parent, child);
+        entities.remove((AthensEntity)child);
     }
 
     @Override
@@ -601,7 +603,9 @@ public class Athens extends GraphicsEngine
     public void removeChildEntity(GfxEntity child)
     {
         super.removeChildEntity(child);
-        entities.add((AthensEntity)child);
+        AthensEntity athensChild = (AthensEntity)child;
+        if (!entities.contains(athensChild))
+            entities.add(athensChild);
     }
     
 }

@@ -65,8 +65,8 @@ public class Tokyo extends GameEngine
         constructGUI();
         
         //uncomment if your doing testing and dont need the gui. use TestMove() to set parameters
-        /*System.out.println("Testing Enabled, GUI disabled. line 69 Tokyo");
-        TestMove();*/
+        System.out.println("Testing Enabled, GUI disabled. line 69 Tokyo");
+        TestMove();
     }
 
     @Override

@@ -27,21 +27,23 @@ public class AthensEntity extends GfxEntity
     
     // collection of composite entities
     private Collection<AthensEntity> subEntities;
-    protected AthensEntity parent;
+    protected AthensEntity parent = null;
     
     protected Mat4 createWorldMatrix()
     {
         Mat4 monkeyWorld = new Mat4(1f);
 
-        monkeyWorld = Matrices.translate(monkeyWorld, getPosition());
+        monkeyWorld = Matrices.translate(monkeyWorld, getWorldPosition());
 
-        monkeyWorld = Matrices.rotate(monkeyWorld, yRot, Y_AXIS);
+        Vec3 worldRot = getWorldRotation();
         
-        monkeyWorld = Matrices.rotate(monkeyWorld, xRot, X_AXIS);
+        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
+        
+        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getX(), X_AXIS);
 
-        monkeyWorld = Matrices.rotate(monkeyWorld, zRot, Z_AXIS);
+        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getZ(), Z_AXIS);
 
-        monkeyWorld = Matrices.scale(monkeyWorld, getScale());
+        monkeyWorld = Matrices.scale(monkeyWorld, getWorldScale());
         
         return monkeyWorld;
     }
@@ -53,12 +55,7 @@ public class AthensEntity extends GfxEntity
                 entity.update(delta);
     }
     
-    protected void draw(GL2 gl, Camera camera, Vec3 sun) // TODO: replace with Camera and Sun/Light objects later
-    {
-        this.draw(gl,camera,sun,createWorldMatrix());
-    }
-    
-    protected void draw(GL2 gl, Camera camera, Vec3 sun, Mat4 worldMatrix)
+    protected void draw(GL2 gl, Camera camera, Vec3 sun)
     {
         // by default, active sets visibility of entity
         if (!active) return;
@@ -73,7 +70,7 @@ public class AthensEntity extends GfxEntity
                 shader.updateUniform(gl, "tex", 0);
             }
 
-            shader.updateUniform(gl, "world", worldMatrix);
+            shader.updateUniform(gl, "world", createWorldMatrix());
             shader.updateUniform(gl, "view", camera.view);
             shader.updateUniform(gl, "projection", camera.projection);
 
@@ -90,9 +87,7 @@ public class AthensEntity extends GfxEntity
         if (subEntities != null)
             for (AthensEntity entity :subEntities)
             {
-                Mat4 subWorldMatrix = entity.createWorldMatrix();
-
-                entity.draw(gl, camera, sun, worldMatrix.multiply(subWorldMatrix));
+                entity.draw(gl, camera, sun);
             }
     }
     

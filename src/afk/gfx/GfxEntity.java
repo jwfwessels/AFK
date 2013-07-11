@@ -37,7 +37,7 @@ public abstract class GfxEntity
     public boolean active = true;
 
     /**
-     * Gets the entity's position as a Vec3.
+     * Gets the entity's local position as a Vec3.
      * @return the entity's position.
      */
     public Vec3 getPosition()
@@ -46,7 +46,7 @@ public abstract class GfxEntity
     }
     
     /**
-     * Gets the entity's rotation as a Vec3.
+     * Gets the entity's local rotation as a Vec3.
      * @return the entity's rotation.
      */
     public Vec3 getRotation()
@@ -55,12 +55,49 @@ public abstract class GfxEntity
     }
     
     /**
-     * Gets the entity's scale as a Vec3.
+     * Gets the entity's local scale as a Vec3.
      * @return the entity's scale.
      */
     public Vec3 getScale()
     {
         return new Vec3(xScale, yScale, zScale);
+    }
+    
+    
+    /**
+     * Gets the entity's world position as a Vec3.
+     * @return the entity's position.
+     */
+    public Vec3 getWorldPosition()
+    {
+        GfxEntity parent = getParent();
+        if (parent != null)
+            return new Vec3(xMove,yMove,zMove).add(parent.getWorldPosition());
+        return new Vec3(xMove,yMove,zMove);
+    }
+    
+    /**
+     * Gets the entity's world rotation as a Vec3.
+     * @return the entity's rotation.
+     */
+    public Vec3 getWorldRotation()
+    {
+        GfxEntity parent = getParent();
+        if (parent != null)
+            return new Vec3(xRot,yRot,zRot).add(parent.getWorldRotation());
+        return new Vec3(xRot,yRot,zRot);
+    }
+    
+    /**
+     * Gets the entity's world scale as a Vec3.
+     * @return the entity's scale.
+     */
+    public Vec3 getWorldScale()
+    {
+        GfxEntity parent = getParent();
+        if (parent != null)
+            return new Vec3(xScale,yScale,zScale).multiply(parent.getWorldScale());
+        return new Vec3(xScale,yScale,zScale);
     }
     
     /**

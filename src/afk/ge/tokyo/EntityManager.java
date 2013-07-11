@@ -70,7 +70,7 @@ public class EntityManager
         
         tankLabelEntity.colour = new Vec3(1,0,1); // magenta, the colour of debugging!
         tankLabelEntity.setPosition(0, 2, 0); // sitting above his head...
-        tankLabelEntity.setScale(1.5f, 0.5f, 1);
+        tankLabelEntity.setScale(3.0f, 0.5f, 1);
         gfxEngine.addChildEntity(tankGfxEntity, tankLabelEntity);
         
         TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
