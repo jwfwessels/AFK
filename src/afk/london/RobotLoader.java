@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -17,7 +19,9 @@ import java.util.HashMap;
 public class RobotLoader extends ClassLoader
 {
     ArrayList<Class<?>> bots = new ArrayList<Class<?>>(); 
+    ArrayList<String> fileHash = new ArrayList<String>();
     HashMap<String, Class<?>> botMap = new HashMap<String, Class<?>>();
+    String error = "";
     public Robot LoadRobot(String path)
     {
         FileInputStream in;
@@ -38,21 +42,32 @@ public class RobotLoader extends ClassLoader
         
         String name = tempFile.getName();
         name = name.substring(0, name.lastIndexOf('.'));
-        System.out.println("Path: " + path);
-        System.out.println("Bot Name1: ");
         Robot newBot;
-        Class<?> loadedBot;
-        if(!botMap.containsKey(name))
+        Class<?> loadedBot = null;
+        try
         {
-            loadedBot = defineClass(null, b, 0, b.length);
-            botMap.put(loadedBot.getName(), loadedBot);
+            if(!botMap.containsKey(name))
+            {
+                loadedBot = defineClass(null, b, 0, b.length);
+                botMap.put(loadedBot.getName(), loadedBot);
+                fileHash.add(MessageDigest.getInstance("MD5").digest(b).toString());
+            }
+            else if(fileHash.contains(MessageDigest.getInstance("MD5").digest(b).toString()))
+            {
+                loadedBot = botMap.get(name);
+                newBot = null;
+            }
+            else
+            {
+                error = "There is already a bot defined by the name: " + path;
+                return null;
+            }
         }
-        else
+        catch(NoSuchAlgorithmException e)
         {
-            loadedBot = botMap.get(name);
-            newBot = null;
+            
         }
-        System.out.println("Bot Name2: " + loadedBot.getName());
+
         newBot = null;
 
         try
@@ -65,7 +80,7 @@ public class RobotLoader extends ClassLoader
             else
             {
                 //TODO: Proper error reporting
-                System.out.println("Not of type Robot");
+                error = loadedBot.getDeclaredConstructor().getName() + " does not inherit from Robot";
             }
         }
         catch(Exception e)
@@ -74,5 +89,16 @@ public class RobotLoader extends ClassLoader
         }
         
         return newBot;
+    }
+    
+    public String getError()
+    {
+        return error;         
+    }
+    
+    public void clearMaps()
+    {
+        fileHash.clear();
+        botMap.clear();
     }
 }

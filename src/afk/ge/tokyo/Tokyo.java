@@ -17,11 +17,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -77,7 +79,7 @@ public class Tokyo extends GameEngine
     protected void gameLoop()
     {
         while (!gameInProgress.get()) { /* spin! */}
-        loadBots();
+        //loadBots();
         double currentTime = System.nanoTime();
         float accumulator = 0.0f;
         int i = 0;
@@ -119,7 +121,7 @@ public class Tokyo extends GameEngine
         gfxEngine.redisplay();
     }
 
-    private void loadBots()
+    private boolean loadBots()
     {
         //TODO refactor load bots
         ArrayList<String> bots = getParticipatingBots();
@@ -127,9 +129,15 @@ public class Tokyo extends GameEngine
         {
             String path = bots.get(i);
             Robot loadedBot = botEngine.loadBot(path);
+            if(loadedBot == null)
+            {
+                JOptionPane.showMessageDialog(jFrame, botEngine.getBotLoadingError(), "Error Loading Bots", JOptionPane.ERROR_MESSAGE);        
+                return false;
+            }
             botEngine.registerBot(loadedBot);
-            entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
+            //entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
         }
+        return true;
     }
     
     private void startGame()
@@ -304,9 +312,20 @@ public class Tokyo extends GameEngine
             public void actionPerformed(ActionEvent e) 
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
-                startGame();
-                
-                jTPane.setSelectedComponent(pnlArena);
+                if(loadBots())
+                {
+                    for(int x = 0; x < botEngine.getRobots().size(); x++)
+                    {
+                        entityManager.createTank(SPAWN_POINTS[x], BOT_COLOURS[x]);
+                    }
+                        
+                    startGame();
+                    jTPane.setSelectedComponent(pnlArena);
+                }
+                else
+                {
+                    botEngine.resetBotLoader();
+                }
             }
         });
         
@@ -345,7 +364,7 @@ public class Tokyo extends GameEngine
                 System.exit(0);
             }
         });
-        jFrame.setResizable(false);
+        //jFrame.setResizable(false);
 		
         pnlArena.add(gfxEngine.getAWTComponent(), BorderLayout.CENTER);
 
