@@ -23,6 +23,10 @@ public class MenuPanel extends JPanel implements ActionListener
     public MenuPanel(RootWindow parent)
     {
         //TODO; set layout
+    }
+
+    void setup()
+    {
         //TODO; call init, add, style
     }
 

@@ -23,6 +23,10 @@ public class GamePanel extends JPanel implements ActionListener
     public GamePanel(RootWindow parent)
     {
         //TODO; set layout
+    }
+
+    void setup()
+    {
         //TODO; call init, add, style
     }
 

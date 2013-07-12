@@ -32,8 +32,8 @@ public class RootWindow_Layout implements LayoutManager
     {
         Dimension dim = new Dimension(0, 0);
         Insets insets = parent.getInsets();
-        dim.width = 200 + insets.left + insets.right;
-        dim.height = 200 + insets.top + insets.bottom;
+        dim.width = 1280 + insets.left + insets.right;
+        dim.height = 786 + insets.top + insets.bottom;
 
         return dim;
     }
