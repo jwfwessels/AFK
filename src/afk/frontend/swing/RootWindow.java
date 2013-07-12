@@ -18,15 +18,17 @@ import javax.swing.JFrame;
 public class RootWindow extends JFrame implements ActionListener
 {
 
+    //TODO; define components
     public void start()
     {
+        //TODO; currently a bit of a hack since this is not the main thread its called by main
         this.pack();
         this.setVisible(true);
     }
 
     public RootWindow()
     {
-        LayoutManager layout = new RootWindow_layout();
+        LayoutManager layout = new RootWindow_Layout();
         this.setLayout(layout);
 
         initComponents();
@@ -45,17 +47,24 @@ public class RootWindow extends JFrame implements ActionListener
 
     private void initComponents()
     {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO; instatiate components
+        // //TODO; run components setup(init & add), 
+        //TODO: set visible 
     }
 
     private void addComponents()
     {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO; get container, add components to container.
+    }
+
+    private void removeComponents()
+    {
+        //TODO;
     }
 
     private void styleComponents()
     {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO; set colours of components(here if you can)
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.awt.LayoutManager;
  *
  * @author Jw
  */
-public class RootWindow_layout implements LayoutManager
+public class RootWindow_Layout implements LayoutManager
 {
 
     @Override
