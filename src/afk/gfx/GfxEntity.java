@@ -166,8 +166,33 @@ public abstract class GfxEntity
         this.setScale(scale.getX(), scale.getY(), scale.getZ());
     }
     
-    public abstract void addEntity(GfxEntity entity);
-    public abstract void removeEntity(GfxEntity entity);
-    public abstract Collection<? extends GfxEntity> removeAllEntities();
+    /**
+     * Adds the entity as a child entity of this entity. The child entity will
+     * be draw whenever the parent is drawn. The child entity will use any of
+     * the parent's resources that the child does not have of its own.
+     * @param entity the entity to add as the child,
+     */
+    public abstract void addChild(GfxEntity entity);
+    
+    /**
+     * Removes the child entity from this entity. The child entity will no
+     * longer be drawn when its (former) parent is drawn. If the given entity is
+     * not a child of this entity, then the method has no effect.
+     * @param entity the child entity to remove.
+     */
+    public abstract void removeChild(GfxEntity entity);
+    
+    /**
+     * Removes all child entities from this entity. This method returns a
+     * collection of all children belonging to this entity. If there are no
+     * children, an empty collection is returned.
+     * @return A collection containing all removed child entities.
+     */
+    public abstract Collection<? extends GfxEntity> removeAllChildren();
+    
+    /**
+     * Gets the parent of this entity.
+     * @return the parent of this entity, null if the entity has no parent.
+     */
     public abstract GfxEntity getParent();
 }

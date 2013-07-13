@@ -26,7 +26,7 @@ public class AthensEntity extends GfxEntity
     protected Shader shader = null;
     
     // collection of composite entities
-    private Collection<AthensEntity> subEntities;
+    private Collection<AthensEntity> children;
     protected AthensEntity parent = null;
     
     protected Mat4 createWorldMatrix()
@@ -50,8 +50,8 @@ public class AthensEntity extends GfxEntity
     
     protected void update(float delta)
     {
-        if (subEntities != null)
-            for (AthensEntity entity :subEntities)
+        if (children != null)
+            for (AthensEntity entity :children)
                 entity.update(delta);
     }
     
@@ -84,8 +84,8 @@ public class AthensEntity extends GfxEntity
         if (mesh != null)
             mesh.draw(gl);
         
-        if (subEntities != null)
-            for (AthensEntity entity :subEntities)
+        if (children != null)
+            for (AthensEntity entity :children)
             {
                 entity.draw(gl, camera, sun);
             }
@@ -117,34 +117,34 @@ public class AthensEntity extends GfxEntity
     }
     
     @Override
-    public void addEntity(GfxEntity entity)
+    public void addChild(GfxEntity entity)
     {
-        if (subEntities == null)
-            subEntities = new ArrayList<AthensEntity>();
+        if (children == null)
+            children = new ArrayList<AthensEntity>();
         AthensEntity athensEntity = (AthensEntity)entity;
-        subEntities.add(athensEntity);
+        children.add(athensEntity);
         athensEntity.parent = this;
     }
     
     @Override
-    public void removeEntity(GfxEntity entity)
+    public void removeChild(GfxEntity entity)
     {
-        if (subEntities == null) return;
+        if (children == null) return;
         AthensEntity athensEntity = (AthensEntity)entity;
-        if (subEntities.remove(athensEntity))
+        if (children.remove(athensEntity))
             athensEntity.parent = null;
     }
 
     @Override
-    public Collection<? extends GfxEntity> removeAllEntities()
+    public Collection<? extends GfxEntity> removeAllChildren()
     {
-        if (subEntities == null) return new ArrayList<AthensEntity>();
-        for (AthensEntity entity :subEntities)
+        if (children == null) return new ArrayList<AthensEntity>();
+        for (AthensEntity entity :children)
         {
             entity.parent = null;
         }
-        Collection<? extends GfxEntity> result = subEntities;
-        subEntities = null;
+        Collection<? extends GfxEntity> result = children;
+        children = null;
         return result;
     }
     

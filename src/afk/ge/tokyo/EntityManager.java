@@ -71,9 +71,9 @@ public class EntityManager
         tankLabelEntity.colour = new Vec3(1,0,1); // magenta, the colour of debugging!
         tankLabelEntity.setPosition(0, 2, 0); // sitting above his head...
         tankLabelEntity.setScale(3.0f, 0.5f, 1);
-        tankGfxEntity.addEntity(tankLabelEntity);
+        tankGfxEntity.addChild(tankLabelEntity);
         
-        gfxEngine.getRootEntity().addEntity(tankGfxEntity);
+        gfxEngine.getRootEntity().addChild(tankGfxEntity);
         
         TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
@@ -97,7 +97,7 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        gfxEngine.getRootEntity().addEntity(projectileGfxEntity);
+        gfxEngine.getRootEntity().addChild(projectileGfxEntity);
         ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
         subEntities.add(projectile);
         projectile.name = parent.name + "projectile";
@@ -184,7 +184,7 @@ public class EntityManager
                             Tokyo.BOARD_SIZE,
                             Tokyo.BOARD_SIZE
                         );
-                    gfxEngine.getRootEntity().addEntity(floorGfxEntity);
+                    gfxEngine.getRootEntity().addChild(floorGfxEntity);
 
                     /*
                     TankEntity tank = createTank();
@@ -207,14 +207,14 @@ public class EntityManager
     void RomoveSubEntity(AbstractEntity entity)
     {
         GfxEntity gfxEntity = entity.getgfxEntity();
-        gfxEntity.getParent().removeEntity(gfxEntity);
+        gfxEntity.getParent().removeChild(gfxEntity);
         subEntities.remove(entity);
     }
 
     void RomoveEntity(TankEntity entity)
     {
         GfxEntity gfxEntity = entity.getgfxEntity();
-        gfxEntity.getParent().removeEntity(gfxEntity);
+        gfxEntity.getParent().removeChild(gfxEntity);
         entities.remove(entity);
     }
 
@@ -237,7 +237,7 @@ public class EntityManager
             explostion.colour = parent.getgfxEntity().colour;
             explostion.setScale(Vec3.VEC3_ZERO);
             explostion.setPosition(where);
-            gfxEngine.getRootEntity().addEntity(explostion);
+            gfxEngine.getRootEntity().addChild(explostion);
 
             explostion.active = true;
         } catch (ResourceNotLoadedException ex)
