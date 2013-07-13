@@ -8,15 +8,12 @@ import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
-import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.RobotEvent;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -55,16 +52,12 @@ public class EntityManager
         float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankLabelEntity = gfxEngine.createEntity(GfxEntity.BILLBOARD_SPHERICAL);
-        try
-        {
-            gfxEngine.attachResource(tankGfxEntity, tankMesh);
-            gfxEngine.attachResource(tankGfxEntity, tankShader);
-            gfxEngine.attachResource(tankLabelEntity, billboardMesh);
-            gfxEngine.attachResource(tankLabelEntity, particleShader);
-        } catch (ResourceNotLoadedException ex)
-        {
-            Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        tankGfxEntity.attachResource(tankMesh);
+        tankGfxEntity.attachResource(tankShader);
+        tankLabelEntity.attachResource(billboardMesh);
+        tankLabelEntity.attachResource(particleShader);
+            
         tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
         
@@ -87,16 +80,13 @@ public class EntityManager
         float DAMAGE = 1.5f;
         //dont have a projectile model yet, mini tank will be bullet XD
         GfxEntity projectileGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        try
-        {
-            gfxEngine.attachResource(projectileGfxEntity, tankMesh);
-            gfxEngine.attachResource(projectileGfxEntity, tankShader);
-            projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
-            projectileGfxEntity.setPosition(5, 10, 5);
-        } catch (ResourceNotLoadedException ex)
-        {
-            Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        projectileGfxEntity.attachResource(tankMesh);
+        projectileGfxEntity.attachResource(tankShader);
+
+        projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
+        projectileGfxEntity.setPosition(5, 10, 5);
+        
         gfxEngine.getRootEntity().addChild(projectileGfxEntity);
         ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
         subEntities.add(projectile);
@@ -174,29 +164,23 @@ public class EntityManager
             @Override
             public void run()
             {
-                try
-                {
-                    GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-                    gfxEngine.attachResource(floorGfxEntity, floorMesh);
-                    gfxEngine.attachResource(floorGfxEntity, floorShader);
-                    floorGfxEntity.setScale(
-                            Tokyo.BOARD_SIZE,
-                            Tokyo.BOARD_SIZE,
-                            Tokyo.BOARD_SIZE
-                        );
-                    gfxEngine.getRootEntity().addChild(floorGfxEntity);
+                GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+                floorGfxEntity.attachResource(floorMesh);
+                floorGfxEntity.attachResource(floorShader);
+                floorGfxEntity.setScale(
+                        Tokyo.BOARD_SIZE,
+                        Tokyo.BOARD_SIZE,
+                        Tokyo.BOARD_SIZE
+                    );
+                gfxEngine.getRootEntity().addChild(floorGfxEntity);
 
-                    /*
-                    TankEntity tank = createTank();
-                    tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));
-                    TankEntity tank2 = createTank();
-                    tank2.setColour(new Vec3(0.0f, 0.0f, 0.8f));
-                    tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
-                    */
-                } catch (ResourceNotLoadedException ex)
-                {
-                    System.err.println(ex.getMessage());
-                }
+                /*
+                TankEntity tank = createTank();
+                tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));
+                TankEntity tank2 = createTank();
+                tank2.setColour(new Vec3(0.0f, 0.0f, 0.8f));
+                tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
+                */
                 
                 loaded.set(true);
             }
@@ -223,26 +207,22 @@ public class EntityManager
     void makeExplosion(Vec3 where, AbstractEntity parent, int type)
     {
         GfxEntity explostion = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
-        try
+        
+        if (type == 0)
         {
-            if (type == 0)
-            {
-                gfxEngine.attachResource(explostion, explosionProjectile);
-            } else if (type == 1)
-            {
-                gfxEngine.attachResource(explostion, explosionTank);
-            }
-            gfxEngine.attachResource(explostion, particleShader);
-            gfxEngine.attachResource(explostion, billboardMesh);
-            explostion.colour = parent.getgfxEntity().colour;
-            explostion.setScale(Vec3.VEC3_ZERO);
-            explostion.setPosition(where);
-            gfxEngine.getRootEntity().addChild(explostion);
-
-            explostion.active = true;
-        } catch (ResourceNotLoadedException ex)
+            explostion.attachResource(explosionProjectile);
+        } else if (type == 1)
         {
-            System.err.println(ex.getMessage());
+            explostion.attachResource(explosionTank);
         }
+        explostion.attachResource(particleShader);
+        explostion.attachResource(billboardMesh);
+        
+        explostion.colour = parent.getgfxEntity().colour;
+        explostion.setScale(Vec3.VEC3_ZERO);
+        explostion.setPosition(where);
+        gfxEngine.getRootEntity().addChild(explostion);
+
+        explostion.active = true;
     }
 }

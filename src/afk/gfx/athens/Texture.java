@@ -87,6 +87,8 @@ public abstract class Texture extends AthensResource
     @Override
     public void unload(GL2 gl)
     {
+        loaded.set(false);
+        
         gl.glDeleteTextures(1, new int[]{handle}, 0);
     }
     

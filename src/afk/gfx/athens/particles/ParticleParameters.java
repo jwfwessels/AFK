@@ -143,6 +143,8 @@ public class ParticleParameters extends AthensResource
                             + nfe.getMessage());
                 }
             }
+        
+            loaded.set(true);
         }
         finally
         {
@@ -154,5 +156,6 @@ public class ParticleParameters extends AthensResource
     public void unload(GL2 gl)
     {
         // TODO: nothing to unload?
+        loaded.set(false);
     }
 }

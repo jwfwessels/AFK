@@ -1,5 +1,7 @@
 package afk.gfx;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Represents a graphical resource that can be loaded, unloaded, and attached to
  * a graphics entity.
@@ -22,6 +24,9 @@ public abstract class Resource
     protected int type;
     /** The name of this resource. */
     protected String name;
+    
+    /** True if the resource is loaded, false otherwise. */
+    protected AtomicBoolean loaded = new AtomicBoolean(false);
 
     /**
      * Creates a new resource with the specified type and name.
@@ -82,6 +87,16 @@ public abstract class Resource
         hash = 37 * hash + this.type;
         hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
+    }
+
+    /**
+     * Checks the load status of the resource.
+     * @return true if the resource is currently loaded in memory, false
+     * otherwise.
+     */
+    public boolean isLoaded()
+    {
+        return loaded.get();
     }
     
 }

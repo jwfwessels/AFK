@@ -16,12 +16,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -542,19 +540,6 @@ public class Athens extends GraphicsEngine
         }
         
         return entity;
-    }
-
-    @Override
-    public void attachResource(GfxEntity entity, Resource resource)
-            throws ResourceNotLoadedException
-    {
-        AthensEntity athensEntity = (AthensEntity)entity;
-        
-        if (resources[resource.getType()].containsKey(resource.getName()))
-        {
-            athensEntity.attachResource((AthensResource)resource);
-        }
-        else throw new ResourceNotLoadedException(resource);
     }
 
     @Override

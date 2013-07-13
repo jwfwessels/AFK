@@ -42,7 +42,7 @@ public class ParticleEmitter extends AthensEntity
     }
 
     @Override
-    public void attachResource(AthensResource resource)
+    public void attachResource(Resource resource)
     {
         if (resource.getType() == Resource.PARTICLE_PARAMETERS)
         {

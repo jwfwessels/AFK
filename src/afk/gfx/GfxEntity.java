@@ -195,4 +195,14 @@ public abstract class GfxEntity
      * @return the parent of this entity, null if the entity has no parent.
      */
     public abstract GfxEntity getParent();
+    
+    /**
+     * Attaches the specified resource to this GfxEntity.
+     * @param resource the resource to attach to the entity.
+     * @throws ResourceNotCompatableException if this entity does not support
+     * the attachment of the given resource.
+     */
+    public abstract void attachResource(Resource resource)
+            // TODO: throws ResourceNotCompatableException
+            ;
 }

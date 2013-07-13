@@ -115,16 +115,6 @@ public abstract class GraphicsEngine
     public abstract GfxEntity getRootEntity();
     
     /**
-     * Attach the specified resource to the specified entity.
-     * @param entity the entity to attach the resource to.
-     * @param resource the resource to attach to the entity.
-     * @throws ResourceNotLoadedException if the specified resource has not yet
-     * been loaded into memory.
-     */
-    public abstract void attachResource(GfxEntity entity, Resource resource)
-            throws ResourceNotLoadedException;
-    
-    /**
      * Reads the status of a key on the keyboard.
      * @param keyCode the key to read.
      * @return true if the key is currently pressed, false otherwise.

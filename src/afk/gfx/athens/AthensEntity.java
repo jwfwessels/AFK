@@ -91,7 +91,8 @@ public class AthensEntity extends GfxEntity
             }
     }
     
-    public void attachResource(AthensResource resource)
+    @Override
+    public void attachResource(Resource resource)
     {
         switch (resource.getType())
         {

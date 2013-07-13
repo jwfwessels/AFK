@@ -41,5 +41,7 @@ public class Quad extends Mesh
             gl.glEnd();
         }
         gl.glEndList();
+        
+        loaded.set(true);
     }
 }
