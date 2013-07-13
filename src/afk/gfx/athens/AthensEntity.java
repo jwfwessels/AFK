@@ -136,7 +136,7 @@ public class AthensEntity extends GfxEntity
     }
 
     @Override
-    protected Collection<? extends GfxEntity> removeAllEntities()
+    public Collection<? extends GfxEntity> removeAllEntities()
     {
         if (subEntities == null) return new ArrayList<AthensEntity>();
         for (AthensEntity entity :subEntities)

@@ -48,9 +48,9 @@ public class Athens extends GraphicsEngine
     private Map<String, AthensResource>[] resources
             = new Map[Resource.NUM_RESOURCE_TYPES];
     
-    // graphics entities that are part of the scene
-    private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
-
+    // the scene's root entity
+    private AthensEntity rootEntity;
+    
     // flag indicating that the load queue has been dispatched
     private boolean loadQueueDispatched = false;
     
@@ -170,6 +170,8 @@ public class Athens extends GraphicsEngine
             animator = new Animator(glCanvas);
             animator.start();
         }
+        
+        rootEntity = new AthensEntity();
     }
 
     @Override
@@ -304,8 +306,7 @@ public class Athens extends GraphicsEngine
         
         updateView();
         
-        for (AthensEntity entity : entities)
-            entity.update(delta);
+        rootEntity.update(delta);
     }
     
     private void render(GL2 gl)
@@ -319,10 +320,7 @@ public class Athens extends GraphicsEngine
     
     private void renderScene(GL2 gl, Camera cam)
     {
-        for (AthensEntity entity :entities)
-        {
-            entity.draw(gl, cam, sun);
-        }
+        rootEntity.draw(gl, camera, sun);
     }
 
     private void init(GL2 gl)
@@ -543,18 +541,7 @@ public class Athens extends GraphicsEngine
                 return null;
         }
         
-        entities.add(entity);
-        
         return entity;
-    }
-
-    @Override
-    public void deleteEntity(GfxEntity entity)
-    {
-        super.deleteEntity(entity);
-        AthensEntity athensEntity = (AthensEntity)entity;
-        athensEntity.removeAllEntities();
-        entities.remove(athensEntity);
     }
 
     @Override
@@ -582,30 +569,9 @@ public class Athens extends GraphicsEngine
     }
 
     @Override
-    public void addChildEntity(GfxEntity parent, GfxEntity child)
+    public GfxEntity getRootEntity()
     {
-        super.addChildEntity(parent, child);
-        entities.remove((AthensEntity)child);
-    }
-
-    @Override
-    public Collection<? extends GfxEntity> removeAllChildren(GfxEntity parent)
-    {
-        Collection<? extends GfxEntity> removedEntities = super.removeAllChildren(parent);
-        for (GfxEntity entity :removedEntities)
-        {
-            entities.add((AthensEntity)entity);
-        }
-        return removedEntities;
-    }
-
-    @Override
-    public void removeChildEntity(GfxEntity child)
-    {
-        super.removeChildEntity(child);
-        AthensEntity athensChild = (AthensEntity)child;
-        if (!entities.contains(athensChild))
-            entities.add(athensChild);
+        return rootEntity;
     }
     
 }

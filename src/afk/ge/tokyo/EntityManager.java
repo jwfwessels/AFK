@@ -71,7 +71,9 @@ public class EntityManager
         tankLabelEntity.colour = new Vec3(1,0,1); // magenta, the colour of debugging!
         tankLabelEntity.setPosition(0, 2, 0); // sitting above his head...
         tankLabelEntity.setScale(3.0f, 0.5f, 1);
-        gfxEngine.addChildEntity(tankGfxEntity, tankLabelEntity);
+        tankGfxEntity.addEntity(tankLabelEntity);
+        
+        gfxEngine.getRootEntity().addEntity(tankGfxEntity);
         
         TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
@@ -95,6 +97,7 @@ public class EntityManager
         {
             Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        gfxEngine.getRootEntity().addEntity(projectileGfxEntity);
         ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
         subEntities.add(projectile);
         projectile.name = parent.name + "projectile";
@@ -181,6 +184,7 @@ public class EntityManager
                             Tokyo.BOARD_SIZE,
                             Tokyo.BOARD_SIZE
                         );
+                    gfxEngine.getRootEntity().addEntity(floorGfxEntity);
 
                     /*
                     TankEntity tank = createTank();
@@ -202,13 +206,15 @@ public class EntityManager
 
     void RomoveSubEntity(AbstractEntity entity)
     {
-        gfxEngine.deleteEntity(entity.getgfxEntity());
+        GfxEntity gfxEntity = entity.getgfxEntity();
+        gfxEntity.getParent().removeEntity(gfxEntity);
         subEntities.remove(entity);
     }
 
     void RomoveEntity(TankEntity entity)
     {
-        gfxEngine.deleteEntity(entity.getgfxEntity());
+        GfxEntity gfxEntity = entity.getgfxEntity();
+        gfxEntity.getParent().removeEntity(gfxEntity);
         entities.remove(entity);
     }
 
@@ -231,6 +237,7 @@ public class EntityManager
             explostion.colour = parent.getgfxEntity().colour;
             explostion.setScale(Vec3.VEC3_ZERO);
             explostion.setPosition(where);
+            gfxEngine.getRootEntity().addEntity(explostion);
 
             explostion.active = true;
         } catch (ResourceNotLoadedException ex)

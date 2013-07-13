@@ -166,8 +166,8 @@ public abstract class GfxEntity
         this.setScale(scale.getX(), scale.getY(), scale.getZ());
     }
     
-    protected abstract void addEntity(GfxEntity entity);
-    protected abstract void removeEntity(GfxEntity entity);
-    protected abstract Collection<? extends GfxEntity> removeAllEntities();
-    protected abstract GfxEntity getParent();
+    public abstract void addEntity(GfxEntity entity);
+    public abstract void removeEntity(GfxEntity entity);
+    public abstract Collection<? extends GfxEntity> removeAllEntities();
+    public abstract GfxEntity getParent();
 }
