@@ -51,20 +51,12 @@ public class EntityManager
     {
         float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        GfxEntity tankLabelEntity = gfxEngine.createEntity(GfxEntity.BILLBOARD_SPHERICAL);
         
         tankGfxEntity.attachResource(tankMesh);
         tankGfxEntity.attachResource(tankShader);
-        tankLabelEntity.attachResource(billboardMesh);
-        tankLabelEntity.attachResource(particleShader);
             
         tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
-        
-        tankLabelEntity.colour = new Vec3(1,0,1); // magenta, the colour of debugging!
-        tankLabelEntity.setPosition(0, 2, 0); // sitting above his head...
-        tankLabelEntity.setScale(3.0f, 0.5f, 1);
-        tankGfxEntity.addChild(tankLabelEntity);
         
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
         
