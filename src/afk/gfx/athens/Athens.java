@@ -82,6 +82,8 @@ public class Athens extends GraphicsEngine
     private GLCanvas glCanvas;
     private Animator animator;
     
+    private float fps = 0.0f;
+    
     public Athens(boolean autodraw)
     {
         for (int i = 0; i < resources.length; i++)
@@ -207,12 +209,7 @@ public class Athens extends GraphicsEngine
         time += delta;
         lastFPS += delta;
         
-        if (lastFPS > fpsInterval)
-        {
-            // TODO: show FPS somehow :/
-            //jFrame.setTitle(title + " - " + (1.0f/delta) + " FPS");
-            lastFPS -= fpsInterval;
-        }
+        fps = (1.0f/delta);
         
         // TODO: move loading into a loading state rather.
         // This should allow for loading progress bars and such.
@@ -558,5 +555,10 @@ public class Athens extends GraphicsEngine
     {
         return rootEntity;
     }
-    
+
+    @Override
+    public float getFPS()
+    {
+        return fps;
+    }
 }

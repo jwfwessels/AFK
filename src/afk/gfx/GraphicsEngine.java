@@ -142,4 +142,10 @@ public abstract class GraphicsEngine
      */
     public abstract int getMouseY();
     
+    /**
+     * Reads the current frame rate.
+     * @return the current frame rate.
+     */
+    public abstract float getFPS();
+    
 }
