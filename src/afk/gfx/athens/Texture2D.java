@@ -27,6 +27,8 @@ public class Texture2D extends Texture
         
         setup(gl, data, w_h[0], w_h[1]);
         
+        setParameters(gl, Texture.texParamsDefault);
+        
         loaded.set(true);
     }
     

@@ -33,7 +33,6 @@ public class EntityManager
     Resource explosionTank;
     Resource particleShader;
     Resource billboardMesh;
-    GfxEntity fountain;
     
     London botEngine;
     
@@ -165,7 +164,7 @@ public class EntityManager
                         Tokyo.BOARD_SIZE
                     );
                 gfxEngine.getRootEntity().addChild(floorGfxEntity);
-
+                
                 /*
                 TankEntity tank = createTank();
                 tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));
