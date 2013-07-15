@@ -33,10 +33,6 @@ public class EntityManager
     Resource explosionTank;
     Resource particleShader;
     Resource billboardMesh;
-    Resource monkeyTexture;
-    Resource fountainParticles;
-    Resource fountainShader;
-    GfxEntity fountain;
     
     London botEngine;
     
@@ -153,10 +149,6 @@ public class EntityManager
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
-        
-        fountainParticles = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "fountain");
-        monkeyTexture = gfxEngine.loadResource(Resource.TEXTURE_2D, "monkey");
-        fountainShader = gfxEngine.loadResource(Resource.SHADER, "texturedParticle");
 
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
@@ -171,17 +163,8 @@ public class EntityManager
                         Tokyo.BOARD_SIZE,
                         Tokyo.BOARD_SIZE
                     );
-                floorGfxEntity.attachResource(monkeyTexture);
                 gfxEngine.getRootEntity().addChild(floorGfxEntity);
                 
-                fountain = gfxEngine.createEntity(GfxEntity.BILLBOARD_SPHERICAL);
-                //fountain.attachResource(fountainParticles);
-                fountain.attachResource(monkeyTexture);
-                fountain.attachResource(billboardMesh);
-                fountain.attachResource(fountainShader);
-                fountain.active = true;
-                gfxEngine.getRootEntity().addChild(fountain);
-
                 /*
                 TankEntity tank = createTank();
                 tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));

@@ -82,6 +82,7 @@ public abstract class Texture extends AthensResource
         gl.glGenTextures(1, handleBuffer);
         
         handle = handleBuffer.get();
+        bind(gl);
     }
 
     @Override
