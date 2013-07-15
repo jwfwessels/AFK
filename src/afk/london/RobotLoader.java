@@ -7,6 +7,8 @@ package afk.london;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -14,10 +16,12 @@ import java.io.FileReader;
  */
 public class RobotLoader extends ClassLoader
 {
+    ArrayList<Class<?>> bots = new ArrayList<Class<?>>(); 
+    HashMap<String, Class<?>> botMap = new HashMap<String, Class<?>>();
     public Robot LoadRobot(String path)
     {
         FileInputStream in;
-        File tempFile;
+        File tempFile = null;
         byte[] b = null;
         
         try
@@ -31,10 +35,26 @@ public class RobotLoader extends ClassLoader
         {
             e.printStackTrace();
         }
-
-        Class<?> loadedBot = defineClass(null, b, 0, b.length);
-        Robot newBot = null;
         
+        String name = tempFile.getName();
+        name = name.substring(0, name.lastIndexOf('.'));
+        System.out.println("Path: " + path);
+        System.out.println("Bot Name1: ");
+        Robot newBot;
+        Class<?> loadedBot;
+        if(!botMap.containsKey(name))
+        {
+            loadedBot = defineClass(null, b, 0, b.length);
+            botMap.put(loadedBot.getName(), loadedBot);
+        }
+        else
+        {
+            loadedBot = botMap.get(name);
+            newBot = null;
+        }
+        System.out.println("Bot Name2: " + loadedBot.getName());
+        newBot = null;
+
         try
         {
             Object obj = loadedBot.getDeclaredConstructor().newInstance();

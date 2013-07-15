@@ -245,7 +245,7 @@ public class Tokyo extends GameEngine
             public void actionPerformed(ActionEvent e)
             {
                 String selectedBot = lstAvailableBots.getSelectedValue();
-                lsAvailableModel.removeElement(selectedBot);
+                //lsAvailableModel.removeElement(selectedBot);
                 lsSelectedModel.addElement(selectedBot);
             }
         });
@@ -255,11 +255,12 @@ public class Tokyo extends GameEngine
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                while (!lsAvailableModel.isEmpty())
+
+                for(int x = 0; x < lsAvailableModel.getSize(); x++)
                 {
-                    lsSelectedModel.addElement(lsAvailableModel.getElementAt(0));
-                    lsAvailableModel.removeElementAt(0);
+                    lsSelectedModel.addElement(lsAvailableModel.getElementAt(x));
                 }
+                //lsAvailableModel.removeElementAt(0);
             }
         });
 
@@ -270,7 +271,7 @@ public class Tokyo extends GameEngine
             {
                 String selectedBot = lstSelectedBots.getSelectedValue();
                 lsSelectedModel.removeElement(selectedBot);
-                lsAvailableModel.addElement(selectedBot);
+                //lsAvailableModel.addElement(selectedBot);
             }
         });
 
@@ -281,7 +282,7 @@ public class Tokyo extends GameEngine
             {
                 while (!lsSelectedModel.isEmpty())
                 {
-                    lsAvailableModel.addElement(lsSelectedModel.getElementAt(0));
+                    //lsAvailableModel.addElement(lsSelectedModel.getElementAt(0));
                     lsSelectedModel.removeElementAt(0);
                 }
             }
