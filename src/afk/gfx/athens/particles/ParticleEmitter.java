@@ -1,6 +1,7 @@
 package afk.gfx.athens.particles;
 
 import afk.gfx.Camera;
+import afk.gfx.Light;
 import afk.gfx.Resource;
 import afk.gfx.athens.Athens;
 import afk.gfx.athens.AthensEntity;
@@ -100,7 +101,7 @@ public class ParticleEmitter extends AthensEntity
     }
     
     @Override
-    public void draw(GL2 gl, Camera camera, Vec3 sun)
+    public void draw(GL2 gl, Camera camera, Light sun)
     {
         if (shader != null)
         {
@@ -114,8 +115,11 @@ public class ParticleEmitter extends AthensEntity
 
             shader.updateUniform(gl, "view", camera.view);
             shader.updateUniform(gl, "projection", camera.projection);
+            
+            shader.updateUniform(gl, "lview", sun.getCamera().view);
+            shader.updateUniform(gl, "lprojection", sun.getCamera().projection);
 
-            shader.updateUniform(gl, "sun", sun);
+            shader.updateUniform(gl, "sun", sun.getPoint());
             shader.updateUniform(gl, "eye", camera.eye);
 
             if (colour != null)

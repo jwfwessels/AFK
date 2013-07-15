@@ -163,6 +163,7 @@ public class EntityManager
                         Tokyo.BOARD_SIZE,
                         Tokyo.BOARD_SIZE
                     );
+                floorGfxEntity.castShadows = false;
                 gfxEngine.getRootEntity().addChild(floorGfxEntity);
                 
                 /*

@@ -5,6 +5,7 @@ import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
+import afk.gfx.Light;
 import afk.gfx.OrthoCamera;
 import afk.gfx.PerspectiveCamera;
 import afk.gfx.Resource;
@@ -69,13 +70,12 @@ public class Athens extends GraphicsEngine
     private float fpsInterval = 1.0f;
     
     Camera camera;
-    Camera lightCamera;
     
     Mat4 monkeyWorld, skyboxWorld;
     
     // TODO: move this to a sun/light position
-    Vec3 origin_sun = new Vec3(-2.0f,1.5f,5.0f);
-    Vec3 sun = new Vec3(origin_sun);
+    Vec3 origin_sun = new Vec3(-20.0f,15.0f,50.0f);
+    Light sun;
     
     float daytime = 0.0f;
 
@@ -88,7 +88,7 @@ public class Athens extends GraphicsEngine
     private GLCanvas glCanvas;
     private Animator animator;
     
-    private final int SHADOW_MAP_SIZE = 1024;
+    private final int SHADOW_MAP_SIZE = 512;
     private Shader shadowMapShader;
     private Texture2D shadowMap;
     
@@ -332,13 +332,16 @@ public class Athens extends GraphicsEngine
     
     private void renderShadows(GL2 gl)
     {
+        gl.glViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+        
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        gl.glCullFace(GL.GL_FRONT);
         
         useShadowMapShader(gl);
-        rootEntity.draw(gl, lightCamera, sun, shadowMapShader);
+        rootEntity.draw(gl, sun.getCamera(), sun, shadowMapShader);
         
         gl.glFlush();
+        
+        gl.glViewport(0, 0, w_width, w_height);
     }
     
     private void renderScene(GL2 gl, Camera cam)
@@ -355,11 +358,11 @@ public class Athens extends GraphicsEngine
     {
         shadowMapShader.use(gl);
         
-        shadowMapShader.updateUniform(gl, "view", lightCamera.view);
-        shadowMapShader.updateUniform(gl, "projection", lightCamera.projection);
+        shadowMapShader.updateUniform(gl, "view", sun.getCamera().view);
+        shadowMapShader.updateUniform(gl, "projection", sun.getCamera().projection);
 
-        shadowMapShader.updateUniform(gl, "sun", sun);
-        shadowMapShader.updateUniform(gl, "eye", lightCamera.eye);
+        shadowMapShader.updateUniform(gl, "sun", sun.getPoint());
+        shadowMapShader.updateUniform(gl, "eye", sun.getCamera().eye);
     }
 
     private void init(GL2 gl)
@@ -393,15 +396,7 @@ public class Athens extends GraphicsEngine
                 60.0f, 0.1f, 100.0f
             );
         
-        lightCamera = new OrthoCamera(
-                Vec3.VEC3_ZERO,
-                Vec3.VEC3_ZERO,
-                new Vec3(0,1,0),
-                0.1f, 100.0f,
-                -100, 100,
-                -100, 100
-            );
-        updateSun();
+        sun = new Light(origin_sun);
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
@@ -487,13 +482,11 @@ public class Athens extends GraphicsEngine
         aspect = (float) width / (float) height;
 
         camera.updateProjection(aspect);
-        lightCamera.updateProjection(aspect);
     }
 
     private void updateView()
     {
         camera.updateView();
-        lightCamera.updateView();
         
         // shift skybox with camera
         skyboxWorld = new Mat4(1.0f);
@@ -510,9 +503,7 @@ public class Athens extends GraphicsEngine
         
         Vec4 sun4 = sunWorld.multiply(new Vec4(origin_sun, 0.0f));
         
-        sun = new Vec3(sun4.getX(),sun4.getY(), sun4.getZ());
-        
-        lightCamera.eye = sun.getUnitVector().scale(60.0f);
+        sun.update(new Vec3(sun4.getX(),sun4.getY(), sun4.getZ()));
     }
 
     @Override

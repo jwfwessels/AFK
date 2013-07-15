@@ -2,6 +2,7 @@ package afk.gfx.athens;
 
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
+import afk.gfx.Light;
 import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
@@ -62,18 +63,21 @@ public class AthensEntity extends GfxEntity
                 entity.update(delta);
     }
     
-    protected void draw(GL2 gl, Camera camera, Vec3 sun)
+    protected void draw(GL2 gl, Camera camera, Light sun)
     {
         draw(gl, camera, sun, null);
     }
     
-    protected void draw(GL2 gl, Camera camera, Vec3 sun, Shader overrideShader)
+    protected void draw(GL2 gl, Camera camera, Light sun, Shader overrideShader)
     {
         // by default, active sets visibility of entity
         if (!active) return;
         
         if (overrideShader != null)
         {
+            // TODO: hacks!
+            if (!castShadows) return;
+            
             overrideShader.updateUniform(gl, "world", createWorldMatrix());
             if (texture != null)
             {
@@ -92,14 +96,17 @@ public class AthensEntity extends GfxEntity
                 texture.use(gl, GL2.GL_TEXTURE0);
                 shader.updateUniform(gl, "tex", 0);
             }
-            /*engine.getShadowMap().use(gl, GL2.GL_TEXTURE1);
-            shader.updateUniform(gl, "shadowmap", 1);*/
+            engine.getShadowMap().use(gl, GL2.GL_TEXTURE1);
+            shader.updateUniform(gl, "shadowmap", 1);
 
             shader.updateUniform(gl, "world", createWorldMatrix());
             shader.updateUniform(gl, "view", camera.view);
             shader.updateUniform(gl, "projection", camera.projection);
+            
+            shader.updateUniform(gl, "lview", sun.getCamera().view);
+            shader.updateUniform(gl, "lprojection", sun.getCamera().projection);
 
-            shader.updateUniform(gl, "sun", sun);
+            shader.updateUniform(gl, "sun", sun.getPoint());
             shader.updateUniform(gl, "eye", camera.eye);
 
             if (colour != null)

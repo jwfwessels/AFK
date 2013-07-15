@@ -35,6 +35,16 @@ public abstract class GfxEntity
      * By default, this boolean dictates whether or not the entity is visible.
      */
     public boolean active = true;
+    
+    /**
+     * Sets whether or not the entity casts a shadow on other entities.
+     */
+    public boolean castShadows = true;
+    
+    /**
+     * Sets whether or not the entity receives shadows from other entities.
+     */
+    public boolean receiveShadows = true;
 
     /**
      * Gets the entity's local position as a Vec3.

@@ -16,21 +16,19 @@ void main()
     vec4 ssLightPos = lposition / lposition.w;
 
     // making the checkerboard!
-    int u = int(gl_TexCoord[0].x);
-    int v = int(gl_TexCoord[0].y);
+    int u = int(gl_TexCoord[0].x*10);
+    int v = int(gl_TexCoord[0].y*10);
 
     float colour;
-    if (mod(u,2) == mod(v,2)) colour = 0.2;
+    if (mod(u,2) == mod(v,2)) colour = 0.5;
     else colour = 0.7;
 
     if (shadowed(ssLightPos.xy, ssLightPos.z))
     {
-        gl_FragColor = vec4(1,0,1,1);
+        colour *= 0.5;
     }
-    else
-    {
-        //gl_FragColor = texture2D(tex, gl_TexCoord[0].xy);
-        gl_FragColor = vec4(vec3(colour),1.0);
-    }
+
+    //gl_FragColor = colour*texture2D(tex, gl_TexCoord[0].xy);
+    gl_FragColor = vec4(vec3(colour),1.0);
 }
 
