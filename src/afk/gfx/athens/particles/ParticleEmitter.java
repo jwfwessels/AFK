@@ -118,6 +118,8 @@ public class ParticleEmitter extends AthensEntity
 
             if (colour != null)
                 shader.updateUniform(gl, "colour", colour);
+            
+            shader.updateUniform(gl, "opacity", opacity);
         }
         
         for (int i = 0; i < particles.length; i++)

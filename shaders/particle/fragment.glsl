@@ -3,6 +3,7 @@
 //uniform sampler2D tex;
 
 uniform vec3 colour;
+uniform float opacity;
 
 varying float ip;
 
@@ -15,6 +16,6 @@ void main()
 
     if (u*u + v*v > 0.25) discard;
 
-    gl_FragColor = vec4(colour,1.0);
+    gl_FragColor = vec4(colour,opacity);
 }
 

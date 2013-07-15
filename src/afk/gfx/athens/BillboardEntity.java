@@ -87,6 +87,8 @@ public class BillboardEntity extends AthensEntity
 
             if (colour != null)
                 shader.updateUniform(gl, "colour", colour);
+            
+            shader.updateUniform(gl, "opacity", opacity);
         }
         
         if (mesh != null)

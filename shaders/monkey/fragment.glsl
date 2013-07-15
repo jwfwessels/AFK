@@ -5,6 +5,7 @@
 varying float ip;
 
 uniform vec3 colour;
+uniform float opacity;
 
 void main()
 {
@@ -13,6 +14,6 @@ void main()
 
     gl_FragColor = texture2D(tex, vec2(u,v))*ip;*/
 
-    gl_FragColor = vec4(ip * colour,1.0);
+    gl_FragColor = vec4(ip * colour,opacity);
 }
 
