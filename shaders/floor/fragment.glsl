@@ -28,7 +28,7 @@ void main()
         colour *= 0.5;
     }
 
-    //gl_FragColor = colour*texture2D(tex, gl_TexCoord[0].xy);
+    //gl_FragColor = colour*texture2D(shadowmap, gl_TexCoord[0].xy);
     gl_FragColor = vec4(vec3(colour),1.0);
 }
 

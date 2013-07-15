@@ -347,7 +347,6 @@ public class Athens extends GraphicsEngine
     private void renderScene(GL2 gl, Camera cam)
     {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        gl.glCullFace(GL.GL_BACK);
 
         rootEntity.draw(gl, cam, sun);
 
@@ -396,7 +395,8 @@ public class Athens extends GraphicsEngine
                 60.0f, 0.1f, 100.0f
             );
         
-        sun = new Light(origin_sun);
+        sun = new Light(new Vec3(origin_sun));
+        updateSun();
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
