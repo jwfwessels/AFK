@@ -3,7 +3,6 @@ import afk.frontend.swing.RootWindow;
 import afk.gfx.*;
 import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 public class Main
 {
@@ -18,8 +17,8 @@ public class Main
 
     public Main()
     {
-        renderer = GraphicsEngine.createInstance(false);
-        engine = new Tokyo(renderer);
+//        renderer = GraphicsEngine.createInstance(false);
+//        engine = new Tokyo(renderer);
         RootWindow window = new RootWindow();
         window.start();
     }
@@ -34,6 +33,6 @@ public class Main
 
         Main main = new Main();
 
-        main.start();
+//        main.start();
     }
 }

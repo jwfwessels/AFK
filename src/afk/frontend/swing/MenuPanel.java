@@ -4,13 +4,26 @@
  */
 package afk.frontend.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -20,25 +33,100 @@ public class MenuPanel extends JPanel implements ActionListener
 {
     //TODO; define components + parent ref
 
+    RootWindow parent;
+    JPanel pnlBotSelButtons;
+    JPanel pnlAvailable;
+    JPanel pnlSelected;
+    JLabel lblAvailable;
+    JLabel lblSelected;
+    JButton btnAddBot;
+    JButton btnAddAllBots;
+    JButton btnRemoveBot;
+    JButton btnRemoveAllBots;
+    JButton btnStartMatch;
+    JButton btnLoadBot;
+    private HashMap<String, String> botMap;
+    private JFileChooser fileChooser;
+    private JList<String> lstAvailableBots;
+    private JList<String> lstSelectedBots;
+    private DefaultListModel<String> lsAvailableModel;
+    private DefaultListModel<String> lsSelectedModel;
+
     public MenuPanel(RootWindow parent)
     {
         //TODO; set layout
+        this.parent = parent;
+
+//        LayoutManager layout = new MenuPanel_Layout();
+        LayoutManager layout = new GridLayout(1, 3);
+        this.setLayout(layout);
+
     }
 
     void setup()
     {
         //TODO; call init, add, style
+        initComponents();
+        addComponents();
+        styleComponents();
     }
 
     private void initComponents()
     {
         //TODO; instatiate components
         //TODO; run components setup(init & add), set visible 
+        pnlBotSelButtons = new JPanel();
+        pnlAvailable = new JPanel();
+        pnlSelected = new JPanel();
+        lblAvailable = new JLabel("Available Bots");
+        lblSelected = new JLabel("Selected Bots");
+
+        btnAddBot = new JButton(">");
+        btnAddAllBots = new JButton(">>");
+        btnRemoveBot = new JButton("<");
+        btnRemoveAllBots = new JButton("<<");
+        btnStartMatch = new JButton("Start");
+        btnLoadBot = new JButton("Load Bot");
+
+        botMap = new HashMap<String, String>();
+
+        fileChooser = new JFileChooser(".");
+
+        lstAvailableBots = new JList();
+        lstSelectedBots = new JList();
+        lsAvailableModel = new DefaultListModel();
+        lsSelectedModel = new DefaultListModel();
     }
 
     private void addComponents()
     {
         //TODO; get container, add components to container.
+        this.add(pnlAvailable);
+        this.add(pnlBotSelButtons);
+        this.add(pnlSelected);
+
+        pnlBotSelButtons.add(btnAddBot);
+        pnlBotSelButtons.add(btnAddAllBots);
+        pnlBotSelButtons.add(btnRemoveBot);
+        pnlBotSelButtons.add(btnRemoveAllBots);
+        pnlBotSelButtons.add(btnStartMatch);
+
+        Iterator it = botMap.keySet().iterator();
+
+        while (it.hasNext())
+        {
+            lsAvailableModel.addElement((String) it.next());
+        }
+        lstAvailableBots.setModel(lsAvailableModel);
+        lstSelectedBots.setModel(lsSelectedModel);
+
+        pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
+        pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
+        pnlAvailable.add(btnLoadBot, BorderLayout.SOUTH);
+
+        pnlSelected.add(lblSelected, BorderLayout.NORTH);
+        pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
+
     }
 
     private void removeComponents()
@@ -49,6 +137,92 @@ public class MenuPanel extends JPanel implements ActionListener
     private void styleComponents()
     {
         //TODO; set colours of components(here if you can)
+        pnlAvailable.setLayout(new BorderLayout());
+        pnlBotSelButtons.setBackground(Color.LIGHT_GRAY);
+        pnlSelected.setLayout(new BorderLayout());
+        pnlBotSelButtons.setBackground(Color.BLACK);
+        pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
+        pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
+        pnlBotSelButtons.setBackground(Color.GRAY);
+
+        fileChooser.setDialogTitle("Load Bot");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class"));
+
+        btnAddBot.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String selectedBot = lstAvailableBots.getSelectedValue();
+                lsAvailableModel.removeElement(selectedBot);
+                lsSelectedModel.addElement(selectedBot);
+            }
+        });
+
+        btnAddAllBots.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                while (!lsAvailableModel.isEmpty())
+                {
+                    lsSelectedModel.addElement(lsAvailableModel.getElementAt(0));
+                    lsAvailableModel.removeElementAt(0);
+                }
+            }
+        });
+
+        btnRemoveBot.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String selectedBot = lstSelectedBots.getSelectedValue();
+                lsSelectedModel.removeElement(selectedBot);
+                lsAvailableModel.addElement(selectedBot);
+            }
+        });
+
+        btnRemoveAllBots.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                while (!lsSelectedModel.isEmpty())
+                {
+                    lsAvailableModel.addElement(lsSelectedModel.getElementAt(0));
+                    lsSelectedModel.removeElementAt(0);
+                }
+            }
+        });
+
+        btnLoadBot.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                int option = fileChooser.showOpenDialog(parent);
+                if (option != JFileChooser.APPROVE_OPTION)
+                {
+                    return;
+                }
+                String botPath = fileChooser.getSelectedFile().getAbsolutePath();
+                String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
+                botMap.put(botName, botPath);
+                lsAvailableModel.addElement(botName);
+            }
+        });
+
+        btnStartMatch.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
+                parent.swapPanel();
+            }
+        });
+
     }
 
     @Override
@@ -63,31 +237,65 @@ public class MenuPanel extends JPanel implements ActionListener
         @Override
         public void addLayoutComponent(String name, Component comp)
         {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
         @Override
         public void removeLayoutComponent(Component comp)
         {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
+//    @Override
+//    public Dimension preferredLayoutSize(Container parent) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
         @Override
         public Dimension preferredLayoutSize(Container parent)
         {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            Dimension dim = new Dimension(0, 0);
+
+            Insets insets = parent.getInsets();
+            dim.width = 640 + insets.left + insets.right;
+            dim.height = 360 + insets.top + insets.bottom;
+
+            return dim;
         }
 
         @Override
         public Dimension minimumLayoutSize(Container parent)
         {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            Dimension dim = new Dimension(0, 0);
+            return dim;
         }
 
         @Override
         public void layoutContainer(Container parent)
         {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            Insets insets = parent.getInsets();
+
+            int w = parent.getSize().width;
+            int h = parent.getSize().height;
+
+            int num1 = 2;
+            Component c;
+
+            //heading
+
+            try
+            {
+                int count = 0;
+                while ((c = parent.getComponent(count)) != null)
+                {
+                    c = parent.getComponent(count);
+                    if (c.isVisible())
+                    {
+                        c.setBounds(insets.left + 2, insets.top + num1, w - 4, (int) 60);
+                        num1 += c.getSize().height + 2;
+                    }
+                    count++;
+                }
+            } catch (Exception er)
+            {
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
  */
 package afk.ge.tokyo;
 
+import afk.frontend.swing.RootWindow;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.london.London;
@@ -62,7 +63,9 @@ public class Tokyo extends GameEngine
 
         entityManager = new EntityManager(botEngine, gfxEngine);
 
-        constructGUI();
+//        RootWindow rootWindow = new RootWindow();
+//        rootWindow.start();
+//        constructGUI();
         
         //uncomment if your doing testing and dont need the gui. use TestMove() to set parameters
         /*System.out.println("Testing Enabled, GUI disabled. line 69 Tokyo");

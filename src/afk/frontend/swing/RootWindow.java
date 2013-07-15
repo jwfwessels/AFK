@@ -4,8 +4,10 @@
  */
 package afk.frontend.swing;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,31 +25,41 @@ public class RootWindow extends JFrame implements ActionListener
 {
 
     //TODO; define components
+    Dimension dim;
+    private JPanel contentPane;
     private MenuPanel menuPanel;
     private GamePanel gamePanel;
 
     public void start()
     {
         //TODO; currently a bit of a hack since this is not the main thread its called by main
+        this.setTitle("AFK Arena");
         this.pack();
+        this.setLocationByPlatform(true);
         this.setVisible(true);
+//        menuPanel.setVisible(false);
+//        gamePanel.setVisible(false);
     }
 
     public RootWindow()
     {
-        this.setBounds(0, 0, 1280, 786);
-
-        LayoutManager layout = new RootWindow_Layout();
-        this.setLayout(layout);
-
+        dim = new Dimension(1280, 786);
+        this.setPreferredSize(dim);
+        contentPane = new JPanel();
+        contentPane.setLayout(new CardLayout());
+        contentPane.setSize(1280, 786);
+        this.setContentPane(contentPane);
+        //        LayoutManager layout = new RootWindow_Layout();
+//        this.setLayout(layout);
+        
         initComponents();
         addComponents();
         styleComponents();
-
-        addWindowListener(new WindowAdapter()
+        System.out.println("swing setup done!");
+        this.addWindowListener(new WindowAdapter()
         {
             @Override
-            public void windowClosing(WindowEvent e)
+            public void windowClosing(WindowEvent windowevent)
             {
                 System.exit(0);
             }
@@ -60,10 +72,11 @@ public class RootWindow extends JFrame implements ActionListener
         {
             menuPanel = new MenuPanel(this);
             menuPanel.setup();
-            menuPanel.setVisible(true);
+//            menuPanel.setVisible(false);
 
             gamePanel = new GamePanel(this);
             gamePanel.setup();
+//            menuPanel.setVisible(false);
 
             ////TODO: set visible 
         } catch (Exception e)
@@ -75,12 +88,11 @@ public class RootWindow extends JFrame implements ActionListener
     private void addComponents()
     {
 
-        Container c = null;
         try
         {
-            c = this.getContentPane();
-            c.add(menuPanel);
-            c.add(gamePanel);
+//            Container c = this.getContentPane();
+            contentPane.add(menuPanel);
+            contentPane.add(gamePanel);
 
         } catch (Exception e)
         {
@@ -104,8 +116,9 @@ public class RootWindow extends JFrame implements ActionListener
     {
         try
         {
-            menuPanel.setBackground(Color.GRAY);
-            menuPanel.setBackground(Color.BLACK);
+            this.getContentPane().setBackground(Color.BLUE);
+            menuPanel.setBackground(Color.RED);
+            gamePanel.setBackground(Color.BLACK);
         } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);
@@ -123,6 +136,9 @@ public class RootWindow extends JFrame implements ActionListener
             menuPanel.setVisible(true);
             gamePanel.setVisible(false);
         }
+
+        contentPane.invalidate();
+        contentPane.validate();
     }
 
     @Override
