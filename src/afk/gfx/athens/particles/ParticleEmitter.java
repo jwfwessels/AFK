@@ -2,6 +2,7 @@ package afk.gfx.athens.particles;
 
 import afk.gfx.Camera;
 import afk.gfx.Resource;
+import afk.gfx.athens.Athens;
 import afk.gfx.athens.AthensEntity;
 import afk.gfx.athens.AthensResource;
 import com.hackoeur.jglm.Mat4;
@@ -36,8 +37,9 @@ public class ParticleEmitter extends AthensEntity
     
     private ParticleParameters particleParams;
 
-    public ParticleEmitter()
+    public ParticleEmitter(Athens engine)
     {
+        super(engine);
         active = false;
     }
 

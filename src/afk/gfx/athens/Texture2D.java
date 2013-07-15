@@ -1,5 +1,6 @@
 package afk.gfx.athens;
 
+import com.jogamp.common.nio.Buffers;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,6 +11,7 @@ import javax.media.opengl.GL2;
 
 public class Texture2D extends Texture
 {
+    private int width, height;
 
     public Texture2D(String name)
     {
@@ -32,7 +34,8 @@ public class Texture2D extends Texture
     
     private void setup(GL2 gl, ByteBuffer data, int width, int height)
     {
-        
+        this.width = width;
+        this.height = height;
         gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB,
                 width, height, 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE,
@@ -44,4 +47,29 @@ public class Texture2D extends Texture
         gl.glGenerateMipmap(GL.GL_TEXTURE_2D);
     }
     
+    protected Texture2D(String name, int width, int height, GL2 gl)
+    {
+        super(TEXTURE_2D, name+"?width="+width+"&height="+height, GL.GL_TEXTURE_2D);
+        try
+        {
+            super.load(gl);
+        } catch (IOException ex)
+        {
+            ex.printStackTrace(System.err);
+        }
+        ByteBuffer data = Buffers.newDirectByteBuffer(width*height*3);
+        data.limit(data.capacity());
+        setup(gl, data, width, height);
+        loaded.set(true);
+    }
+
+    public int getWidth()
+    {
+        return width;
+    }
+
+    public int getHeight()
+    {
+        return height;
+    }
 }

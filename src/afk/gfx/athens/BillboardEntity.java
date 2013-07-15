@@ -19,8 +19,9 @@ public class BillboardEntity extends AthensEntity
 {
     private boolean spherical;
 
-    protected BillboardEntity(boolean spherical)
+    protected BillboardEntity(Athens engine, boolean spherical)
     {
+        super(engine);
         this.spherical = spherical;
     }
     

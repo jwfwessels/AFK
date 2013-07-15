@@ -50,7 +50,7 @@ public class Shader extends AthensResource
     public void unload(GL2 gl)
     {
         loaded.set(false);
-        gl.glDeleteShader(program);
+        gl.glDeleteProgram(program);
     }
     
     public void use(GL2 gl)

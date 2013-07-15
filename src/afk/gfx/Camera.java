@@ -12,7 +12,7 @@ import com.hackoeur.jglm.Vec4;
  * 
  * @author Daniel
  */
-public class Camera
+public abstract class Camera
 {
     /** Camera location. */
     public Vec3 eye;
@@ -20,13 +20,6 @@ public class Camera
     public Vec3 at;
     /** Up direction from the camera. */
     public Vec3 up;
-
-    /** Vertical field-of-view. */
-    public float fovY;
-    /** Near clipping plane. */
-    public float near;
-    /** Far clipping plane. */
-    public float far;
            
     /** Matrix for OpenGL. */
     public Mat4 view = null, projection = null;
@@ -46,14 +39,11 @@ public class Camera
      * @param near Near clipping plane.
      * @param far Far clipping plane.
      */
-    public Camera(Vec3 eye, Vec3 at, Vec3 up, float fovY, float near, float far)
+    public Camera(Vec3 eye, Vec3 at, Vec3 up)
     {
         this.eye = eye;
         this.at = at;
         this.up = up;
-        this.fovY = fovY;
-        this.near = near;
-        this.far = far;
     }
     
     /**
@@ -72,10 +62,7 @@ public class Camera
      * Call this when you need thew projection matrix updated.
      * @param aspect The aspect ratio of the scene.
      */
-    public void updateProjection(float aspect)
-    {
-        projection = Matrices.perspective(fovY, aspect, near, far);
-    }
+    public abstract void updateProjection(float aspect);
     
     /**
      * Moves the camera forward.

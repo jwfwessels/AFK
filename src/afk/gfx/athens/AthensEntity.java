@@ -16,6 +16,8 @@ import javax.media.opengl.GL2;
  */
 public class AthensEntity extends GfxEntity
 {
+    private Athens engine;
+    
     public static final Vec3 X_AXIS = new Vec3(1,0,0);
     public static final Vec3 Y_AXIS = new Vec3(0,1,0);
     public static final Vec3 Z_AXIS = new Vec3(0,0,1);
@@ -28,6 +30,11 @@ public class AthensEntity extends GfxEntity
     // collection of composite entities
     private Collection<AthensEntity> children;
     protected AthensEntity parent = null;
+    
+    protected AthensEntity(Athens engine)
+    {
+        this.engine = engine;
+    }
     
     protected Mat4 createWorldMatrix()
     {
@@ -57,10 +64,26 @@ public class AthensEntity extends GfxEntity
     
     protected void draw(GL2 gl, Camera camera, Vec3 sun)
     {
+        draw(gl, camera, sun, null);
+    }
+    
+    protected void draw(GL2 gl, Camera camera, Vec3 sun, Shader overrideShader)
+    {
         // by default, active sets visibility of entity
         if (!active) return;
         
-        if (shader != null)
+        if (overrideShader != null)
+        {
+            overrideShader.updateUniform(gl, "world", createWorldMatrix());
+            if (texture != null)
+            {
+                texture.use(gl, GL2.GL_TEXTURE0);
+                overrideShader.updateUniform(gl, "tex", 0);
+            }
+            if (colour != null)
+                overrideShader.updateUniform(gl, "colour", colour);
+        }
+        else if (shader != null)
         {
             shader.use(gl);
 
@@ -69,6 +92,8 @@ public class AthensEntity extends GfxEntity
                 texture.use(gl, GL2.GL_TEXTURE0);
                 shader.updateUniform(gl, "tex", 0);
             }
+            /*engine.getShadowMap().use(gl, GL2.GL_TEXTURE1);
+            shader.updateUniform(gl, "shadowmap", 1);*/
 
             shader.updateUniform(gl, "world", createWorldMatrix());
             shader.updateUniform(gl, "view", camera.view);
@@ -87,7 +112,10 @@ public class AthensEntity extends GfxEntity
         if (children != null)
             for (AthensEntity entity :children)
             {
-                entity.draw(gl, camera, sun);
+                if (overrideShader == null)
+                    entity.draw(gl, camera, sun);
+                else
+                    entity.draw(gl, camera, sun, overrideShader);
             }
     }
     

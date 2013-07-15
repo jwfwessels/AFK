@@ -5,10 +5,13 @@ import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
+import afk.gfx.OrthoCamera;
+import afk.gfx.PerspectiveCamera;
 import afk.gfx.Resource;
 import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.*;
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.Animator;
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
@@ -16,10 +19,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import javax.media.opengl.DebugGL2;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -64,6 +69,7 @@ public class Athens extends GraphicsEngine
     private float fpsInterval = 1.0f;
     
     Camera camera;
+    Camera lightCamera;
     
     Mat4 monkeyWorld, skyboxWorld;
     
@@ -81,6 +87,10 @@ public class Athens extends GraphicsEngine
     private GLCapabilities glCaps;
     private GLCanvas glCanvas;
     private Animator animator;
+    
+    private final int SHADOW_MAP_SIZE = 1024;
+    private Shader shadowMapShader;
+    private Texture2D shadowMap;
     
     public Athens(boolean autodraw)
     {
@@ -147,8 +157,9 @@ public class Athens extends GraphicsEngine
             
             @Override
             public void init( GLAutoDrawable glautodrawable ) {
-                GL gl = glautodrawable.getGL().getGL2();
+                GL gl = glautodrawable.getGL();
                 System.out.println("OpenGL Version: " + gl.glGetString(GL.GL_VERSION));
+                glautodrawable.setGL(new DebugGL2(gl.getGL2()));
                 Athens.this.init( gl.getGL2() );
             }
             
@@ -169,7 +180,7 @@ public class Athens extends GraphicsEngine
             animator.start();
         }
         
-        rootEntity = new AthensEntity();
+        rootEntity = new AthensEntity(this);
     }
 
     @Override
@@ -309,16 +320,46 @@ public class Athens extends GraphicsEngine
     
     private void render(GL2 gl)
     {
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        renderShadows(gl);
+
+        shadowMap.bind(gl);
+        gl.glCopyTexImage2D( GL.GL_TEXTURE_2D, 0, GL.GL_LUMINANCE,
+                0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, 0);
 
         renderScene(gl, camera);
-
+        
+    }
+    
+    private void renderShadows(GL2 gl)
+    {
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glCullFace(GL.GL_FRONT);
+        
+        useShadowMapShader(gl);
+        rootEntity.draw(gl, lightCamera, sun, shadowMapShader);
+        
         gl.glFlush();
     }
     
     private void renderScene(GL2 gl, Camera cam)
     {
-        rootEntity.draw(gl, camera, sun);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glCullFace(GL.GL_BACK);
+
+        rootEntity.draw(gl, cam, sun);
+
+        gl.glFlush();
+    }
+    
+    private void useShadowMapShader(GL2 gl)
+    {
+        shadowMapShader.use(gl);
+        
+        shadowMapShader.updateUniform(gl, "view", lightCamera.view);
+        shadowMapShader.updateUniform(gl, "projection", lightCamera.projection);
+
+        shadowMapShader.updateUniform(gl, "sun", sun);
+        shadowMapShader.updateUniform(gl, "eye", lightCamera.eye);
     }
 
     private void init(GL2 gl)
@@ -332,14 +373,35 @@ public class Athens extends GraphicsEngine
         // TODO: allow this to be set through an interface
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
         
+        shadowMapShader = new Shader("shadowmap");
+        try
+        {
+            shadowMapShader.load(gl);
+        } catch (IOException ex)
+        {
+            ex.printStackTrace(System.err);
+        }
+        shadowMap = new Texture2D("shadowmap", SHADOW_MAP_SIZE, SHADOW_MAP_SIZE, gl);
+        shadowMap.setParameters(gl, Texture.texParamsFBO);
+        
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
-        camera = new Camera(
+        camera = new PerspectiveCamera(
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
                 60.0f, 0.1f, 100.0f
             );
+        
+        lightCamera = new OrthoCamera(
+                Vec3.VEC3_ZERO,
+                Vec3.VEC3_ZERO,
+                new Vec3(0,1,0),
+                0.1f, 100.0f,
+                -100, 100,
+                -100, 100
+            );
+        updateSun();
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
@@ -425,11 +487,13 @@ public class Athens extends GraphicsEngine
         aspect = (float) width / (float) height;
 
         camera.updateProjection(aspect);
+        lightCamera.updateProjection(aspect);
     }
 
     private void updateView()
     {
         camera.updateView();
+        lightCamera.updateView();
         
         // shift skybox with camera
         skyboxWorld = new Mat4(1.0f);
@@ -447,6 +511,8 @@ public class Athens extends GraphicsEngine
         Vec4 sun4 = sunWorld.multiply(new Vec4(origin_sun, 0.0f));
         
         sun = new Vec3(sun4.getX(),sun4.getY(), sun4.getZ());
+        
+        lightCamera.eye = sun.getUnitVector().scale(60.0f);
     }
 
     @Override
@@ -523,16 +589,16 @@ public class Athens extends GraphicsEngine
         switch (behaviour)
         {
             case GfxEntity.NORMAL:
-                entity = new AthensEntity();
+                entity = new AthensEntity(this);
                 break;
             case GfxEntity.BILLBOARD_SPHERICAL:
-                entity = new BillboardEntity(true);
+                entity = new BillboardEntity(this,true);
                 break;
             case GfxEntity.BILLBOARD_CYLINDRICAL:
-                entity = new BillboardEntity(false);
+                entity = new BillboardEntity(this,false);
                 break;
             case GfxEntity.PARTICLE_EMITTER:
-                entity = new ParticleEmitter();
+                entity = new ParticleEmitter(this);
                 break;
             default:
                 // TODO: throw new InvalidEntityBehaviourException();
@@ -557,6 +623,11 @@ public class Athens extends GraphicsEngine
     public GfxEntity getRootEntity()
     {
         return rootEntity;
+    }
+
+    public Texture2D getShadowMap()
+    {
+        return shadowMap;
     }
     
 }
