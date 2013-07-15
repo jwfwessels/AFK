@@ -31,6 +31,9 @@ public abstract class GfxEntity
     /** The entity's colour. */
     public Vec3 colour = null; // TODO: this may become more generic in the future
     
+    /** The entity's level of opacity. */
+    public float opacity = 1.0f;
+    
     /**
      * By default, this boolean dictates whether or not the entity is visible.
      */

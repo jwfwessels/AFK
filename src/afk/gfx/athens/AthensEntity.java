@@ -8,6 +8,7 @@ import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 /**
@@ -79,10 +80,18 @@ public class AthensEntity extends GfxEntity
 
             if (colour != null)
                 shader.updateUniform(gl, "colour", colour);
+            
+            shader.updateUniform(gl, "opacity", opacity);
         }
+        
+        if (opacity < 1.0f)
+            gl.glEnable(GL.GL_BLEND);
         
         if (mesh != null)
             mesh.draw(gl);
+        
+        if (opacity < 1.0f)
+            gl.glDisable(GL.GL_BLEND);
         
         if (children != null)
             for (AthensEntity entity :children)

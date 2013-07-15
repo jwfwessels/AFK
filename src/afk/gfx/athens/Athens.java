@@ -324,6 +324,7 @@ public class Athens extends GraphicsEngine
         
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         
         // set background colour to white
         // TODO: allow this to be set through an interface

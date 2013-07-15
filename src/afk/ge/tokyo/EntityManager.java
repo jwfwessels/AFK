@@ -33,6 +33,7 @@ public class EntityManager
     Resource explosionTank;
     Resource particleShader;
     Resource billboardMesh;
+    Resource simpleShadowShader;
     
     London botEngine;
     
@@ -50,12 +51,21 @@ public class EntityManager
     {
         float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         
         tankGfxEntity.attachResource(tankMesh);
         tankGfxEntity.attachResource(tankShader);
+        
+        tankShadowEntity.attachResource(floorMesh);
+        tankShadowEntity.attachResource(simpleShadowShader);
+        tankShadowEntity.colour = Vec3.VEC3_ZERO;
+        tankShadowEntity.opacity = 0.7f;
+        tankShadowEntity.yMove = 0.01f;
+        tankShadowEntity.xScale = tankShadowEntity.zScale = 2.7f;
             
         tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
+        tankGfxEntity.addChild(tankShadowEntity);
         
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
         
@@ -149,6 +159,8 @@ public class EntityManager
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
+        
+        simpleShadowShader = gfxEngine.loadResource(Resource.SHADER, "simpleshadow");
 
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
