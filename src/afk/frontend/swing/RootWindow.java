@@ -138,12 +138,21 @@ public class RootWindow extends JFrame implements ActionListener
         games.add(engine);
         final Component glCanvas = renderer.getAWTComponent();
         System.out.println("glCanvas" + glCanvas.getName());
-        GamePanel gamePanel = new GamePanel(this);
+        final GamePanel gamePanel = new GamePanel(this);
 //        gamePanel.setBackground(Color.CYAN);
         gamePanels.add(gamePanel);
         gamePanel.add(glCanvas, BorderLayout.CENTER);
+        gamePanel.addComponentListener(new ComponentAdapter()
+        {
+            @Override
+            public void componentResized(ComponentEvent e)
+            {
+                super.componentResized(e);
+                glCanvas.setSize(gamePanel.getSize());
+            }
+        });
         contentPane.add(gamePanel);
-//        engine.startGame();
+        engine.startGame();
 
 
 
