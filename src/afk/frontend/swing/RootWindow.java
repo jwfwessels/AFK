@@ -4,15 +4,25 @@
  */
 package afk.frontend.swing;
 
+import afk.ge.GameEngine;
+import afk.ge.tokyo.Tokyo;
+import afk.gfx.GraphicsEngine;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,9 +36,10 @@ public class RootWindow extends JFrame implements ActionListener
 
     //TODO; define components
     Dimension dim;
+    ArrayList games;
     private JPanel contentPane;
     private MenuPanel menuPanel;
-    private GamePanel gamePanel;
+    private ArrayList<GamePanel> gamePanels;
 
     public void start()
     {
@@ -43,6 +54,8 @@ public class RootWindow extends JFrame implements ActionListener
 
     public RootWindow()
     {
+        games = new ArrayList();
+        gamePanels = new ArrayList<GamePanel>();
         dim = new Dimension(1280, 786);
         this.setPreferredSize(dim);
         contentPane = new JPanel();
@@ -51,7 +64,7 @@ public class RootWindow extends JFrame implements ActionListener
         this.setContentPane(contentPane);
         //        LayoutManager layout = new RootWindow_Layout();
 //        this.setLayout(layout);
-        
+
         initComponents();
         addComponents();
         styleComponents();
@@ -72,13 +85,6 @@ public class RootWindow extends JFrame implements ActionListener
         {
             menuPanel = new MenuPanel(this);
             menuPanel.setup();
-//            menuPanel.setVisible(false);
-
-            gamePanel = new GamePanel(this);
-            gamePanel.setup();
-//            menuPanel.setVisible(false);
-
-            ////TODO: set visible 
         } catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Intitializing components for rootWindow failed:\n" + e);
@@ -90,10 +96,7 @@ public class RootWindow extends JFrame implements ActionListener
 
         try
         {
-//            Container c = this.getContentPane();
             contentPane.add(menuPanel);
-            contentPane.add(gamePanel);
-
         } catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Adding components to rootWindow failed:\n" + e);
@@ -118,27 +121,32 @@ public class RootWindow extends JFrame implements ActionListener
         {
             this.getContentPane().setBackground(Color.BLUE);
             menuPanel.setBackground(Color.RED);
-            gamePanel.setBackground(Color.BLACK);
+//            gamePanel.setBackground(Color.CYAN);
         } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);
         }
     }
 
-    public void swapPanel()
+    public void spawnGamePanel(DefaultListModel<String> lsSelectedModel, HashMap<String, String> botMap)
     {
-        if (menuPanel.isVisible())
-        {
-            menuPanel.setVisible(false);
-            gamePanel.setVisible(true);
-        } else
-        {
-            menuPanel.setVisible(true);
-            gamePanel.setVisible(false);
-        }
+        GraphicsEngine renderer = GraphicsEngine.createInstance(false);
+        GameEngine engine = new Tokyo(renderer, lsSelectedModel, botMap);
+        games.add(engine);
+        new Thread(engine).start();
+
+        final Component glCanvas = renderer.getAWTComponent();
+        GamePanel gamePanel = new GamePanel(this);
+        gamePanels.add(gamePanel);
+        gamePanel.add(glCanvas, BorderLayout.CENTER);
+        contentPane.add(gamePanel);
+
+        CardLayout cl = (CardLayout) contentPane.getLayout();
+        cl.next(contentPane);
 
         contentPane.invalidate();
         contentPane.validate();
+        engine.startGame();
     }
 
     @Override

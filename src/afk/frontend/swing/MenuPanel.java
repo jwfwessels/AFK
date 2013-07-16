@@ -4,6 +4,9 @@
  */
 package afk.frontend.swing;
 
+import afk.ge.GameEngine;
+import afk.ge.tokyo.Tokyo;
+import afk.gfx.GraphicsEngine;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,12 +19,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -75,11 +81,16 @@ public class MenuPanel extends JPanel implements ActionListener
     {
         //TODO; instatiate components
         //TODO; run components setup(init & add), set visible 
-        pnlBotSelButtons = new JPanel();
         pnlAvailable = new JPanel();
-        pnlSelected = new JPanel();
+        pnlAvailable.setLayout(new BorderLayout());
         lblAvailable = new JLabel("Available Bots");
+
+        pnlBotSelButtons = new JPanel();
+        pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
+
+        pnlSelected = new JPanel();
         lblSelected = new JLabel("Selected Bots");
+        pnlSelected.setLayout(new BorderLayout());
 
         btnAddBot = new JButton(">");
         btnAddAllBots = new JButton(">>");
@@ -91,6 +102,8 @@ public class MenuPanel extends JPanel implements ActionListener
         botMap = new HashMap<String, String>();
 
         fileChooser = new JFileChooser(".");
+        fileChooser.setDialogTitle("Load Bot");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class"));
 
         lstAvailableBots = new JList();
         lstSelectedBots = new JList();
@@ -101,16 +114,6 @@ public class MenuPanel extends JPanel implements ActionListener
     private void addComponents()
     {
         //TODO; get container, add components to container.
-        this.add(pnlAvailable);
-        this.add(pnlBotSelButtons);
-        this.add(pnlSelected);
-
-        pnlBotSelButtons.add(btnAddBot);
-        pnlBotSelButtons.add(btnAddAllBots);
-        pnlBotSelButtons.add(btnRemoveBot);
-        pnlBotSelButtons.add(btnRemoveAllBots);
-        pnlBotSelButtons.add(btnStartMatch);
-
         Iterator it = botMap.keySet().iterator();
 
         while (it.hasNext())
@@ -120,9 +123,20 @@ public class MenuPanel extends JPanel implements ActionListener
         lstAvailableBots.setModel(lsAvailableModel);
         lstSelectedBots.setModel(lsSelectedModel);
 
+
+        this.add(pnlAvailable);
+        this.add(pnlBotSelButtons);
+        this.add(pnlSelected);
+
         pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
         pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
         pnlAvailable.add(btnLoadBot, BorderLayout.SOUTH);
+
+        pnlBotSelButtons.add(btnAddBot);
+        pnlBotSelButtons.add(btnAddAllBots);
+        pnlBotSelButtons.add(btnRemoveBot);
+        pnlBotSelButtons.add(btnRemoveAllBots);
+        pnlBotSelButtons.add(btnStartMatch);
 
         pnlSelected.add(lblSelected, BorderLayout.NORTH);
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
@@ -137,16 +151,16 @@ public class MenuPanel extends JPanel implements ActionListener
     private void styleComponents()
     {
         //TODO; set colours of components(here if you can)
-        pnlAvailable.setLayout(new BorderLayout());
-        pnlBotSelButtons.setBackground(Color.LIGHT_GRAY);
-        pnlSelected.setLayout(new BorderLayout());
-        pnlBotSelButtons.setBackground(Color.BLACK);
-        pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
+
+        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
+        pnlAvailable.setBackground(Color.LIGHT_GRAY);
+
+        pnlSelected.setBackground(Color.cyan);
+
         pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
         pnlBotSelButtons.setBackground(Color.GRAY);
 
-        fileChooser.setDialogTitle("Load Bot");
-        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class"));
+
 
         btnAddBot.addActionListener(new ActionListener()
         {
@@ -219,7 +233,9 @@ public class MenuPanel extends JPanel implements ActionListener
             public void actionPerformed(ActionEvent e)
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
-                parent.swapPanel();
+
+                parent.spawnGamePanel(lsSelectedModel, botMap);
+                
             }
         });
 

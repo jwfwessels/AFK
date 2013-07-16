@@ -21,6 +21,8 @@ public abstract class GameEngine implements Runnable
 
 //    public abstract void addEntity(AbstractEntity tankEntity); //done by entityManager now
 
+    public abstract void startGame();
+    
     @Override
     public abstract void run();
 
