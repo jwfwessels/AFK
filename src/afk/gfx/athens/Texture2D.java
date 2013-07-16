@@ -26,6 +26,10 @@ public class Texture2D extends Texture
         ByteBuffer data = imageToBytes(ImageIO.read(new File("./textures/"+name+".png")), w_h);
         
         setup(gl, data, w_h[0], w_h[1]);
+        
+        setParameters(gl, Texture.texParamsDefault);
+        
+        loaded.set(true);
     }
     
     private void setup(GL2 gl, ByteBuffer data, int width, int height)

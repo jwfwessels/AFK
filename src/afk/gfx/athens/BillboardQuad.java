@@ -37,5 +37,7 @@ public class BillboardQuad extends Mesh
             gl.glEnd();
         }
         gl.glEndList();
+        
+        loaded.set(true);
     }
 }

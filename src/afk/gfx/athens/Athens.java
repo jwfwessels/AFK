@@ -16,12 +16,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.CopyOnWriteArrayList;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -48,9 +46,9 @@ public class Athens extends GraphicsEngine
     private Map<String, AthensResource>[] resources
             = new Map[Resource.NUM_RESOURCE_TYPES];
     
-    // graphics entities that are part of the scene
-    private Collection<AthensEntity> entities = new CopyOnWriteArrayList<AthensEntity>();
-
+    // the scene's root entity
+    private AthensEntity rootEntity;
+    
     // flag indicating that the load queue has been dispatched
     private boolean loadQueueDispatched = false;
     
@@ -83,6 +81,8 @@ public class Athens extends GraphicsEngine
     private GLCapabilities glCaps;
     private GLCanvas glCanvas;
     private Animator animator;
+    
+    private float fps = 0.0f;
     
     public Athens(boolean autodraw)
     {
@@ -170,6 +170,8 @@ public class Athens extends GraphicsEngine
             animator = new Animator(glCanvas);
             animator.start();
         }
+        
+        rootEntity = new AthensEntity();
     }
 
     @Override
@@ -207,12 +209,7 @@ public class Athens extends GraphicsEngine
         time += delta;
         lastFPS += delta;
         
-        if (lastFPS > fpsInterval)
-        {
-            // TODO: show FPS somehow :/
-            //jFrame.setTitle(title + " - " + (1.0f/delta) + " FPS");
-            lastFPS -= fpsInterval;
-        }
+        fps = (1.0f/delta);
         
         // TODO: move loading into a loading state rather.
         // This should allow for loading progress bars and such.
@@ -304,8 +301,7 @@ public class Athens extends GraphicsEngine
         
         updateView();
         
-        for (AthensEntity entity : entities)
-            entity.update(delta);
+        rootEntity.update(delta);
     }
     
     private void render(GL2 gl)
@@ -319,10 +315,7 @@ public class Athens extends GraphicsEngine
     
     private void renderScene(GL2 gl, Camera cam)
     {
-        for (AthensEntity entity :entities)
-        {
-            entity.draw(gl, cam, sun);
-        }
+        rootEntity.draw(gl, camera, sun);
     }
 
     private void init(GL2 gl)
@@ -331,6 +324,7 @@ public class Athens extends GraphicsEngine
         
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         
         // set background colour to white
         // TODO: allow this to be set through an interface
@@ -530,10 +524,10 @@ public class Athens extends GraphicsEngine
                 entity = new AthensEntity();
                 break;
             case GfxEntity.BILLBOARD_SPHERICAL:
-                entity = new Billboard(true);
+                entity = new BillboardEntity(true);
                 break;
             case GfxEntity.BILLBOARD_CYLINDRICAL:
-                entity = new Billboard(false);
+                entity = new BillboardEntity(false);
                 break;
             case GfxEntity.PARTICLE_EMITTER:
                 entity = new ParticleEmitter();
@@ -543,29 +537,7 @@ public class Athens extends GraphicsEngine
                 return null;
         }
         
-        entities.add(entity);
-        
         return entity;
-    }
-
-    @Override
-    public void deleteEntity(GfxEntity entity)
-    {
-        entities.remove((AthensEntity)entity);
-    }
-
-    @Override
-    public void attachResource(GfxEntity entity, Resource resource)
-            throws ResourceNotLoadedException
-    {
-        System.out.println("resource attached!");
-        AthensEntity athensEntity = (AthensEntity)entity;
-        
-        if (resources[resource.getType()].containsKey(resource.getName()))
-        {
-            athensEntity.attachResource((AthensResource)resource);
-        }
-        else throw new ResourceNotLoadedException(resource);
     }
 
     @Override
@@ -578,5 +550,16 @@ public class Athens extends GraphicsEngine
         loadQueueDispatched = true;
         onLoadCallback = callback;
     }
-    
+
+    @Override
+    public GfxEntity getRootEntity()
+    {
+        return rootEntity;
+    }
+
+    @Override
+    public float getFPS()
+    {
+        return fps;
+    }
 }

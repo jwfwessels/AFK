@@ -120,6 +120,8 @@ public class WavefrontMesh extends Mesh
             }
         }
         gl.glEndList();
+        
+        loaded.set(true);
     }
     
     /**

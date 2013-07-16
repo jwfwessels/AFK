@@ -42,11 +42,14 @@ public class Shader extends AthensResource
 
        /* Check if it linked  properly. */
        Utils.checkProgramLogInfo(gl, program);
+       
+       loaded.set(true);
     }
 
     @Override
     public void unload(GL2 gl)
     {
+        loaded.set(false);
         gl.glDeleteShader(program);
     }
     

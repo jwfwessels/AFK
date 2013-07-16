@@ -36,6 +36,7 @@ public abstract class Mesh extends AthensResource
     @Override
     public void unload(GL2 gl)
     {
+        loaded.set(false);
         gl.glDeleteLists(handle, 1);
     }
 }

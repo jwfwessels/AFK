@@ -101,7 +101,7 @@ public abstract class GraphicsEngine
     public abstract void unloadEverything();
     
     /**
-     * Creates a GfxEntity and adds it to the list of drawable entities.
+     * Creates a GfxEntity.
      * @param behaviour The behaviour of the entity. See afx.gfx.GfxEntity for a
      * list of available behaviours.
      * @return The created GfxEntity.
@@ -109,22 +109,10 @@ public abstract class GraphicsEngine
     public abstract GfxEntity createEntity(int behaviour);
     
     /**
-     * Removes the specified entity from the list of drawable entities. This
-     * will render the entity useless with regard to the graphics engine in
-     * question. The reference should be discarded afterward/
-     * @param entity The entity to delete from the graphics engine.
+     * Gets the scene's root entity.
+     * @return the scene's root entity.
      */
-    public abstract void deleteEntity(GfxEntity entity);
-    
-    /**
-     * Attach the specified resource to the specified entity.
-     * @param entity the entity to attach the resource to.
-     * @param resource the resource to attach to the entity.
-     * @throws ResourceNotLoadedException if the specified resource has not yet
-     * been loaded into memory.
-     */
-    public abstract void attachResource(GfxEntity entity, Resource resource)
-            throws ResourceNotLoadedException;
+    public abstract GfxEntity getRootEntity();
     
     /**
      * Reads the status of a key on the keyboard.
@@ -153,5 +141,11 @@ public abstract class GraphicsEngine
      * @return the Y component of the mouse cursor position.
      */
     public abstract int getMouseY();
+    
+    /**
+     * Reads the current frame rate.
+     * @return the current frame rate.
+     */
+    public abstract float getFPS();
     
 }

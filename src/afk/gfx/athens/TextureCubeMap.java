@@ -38,6 +38,8 @@ public class TextureCubeMap extends Texture
         }
         
         setup(gl, data, w_h[0], w_h[1]);
+        
+        loaded.set(true);
     }
     
     private void setup(GL2 gl, ByteBuffer[] data, int width, int height)

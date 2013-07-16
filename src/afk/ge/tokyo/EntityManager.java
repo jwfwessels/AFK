@@ -8,15 +8,12 @@ import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
-import afk.gfx.ResourceNotLoadedException;
 import afk.london.London;
 import afk.london.Robot;
 import afk.london.RobotEvent;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -36,7 +33,7 @@ public class EntityManager
     Resource explosionTank;
     Resource particleShader;
     Resource billboardMesh;
-    GfxEntity fountain;
+    Resource simpleShadowShader;
     London botEngine;
     protected AtomicBoolean loaded = new AtomicBoolean(false);
 
@@ -52,16 +49,24 @@ public class EntityManager
     {
         float TOTAL_LIFE = 5;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        try
-        {
-            gfxEngine.attachResource(tankGfxEntity, tankMesh);
-            gfxEngine.attachResource(tankGfxEntity, tankShader);
-        } catch (ResourceNotLoadedException ex)
-        {
-            Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+
+        tankGfxEntity.attachResource(tankMesh);
+        tankGfxEntity.attachResource(tankShader);
+
+        tankShadowEntity.attachResource(floorMesh);
+        tankShadowEntity.attachResource(simpleShadowShader);
+        tankShadowEntity.colour = Vec3.VEC3_ZERO;
+        tankShadowEntity.opacity = 0.7f;
+        tankShadowEntity.yMove = 0.01f;
+        tankShadowEntity.xScale = tankShadowEntity.zScale = 2.7f;
+
         tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
+        tankGfxEntity.addChild(tankShadowEntity);
+
+        gfxEngine.getRootEntity().addChild(tankGfxEntity);
+
         TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
@@ -74,16 +79,14 @@ public class EntityManager
         float DAMAGE = 1.5f;
         //dont have a projectile model yet, mini tank will be bullet XD
         GfxEntity projectileGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        try
-        {
-            gfxEngine.attachResource(projectileGfxEntity, tankMesh);
-            gfxEngine.attachResource(projectileGfxEntity, tankShader);
-            projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
-            projectileGfxEntity.setPosition(5, 10, 5);
-        } catch (ResourceNotLoadedException ex)
-        {
-            Logger.getLogger(EntityManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        projectileGfxEntity.attachResource(tankMesh);
+        projectileGfxEntity.attachResource(tankShader);
+
+        projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
+        projectileGfxEntity.setPosition(5, 10, 5);
+
+        gfxEngine.getRootEntity().addChild(projectileGfxEntity);
         ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
         subEntities.add(projectile);
         projectile.name = parent.name + "projectile";
@@ -155,27 +158,22 @@ public class EntityManager
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
         System.out.println("test2 " + javax.swing.SwingUtilities.isEventDispatchThread());
+        simpleShadowShader = gfxEngine.loadResource(Resource.SHADER, "simpleshadow");
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
             @Override
             public void run()
             {
-                System.out.println("test3 " + javax.swing.SwingUtilities.isEventDispatchThread());
-                try
-                {
-                    GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-                    gfxEngine.attachResource(floorGfxEntity, floorMesh);
-                    gfxEngine.attachResource(floorGfxEntity, floorShader);
-                    floorGfxEntity.setScale(
-                            Tokyo.BOARD_SIZE,
-                            Tokyo.BOARD_SIZE,
-                            Tokyo.BOARD_SIZE);
-                    System.out.println("test4 " + javax.swing.SwingUtilities.isEventDispatchThread());
 
-                } catch (ResourceNotLoadedException ex)
-                {
-                    System.err.println(ex.getMessage());
-                }
+                System.out.println("test3 " + javax.swing.SwingUtilities.isEventDispatchThread());
+                GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+                floorGfxEntity.attachResource(floorMesh);
+                floorGfxEntity.attachResource(floorShader);
+                floorGfxEntity.setScale(
+                        Tokyo.BOARD_SIZE,
+                        Tokyo.BOARD_SIZE,
+                        Tokyo.BOARD_SIZE);
+                gfxEngine.getRootEntity().addChild(floorGfxEntity);
 
                 loaded.set(true);
             }
@@ -185,13 +183,15 @@ public class EntityManager
 
     void RomoveSubEntity(AbstractEntity entity)
     {
-        gfxEngine.deleteEntity(entity.getgfxEntity());
+        GfxEntity gfxEntity = entity.getgfxEntity();
+        gfxEntity.getParent().removeChild(gfxEntity);
         subEntities.remove(entity);
     }
 
     void RomoveEntity(TankEntity entity)
     {
-        gfxEngine.deleteEntity(entity.getgfxEntity());
+        GfxEntity gfxEntity = entity.getgfxEntity();
+        gfxEntity.getParent().removeChild(gfxEntity);
         entities.remove(entity);
     }
 
@@ -200,25 +200,22 @@ public class EntityManager
     void makeExplosion(Vec3 where, AbstractEntity parent, int type)
     {
         GfxEntity explostion = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
-        try
-        {
-            if (type == 0)
-            {
-                gfxEngine.attachResource(explostion, explosionProjectile);
-            } else if (type == 1)
-            {
-                gfxEngine.attachResource(explostion, explosionTank);
-            }
-            gfxEngine.attachResource(explostion, particleShader);
-            gfxEngine.attachResource(explostion, billboardMesh);
-            explostion.colour = parent.getgfxEntity().colour;
-            explostion.setScale(Vec3.VEC3_ZERO);
-            explostion.setPosition(where);
 
-            explostion.active = true;
-        } catch (ResourceNotLoadedException ex)
+        if (type == 0)
         {
-            System.err.println(ex.getMessage());
+            explostion.attachResource(explosionProjectile);
+        } else if (type == 1)
+        {
+            explostion.attachResource(explosionTank);
         }
+        explostion.attachResource(particleShader);
+        explostion.attachResource(billboardMesh);
+
+        explostion.colour = parent.getgfxEntity().colour;
+        explostion.setScale(Vec3.VEC3_ZERO);
+        explostion.setPosition(where);
+        gfxEngine.getRootEntity().addChild(explostion);
+
+        explostion.active = true;
     }
 }

@@ -6,6 +6,9 @@ import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 /**
@@ -23,55 +26,82 @@ public class AthensEntity extends GfxEntity
     protected Object material = null; // TODO: placeholder for materials in future
     protected Shader shader = null;
     
+    // collection of composite entities
+    private Collection<AthensEntity> children;
+    protected AthensEntity parent = null;
+    
     protected Mat4 createWorldMatrix()
     {
         Mat4 monkeyWorld = new Mat4(1f);
 
-        monkeyWorld = Matrices.translate(monkeyWorld, getPosition());
+        monkeyWorld = Matrices.translate(monkeyWorld, getWorldPosition());
 
-        monkeyWorld = Matrices.rotate(monkeyWorld, yRot, Y_AXIS);
+        Vec3 worldRot = getWorldRotation();
         
-        monkeyWorld = Matrices.rotate(monkeyWorld, xRot, X_AXIS);
+        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
+        
+        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getX(), X_AXIS);
 
-        monkeyWorld = Matrices.rotate(monkeyWorld, zRot, Z_AXIS);
+        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getZ(), Z_AXIS);
 
-        monkeyWorld = Matrices.scale(monkeyWorld, getScale());
+        monkeyWorld = Matrices.scale(monkeyWorld, getWorldScale());
         
         return monkeyWorld;
     }
     
     protected void update(float delta)
     {
-        // do nothing
+        if (children != null)
+            for (AthensEntity entity :children)
+                entity.update(delta);
     }
     
-    protected void draw(GL2 gl, Camera camera, Vec3 sun) // TODO: replace with Camera and Sun/Light objects later
+    protected void draw(GL2 gl, Camera camera, Vec3 sun)
     {
         // by default, active sets visibility of entity
         if (!active) return;
         
-        shader.use(gl);
-        
-        if (texture != null)
+        if (shader != null)
         {
-            texture.use(gl, GL2.GL_TEXTURE0);
-            shader.updateUniform(gl, "tex", 0);
+            shader.use(gl);
+
+            if (texture != null)
+            {
+                texture.use(gl, GL2.GL_TEXTURE0);
+                shader.updateUniform(gl, "tex", 0);
+            }
+
+            shader.updateUniform(gl, "world", createWorldMatrix());
+            shader.updateUniform(gl, "view", camera.view);
+            shader.updateUniform(gl, "projection", camera.projection);
+
+            shader.updateUniform(gl, "sun", sun);
+            shader.updateUniform(gl, "eye", camera.eye);
+
+            if (colour != null)
+                shader.updateUniform(gl, "colour", colour);
+            
+            shader.updateUniform(gl, "opacity", opacity);
         }
         
-        shader.updateUniform(gl, "world", createWorldMatrix());
-        shader.updateUniform(gl, "view", camera.view);
-        shader.updateUniform(gl, "projection", camera.projection);
+        if (opacity < 1.0f)
+            gl.glEnable(GL.GL_BLEND);
         
-        shader.updateUniform(gl, "sun", sun);
-        shader.updateUniform(gl, "eye", camera.eye);
+        if (mesh != null)
+            mesh.draw(gl);
         
-        if (colour != null)
-            shader.updateUniform(gl, "colour", colour);
+        if (opacity < 1.0f)
+            gl.glDisable(GL.GL_BLEND);
         
-        mesh.draw(gl);
+        if (children != null)
+            for (AthensEntity entity :children)
+            {
+                entity.draw(gl, camera, sun);
+            }
     }
     
-    public void attachResource(AthensResource resource)
+    @Override
+    public void attachResource(Resource resource)
     {
         switch (resource.getType())
         {
@@ -95,4 +125,71 @@ public class AthensEntity extends GfxEntity
                 break;
         }
     }
+    
+    @Override
+    public void addChild(GfxEntity entity)
+    {
+        if (children == null)
+            children = new ArrayList<AthensEntity>();
+        AthensEntity athensEntity = (AthensEntity)entity;
+        children.add(athensEntity);
+        athensEntity.parent = this;
+    }
+    
+    @Override
+    public void removeChild(GfxEntity entity)
+    {
+        if (children == null) return;
+        AthensEntity athensEntity = (AthensEntity)entity;
+        if (children.remove(athensEntity))
+            athensEntity.parent = null;
+    }
+
+    @Override
+    public Collection<? extends GfxEntity> removeAllChildren()
+    {
+        if (children == null) return new ArrayList<AthensEntity>();
+        for (AthensEntity entity :children)
+        {
+            entity.parent = null;
+        }
+        Collection<? extends GfxEntity> result = children;
+        children = null;
+        return result;
+    }
+    
+    @Override
+    public GfxEntity getParent()
+    {
+        return parent;
+    }
+
+    public Mesh getMesh()
+    {
+        if (mesh == null && parent != null)
+            return parent.getMesh();
+        return mesh;
+    }
+
+    public Shader getShader()
+    {
+        if (shader == null && parent != null)
+            return parent.getShader();
+        return shader;
+    }
+
+    public Object getMaterial()
+    {
+        if (material == null && parent != null)
+            return parent.getMaterial();
+        return material;
+    }
+
+    public Texture getTexture()
+    {
+        if (texture == null && parent != null)
+            return parent.getTexture();
+        return texture;
+    }
+    
 }

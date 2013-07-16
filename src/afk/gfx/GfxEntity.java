@@ -1,6 +1,7 @@
 package afk.gfx;
 
 import com.hackoeur.jglm.Vec3;
+import java.util.Collection;
 
 /**
  * Interface to a graphics entity. A Graphics entity is a visual object with
@@ -30,13 +31,16 @@ public abstract class GfxEntity
     /** The entity's colour. */
     public Vec3 colour = null; // TODO: this may become more generic in the future
     
+    /** The entity's level of opacity. */
+    public float opacity = 1.0f;
+    
     /**
      * By default, this boolean dictates whether or not the entity is visible.
      */
     public boolean active = true;
 
     /**
-     * Gets the entity's position as a Vec3.
+     * Gets the entity's local position as a Vec3.
      * @return the entity's position.
      */
     public Vec3 getPosition()
@@ -45,7 +49,7 @@ public abstract class GfxEntity
     }
     
     /**
-     * Gets the entity's rotation as a Vec3.
+     * Gets the entity's local rotation as a Vec3.
      * @return the entity's rotation.
      */
     public Vec3 getRotation()
@@ -54,12 +58,49 @@ public abstract class GfxEntity
     }
     
     /**
-     * Gets the entity's scale as a Vec3.
+     * Gets the entity's local scale as a Vec3.
      * @return the entity's scale.
      */
     public Vec3 getScale()
     {
         return new Vec3(xScale, yScale, zScale);
+    }
+    
+    
+    /**
+     * Gets the entity's world position as a Vec3.
+     * @return the entity's position.
+     */
+    public Vec3 getWorldPosition()
+    {
+        GfxEntity parent = getParent();
+        if (parent != null)
+            return new Vec3(xMove,yMove,zMove).add(parent.getWorldPosition());
+        return new Vec3(xMove,yMove,zMove);
+    }
+    
+    /**
+     * Gets the entity's world rotation as a Vec3.
+     * @return the entity's rotation.
+     */
+    public Vec3 getWorldRotation()
+    {
+        GfxEntity parent = getParent();
+        if (parent != null)
+            return new Vec3(xRot,yRot,zRot).add(parent.getWorldRotation());
+        return new Vec3(xRot,yRot,zRot);
+    }
+    
+    /**
+     * Gets the entity's world scale as a Vec3.
+     * @return the entity's scale.
+     */
+    public Vec3 getWorldScale()
+    {
+        GfxEntity parent = getParent();
+        if (parent != null)
+            return new Vec3(xScale,yScale,zScale).multiply(parent.getWorldScale());
+        return new Vec3(xScale,yScale,zScale);
     }
     
     /**
@@ -127,4 +168,44 @@ public abstract class GfxEntity
     {
         this.setScale(scale.getX(), scale.getY(), scale.getZ());
     }
+    
+    /**
+     * Adds the entity as a child entity of this entity. The child entity will
+     * be draw whenever the parent is drawn. The child entity will use any of
+     * the parent's resources that the child does not have of its own.
+     * @param entity the entity to add as the child,
+     */
+    public abstract void addChild(GfxEntity entity);
+    
+    /**
+     * Removes the child entity from this entity. The child entity will no
+     * longer be drawn when its (former) parent is drawn. If the given entity is
+     * not a child of this entity, then the method has no effect.
+     * @param entity the child entity to remove.
+     */
+    public abstract void removeChild(GfxEntity entity);
+    
+    /**
+     * Removes all child entities from this entity. This method returns a
+     * collection of all children belonging to this entity. If there are no
+     * children, an empty collection is returned.
+     * @return A collection containing all removed child entities.
+     */
+    public abstract Collection<? extends GfxEntity> removeAllChildren();
+    
+    /**
+     * Gets the parent of this entity.
+     * @return the parent of this entity, null if the entity has no parent.
+     */
+    public abstract GfxEntity getParent();
+    
+    /**
+     * Attaches the specified resource to this GfxEntity.
+     * @param resource the resource to attach to the entity.
+     * @throws ResourceNotCompatableException if this entity does not support
+     * the attachment of the given resource.
+     */
+    public abstract void attachResource(Resource resource)
+            // TODO: throws ResourceNotCompatableException
+            ;
 }

@@ -61,5 +61,7 @@ public class SkyBox extends Mesh
             gl.glEnd();
         }
         gl.glEndList();
+        
+        loaded.set(true);
     }
 }

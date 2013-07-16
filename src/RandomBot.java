@@ -37,7 +37,7 @@ public class RandomBot extends Robot
             thetaAngle = visibles[0];
             float diff = FastMath.abs(thetaAngle);
 
-            if (Float.compare(diff, 0.5f) < 0)
+            if (Float.compare(diff, 1) < 0)
             {
                 attack();
             } else
