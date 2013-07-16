@@ -121,7 +121,7 @@ public class RootWindow extends JFrame implements ActionListener
         {
             this.getContentPane().setBackground(Color.BLUE);
             menuPanel.setBackground(Color.RED);
-//            gamePanel.setBackground(Color.CYAN);
+
         } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);
@@ -132,17 +132,21 @@ public class RootWindow extends JFrame implements ActionListener
     {
         GraphicsEngine renderer = GraphicsEngine.createInstance(false);
         GameEngine engine = new Tokyo(renderer, lsSelectedModel, botMap);
+        System.out.println("START ENGINE THREAD");
+        new Thread(engine).start();
+
         games.add(engine);
         final Component glCanvas = renderer.getAWTComponent();
+        System.out.println("glCanvas" + glCanvas.getName());
         GamePanel gamePanel = new GamePanel(this);
+//        gamePanel.setBackground(Color.CYAN);
         gamePanels.add(gamePanel);
         gamePanel.add(glCanvas, BorderLayout.CENTER);
         contentPane.add(gamePanel);
-        engine.startGame();
+//        engine.startGame();
 
 
-        new Thread(engine).start();
-        
+
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);
 

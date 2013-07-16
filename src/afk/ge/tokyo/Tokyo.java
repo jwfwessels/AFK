@@ -39,7 +39,7 @@ public class Tokyo extends GameEngine
         this.botEngine = new London();
 
         entityManager = new EntityManager(botEngine, gfxEngine);
-        
+        System.out.println("gfx" + gfxEngine.getFPS());
         this.lsSelectedModel = lsSelectedModel;
         this.botMap = botMap;
 //        RootWindow rootWindow = new RootWindow();
@@ -156,15 +156,7 @@ public class Tokyo extends GameEngine
         new Vec3(-20, 0, 0)
     };
     public static final float BOARD_SIZE = 50;
-//    private JFrame jFrame;
-//    private JTabbedPane jTPane;
     private HashMap<String, String> botMap = new HashMap<String, String>();
-//    private JPanel pnlBotSelection = new JPanel();
-//    private JPanel pnlArena = new JPanel();
-//    private JFileChooser fileChooser = new JFileChooser(".");
-//    private JList<String> lstAvailableBots = new JList();
-//    private JList<String> lstSelectedBots = new JList();
-//    private DefaultListModel<String> lsAvailableModel = new DefaultListModel();
     private DefaultListModel<String> lsSelectedModel = new DefaultListModel();
 
 
