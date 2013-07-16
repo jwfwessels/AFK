@@ -39,6 +39,7 @@ public class Tokyo extends GameEngine
         this.botEngine = new London();
 
         entityManager = new EntityManager(botEngine, gfxEngine);
+        
         this.lsSelectedModel = lsSelectedModel;
         this.botMap = botMap;
 //        RootWindow rootWindow = new RootWindow();
@@ -53,7 +54,6 @@ public class Tokyo extends GameEngine
     @Override
     public void run()
     {
-        System.out.println("test0 " + javax.swing.SwingUtilities.isEventDispatchThread());
         entityManager.loadResources();
         System.out.println("test1 " + javax.swing.SwingUtilities.isEventDispatchThread());
         while (!entityManager.loaded.get())

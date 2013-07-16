@@ -133,20 +133,21 @@ public class RootWindow extends JFrame implements ActionListener
         GraphicsEngine renderer = GraphicsEngine.createInstance(false);
         GameEngine engine = new Tokyo(renderer, lsSelectedModel, botMap);
         games.add(engine);
-        new Thread(engine).start();
-
         final Component glCanvas = renderer.getAWTComponent();
         GamePanel gamePanel = new GamePanel(this);
         gamePanels.add(gamePanel);
         gamePanel.add(glCanvas, BorderLayout.CENTER);
         contentPane.add(gamePanel);
+        engine.startGame();
 
+
+        new Thread(engine).start();
+        
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);
 
         contentPane.invalidate();
         contentPane.validate();
-        engine.startGame();
     }
 
     @Override
