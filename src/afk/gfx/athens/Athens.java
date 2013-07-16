@@ -558,6 +558,7 @@ public class Athens extends GraphicsEngine
     public void attachResource(GfxEntity entity, Resource resource)
             throws ResourceNotLoadedException
     {
+        System.out.println("resource attached!");
         AthensEntity athensEntity = (AthensEntity)entity;
         
         if (resources[resource.getType()].containsKey(resource.getName()))

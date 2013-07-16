@@ -37,9 +37,7 @@ public class EntityManager
     Resource particleShader;
     Resource billboardMesh;
     GfxEntity fountain;
-    
     London botEngine;
-    
     protected AtomicBoolean loaded = new AtomicBoolean(false);
 
     public EntityManager(London botEngine, GraphicsEngine gfxEngine)
@@ -104,7 +102,7 @@ public class EntityManager
         {
             subEntities.get(i).update(t, delta, null);
         }
-        
+
         ArrayList<RobotEvent> events = new ArrayList<RobotEvent>();
         for (int i = 0; i < entities.size(); i++)
         {
@@ -156,12 +154,13 @@ public class EntityManager
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
-
+        System.out.println("test2 " + javax.swing.SwingUtilities.isEventDispatchThread());
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
             @Override
             public void run()
             {
+                System.out.println("test3 " + javax.swing.SwingUtilities.isEventDispatchThread());
                 try
                 {
                     GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
@@ -170,25 +169,18 @@ public class EntityManager
                     floorGfxEntity.setScale(
                             Tokyo.BOARD_SIZE,
                             Tokyo.BOARD_SIZE,
-                            Tokyo.BOARD_SIZE
-                        );
+                            Tokyo.BOARD_SIZE);
+                    System.out.println("test4 " + javax.swing.SwingUtilities.isEventDispatchThread());
 
-                    /*
-                    TankEntity tank = createTank();
-                    tank.setColour(new Vec3(0.8f, 0.0f, 0.0f));
-                    TankEntity tank2 = createTank();
-                    tank2.setColour(new Vec3(0.0f, 0.0f, 0.8f));
-                    tank2.setState(new EntityState(new Vec3(0.0f, 0.0f, 10.0f)));
-                    */
                 } catch (ResourceNotLoadedException ex)
                 {
                     System.err.println(ex.getMessage());
                 }
-                
+
                 loaded.set(true);
             }
         });
-        
+
     }
 
     void RomoveSubEntity(AbstractEntity entity)

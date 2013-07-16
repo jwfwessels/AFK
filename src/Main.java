@@ -23,10 +23,10 @@ public class Main
         window.start();
     }
 
-    public void start()
-    {
-        new Thread(engine).start();
-    }
+//    public void start()
+//    {
+//        new Thread(engine).start();
+//    }
 
     public static void main(String[] args)
     {
