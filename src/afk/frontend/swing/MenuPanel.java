@@ -152,13 +152,13 @@ public class MenuPanel extends JPanel implements ActionListener
     {
         //TODO; set colours of components(here if you can)
 
-        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
-        pnlAvailable.setBackground(Color.LIGHT_GRAY);
+//        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
+//        pnlAvailable.setBackground(Color.LIGHT_GRAY);
 
-        pnlSelected.setBackground(Color.cyan);
+//        pnlSelected.setBackground(Color.cyan);
 
         pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
-        pnlBotSelButtons.setBackground(Color.GRAY);
+//        pnlBotSelButtons.setBackground(Color.GRAY);
 
 
 

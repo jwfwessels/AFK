@@ -120,7 +120,7 @@ public class RootWindow extends JFrame implements ActionListener
         try
         {
             this.getContentPane().setBackground(Color.BLUE);
-            menuPanel.setBackground(Color.RED);
+//            menuPanel.setBackground(Color.RED);
 
         } catch (Exception err)
         {
@@ -139,18 +139,19 @@ public class RootWindow extends JFrame implements ActionListener
         final Component glCanvas = renderer.getAWTComponent();
         System.out.println("glCanvas" + glCanvas.getName());
         final GamePanel gamePanel = new GamePanel(this);
-//        gamePanel.setBackground(Color.CYAN);
         gamePanels.add(gamePanel);
         gamePanel.add(glCanvas, BorderLayout.CENTER);
-        gamePanel.addComponentListener(new ComponentAdapter()
-        {
-            @Override
-            public void componentResized(ComponentEvent e)
-            {
-                super.componentResized(e);
-                glCanvas.setSize(gamePanel.getSize());
-            }
-        });
+        //vvvvv this is horrible
+//        gamePanel.addComponentListener(new ComponentAdapter()
+//        {
+//            @Override
+//            public void componentResized(ComponentEvent e)
+//            {
+//                super.componentResized(e);
+//                glCanvas.setSize(gamePanel.getSize());
+//            }
+//        });
+        //^^^^^ this is horrible
         contentPane.add(gamePanel);
         engine.startGame();
 

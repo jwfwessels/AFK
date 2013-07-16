@@ -4,6 +4,7 @@
  */
 package afk.frontend.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel implements ActionListener
     public GamePanel(RootWindow parent)
     {
         this.parent = parent;
+        this.setLayout(new BorderLayout());
         //TODO; set layout
     }
 
