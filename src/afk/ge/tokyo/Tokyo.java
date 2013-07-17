@@ -239,7 +239,7 @@ public class Tokyo extends GameEngine
         JButton btnLoadBot = new JButton("Load Bot");
         
         fileChooser.setDialogTitle("Load Bot");
-        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class", "jar"));
         
         btnAddBot.addActionListener(new ActionListener() 
         {
