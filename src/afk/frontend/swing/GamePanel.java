@@ -4,6 +4,7 @@
  */
 package afk.frontend.swing;
 
+import afk.gfx.GraphicsEngine;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -11,7 +12,10 @@ import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 /**
@@ -22,12 +26,19 @@ public class GamePanel extends JPanel implements ActionListener
 {
 
     RootWindow parent;
-//    private JButton btnStartMatch;
-    //TODO; define components + parent ref
+    GraphicsEngine gfxEngine;
+    Component glCanvas;
+    JLayeredPane hudLayer;
+    JLabel fps;
 
-    public GamePanel(RootWindow parent)
+    //    private JButton btnStartMatch;
+    //TODO; define components + parent ref
+    public GamePanel(RootWindow parent, GraphicsEngine renderer)
     {
         this.parent = parent;
+        gfxEngine = renderer;
+        glCanvas = gfxEngine.getAWTComponent();
+        System.out.println("glCanvas" + glCanvas.getName());
         this.setLayout(new BorderLayout());
         //TODO; set layout
     }
@@ -42,6 +53,14 @@ public class GamePanel extends JPanel implements ActionListener
 
     private void initComponents()
     {
+        fps = new JLabel("1");
+        gfxEngine.setFPSComponent(fps);
+        fps.setBounds(640, 0, 100, 100);
+        glCanvas.setBounds(0, 0, 1280, 786);
+        hudLayer = new JLayeredPane();
+//        hudLayer.setLayout(new BorderLayout());
+        hudLayer.setSize(parent.getSize());
+        System.out.println("size2" + hudLayer.getSize().toString());
 //        btnStartMatch = new JButton("Start");
         //TODO; instatiate components
         //TODO; run components setup(init & add), set visible 
@@ -49,6 +68,12 @@ public class GamePanel extends JPanel implements ActionListener
 
     private void addComponents()
     {
+
+        hudLayer.add(glCanvas, new Integer(0));
+        hudLayer.add(fps, new Integer(1));
+//        hudLayer.add(glCanvas, JLayeredPane.DEFAULT_LAYER);
+//        hudLayer.add(fps, JLayeredPane.PALETTE_LAYER);
+        add(hudLayer, BorderLayout.CENTER);
 //        add(btnStartMatch);
         //TODO; get container, add components to container.
     }
@@ -60,7 +85,18 @@ public class GamePanel extends JPanel implements ActionListener
 
     private void styleComponents()
     {
+        fps.setOpaque(false);
+//        glCanvas.requestFocus();
+//        this.setBackground(Color.BLUE);
         //TODO; set colours of components(here if you can)
+//        glCanvas.addMouseListener(new MouseAdapter()
+//        {
+//            @Override
+//            public void mouseClicked(MouseEvent e)
+//            {
+//                glCanvas.requestFocus();
+//            }
+//        });
     }
 
     @Override

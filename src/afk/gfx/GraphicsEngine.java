@@ -148,4 +148,11 @@ public abstract class GraphicsEngine
      */
     public abstract float getFPS();
     
+    
+        /**
+     * register swing component for frame rate updates.
+     * @param comp the component to register for Updates.
+     */
+    public abstract void setFPSComponent(Component comp);
+    
 }

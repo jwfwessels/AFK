@@ -157,7 +157,6 @@ public class EntityManager
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
-        System.out.println("test2 " + javax.swing.SwingUtilities.isEventDispatchThread());
         simpleShadowShader = gfxEngine.loadResource(Resource.SHADER, "simpleshadow");
         gfxEngine.dispatchLoadQueue(new Runnable()
         {
@@ -165,7 +164,6 @@ public class EntityManager
             public void run()
             {
 
-                System.out.println("test3 " + javax.swing.SwingUtilities.isEventDispatchThread());
                 GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
                 floorGfxEntity.attachResource(floorMesh);
                 floorGfxEntity.attachResource(floorShader);

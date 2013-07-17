@@ -136,11 +136,11 @@ public class RootWindow extends JFrame implements ActionListener
         new Thread(engine).start();
 
         games.add(engine);
-        final Component glCanvas = renderer.getAWTComponent();
-        System.out.println("glCanvas" + glCanvas.getName());
-        final GamePanel gamePanel = new GamePanel(this);
+
+        final GamePanel gamePanel = new GamePanel(this, renderer);
+        gamePanel.setup();
         gamePanels.add(gamePanel);
-        gamePanel.add(glCanvas, BorderLayout.CENTER);
+//        gamePanel.add(glCanvas, BorderLayout.CENTER);
         //vvvvv this is horrible
 //        gamePanel.addComponentListener(new ComponentAdapter()
 //        {
@@ -159,6 +159,8 @@ public class RootWindow extends JFrame implements ActionListener
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);
+        //hack to get awt keyEvents to register
+        gamePanel.glCanvas.requestFocus();
 
         contentPane.invalidate();
         contentPane.validate();

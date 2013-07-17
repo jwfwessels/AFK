@@ -54,8 +54,8 @@ public class Tokyo extends GameEngine
     @Override
     public void run()
     {
+//        System.out.println("" + javax.swing.SwingUtilities.isEventDispatchThread());
         entityManager.loadResources();
-        System.out.println("test1 " + javax.swing.SwingUtilities.isEventDispatchThread());
         while (!entityManager.loaded.get())
         { /* spin */ }
 
@@ -65,12 +65,10 @@ public class Tokyo extends GameEngine
     @Override
     protected void gameLoop()
     {
-        System.out.println("loop " + javax.swing.SwingUtilities.isEventDispatchThread());
         while (!gameInProgress.get())
         { /* spin! */
 
         }
-        System.out.println("running " + javax.swing.SwingUtilities.isEventDispatchThread());
         loadBots();
         double currentTime = System.nanoTime();
         float accumulator = 0.0f;

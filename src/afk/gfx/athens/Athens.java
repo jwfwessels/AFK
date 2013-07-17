@@ -1,12 +1,10 @@
 package afk.gfx.athens;
 
-
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
-import afk.gfx.ResourceNotLoadedException;
 import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
@@ -26,81 +24,79 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.awt.GLJPanel;
+import javax.swing.JLabel;
 
 /**
  * OpenGL 2.0 Implementation of the AFK Graphics Engine.
+ *
  * @author Daniel
  */
 public class Athens extends GraphicsEngine
 {
-    
+
     // loading queues
     private Queue<AthensResource> loadQueue = new LinkedList<AthensResource>();
     private Queue<AthensResource> unloadQueue = new LinkedList<AthensResource>();
-    
     // this gets called when loading is done
     private Runnable onLoadCallback;
-    
     // resources
-    private Map<String, AthensResource>[] resources
-            = new Map[Resource.NUM_RESOURCE_TYPES];
-    
+    private Map<String, AthensResource>[] resources = new Map[Resource.NUM_RESOURCE_TYPES];
     // the scene's root entity
     private AthensEntity rootEntity;
-    
     // flag indicating that the load queue has been dispatched
     private boolean loadQueueDispatched = false;
-    
     private int w_width, w_height;
     private float aspect;
-    
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
     private boolean[] keys = new boolean[1024];
-    
     private long lastUpdate;
     private float time = 0.0f;
     private float lastFPS = 0.0f;
     private float fpsInterval = 1.0f;
-    
     Camera camera;
-    
     Mat4 monkeyWorld, skyboxWorld;
-    
     // TODO: move this to a sun/light position
-    Vec3 origin_sun = new Vec3(-2.0f,1.5f,5.0f);
+    Vec3 origin_sun = new Vec3(-2.0f, 1.5f, 5.0f);
     Vec3 sun = new Vec3(origin_sun);
-    
     float daytime = 0.0f;
-
     static final float MOUSE_SENSITIVITY = 60.0f;
     /* Amount to move / scale by in one step. */
     static final float DELTA = 5f, ANGLE_DELTA = 30.0f;
-
     private GLProfile glProfile;
     private GLCapabilities glCaps;
-    private GLCanvas glCanvas;
+//    private GLCanvas glCanvas;
+    private GLJPanel glCanvas;
     private Animator animator;
-    
     private float fps = 0.0f;
-    
+    private JLabel fpsComp;
+
     public Athens(boolean autodraw)
     {
         for (int i = 0; i < resources.length; i++)
+        {
             resources[i] = new HashMap<String, AthensResource>();
-        
+        }
+
         glProfile = GLProfile.getDefault();
-        
+
         glCaps = new GLCapabilities(glProfile);
         glCaps.setDoubleBuffered(true);
-        
-        glCanvas = new GLCanvas(glCaps);
-        
-        glCanvas.addKeyListener(new KeyAdapter()
+
+//        glCanvas = new GLCanvas(glCaps);
+        glCanvas = new GLJPanel(glCaps);
+
+        KeyAdapter key = new KeyAdapter()
         {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                Athens.this.keyPressed(e);
+            }
 
             @Override
-            public void keyPressed(KeyEvent e) {
+            public void keyPressed(KeyEvent e)
+            {
                 Athens.this.keyPressed(e);
             }
 
@@ -109,74 +105,85 @@ public class Athens extends GraphicsEngine
             {
                 Athens.this.keyReleased(e);
             }
-            
-        });
-        
+        };
+
+        glCanvas.addKeyListener(key);
+
         MouseAdapter mouse = new MouseAdapter()
         {
-            int cx = glCanvas.getWidth()/2;
-            int cy = glCanvas.getHeight()/2;
+            int cx = glCanvas.getWidth() / 2;
+            int cy = glCanvas.getHeight() / 2;
 
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mousePressed(MouseEvent e)
+            {
+
 
                 cx = e.getX();
                 cy = e.getY();
             }
 
             @Override
-            public void mouseDragged(MouseEvent e) {
+            public void mouseDragged(MouseEvent e)
+            {
+                if (e.getX() == cx && e.getY() == cy)
+                {
+                    return;
+                }
 
-                if (e.getX() == cx && e.getY() == cy) return;
-
-                Athens.this.mouseMoved(cx-e.getX(), cy-e.getY());
+                Athens.this.mouseMoved(cx - e.getX(), cy - e.getY());
 
                 cx = e.getX();
                 cy = e.getY();
             }
         };
-        
+
         glCanvas.addMouseListener(mouse);
         glCanvas.addMouseMotionListener(mouse);
 
-        glCanvas.addGLEventListener( new GLEventListener()
+        glCanvas.addGLEventListener(new GLEventListener()
         {
+            @Override
+            public void reshape(GLAutoDrawable glautodrawable, int x, int y, int width, int height)
+            {
+                Athens.this.reshape(glautodrawable.getGL().getGL2(), width, height);
+            }
 
             @Override
-            public void reshape( GLAutoDrawable glautodrawable, int x, int y, int width, int height ) {
-                Athens.this.reshape( glautodrawable.getGL().getGL2(), width, height );
-            }
-            
-            @Override
-            public void init( GLAutoDrawable glautodrawable ) {
+            public void init(GLAutoDrawable glautodrawable)
+            {
                 GL gl = glautodrawable.getGL().getGL2();
                 System.out.println("OpenGL Version: " + gl.glGetString(GL.GL_VERSION));
-                Athens.this.init( gl.getGL2() );
+                Athens.this.init(gl.getGL2());
             }
-            
+
             @Override
-            public void dispose( GLAutoDrawable glautodrawable ) {
-                Athens.this.dispose( glautodrawable.getGL().getGL2() );
+            public void dispose(GLAutoDrawable glautodrawable)
+            {
+                Athens.this.dispose(glautodrawable.getGL().getGL2());
             }
-            
+
             @Override
-            public void display( GLAutoDrawable glautodrawable ) {
-                Athens.this.display( glautodrawable.getGL().getGL2());
+            public void display(GLAutoDrawable glautodrawable)
+            {
+                Athens.this.display(glautodrawable.getGL().getGL2());
             }
         });
-        
+
         if (autodraw)
         {
             animator = new Animator(glCanvas);
             animator.start();
         }
-        
+
         rootEntity = new AthensEntity();
+
     }
 
     @Override
     public Component getAWTComponent()
     {
+
         return glCanvas;
     }
 
@@ -185,12 +192,12 @@ public class Athens extends GraphicsEngine
     {
         glCanvas.display();
     }
-    
+
     private void dispose(GL2 gl)
     {
         for (int i = 0; i < resources.length; i++)
         {
-            for (Map.Entry<String,AthensResource> entry :resources[i].entrySet())
+            for (Map.Entry<String, AthensResource> entry : resources[i].entrySet())
             {
                 AthensResource resource = entry.getValue();
                 System.out.println("Unloading " + resource);
@@ -201,52 +208,66 @@ public class Athens extends GraphicsEngine
 
     private void display(GL2 gl)
     {
-        
+
         long nTime = System.nanoTime();
-        long nanos = nTime-lastUpdate;
+        long nanos = nTime - lastUpdate;
         lastUpdate = nTime;
-        float delta = nanos/(float)NANOS_PER_SECOND;
+        float delta = nanos / (float) NANOS_PER_SECOND;
         time += delta;
         lastFPS += delta;
-        
-        fps = (1.0f/delta);
-        
+
+//        int counter = 0;
+//        float tempFps = 0.0f;
+//        float avgFps = 0.0f;
+        fps = (1.0f / delta);
+//        if (counter < 60)
+//        {
+//            counter++;
+//            tempFps += fps;
+//        } else
+//        {
+//            avgFps = tempFps / 60;
+//            tempFps = 0.0f;
+//            counter = 0;
+//        }
+        fpsComp.setText(String.format("FPS: %.0f", fps));
         // TODO: move loading into a loading state rather.
         // This should allow for loading progress bars and such.
         // just put it here for now.
         if (loadQueueDispatched)
         {
             loadResources(gl);
-            
+
             loadQueueDispatched = false;
-            
+
             // notify caller that load is complete
             onLoadCallback.run();
-        }
-        else
+        } else
         {
             update(delta);
-            
-            for (GfxListener l :listeners)
+
+            for (GfxListener l : listeners)
+            {
                 l.update(delta);
-            
+            }
+
             render(gl);
         }
     }
-    
+
     // helper function to load/unload all necessary/unnecessary resources
     private void loadResources(GL2 gl)
     {
-        
+
         // unload resources in unload queue
         while (!unloadQueue.isEmpty())
         {
             AthensResource resource = unloadQueue.poll();
             System.out.println("Unloading " + resource);
-            
+
             resources[resource.getType()].remove(resource.getName()).unload(gl);
         }
-        
+
         // load resources in load queue
         while (!loadQueue.isEmpty())
         {
@@ -255,55 +276,55 @@ public class Athens extends GraphicsEngine
             try
             {
                 resource.load(gl);
-                resources[resource.getType()].put(resource.getName(),resource);
+                resources[resource.getType()].put(resource.getName(), resource);
             } catch (IOException ex)
             {
                 System.err.println("Unable to load " + resource + ": " + ex.getMessage());
             }
         }
     }
-    
+
     private void update(float delta)
     {
-        
-        float amount = DELTA*delta;
-        
-        if (keys[KeyEvent.VK_SHIFT]) amount *= 5;
+
+        float amount = DELTA * delta;
+
+        if (keys[KeyEvent.VK_SHIFT])
+        {
+            amount *= 5;
+        }
 
         if (keys[KeyEvent.VK_W])
         {
-           camera.moveForward(amount);
-        }
-        else if (keys[KeyEvent.VK_S])
+            camera.moveForward(amount);
+        } else if (keys[KeyEvent.VK_S])
         {
-           camera.moveForward(-amount);
+            camera.moveForward(-amount);
         }
 
         if (keys[KeyEvent.VK_D])
         {
-           camera.moveRight(amount);
-        }
-        else if (keys[KeyEvent.VK_A])
+            camera.moveRight(amount);
+        } else if (keys[KeyEvent.VK_A])
         {
-           camera.moveRight(-amount);
+            camera.moveRight(-amount);
         }
-        
+
         if (keys[KeyEvent.VK_2])
         {
             daytime += 1.0f;
             updateSun();
-        }
-        else if (keys[KeyEvent.VK_3])
+        } else if (keys[KeyEvent.VK_3])
         {
             daytime -= 1.0f;
             updateSun();
         }
-        
+
         updateView();
-        
+
         rootEntity.update(delta);
     }
-    
+
     private void render(GL2 gl)
     {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -312,7 +333,7 @@ public class Athens extends GraphicsEngine
 
         gl.glFlush();
     }
-    
+
     private void renderScene(GL2 gl, Camera cam)
     {
         rootEntity.draw(gl, camera, sun);
@@ -321,28 +342,27 @@ public class Athens extends GraphicsEngine
     private void init(GL2 gl)
     {
         System.out.println("Initialising");
-        
+
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        
+
         // set background colour to white
         // TODO: allow this to be set through an interface
         gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-        
+
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
         camera = new Camera(
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
-                60.0f, 0.1f, 100.0f
-            );
+                60.0f, 0.1f, 100.0f);
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
         updateView();
-        
+
         // initialise update time with current time
         lastUpdate = System.nanoTime();
     }
@@ -350,7 +370,9 @@ public class Athens extends GraphicsEngine
     private void keyPressed(KeyEvent ke)
     {
         if (ke.getKeyCode() < keys.length)
+        {
             keys[ke.getKeyCode()] = true;
+        }
 
         switch (ke.getKeyCode())
         {
@@ -364,20 +386,22 @@ public class Athens extends GraphicsEngine
     {
         return keys[keyCode];
     }
-    
+
     private void keyReleased(KeyEvent ke)
     {
         if (ke.getKeyCode() < keys.length)
+        {
             keys[ke.getKeyCode()] = false;
+        }
     }
 
     private void mouseMoved(int x, int y)
     {
-        final float LEFT_RIGHT_ROT = (2.0f*(float)x/(float)w_width) * MOUSE_SENSITIVITY;
-        final float UP_DOWN_ROT = (2.0f*(float)y/(float)w_height) * MOUSE_SENSITIVITY;
+        final float LEFT_RIGHT_ROT = (2.0f * (float) x / (float) w_width) * MOUSE_SENSITIVITY;
+        final float UP_DOWN_ROT = (2.0f * (float) y / (float) w_height) * MOUSE_SENSITIVITY;
 
         camera.rotate(LEFT_RIGHT_ROT, UP_DOWN_ROT);
-        
+
         updateView();
 
     }
@@ -407,7 +431,7 @@ public class Athens extends GraphicsEngine
     {
         w_width = newWidth;
         w_height = newHeight;
-        
+
         /* Correct the viewport. */
         gl.glViewport(0, 0, newWidth, newHeight);
 
@@ -428,23 +452,23 @@ public class Athens extends GraphicsEngine
     private void updateView()
     {
         camera.updateView();
-        
+
         // shift skybox with camera
         skyboxWorld = new Mat4(1.0f);
         skyboxWorld = Matrices.translate(skyboxWorld, camera.eye);
         // also scale it a bit so it doesn't intersect with near clip
-        skyboxWorld = Matrices.scale(skyboxWorld, new Vec3(1.5f,1.5f,1.5f));
+        skyboxWorld = Matrices.scale(skyboxWorld, new Vec3(1.5f, 1.5f, 1.5f));
     }
-    
+
     private void updateSun()
     {
         Mat4 sunWorld = new Mat4(1.0f);
-        
-        sunWorld = Matrices.rotate(sunWorld, daytime, new Vec3(1,0.2f,0).getUnitVector());
-        
+
+        sunWorld = Matrices.rotate(sunWorld, daytime, new Vec3(1, 0.2f, 0).getUnitVector());
+
         Vec4 sun4 = sunWorld.multiply(new Vec4(origin_sun, 0.0f));
-        
-        sun = new Vec3(sun4.getX(),sun4.getY(), sun4.getZ());
+
+        sun = new Vec3(sun4.getX(), sun4.getY(), sun4.getZ());
     }
 
     @Override
@@ -455,20 +479,22 @@ public class Athens extends GraphicsEngine
             // TODO: throw something about already dispatching a load queue
             return null;
         }
-        
+
         AthensResource resource = resources[type].get(name);
-        
+
         // don't bother loading something that's already loaded
         if (resource != null)
+        {
             return resource;
-            
+        }
+
         resource = AthensResource.create(type, name);
-        
+
         if (!unloadQueue.remove(resource))
         {
             loadQueue.add(resource);
         }
-        
+
         return resource;
     }
 
@@ -480,14 +506,16 @@ public class Athens extends GraphicsEngine
             // TODO: throw something about already dispatching a load queue
             return;
         }
-        
+
         // can't unload resource that isn't loaded
         if (!resources[resource.getType()].containsKey(resource.getName()))
-            return;
-        
-        if (!loadQueue.remove((AthensResource)resource))
         {
-            unloadQueue.add((AthensResource)resource);
+            return;
+        }
+
+        if (!loadQueue.remove((AthensResource) resource))
+        {
+            unloadQueue.add((AthensResource) resource);
         }
     }
 
@@ -499,13 +527,13 @@ public class Athens extends GraphicsEngine
             // TODO: throw something about already dispatching a load queue
             return;
         }
-        
+
         loadQueue.clear();
-        
+
         // add every single loaded resource to unload queue
         for (int i = 0; i < resources.length; i++)
         {
-            for (Map.Entry<String,AthensResource> entry :resources[i].entrySet())
+            for (Map.Entry<String, AthensResource> entry : resources[i].entrySet())
             {
                 unloadQueue.add(entry.getValue());
             }
@@ -516,7 +544,7 @@ public class Athens extends GraphicsEngine
     public GfxEntity createEntity(int behaviour)
     {
         // TODO: research possible performance hit is we use Class.newInstance() instead of using ints
-        
+
         AthensEntity entity;
         switch (behaviour)
         {
@@ -536,7 +564,7 @@ public class Athens extends GraphicsEngine
                 // TODO: throw new InvalidEntityBehaviourException();
                 return null;
         }
-        
+
         return entity;
     }
 
@@ -561,5 +589,11 @@ public class Athens extends GraphicsEngine
     public float getFPS()
     {
         return fps;
+    }
+
+    @Override
+    public void setFPSComponent(Component comp)
+    {
+        fpsComp = (JLabel) comp;
     }
 }
