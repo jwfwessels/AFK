@@ -134,7 +134,7 @@ public class EntityManager
         return tempFlags;
     }
 
-    void renderEntities(float alpha)
+    void renderEntities(double alpha)
     {
         for (int i = 0; i < entities.size(); i++)
         {

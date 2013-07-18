@@ -29,12 +29,15 @@ public class Tokyo extends GameEngine
     final static float DELTA = NANOS_PER_SECOND / GAME_SPEED;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     final static double TARGET_FPS = 90;
-    final static double MIN_FPS = 25;
+    final static double MIN_FPS = 4;
     final static double MIN_FRAMETIME = NANOS_PER_SECOND / TARGET_FPS;
     final static double MAX_FRAMETIME = NANOS_PER_SECOND / MIN_FPS;
 
     public Tokyo(GraphicsEngine gfxEngine, DefaultListModel<String> lsSelectedModel, HashMap<String, String> botMap)
     {
+        System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
+        System.out.println("DELTA = " + DELTA);
+        
         this.gfxEngine = gfxEngine;
         this.botEngine = new London();
 
@@ -71,7 +74,7 @@ public class Tokyo extends GameEngine
         }
         loadBots();
         double currentTime = System.nanoTime();
-        float accumulator = 0.0f;
+        double accumulator = 0.0f;
         int i = 0;
         while (running)
         {
@@ -81,18 +84,23 @@ public class Tokyo extends GameEngine
             if (frameTime > MAX_FRAMETIME)
             {
                 frameTime = MAX_FRAMETIME;
+                System.out.println(frameTime + " > MAX_FRAMETIME");
             }
             currentTime = newTime;
 
             accumulator += frameTime;
 
+            int x = 0;
             while (accumulator >= DELTA)
             {
                 updateGame();
                 t += DELTA;
                 accumulator -= DELTA;
+                x++;
             }
-            float alpha = accumulator / DELTA;
+            System.out.println("DID " + x + " UPDATES.");
+            double alpha = accumulator / DELTA;
+            System.out.println("ALPHA = " + alpha);
             render(alpha);
         }
     }
@@ -104,7 +112,7 @@ public class Tokyo extends GameEngine
     }
 
     @Override
-    protected void render(float alpha)
+    protected void render(double alpha)
     {
         entityManager.renderEntities(alpha);
 

@@ -194,8 +194,9 @@ public abstract class AbstractEntity
      * @param alpha
      * @return
      */
-    protected EntityState interpolate(float alpha)
+    protected EntityState interpolate(double alphaD)
     {
+        float alpha = (float)alphaD;
         EntityState tempState = new EntityState(current);
         //state = currentState * alpha = previousState* (1.0-alpha);
         tempState.position = previous.position.multiply(1 - alpha).add(current.position.multiply(alpha));
@@ -219,7 +220,7 @@ public abstract class AbstractEntity
      *
      * @param alpha
      */
-    public void render(float alpha)
+    public void render(double alpha)
     {
         EntityState gfxState = interpolate(alpha);
         gfxPos.setPosition(gfxState.position);

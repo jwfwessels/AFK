@@ -30,5 +30,5 @@ public abstract class GameEngine implements Runnable
 
     protected abstract void updateGame();
 
-    protected abstract void render(float alpha);
+    protected abstract void render(double alpha);
 }
