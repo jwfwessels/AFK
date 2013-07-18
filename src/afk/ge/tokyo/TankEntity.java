@@ -35,6 +35,8 @@ public class TankEntity extends AbstractEntity
         lastShot = -1;
         FOV = 90;
         viewingDistanceSqr = 10 * 10;
+        VELOCITY = 1f;
+        ANGULAR_VELOCITY = 1f;
     }
 
     @Override

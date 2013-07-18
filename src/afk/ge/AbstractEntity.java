@@ -22,7 +22,7 @@ public abstract class AbstractEntity
 
     public String name;
     protected float ANGULAR_VELOCITY = 1.0f;
-    protected float VELOCITY = 0.5f;
+    protected float VELOCITY = 1.0f;
     protected GfxEntity gfxPos;
     protected EntityState current;
     protected EntityState previous;

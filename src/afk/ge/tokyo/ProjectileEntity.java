@@ -30,7 +30,7 @@ public class ProjectileEntity extends AbstractEntity
         life = TOTAL_LIFE = damage;
         size = 0.14f;
         mass = 0.5f;
-        VELOCITY = 2.5f;
+        VELOCITY = 10f;
         RANGE = 10;
     }
 

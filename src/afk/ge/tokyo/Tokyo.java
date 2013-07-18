@@ -26,8 +26,9 @@ public class Tokyo extends GameEngine
     final static float GAME_SPEED = 60;
     float t = 0.0f;
     final static float DELTA = 1.0f / GAME_SPEED;
+    final static double NANOS_PER_SECOND = (double) GraphicsEngine.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    final static double TARGET_FPS = 90;
+    final static double TARGET_FPS = 60;
     final static double MIN_FPS = 25;
     final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
@@ -36,7 +37,7 @@ public class Tokyo extends GameEngine
     {
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
-        
+
         this.gfxEngine = gfxEngine;
         this.botEngine = new London();
 
@@ -44,9 +45,6 @@ public class Tokyo extends GameEngine
         System.out.println("gfx" + gfxEngine.getFPS());
         this.lsSelectedModel = lsSelectedModel;
         this.botMap = botMap;
-//        RootWindow rootWindow = new RootWindow();
-//        rootWindow.start();
-//        constructGUI();
 
         //uncomment if your doing testing and dont need the gui. use TestMove() to set parameters
         /*System.out.println("Testing Enabled, GUI disabled. line 69 Tokyo");
@@ -79,10 +77,9 @@ public class Tokyo extends GameEngine
         {
 
             double newTime = System.nanoTime();
-            double frameTime = (newTime - currentTime)/(double)GraphicsEngine.NANOS_PER_SECOND;
+            double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
             {
-                System.out.println(frameTime + " > MAX_FRAMETIME");
                 frameTime = MAX_FRAMETIME;
             }
             currentTime = newTime;
@@ -97,9 +94,7 @@ public class Tokyo extends GameEngine
                 accumulator -= DELTA;
                 x++;
             }
-            System.out.println("DID " + x + " UPDATES.");
             double alpha = accumulator / DELTA;
-            System.out.println("ALPHA = " + alpha);
             render(alpha);
         }
     }
@@ -164,7 +159,6 @@ public class Tokyo extends GameEngine
     private HashMap<String, String> botMap = new HashMap<String, String>();
     private DefaultListModel<String> lsSelectedModel = new DefaultListModel();
 
-
     public ArrayList<String> getParticipatingBots()
     {
         ArrayList<String> bots = new ArrayList<String>();
@@ -174,7 +168,6 @@ public class Tokyo extends GameEngine
         }
         return bots;
     }
-
 //    private void TestMove()
 //    {
 ////        String botPath1 = "./build/classes/SampleBot.class";
