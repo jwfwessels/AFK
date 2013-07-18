@@ -4,11 +4,7 @@
  */
 package afk.frontend.swing;
 
-import afk.ge.GameEngine;
-import afk.ge.tokyo.Tokyo;
-import afk.gfx.GraphicsEngine;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -19,15 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -103,7 +96,7 @@ public class MenuPanel extends JPanel implements ActionListener
 
         fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle("Load Bot");
-        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class", "jar"));
 
         lstAvailableBots = new JList();
         lstSelectedBots = new JList();
