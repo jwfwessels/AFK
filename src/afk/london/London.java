@@ -32,6 +32,19 @@ public class London
         robots.add(bot);
     }
     
+    public String getBotLoadingError()
+    {
+        return botLoader.getError();
+    }
+    
+    public void resetBotLoader()
+    {
+       // botLoader.clearMaps();
+        robots.clear();
+        botLoader = new RobotLoader();
+        System.gc();
+    }
+    
     /**
      * Give feedback to all the bots.
      * @param events List of RobotEvent objects to give to each robot.

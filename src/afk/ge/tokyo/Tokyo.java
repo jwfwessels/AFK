@@ -32,6 +32,9 @@ public class Tokyo extends GameEngine
     final static double MIN_FPS = 25;
     final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
+    public static final float BOARD_SIZE = 50;
+    private HashMap<String, String> botMap;
+    private DefaultListModel<String> lsSelectedModel;
 
     public Tokyo(GraphicsEngine gfxEngine, DefaultListModel<String> lsSelectedModel, HashMap<String, String> botMap)
     {
@@ -46,6 +49,7 @@ public class Tokyo extends GameEngine
         this.lsSelectedModel = lsSelectedModel;
         this.botMap = botMap;
 
+        //this doesnt work with the new GUI refactor
         //uncomment if your doing testing and dont need the gui. use TestMove() to set parameters
         /*System.out.println("Testing Enabled, GUI disabled. line 69 Tokyo");
          TestMove();*/
@@ -60,6 +64,14 @@ public class Tokyo extends GameEngine
         { /* spin */ }
 
         gameLoop();
+    }
+
+    @Override
+    public void startGame()
+    {
+//        System.out.println("startGame! " + javax.swing.SwingUtilities.isEventDispatchThread());
+        gameInProgress.set(true);
+
     }
 
     @Override
@@ -113,26 +125,34 @@ public class Tokyo extends GameEngine
         gfxEngine.redisplay();
     }
 
-    private void loadBots()
+    private boolean loadBots()
     {
-        //TODO refactor load bots
         ArrayList<String> bots = getParticipatingBots();
         for (int i = 0; i < bots.size(); i++)
         {
             String path = bots.get(i);
             Robot loadedBot = botEngine.loadBot(path);
+            if (loadedBot == null)
+            {
+//                JOptionPane.showMessageDialog(jFrame, botEngine.getBotLoadingError(), "Error Loading Bots", JOptionPane.ERROR_MESSAGE);        
+                System.out.println(botEngine.getBotLoadingError() + "Error Loading Bots");
+                return false;
+            }
             botEngine.registerBot(loadedBot);
             entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
         }
         System.out.println("Botsloaded");
+        return true;
     }
 
-    @Override
-    public void startGame()
+    public ArrayList<String> getParticipatingBots()
     {
-        System.out.println("startGame! " + javax.swing.SwingUtilities.isEventDispatchThread());
-        gameInProgress.set(true);
-
+        ArrayList<String> bots = new ArrayList<String>();
+        for (int x = 0; x < lsSelectedModel.size(); x++)
+        {
+            bots.add(botMap.get(lsSelectedModel.getElementAt(x)));
+        }
+        return bots;
     }
     private AtomicBoolean gameInProgress = new AtomicBoolean(false);
     private static final Vec3[] BOT_COLOURS =
@@ -155,19 +175,6 @@ public class Tokyo extends GameEngine
         new Vec3(0, 0, -20),
         new Vec3(20, 0, 0)
     };
-    public static final float BOARD_SIZE = 50;
-    private HashMap<String, String> botMap = new HashMap<String, String>();
-    private DefaultListModel<String> lsSelectedModel = new DefaultListModel();
-
-    public ArrayList<String> getParticipatingBots()
-    {
-        ArrayList<String> bots = new ArrayList<String>();
-        for (int x = 0; x < lsSelectedModel.size(); x++)
-        {
-            bots.add(botMap.get(lsSelectedModel.getElementAt(x)));
-        }
-        return bots;
-    }
 //    private void TestMove()
 //    {
 ////        String botPath1 = "./build/classes/SampleBot.class";
