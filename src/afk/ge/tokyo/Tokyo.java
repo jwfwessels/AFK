@@ -142,7 +142,7 @@ public class Tokyo extends GameEngine
         new Vec3(0, 1, 0),
         new Vec3(1, 1, 0),
         new Vec3(1, 0, 1),
-        new Vec3(1, 0, 1),
+        new Vec3(0, 1, 1),
         new Vec3(0.6f, 0.6f, 0.6f),
     };
     private static Vec3[] SPAWN_POINTS =
@@ -153,7 +153,7 @@ public class Tokyo extends GameEngine
         new Vec3(20, 0, -20),
         new Vec3(-20, 0, 0),
         new Vec3(0, 0, -20),
-        new Vec3(-20, 0, 0)
+        new Vec3(20, 0, 0)
     };
     public static final float BOARD_SIZE = 50;
     private HashMap<String, String> botMap = new HashMap<String, String>();
