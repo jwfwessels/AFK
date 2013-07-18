@@ -168,7 +168,6 @@ public class MenuPanel extends JPanel implements ActionListener
             public void actionPerformed(ActionEvent e)
             {
                 String selectedBot = lstAvailableBots.getSelectedValue();
-                lsAvailableModel.removeElement(selectedBot);
                 lsSelectedModel.addElement(selectedBot);
             }
         });
@@ -178,10 +177,9 @@ public class MenuPanel extends JPanel implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                while (!lsAvailableModel.isEmpty())
+                for (int i = 0; i < lsAvailableModel.size(); i++)
                 {
-                    lsSelectedModel.addElement(lsAvailableModel.getElementAt(0));
-                    lsAvailableModel.removeElementAt(0);
+                    lsSelectedModel.addElement(lsAvailableModel.getElementAt(i));
                 }
             }
         });
@@ -193,7 +191,6 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 String selectedBot = lstSelectedBots.getSelectedValue();
                 lsSelectedModel.removeElement(selectedBot);
-                lsAvailableModel.addElement(selectedBot);
             }
         });
 
@@ -204,7 +201,6 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 while (!lsSelectedModel.isEmpty())
                 {
-                    lsAvailableModel.addElement(lsSelectedModel.getElementAt(0));
                     lsSelectedModel.removeElementAt(0);
                 }
             }
