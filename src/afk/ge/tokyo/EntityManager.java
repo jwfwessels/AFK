@@ -33,6 +33,7 @@ public class EntityManager
     Resource smallTankBarrelTex;
     Resource smallTankTracksTex;
     Resource smallTankWheelsTex;
+    Resource smallTankShadowTex;
     Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
@@ -86,8 +87,9 @@ public class EntityManager
 
         tankShadowEntity.attachResource(floorMesh);
         tankShadowEntity.attachResource(simpleShadowShader);
+        tankShadowEntity.attachResource(smallTankShadowTex);
         tankShadowEntity.colour = Vec3.VEC3_ZERO;
-        tankShadowEntity.opacity = 0.7f;
+        tankShadowEntity.opacity = 0.99f;
         tankShadowEntity.yMove = 0.01f;
         tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
 
@@ -188,6 +190,7 @@ public class EntityManager
         smallTankBarrelTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_barrel");
         smallTankTracksTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_tracks");
         smallTankWheelsTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_wheels");
+        smallTankShadowTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_shadow");
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
