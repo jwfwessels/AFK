@@ -18,8 +18,8 @@ void main()
     vec3 g_colour = gl_Vertex.xyz;
     vec3 g_position = (world * gl_Vertex).xyz;
 
-    float ia = 0.1f;
-    float id = 0.6f;
+    float ia = 0.5f;
+    float id = 0.5f;
     //float is = 0.3f;
     //float s = 50.0f;
 
