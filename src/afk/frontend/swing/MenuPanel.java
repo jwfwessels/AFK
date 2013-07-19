@@ -161,7 +161,10 @@ public class MenuPanel extends JPanel implements ActionListener
             public void actionPerformed(ActionEvent e)
             {
                 String selectedBot = lstAvailableBots.getSelectedValue();
+                if (selectedBot.isEmpty())
+                {
                 lsSelectedModel.addElement(selectedBot);
+                }
             }
         });
 
