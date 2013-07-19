@@ -112,6 +112,11 @@ public final class Vec4 extends AbstractVec {
 	public float getW() {
 		return w;
 	}
+        
+        public Vec3 getXYZ()
+        {
+            return new Vec3(x,y,z);
+        }
 	
 	@Override
 	public FloatBuffer getBuffer() {

@@ -25,7 +25,14 @@ public class EntityManager
     public ArrayList<TankEntity> entities;
     private ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
-    Resource tankMesh;
+    Resource smallTankBody;
+    Resource smallTankBarrel;
+    Resource smallTankTracks;
+    Resource smallTankWheels;
+    Resource smallTankBodyTex;
+    Resource smallTankBarrelTex;
+    Resource smallTankTracksTex;
+    Resource smallTankWheelsTex;
     Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
@@ -48,21 +55,46 @@ public class EntityManager
     public TankEntity createTank(Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 5;
+        float SCALE = 2.0f;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankBarrelEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankTracksEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankWheelsEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
 
-        tankGfxEntity.attachResource(tankMesh);
+        tankGfxEntity.attachResource(smallTankBody);
+        tankGfxEntity.attachResource(smallTankBodyTex);
         tankGfxEntity.attachResource(tankShader);
+        tankGfxEntity.setScale(SCALE, SCALE, SCALE);
+        tankGfxEntity.colour = colour;
+        
+        tankBarrelEntity.attachResource(smallTankBarrel);
+        tankBarrelEntity.attachResource(smallTankBarrelTex);
+        tankBarrelEntity.attachResource(tankShader);
+        tankBarrelEntity.setPosition(0.0f, 0.41522f, 0.28351f);
+        tankBarrelEntity.colour = colour;
+        
+        tankTracksEntity.attachResource(smallTankTracks);
+        tankTracksEntity.attachResource(smallTankTracksTex);
+        tankTracksEntity.attachResource(tankShader);
+        tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
+        
+        tankWheelsEntity.attachResource(smallTankWheels);
+        tankWheelsEntity.attachResource(smallTankWheelsTex);
+        tankWheelsEntity.attachResource(tankShader);
+        tankWheelsEntity.colour = colour;
 
         tankShadowEntity.attachResource(floorMesh);
         tankShadowEntity.attachResource(simpleShadowShader);
         tankShadowEntity.colour = Vec3.VEC3_ZERO;
         tankShadowEntity.opacity = 0.7f;
         tankShadowEntity.yMove = 0.01f;
-        tankShadowEntity.xScale = tankShadowEntity.zScale = 2.7f;
+        tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
 
-        tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
+        tankGfxEntity.addChild(tankBarrelEntity);
+        tankGfxEntity.addChild(tankTracksEntity);
+        tankGfxEntity.addChild(tankWheelsEntity);
         tankGfxEntity.addChild(tankShadowEntity);
 
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
@@ -80,7 +112,7 @@ public class EntityManager
         //dont have a projectile model yet, mini tank will be bullet XD
         GfxEntity projectileGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
 
-        projectileGfxEntity.attachResource(tankMesh);
+        projectileGfxEntity.attachResource(smallTankBody);
         projectileGfxEntity.attachResource(tankShader);
 
         projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
@@ -148,7 +180,14 @@ public class EntityManager
 
     protected void loadResources()
     {
-        tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
+        smallTankBody = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_body");
+        smallTankBarrel = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_barrel");
+        smallTankTracks = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_tracks");
+        smallTankWheels = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_wheels");
+        smallTankBodyTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_body");
+        smallTankBarrelTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_barrel");
+        smallTankTracksTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_tracks");
+        smallTankWheelsTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_wheels");
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
