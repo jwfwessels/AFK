@@ -1,5 +1,5 @@
 
-import afk.london.Robot;
+import afk.london.RobotClasses.LargeTank;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -8,7 +8,7 @@ import com.hackoeur.jglm.support.FastMath;
  * @author Jessica
  *
  */
-public class CircleBot extends Robot
+public class CircleBot extends LargeTank
 {
 
     int movement = 0;

@@ -35,7 +35,7 @@ public class ProjectileEntity extends AbstractEntity
     }
 
     @Override
-    public void update(float t, float dt, boolean[] flags)
+    public void update(float t, float dt)
     {
         float angle = -(float) Math.toRadians(current.rotation.getY());
         float sin = (float) Math.sin(angle);

@@ -8,9 +8,10 @@ import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
+import afk.london.RobotClasses.LargeTank;
 import afk.london.London;
 import afk.london.Robot;
-import afk.london.RobotEvent;
+import afk.london.RobotClasses.SmallTank;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,6 +26,8 @@ public class EntityManager
     public ArrayList<TankEntity> entities;
     private ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
+    Resource tankMesh;
+    Resource tankShader;
     Resource smallTankBody;
     Resource smallTankBarrel;
     Resource smallTankTracks;
@@ -34,7 +37,6 @@ public class EntityManager
     Resource smallTankTracksTex;
     Resource smallTankWheelsTex;
     Resource smallTankShadowTex;
-    Resource tankShader;
     Resource floorMesh;
     Resource floorShader;
     Resource explosionProjectile;
@@ -44,6 +46,26 @@ public class EntityManager
     Resource simpleShadowShader;
     London botEngine;
     protected AtomicBoolean loaded = new AtomicBoolean(false);
+    private static final Vec3[] BOT_COLOURS =
+    {
+        new Vec3(1, 0, 0),
+        new Vec3(0, 0, 1),
+        new Vec3(0, 1, 0),
+        new Vec3(1, 1, 0),
+        new Vec3(1, 0, 1),
+        new Vec3(0, 1, 1),
+        new Vec3(0.6f, 0.6f, 0.6f),
+    };
+    private static Vec3[] SPAWN_POINTS =
+    {
+        new Vec3(-20, 0, -20),
+        new Vec3(20, 0, 20),
+        new Vec3(-20, 0, 20),
+        new Vec3(20, 0, -20),
+        new Vec3(-20, 0, 0),
+        new Vec3(0, 0, -20),
+        new Vec3(20, 0, 0)
+    };
 
     public EntityManager(London botEngine, GraphicsEngine gfxEngine)
     {
@@ -53,9 +75,32 @@ public class EntityManager
         subEntities = new ArrayList<AbstractEntity>();
     }
 
-    public TankEntity createTank(Vec3 spawnPoint, Vec3 colour)
+    void createBots()
     {
-        float TOTAL_LIFE = 5;
+        ArrayList<Robot> bots = botEngine.getRobots();
+        for (int i = 0; i < bots.size(); i++)
+        {
+            createEntity(bots.get(i), SPAWN_POINTS[i], BOT_COLOURS[i]);
+        }
+    }
+
+    public void createEntity(Robot botController, Vec3 spawnPoint, Vec3 colour)
+    {
+        if (LargeTank.class.isInstance(botController))
+        {
+            System.out.println("type LargeTank");
+            createLargeTank(botController, spawnPoint, colour);
+        }
+        if (SmallTank.class.isInstance(botController))
+        {
+            System.out.println("type SmallTank");
+            createSmallTank(botController, spawnPoint, colour);
+        }
+    }
+
+    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
+    {
+        float TOTAL_LIFE = 8;
         float SCALE = 2.0f;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankBarrelEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
@@ -68,18 +113,18 @@ public class EntityManager
         tankGfxEntity.attachResource(tankShader);
         tankGfxEntity.setScale(SCALE, SCALE, SCALE);
         tankGfxEntity.colour = colour;
-        
+
         tankBarrelEntity.attachResource(smallTankBarrel);
         tankBarrelEntity.attachResource(smallTankBarrelTex);
         tankBarrelEntity.attachResource(tankShader);
         tankBarrelEntity.setPosition(0.0f, 0.41522f, 0.28351f);
         tankBarrelEntity.colour = colour;
-        
+
         tankTracksEntity.attachResource(smallTankTracks);
         tankTracksEntity.attachResource(smallTankTracksTex);
         tankTracksEntity.attachResource(tankShader);
         tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
-        
+
         tankWheelsEntity.attachResource(smallTankWheels);
         tankWheelsEntity.attachResource(smallTankWheelsTex);
         tankWheelsEntity.attachResource(tankShader);
@@ -101,7 +146,37 @@ public class EntityManager
 
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
 
-        TankEntity tank = new TankEntity(tankGfxEntity, this, TOTAL_LIFE);
+        TankEntity tank = new TankEntity(botController, tankGfxEntity, this, TOTAL_LIFE);
+        entities.add(tank);
+        tank.name = "tank" + (entities.size() - 1);
+        return tank;
+    }
+
+    public TankEntity createLargeTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
+    {
+        float TOTAL_LIFE = 10;
+        float SCALE = 2.0f;
+        GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+
+        tankGfxEntity.attachResource(tankMesh);
+        tankGfxEntity.attachResource(tankShader);
+        tankGfxEntity.setScale(SCALE, SCALE, SCALE);
+
+        tankShadowEntity.attachResource(floorMesh);
+        tankShadowEntity.attachResource(simpleShadowShader);
+        tankShadowEntity.colour = Vec3.VEC3_ZERO;
+        tankShadowEntity.opacity = 0.7f;
+        tankShadowEntity.yMove = 0.01f;
+        tankShadowEntity.xScale = tankShadowEntity.zScale = 2.7f;
+
+        tankGfxEntity.colour = colour;
+        tankGfxEntity.setPosition(spawnPoint);
+        tankGfxEntity.addChild(tankShadowEntity);
+
+        gfxEngine.getRootEntity().addChild(tankGfxEntity);
+
+        TankEntity tank = new TankEntity(botController, tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
         return tank;
@@ -129,43 +204,14 @@ public class EntityManager
 
     void updateEntities(float t, float delta)
     {
-        ArrayList commands = getInputs();
         for (int i = 0; i < entities.size(); i++)
         {
-            boolean[] flags = (boolean[]) commands.get(i);
-            entities.get(i).update(t, delta, flags);
+            entities.get(i).update(t, delta);
         }
         for (int i = 0; i < subEntities.size(); i++)
         {
-            subEntities.get(i).update(t, delta, null);
+            subEntities.get(i).update(t, delta);
         }
-
-        ArrayList<RobotEvent> events = new ArrayList<RobotEvent>();
-        for (int i = 0; i < entities.size(); i++)
-        {
-            ArrayList<Float> visible = entities.get(i).checkVisible();
-            // TODO: need to check hits as well.
-            RobotEvent event = new RobotEvent(visible, false, false, entities.get(i).hitwall);
-            events.add(event);
-        }
-        botEngine.feedback(events);
-
-    }
-
-    private ArrayList getInputs()
-    {
-        ArrayList tempFlags = new ArrayList();
-        ArrayList<Robot> bots = botEngine.getRobots();
-        for (int i = 0; i < bots.size(); i++)
-        {
-            bots.get(i).run();
-            boolean[] temp = bots.get(i).getActionFlags();
-            boolean[] tempArr = new boolean[temp.length];
-            System.arraycopy(temp, 0, tempArr, 0, temp.length);
-            bots.get(i).clearFlags();
-            tempFlags.add(tempArr);
-        }
-        return tempFlags;
     }
 
     void renderEntities(double alpha)
@@ -182,6 +228,7 @@ public class EntityManager
 
     protected void loadResources()
     {
+        tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
         smallTankBody = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_body");
         smallTankBarrel = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_barrel");
         smallTankTracks = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_tracks");
