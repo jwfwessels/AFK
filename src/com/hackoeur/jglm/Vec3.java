@@ -145,6 +145,14 @@ public final class Vec3 extends AbstractVec {
 		
 		return buffer;
 	}
+        
+        public float get(int i)
+        {
+            if (i == 0) return x;
+            if (i == 1) return y;
+            if (i == 2) return z;
+            throw new IllegalArgumentException("Invalid component index = " + i);
+        }
 
 	public float getX() {
 		return x;

@@ -386,6 +386,11 @@ public final class Mat4 extends AbstractMat {
 				result.x, result.y, result.z, result.w
 		);
 	}
+        
+        public Vec3 getTranslate()
+        {
+            return new Vec3( m30, m31, m32 );
+        }
 	
 	public Mat4 transpose() {
 		return new Mat4(
@@ -562,4 +567,36 @@ public final class Mat4 extends AbstractMat {
                     m03*m.m30 + m13*m.m31 + m23*m.m32 + m33*m.m33
             );
         }
+        
+        /**
+         * Simple but not robust matrix inversion.
+         * (Doesn't work properly if there is a scaling or skewing transformation.)
+         * @return the inverse of this matrix.
+         */
+	public Mat4 invertSimple()
+	{
+            return new Mat4(
+                m00, m10, m20, 0,
+                m10, m11, m21, 0,
+                m02, m12, m22, 0,
+                -(m30*m00) - (m31*m01) - (m32*m02),
+                -(m30*m10) - (m31*m11) - (m32*m12),
+                -(m30*m20) - (m31*m21) - (m32*m22),
+                1.0f
+            );
+	}
+	
+	/** 
+         * Invert for only a rotation, any translation is zeroed out
+         * @return the inverse of this matrix.
+         */
+	public Mat4 invertRot( )
+	{
+            return new Mat4(
+                 m00, m10, m20, 0,
+                 m01, m11, m21, 0,
+                 m02, m12, m22, 0,
+                 0, 0, 0, 1.0f
+            );
+	}
 }
