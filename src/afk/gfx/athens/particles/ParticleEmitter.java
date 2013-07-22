@@ -123,24 +123,12 @@ public class ParticleEmitter extends AthensEntity
             shader.updateUniform(gl, "opacity", opacity);
         }
         
-        if (opacity < 1.0f)
-        {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glDisable(GL.GL_DEPTH_TEST);
-        }
-        
         for (int i = 0; i < particles.length; i++)
         {
             if (particles[i].alive)
             {
                 particles[i].draw(gl, mesh, camera, getShader());
             }
-        }
-        
-        if (opacity < 1.0f)
-        {
-            gl.glDisable(GL.GL_BLEND);
-            gl.glEnable(GL.GL_DEPTH_TEST);
         }
     }
     

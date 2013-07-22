@@ -199,7 +199,7 @@ public class EntityManager
 
         explosionProjectile = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionProjectile");
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
-        particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
+        particleShader = gfxEngine.loadResource(Resource.SHADER, "texturedParticle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
         simpleShadowShader = gfxEngine.loadResource(Resource.SHADER, "simpleshadow");
         gfxEngine.dispatchLoadQueue(new Runnable()
@@ -250,7 +250,7 @@ public class EntityManager
         {
             explosion.attachResource(explosionTank);
         }
-        explosion.attachResource(simpleShadowShader);
+        explosion.attachResource(particleShader);
         explosion.attachResource(billboardMesh);
         explosion.attachResource(explosionTexture);
 
