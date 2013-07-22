@@ -389,8 +389,22 @@ public final class Mat4 extends AbstractMat {
         
         public Vec3 getTranslate()
         {
-            return new Vec3( m30, m31, m32 );
+            return new Vec3(m30, m31, m32);
         }
+        
+        /**
+         * Return vector v rotated by the 3x3 portion of this matrix.
+	 * (provided because it's used by BBox)
+         * @param v the vector to rotate.
+         * @return the rotated vector.
+         */
+	public Vec3 roatateVector(Vec3 v)
+	{
+            return new Vec3( 
+		v.getX()*m00 + v.getY()*m10 + v.getZ()*m20,
+		v.getX()*m01 + v.getY()*m11 + v.getZ()*m21,
+		v.getX()*m02 + v.getY()*m12 + v.getZ()*m22 );
+ 	}
 	
 	public Mat4 transpose() {
 		return new Mat4(
