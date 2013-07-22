@@ -148,14 +148,14 @@ public class TankEntity extends AbstractEntity
     {
         float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
 
-        if (comp < -halfBoardSize)
+        if (comp-size < -halfBoardSize)
         {
             hitwall = true;
-            comp = -halfBoardSize;
-        } else if (comp > halfBoardSize)
+            comp = -halfBoardSize+size;
+        } else if (comp+size > halfBoardSize)
         {
             hitwall = true;
-            comp = halfBoardSize;
+            comp = halfBoardSize-size;
         }
 
         return comp;
