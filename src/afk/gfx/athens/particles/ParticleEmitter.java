@@ -11,6 +11,7 @@ import com.hackoeur.jglm.Vec4;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 /**
@@ -188,7 +189,8 @@ public class ParticleEmitter extends AthensEntity
         float speed = jitter(particleParams.speed, particleParams.speedJitter);
 
         p.set(pos, dir.scale(speed),
-                jitter(particleParams.maxLife, particleParams.lifeJitter));
+                jitter(particleParams.maxLife, particleParams.lifeJitter),
+                jitter(particleParams.scale, particleParams.scaleJitter));
         p.update(delta, particleParams.acceleration,
                 particleParams.boundingBox);
     }

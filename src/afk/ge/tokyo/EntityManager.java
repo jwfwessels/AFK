@@ -44,6 +44,7 @@ public class EntityManager
     Resource particleShader;
     Resource billboardMesh;
     Resource simpleShadowShader;
+    Resource explosionTexture;
     London botEngine;
     protected AtomicBoolean loaded = new AtomicBoolean(false);
     private static final Vec3[] BOT_COLOURS =
@@ -238,13 +239,14 @@ public class EntityManager
         smallTankTracksTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_tracks");
         smallTankWheelsTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_wheels");
         smallTankShadowTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_shadow");
+        explosionTexture = gfxEngine.loadResource(Resource.TEXTURE_2D, "explosion");
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
 
         explosionProjectile = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionProjectile");
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
-        particleShader = gfxEngine.loadResource(Resource.SHADER, "particle");
+        particleShader = gfxEngine.loadResource(Resource.SHADER, "texturedParticle");
         billboardMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "billboard");
         simpleShadowShader = gfxEngine.loadResource(Resource.SHADER, "simpleshadow");
         gfxEngine.dispatchLoadQueue(new Runnable()
@@ -286,23 +288,25 @@ public class EntityManager
     // Please optimise/refactor before the universe ends!
     void makeExplosion(Vec3 where, AbstractEntity parent, int type)
     {
-        GfxEntity explostion = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
+        GfxEntity explosion = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
 
         if (type == 0)
         {
-            explostion.attachResource(explosionProjectile);
+            explosion.attachResource(explosionProjectile);
         } else if (type == 1)
         {
-            explostion.attachResource(explosionTank);
+            explosion.attachResource(explosionTank);
         }
-        explostion.attachResource(particleShader);
-        explostion.attachResource(billboardMesh);
+        explosion.attachResource(particleShader);
+        explosion.attachResource(billboardMesh);
+        explosion.attachResource(explosionTexture);
 
-        explostion.colour = parent.getgfxEntity().colour;
-        explostion.setScale(Vec3.VEC3_ZERO);
-        explostion.setPosition(where);
-        gfxEngine.getRootEntity().addChild(explostion);
+        explosion.colour = parent.getgfxEntity().colour;
+        explosion.opacity = 0.9f;
+        explosion.setScale(Vec3.VEC3_ZERO);
+        explosion.setPosition(where);
+        gfxEngine.getRootEntity().addChild(explosion);
 
-        explostion.active = true;
+        explosion.active = true;
     }
 }
