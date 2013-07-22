@@ -37,6 +37,17 @@ public class EntityManager
     Resource smallTankTracksTex;
     Resource smallTankWheelsTex;
     Resource smallTankShadowTex;
+    Resource largeTankBody;
+    Resource largeTankBarrel;
+    Resource largeTankTracks;
+    Resource largeTankTurret;
+    Resource largeTankWheels;
+    Resource largeTankBodyTex;
+    Resource largeTankBarrelTex;
+    Resource largeTankTracksTex;
+    Resource largeTankTurretTex;
+    Resource largeTankWheelsTex;
+    Resource largeTankShadowTex;
     Resource floorMesh;
     Resource floorShader;
     Resource explosionProjectile;
@@ -156,23 +167,55 @@ public class EntityManager
     public TankEntity createLargeTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 10;
-        float SCALE = 2.0f;
+        float SCALE = 4.0f;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankBarrelEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankTracksEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankTurretEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity tankWheelsEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
 
-        tankGfxEntity.attachResource(tankMesh);
+        tankGfxEntity.attachResource(largeTankBody);
+        tankGfxEntity.attachResource(largeTankBodyTex);
         tankGfxEntity.attachResource(tankShader);
         tankGfxEntity.setScale(SCALE, SCALE, SCALE);
+        tankGfxEntity.colour = colour;
+
+        tankTurretEntity.attachResource(largeTankTurret);
+        tankTurretEntity.attachResource(largeTankTurretTex);
+        tankTurretEntity.attachResource(tankShader);
+        tankTurretEntity.setPosition(0.0f, 0.17623f, -0.15976f);
+        tankTurretEntity.colour = colour;
+
+        tankBarrelEntity.attachResource(largeTankBarrel);
+        tankBarrelEntity.attachResource(largeTankBarrelTex);
+        tankBarrelEntity.attachResource(tankShader);
+        tankBarrelEntity.setPosition(0.0f, 0.03200f, 0.22199f);
+        tankBarrelEntity.colour = colour;
+        tankTurretEntity.addChild(tankBarrelEntity);
+
+        tankTracksEntity.attachResource(largeTankTracks);
+        tankTracksEntity.attachResource(largeTankTracksTex);
+        tankTracksEntity.attachResource(tankShader);
+        tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
+
+        tankWheelsEntity.attachResource(largeTankWheels);
+        tankWheelsEntity.attachResource(largeTankWheelsTex);
+        tankWheelsEntity.attachResource(tankShader);
+        tankWheelsEntity.colour = colour;
 
         tankShadowEntity.attachResource(floorMesh);
         tankShadowEntity.attachResource(simpleShadowShader);
+        tankShadowEntity.attachResource(largeTankShadowTex);
         tankShadowEntity.colour = Vec3.VEC3_ZERO;
-        tankShadowEntity.opacity = 0.7f;
+        tankShadowEntity.opacity = 0.99f;
         tankShadowEntity.yMove = 0.01f;
-        tankShadowEntity.xScale = tankShadowEntity.zScale = 2.7f;
+        tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
 
-        tankGfxEntity.colour = colour;
         tankGfxEntity.setPosition(spawnPoint);
+        tankGfxEntity.addChild(tankTurretEntity);
+        tankGfxEntity.addChild(tankTracksEntity);
+        tankGfxEntity.addChild(tankWheelsEntity);
         tankGfxEntity.addChild(tankShadowEntity);
 
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
@@ -239,6 +282,17 @@ public class EntityManager
         smallTankTracksTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_tracks");
         smallTankWheelsTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_wheels");
         smallTankShadowTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/small_tank_shadow");
+        largeTankBody = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "large_tank_body");
+        largeTankBarrel = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "large_tank_barrel");
+        largeTankTracks = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "large_tank_tracks");
+        largeTankTurret = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "large_tank_turret");
+        largeTankWheels = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "large_tank_wheels");
+        largeTankBodyTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/large_tank_body");
+        largeTankBarrelTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/large_tank_barrel");
+        largeTankTracksTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/large_tank_tracks");
+        largeTankTurretTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/large_tank_turret");
+        largeTankWheelsTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/large_tank_wheels");
+        largeTankShadowTex = gfxEngine.loadResource(Resource.TEXTURE_2D, "lightmaps/large_tank_shadow");
         explosionTexture = gfxEngine.loadResource(Resource.TEXTURE_2D, "explosion");
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
