@@ -189,7 +189,8 @@ public class ParticleEmitter extends AthensEntity
         float speed = jitter(particleParams.speed, particleParams.speedJitter);
 
         p.set(pos, dir.scale(speed),
-                jitter(particleParams.maxLife, particleParams.lifeJitter));
+                jitter(particleParams.maxLife, particleParams.lifeJitter),
+                jitter(particleParams.scale, particleParams.scaleJitter));
         p.update(delta, particleParams.acceleration,
                 particleParams.boundingBox);
     }
