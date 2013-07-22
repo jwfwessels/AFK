@@ -10,6 +10,8 @@ void main()
 
     float ip = texture2D(tex,gl_TexCoord[0].xy).r;
 
+    if (ip < 0.01) discard;
+
     gl_FragColor = vec4(colour,opacity*ip);
 }
 
