@@ -7,6 +7,9 @@ uniform float opacity;
 
 varying float ip;
 
+uniform float life;
+uniform int particleID;
+
 void main()
 {
     float u = gl_TexCoord[0].x-0.5;

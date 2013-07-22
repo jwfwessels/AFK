@@ -30,6 +30,12 @@ public class ParticleParameters extends AthensResource
     /** Deviation of initial speed of particles. */
     float speedJitter = 0;
     
+    /** Base scale of particles. */
+    float scale = 1;
+    
+    /** Deviation of scale of particles. */
+    float scaleJitter = 0;
+    
     /**
      * Time between particle spawns (in seconds). If this is set to exactly zero, the emitter
      * will become and explosion, effectively emitting all particles at once and
@@ -116,26 +122,42 @@ public class ParticleParameters extends AthensResource
                 {
                     if ("acceleration".equals(param))
                         this.acceleration = parseVec3(value);
+                    
                     else if ("angleJitter".equals(param))
                         this.angleJitter = parseVec3(value);
+                    
                     else if ("speed".equals(param))
                         this.speed = Float.parseFloat(value);
+                    
                     else if ("speedJitter".equals(param))
                         this.speedJitter = Float.parseFloat(value);
+                    
+                    else if ("scale".equals(param))
+                        this.scale = Float.parseFloat(value);
+                    
+                    else if ("scaleJitter".equals(param))
+                        this.scaleJitter = Float.parseFloat(value);
+                    
                     else if ("spawnInterval".equals(param))
                         this.spawnInterval = Float.parseFloat(value);
+                    
                     else if ("maxLife".equals(param))
                         this.maxLife = Float.parseFloat(value);
+                    
                     else if ("lifeJitter".equals(param))
                         this.lifeJitter = Float.parseFloat(value);
+                    
                     else if ("numParticles".equals(param))
                         this.numParticles = Integer.parseInt(value);
+                    
                     else if ("noDirection".equals(param))
                         this.noDirection = Boolean.parseBoolean(value);
+                    
                     else if ("boundingBox".equals(param))
                         this.boundingBox = parseAABBox(value);
                     else
-                        throw new IOException("Invalid parameter name on line " + lineNumber);
+                        throw new IOException("Invalid parameter name [" + param
+                                + "] on line " + lineNumber);
                 }
                 catch (NumberFormatException nfe)
                 {

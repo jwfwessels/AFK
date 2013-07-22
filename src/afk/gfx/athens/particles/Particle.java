@@ -16,8 +16,9 @@ import javax.media.opengl.GL2;
  */
 public class Particle
 {
-    Vec3 position;
-    Vec3 velocity;
+    Vec3 position = Vec3.VEC3_ZERO;
+    Vec3 velocity = Vec3.VEC3_ZERO;
+    float scale = 1;
     float lifetime, maxLife;
     boolean alive = false;
     
@@ -25,12 +26,13 @@ public class Particle
     {
     }
     
-    protected void set(Vec3 position, Vec3 velocity, float maxLife)
+    protected void set(Vec3 position, Vec3 velocity, float maxLife, float scale)
     {
         this.position = position;
         this.velocity = velocity;
         this.lifetime = 0;
         this.maxLife = maxLife;
+        this.scale = scale;
         alive = true;
     }
     
@@ -85,7 +87,7 @@ public class Particle
                 roty,
                 new Vec3(0,1,0));
         
-        //TODO: world = Matrices.scale(world, getScale());
+        world = Matrices.scale(world, new Vec3(scale,scale,scale));
         
         return world;
     }
@@ -94,7 +96,10 @@ public class Particle
     {
         
         if (shader != null)
+        {
+            shader.updateUniform(gl, "life", lifetime/maxLife);
             shader.updateUniform(gl, "world", createWorldMatrix(camera));
+        }
         
         mesh.draw(gl);
     }
