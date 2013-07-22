@@ -109,7 +109,7 @@ public class TankEntity extends AbstractEntity
                 float theta = isVisible(this, b, halfFOV, viewingDistanceSqr);
                 if (!Float.isNaN(theta))
                 {
-                    System.out.println(this.name + " <(©)> " + b.name + "  " + theta + "°");
+//                    System.out.println(this.name + " <(©)> " + b.name + "  " + theta + "°");
                     targets.add(theta);
                 }
             }
