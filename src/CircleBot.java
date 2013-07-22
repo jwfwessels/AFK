@@ -1,5 +1,5 @@
 
-import afk.london.Robot;
+import afk.london.RobotClasses.LargeTank;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -8,23 +8,26 @@ import com.hackoeur.jglm.support.FastMath;
  * @author Jessica
  *
  */
-public class CircleBot extends Robot
+public class CircleBot extends LargeTank
 {
 
     int movement = 0;
     int rotation = 0;
     boolean turning = true;
     private float thetaAngle;
+    
+    boolean antiBot;
 
     public CircleBot()
     {
         super();
+        
+        antiBot = Math.random() > 0.5;
     }
 
     @Override
     public void run()
     {
-
         float[] visibles = events.getVisibleBots();
         if (visibles.length > 0)
         {
@@ -48,38 +51,17 @@ public class CircleBot extends Robot
                     thetaAngle--;
                 }
             }
-        } else if (turning)
-        {
-            turn();
-        } else
-        {
-            move();
         }
-    }
-
-    public void turn()
-    {
-        if (rotation < 90)
-        {
-            turnAntiClockwise();
-            rotation++;
-        } else
-        {
-            rotation = 0;
-            turning = false;
-        }
-    }
-
-    public void move()
-    {
-        if (movement < 1600)
+        else
         {
             moveForward();
-            movement++;
-        } else
-        {
-            movement = 0;
-            turning = true;
+            if (events.hitWall())
+            {
+                if (antiBot)
+                    turnAntiClockwise();
+                else
+                    turnClockwise();
+            }
         }
     }
 }

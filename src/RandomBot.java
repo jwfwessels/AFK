@@ -1,5 +1,5 @@
 
-import afk.london.Robot;
+import afk.london.RobotClasses.SmallTank;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -8,7 +8,7 @@ import com.hackoeur.jglm.support.FastMath;
  * @author Jessica
  *
  */
-public class RandomBot extends Robot
+public class RandomBot extends SmallTank
 {
 
     int movement = 0;

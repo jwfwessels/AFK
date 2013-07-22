@@ -108,7 +108,7 @@ public abstract class AbstractEntity
      * @param dt
      * @param flags
      */
-    public abstract void update(float t, float dt, boolean[] flags);
+    public abstract void update(float t, float dt);
 
     /**
      * This method performs RK4 integration to approximate the position of an

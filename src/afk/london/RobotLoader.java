@@ -6,7 +6,6 @@ package afk.london;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 //import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +96,7 @@ public class RobotLoader extends ClassLoader
         try
         {
             Object obj = loadedBot.getDeclaredConstructor().newInstance();
+            System.out.println("loadedBot: " + loadedBot.getSuperclass().getPackage().getName());
             if(obj instanceof Robot)
             {
                 newBot = (Robot)obj;
