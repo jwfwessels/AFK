@@ -24,7 +24,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLJPanel;
+import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JLabel;
 
 /**
@@ -65,8 +65,8 @@ public class Athens extends GraphicsEngine
     static final float DELTA = 5f, ANGLE_DELTA = 30.0f;
     private GLProfile glProfile;
     private GLCapabilities glCaps;
-//    private GLCanvas glCanvas;
-    private GLJPanel glCanvas;
+    private GLCanvas glCanvas;
+//    private GLJPanel glCanvas;
     private Animator animator;
     private float fps = 0.0f;
     private JLabel fpsComp;
@@ -83,8 +83,8 @@ public class Athens extends GraphicsEngine
         glCaps = new GLCapabilities(glProfile);
         glCaps.setDoubleBuffered(true);
 
-//        glCanvas = new GLCanvas(glCaps);
-        glCanvas = new GLJPanel(glCaps);
+        glCanvas = new GLCanvas(glCaps);
+//        glCanvas = new GLJPanel(glCaps);
 
         KeyAdapter key = new KeyAdapter()
         {
