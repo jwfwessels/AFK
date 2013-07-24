@@ -33,6 +33,7 @@ public class RobotLoader extends ClassLoader
     private String error = "";
     
     //public Robot LoadRobot(String path)
+    //Loads all necessary classes needed for the robot
     public void AddRobot(String path)
     {
         error = "";
@@ -102,7 +103,7 @@ public class RobotLoader extends ClassLoader
                     }
                     else if(je.getName().endsWith(".class"))
                     {
-                        //TODO: Check for multiple Robot classes with a jar - report on this or only use the first one found
+                        //TODO: Check for multiple Robot classes within a jar - report on this or only use the first one found - prevent cheating
                         InputStream in = jarFile.getInputStream(je);
                         String name = je.getName().substring(0, je.getName().lastIndexOf('.'));
                         loadClass(in, name);
@@ -115,7 +116,7 @@ public class RobotLoader extends ClassLoader
         }
         catch(Exception e)
         {
-            error = "I don't know what has just happened. But something failed";
+            error = "I don't know what has just happened. But something went wrong.";
         }
     }
     
@@ -130,7 +131,7 @@ public class RobotLoader extends ClassLoader
         }
     }
     
-    //Returns instances of robots that are in classMap
+    //Returns instances of robots that are in classMap - to be used when game is started
     public Robot[] getBots()
     {
         Robot[] bots = new Robot[numBots];

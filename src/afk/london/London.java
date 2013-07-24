@@ -22,9 +22,14 @@ public class London
         botLoader = new RobotLoader();
     }
     
-    public Robot loadBot(String path)
+    /*public Robot loadBot(String path)
     {
         return botLoader.LoadRobot(path);
+    }*/
+    
+    public Robot[] InitialiseBots()
+    {
+        return botLoader.getBots();
     }
     
     public void AddRobot(String path)
