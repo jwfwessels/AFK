@@ -128,7 +128,7 @@ public class Tokyo extends GameEngine
     private boolean loadBots()
     {
         ArrayList<String> bots = getParticipatingBots();
-        for (int i = 0; i < bots.size(); i++)
+        /*for (int i = 0; i < bots.size(); i++)
         {
             String path = bots.get(i);
             Robot loadedBot = botEngine.loadBot(path);
@@ -140,7 +140,8 @@ public class Tokyo extends GameEngine
             }
             botEngine.registerBot(loadedBot);
             entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
-        }
+        }*/
+        //Robot[] participatingBots = botEngine.
         System.out.println("Botsloaded");
         return true;
     }

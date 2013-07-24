@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package afk.london;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-//import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.jar.*;
@@ -15,8 +12,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
-//import java.security.MessageDigest;
-//import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  *
@@ -25,105 +22,70 @@ import java.util.Enumeration;
 
 public class RobotLoader extends ClassLoader
 {
+    private final String ROBOT_CLASS = "afk.london.Robot";
+    
     private ArrayList<Class<?>> bots = new ArrayList<Class<?>>(); 
-    private ArrayList<byte[]> fileHash = new ArrayList<byte[]>();
-    private HashMap<String, Class<?>> botMap = new HashMap<String, Class<?>>();
+    //private ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+    //private ArrayList<byte[]> fileHash = new ArrayList<byte[]>();
+    private int numBots = 0;
+    private byte[] tempByteArray = null;
+    private HashMap<String, Class<?>> classMap = new HashMap<String, Class<?>>();
     private String error = "";
     
-    public Robot LoadRobot(String path)
+    //public Robot LoadRobot(String path)
+    public void AddRobot(String path)
     {
+        error = "";
         if(path.endsWith(".class"))
         {
-            return loadFromClass(path);
+            loadFromClass(path);
         }
         else if(path.endsWith(".jar"))
         {
-            return loadFromJar(path);
+            loadFromJar(path);
         }
         else
         {
-            error = path + " is not a valid Robot file";
-            return null;
+            error = path + " is not a valid file";
+            return;
+            //return null;
+        }
+        if(error.equals(""))
+        {
+            numBots++;
+            error = "Successfully loaded";
         }
         
     }
     
-    private Robot loadFromClass(String path)
+    //private Robot loadFromClass(String path)
+    private void loadFromClass(String path)
     {
-        FileInputStream in;
+        InputStream in = null;
         File tempFile = null;
-        byte[] b = null;
         try
         {
             tempFile = new File(path);
-            b = new byte[(int)tempFile.length()];
             in = new FileInputStream(tempFile);
-            in.read(b);
+            tempByteArray = new byte[(int)tempFile.length()];
         }
-        catch(Exception e)
+        catch(FileNotFoundException e)
         {
-            e.printStackTrace();
+            error = "Could not find file " + path;
+            return;
         }
         
-        String name = tempFile.getName();
-        name = name.substring(0, name.lastIndexOf('.'));
-        Robot newBot;
-        Class<?> loadedBot = null;
-        //try
-        //{
-            if(!botMap.containsKey(name))
-            {
-                loadedBot = defineClass(null, b, 0, b.length);
-                botMap.put(loadedBot.getName(), loadedBot);
-                //fileHash.add(MessageDigest.getInstance("MD5").digest(b));
-            }
-            else /*if(fileHash.contains(MessageDigest.getInstance("MD5").digest(b)))*/
-            {
-                loadedBot = botMap.get(name);
-                newBot = null;
-            }
-            /*else
-            {
-                error = "Class already in use: " + path;
-                return null;
-            }
-        }
-        catch(NoSuchAlgorithmException e)
-        {
-        }*/
-
-        newBot = null;
-
-        try
-        {
-            Object obj = loadedBot.getDeclaredConstructor().newInstance();
-            if(obj instanceof Robot)
-            {
-                newBot = (Robot)obj;
-            }
-            else
-            {
-                error = loadedBot.getDeclaredConstructor().getName() + " does not inherit from Robot";
-                return null;
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        
-        return newBot;
+        loadClass(in, tempFile.getName());
     }
     
     //Only loads class files in root directory at present
-    private Robot loadFromJar(String path)
+    //private Robot loadFromJar(String path)
+    private void loadFromJar(String path)
     {
-        Robot newBot = null;
         try
         {
-            JarFile jarFile = new JarFile(path);
+            JarFile jarFile = new JarFile(path);       
             Enumeration e = jarFile.entries();
-
             URL[] urls = 
             { 
                 new URL("jar:file:" + path + "!/") 
@@ -135,56 +97,78 @@ public class RobotLoader extends ClassLoader
                     JarEntry je = (JarEntry)e.nextElement();
                     if(je.isDirectory())
                     {
-                        // TODO: load class files nested in directories
+                        System.out.println("Directory: " + je.getName());
+                        // TODO: Load nested files
                     }
                     else if(je.getName().endsWith(".class"))
                     {
+                        //TODO: Check for multiple Robot classes with a jar - report on this or only use the first one found
                         InputStream in = jarFile.getInputStream(je);
-                        try
-                        {
-                            System.out.println(je.getName());
-                            byte[] b = new byte[(int)je.getSize()];
-                            in.read(b);
-                            Class<?> tempClass = null;
-                            String name = je.getName().substring(0, je.getName().lastIndexOf('.'));
-                            if(!botMap.containsKey(name))
-                            {
-                                tempClass = defineClass(null, b, 0, b.length);
-                                botMap.put(tempClass.getName(), tempClass);
-                                //fileHash.add(MessageDigest.getInstance("MD5").digest(b));
-                            }
-                            else /*if(fileHash.contains(MessageDigest.getInstance("MD5").digest(b)))*/
-                            {
-                                tempClass = botMap.get(name);
-                                newBot = null;
-                            }
-                            Class stuff = tempClass.getSuperclass();
-                            System.out.println("Length: " + tempClass.getSuperclass());
-                            if(stuff.getName().equals("afk.london.Robot"))
-                            {
-                                System.out.println("I HAS A BOT :)");
-                                Object obj = tempClass.getDeclaredConstructor().newInstance();
-                                if(obj instanceof Robot)
-                                {
-                                    newBot = (Robot)obj;
-                                }
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            error = "Could not load " + path;
-                            return null;
-                        }
-                    }
+                        String name = je.getName().substring(0, je.getName().lastIndexOf('.'));
+                        loadClass(in, name);
+                      }
+                   /* else if(je.getName().endsWith(".jar"))
+                    {
+                        //TODO: Load nested jars to allow use of libraries etc.
+                    }*/
             }
         }
         catch(Exception e)
         {
-            error = "I don't know what has just happened";
+            error = "I don't know what has just happened. But something failed";
         }
-        
-        
-        return newBot;
+    }
+    
+    public void loadClass(InputStream in, String name)
+    {    
+        Class loadedClass = null;
+
+        if(!classMap.containsKey(name))
+        {
+            loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
+            classMap.put(loadedClass.getName(), loadedClass);
+        }
+    }
+    
+    //Returns instances of robots that are in classMap
+    public Robot[] getBots()
+    {
+        Robot[] bots = new Robot[numBots];
+        int x = 0;
+        for(Map.Entry entryPair : classMap.entrySet()) 
+        {
+            Class<?> tempClass = (Class<?>)entryPair.getValue();
+            Class superClass = tempClass.getSuperclass();
+            Object obj = null;
+            if(superClass.getName() == ROBOT_CLASS)
+            {
+                try
+                {
+                    obj = tempClass.getDeclaredConstructor().newInstance();
+                }
+                catch(Exception e)
+                {
+                    error = "Some error occurred";
+                }
+                // TODO: Catch exceptions individually
+               /* catch(NoSuchMethodException e)
+                {
+                    error = "Failed to use constructor of robot " + entryPair.getKey();
+                    return null;
+                    
+                }
+                catch(InstantiationException e)
+                {
+                    error = "Failed to instantiate robot " + entryPair.getKey();
+                    return null;
+                }*/
+                
+                bots[x] = (Robot)obj;
+                x++;
+            }
+        } 
+
+        return bots;
     }
     
     public String getError()
@@ -194,7 +178,7 @@ public class RobotLoader extends ClassLoader
     
     public void clearMaps()
     {
-        fileHash.clear();
-        botMap.clear();
+        //fileHash.clear();
+        classMap.clear();
     }
 }

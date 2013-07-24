@@ -26,6 +26,11 @@ public class London
     {
         return botLoader.LoadRobot(path);
     }
+    
+    public void AddRobot(String path)
+    {
+        botLoader.AddRobot(path);
+    }
 
     public void registerBot(Robot bot)
     {
