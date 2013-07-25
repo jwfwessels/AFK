@@ -1,7 +1,5 @@
 
 package afk.bot.london;
-
-import afk.bot.london.Robot;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,7 +25,7 @@ public class RobotLoader extends ClassLoader
     private Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
     private boolean robotExists;
     
-    //Loads all necessary classes needed for the robot
+    //Loads all necessary classes needed for the robot specified by path
     public void AddRobot(String path)
     {
         if(path.endsWith(".class"))
@@ -111,13 +109,11 @@ public class RobotLoader extends ClassLoader
     
     public void loadClass(InputStream in, String name)
     {    
-        Class loadedClass = null;
-
         if(!classMap.containsKey(name))
         {
-            loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
+            Class loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
             classMap.put(loadedClass.getName(), loadedClass);
-            if(loadedClass.getSuperclass().equals("afk.london.Robot"))
+            if(loadedClass.getSuperclass().getName().equals(ROBOT_CLASS))
             {
                 robotExists = true;
                 robotClasses.add(loadedClass);
@@ -149,7 +145,11 @@ public class RobotLoader extends ClassLoader
     
     public void clearMaps()
     {
-        //fileHash.clear();
         classMap.clear();
+        robotClasses.clear();
+        
+        //Hint to garbage collector
+        System.gc();
+        System.gc();
     }
 }

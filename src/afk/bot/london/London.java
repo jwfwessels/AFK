@@ -13,13 +13,8 @@ import java.util.ArrayList;
  */
 public class London extends RobotEngine
 {
-
-    //private ArrayList<Robot> robots;
-    //private RobotLoader robotLoader;
-
     public London()
     {
-        robots = new ArrayList<Robot>();
         robotLoader = new RobotLoader();
     }
     
@@ -30,7 +25,7 @@ public class London extends RobotEngine
     }
     
     @Override
-    public void AddRobot(String path)
+    public void addRobot(String path)
     {
         robotLoader.AddRobot(path);
     }

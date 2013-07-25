@@ -14,11 +14,10 @@ import java.util.ArrayList;
  */
 public abstract class RobotEngine 
 {
-    protected ArrayList<Robot> robots;
     protected RobotLoader robotLoader;
     
     public abstract Robot[] getRobotInstances();
-    public abstract void AddRobot(String path);
+    public abstract void addRobot(String path);
     
     
 }

@@ -89,10 +89,10 @@ public class EntityManager
 
     void createBots()
     {
-        ArrayList<Robot> bots = botEngine.getRobots();
-        for (int i = 0; i < bots.size(); i++)
+        Robot[] bots = botEngine.getRobotInstances();
+        for (int i = 0; i < bots.length; i++)
         {
-            createEntity(bots.get(i), SPAWN_POINTS[i], BOT_COLOURS[i]);
+            createEntity(bots[i], SPAWN_POINTS[i], BOT_COLOURS[i]);
         }
     }
 
