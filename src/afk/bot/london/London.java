@@ -4,17 +4,18 @@
  */
 package afk.bot.london;
 
+import afk.bot.RobotEngine;
 import java.util.ArrayList;
 
 /**
  *
  * @author Jessica
  */
-public class London
+public class London extends RobotEngine
 {
 
-    private ArrayList<Robot> robots;
-    private RobotLoader robotLoader;
+    //private ArrayList<Robot> robots;
+    //private RobotLoader robotLoader;
 
     public London()
     {
@@ -22,17 +23,19 @@ public class London
         robotLoader = new RobotLoader();
     }
     
+    @Override
     public Robot[] getRobotInstances()
     {
         return robotLoader.getRobotInstances();
     }
     
+    @Override
     public void AddRobot(String path)
     {
         robotLoader.AddRobot(path);
     }
 
-    public void registerBot(Robot bot)
+   /* public void registerBot(Robot bot)
     {
         robots.add(bot);
     }
@@ -47,5 +50,5 @@ public class London
     public ArrayList<Robot> getRobots()
     {
         return robots;
-    }
+    }*/
 }
