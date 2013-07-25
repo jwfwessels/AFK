@@ -8,6 +8,7 @@ package afk.bot;
  *
  * @author Jessica
  */
-public class RobotEngine {
+public abstract class RobotEngine 
+{
     
 }
