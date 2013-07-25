@@ -4,7 +4,7 @@
  */
 package afk.london.RobotClasses;
 
-import afk.london.Robot;
+import afk.bot.london.Robot;
 
 /**
  *

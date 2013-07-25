@@ -1,5 +1,5 @@
 
-import afk.london.Robot;
+import afk.bot.london.Robot;
 import com.hackoeur.jglm.support.FastMath;
 
 /**

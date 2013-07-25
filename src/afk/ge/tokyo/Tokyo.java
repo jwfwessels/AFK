@@ -6,8 +6,8 @@ package afk.ge.tokyo;
 
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
-import afk.london.London;
-import afk.london.Robot;
+import afk.bot.london.London;
+import afk.bot.london.Robot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;

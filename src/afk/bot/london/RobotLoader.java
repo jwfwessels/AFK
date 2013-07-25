@@ -1,6 +1,7 @@
 
-package afk.london;
+package afk.bot.london;
 
+import afk.bot.london.Robot;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

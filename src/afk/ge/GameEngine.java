@@ -5,7 +5,7 @@
 package afk.ge;
 
 import afk.gfx.GraphicsEngine;
-import afk.london.London;
+import afk.bot.london.London;
 
 /**
  *
