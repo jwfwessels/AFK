@@ -8,6 +8,7 @@ import afk.ge.EntityState;
 import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.london.Robot;
+import afk.london.RobotEvent;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 
@@ -24,10 +25,12 @@ public class TankEntity extends AbstractEntity
     private final int viewingDistanceSqr;
     // TODO: just a quick temp hack variable to get feedback working...
     protected boolean hitwall;
+    Robot botController;
 
-    public TankEntity(GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
+    public TankEntity(Robot botController, GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
     {
         super(gfxEntity, entityManager);
+        this.botController = botController;
         life = TOTAL_LIFE = totalLife;
         size = 1.4f;
         mass = 2.0f;
@@ -40,8 +43,9 @@ public class TankEntity extends AbstractEntity
     }
 
     @Override
-    public void update(float t, float dt, boolean[] flags)
+    public void update(float t, float dt)
     {
+        boolean[] flags = botController.getBotInputs();
         float angle = -(float) Math.toRadians(current.rotation.getY());
         float sin = (float) Math.sin(angle);
         float cos = (float) Math.cos(angle);
@@ -66,8 +70,17 @@ public class TankEntity extends AbstractEntity
             fireProjectile(t);
         }
         integrate(current, t, dt);
+        eventFeedback();
+    }
+
+    private void eventFeedback()
+    {
+        // TODO: need to check hits as well.
         // TODO: temporary? doing quick-and-dirty bounds checking...
         checkWalls();
+        ArrayList<Float> visible = checkVisible();
+        RobotEvent feedbackEvent = new RobotEvent(visible, false, false, hitwall);
+        botController.feedback(feedbackEvent);
     }
 
     private void fireProjectile(float t)
@@ -96,7 +109,7 @@ public class TankEntity extends AbstractEntity
                 float theta = isVisible(this, b, halfFOV, viewingDistanceSqr);
                 if (!Float.isNaN(theta))
                 {
-                    System.out.println(this.name + " <(©)> " + b.name + "  " + theta + "°");
+//                    System.out.println(this.name + " <(©)> " + b.name + "  " + theta + "°");
                     targets.add(theta);
                 }
             }
@@ -135,14 +148,14 @@ public class TankEntity extends AbstractEntity
     {
         float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
 
-        if (comp < -halfBoardSize)
+        if (comp-size < -halfBoardSize)
         {
             hitwall = true;
-            comp = -halfBoardSize;
-        } else if (comp > halfBoardSize)
+            comp = -halfBoardSize+size;
+        } else if (comp+size > halfBoardSize)
         {
             hitwall = true;
-            comp = halfBoardSize;
+            comp = halfBoardSize-size;
         }
 
         return comp;

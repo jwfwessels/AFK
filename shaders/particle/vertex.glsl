@@ -7,6 +7,9 @@ uniform mat4 view;
 uniform vec3 sun;
 uniform vec3 eye;
 
+uniform float life;
+uniform int particleID;
+
 varying float ip;
 
 void main()
@@ -30,7 +33,7 @@ void main()
     ip = ia + max(dot(l,g_normal),0)*id; // + pow(max(dot(r,v),0),s)*is;*/
 
 
-    gl_Position = projection * view * world * gl_Vertex;
+    gl_Position = projection * view * world * vec4(gl_Vertex.xyz * (1.0-life), 1.0);
 
     ip = 1.0-(gl_Position.z)/25.0;
 }

@@ -96,6 +96,15 @@ public final class Vec4 extends AbstractVec {
 	public float dot(final Vec4 vec) {
 		return this.x * vec.x + this.y * vec.y + this.z * vec.z + this.w * vec.w;
 	}
+        
+        public float get(int i)
+        {
+            if (i == 0) return x;
+            if (i == 1) return y;
+            if (i == 2) return z;
+            if (i == 3) return w;
+            throw new IllegalArgumentException("Invalid component index = " + i);
+        }
 	
 	public float getX() {
 		return x;
@@ -112,6 +121,11 @@ public final class Vec4 extends AbstractVec {
 	public float getW() {
 		return w;
 	}
+        
+        public Vec3 getXYZ()
+        {
+            return new Vec3(x,y,z);
+        }
 	
 	@Override
 	public FloatBuffer getBuffer() {

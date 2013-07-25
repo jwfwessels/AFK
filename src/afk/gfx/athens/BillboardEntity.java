@@ -68,6 +68,8 @@ public class BillboardEntity extends AthensEntity
     {
         if (!active) return;
         
+        worldMatrix = createWorldMatrix(camera);
+        
         if (shader != null)
         {
             shader.use(gl);
@@ -78,7 +80,7 @@ public class BillboardEntity extends AthensEntity
                 shader.updateUniform(gl, "tex", 0);
             }
 
-            shader.updateUniform(gl, "world", createWorldMatrix(camera));
+            shader.updateUniform(gl, "world", worldMatrix);
             shader.updateUniform(gl, "view", camera.view);
             shader.updateUniform(gl, "projection", camera.projection);
 

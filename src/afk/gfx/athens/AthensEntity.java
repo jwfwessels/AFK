@@ -6,6 +6,7 @@ import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.media.opengl.GL;
@@ -29,6 +30,19 @@ public class AthensEntity extends GfxEntity
     // collection of composite entities
     private Collection<AthensEntity> children;
     protected AthensEntity parent = null;
+    
+    protected Mat4 worldMatrix;
+
+    @Override
+    public Vec3 getWorldPosition()
+    {
+        Vec3 move = new Vec3(xMove,yMove,zMove);
+        if (parent != null)
+        {
+            move = parent.worldMatrix.multiply(move.toPoint()).getXYZ();
+        }
+        return move;
+    }
     
     protected Mat4 createWorldMatrix()
     {
@@ -61,6 +75,8 @@ public class AthensEntity extends GfxEntity
         // by default, active sets visibility of entity
         if (!active) return;
         
+        worldMatrix = createWorldMatrix();
+        
         if (shader != null)
         {
             shader.use(gl);
@@ -71,7 +87,7 @@ public class AthensEntity extends GfxEntity
                 shader.updateUniform(gl, "tex", 0);
             }
 
-            shader.updateUniform(gl, "world", createWorldMatrix());
+            shader.updateUniform(gl, "world", worldMatrix);
             shader.updateUniform(gl, "view", camera.view);
             shader.updateUniform(gl, "projection", camera.projection);
 

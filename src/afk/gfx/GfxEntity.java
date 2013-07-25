@@ -75,7 +75,8 @@ public abstract class GfxEntity
     {
         GfxEntity parent = getParent();
         if (parent != null)
-            return new Vec3(xMove,yMove,zMove).add(parent.getWorldPosition());
+            return new Vec3(xMove,yMove,zMove).multiply(parent.getWorldScale())
+                    .add(parent.getWorldPosition());
         return new Vec3(xMove,yMove,zMove);
     }
     

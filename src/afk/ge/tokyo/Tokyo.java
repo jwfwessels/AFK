@@ -8,7 +8,6 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.london.London;
 import afk.london.Robot;
-import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,6 +22,8 @@ public class Tokyo extends GameEngine
 
     EntityManager entityManager;
     boolean running = true;
+    private AtomicBoolean gameInProgress = new AtomicBoolean(false);
+    public static final float BOARD_SIZE = 50;
     final static float GAME_SPEED = 60;
     float t = 0.0f;
     final static float DELTA = 1.0f / GAME_SPEED;
@@ -32,7 +33,6 @@ public class Tokyo extends GameEngine
     final static double MIN_FPS = 25;
     final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
-    public static final float BOARD_SIZE = 50;
     private HashMap<String, String> botMap;
     private DefaultListModel<String> lsSelectedModel;
 
@@ -142,6 +142,7 @@ public class Tokyo extends GameEngine
             entityManager.createTank(SPAWN_POINTS[i], BOT_COLOURS[i]);
         }*/
         //Robot[] participatingBots = botEngine.
+        entityManager.createBots();
         System.out.println("Botsloaded");
         return true;
     }
@@ -155,27 +156,6 @@ public class Tokyo extends GameEngine
         }
         return bots;
     }
-    private AtomicBoolean gameInProgress = new AtomicBoolean(false);
-    private static final Vec3[] BOT_COLOURS =
-    {
-        new Vec3(1, 0, 0),
-        new Vec3(0, 0, 1),
-        new Vec3(0, 1, 0),
-        new Vec3(1, 1, 0),
-        new Vec3(1, 0, 1),
-        new Vec3(0, 1, 1),
-        new Vec3(0.6f, 0.6f, 0.6f),
-    };
-    private static Vec3[] SPAWN_POINTS =
-    {
-        new Vec3(-20, 0, -20),
-        new Vec3(20, 0, 20),
-        new Vec3(-20, 0, 20),
-        new Vec3(20, 0, -20),
-        new Vec3(-20, 0, 0),
-        new Vec3(0, 0, -20),
-        new Vec3(20, 0, 0)
-    };
 //    private void TestMove()
 //    {
 ////        String botPath1 = "./build/classes/SampleBot.class";

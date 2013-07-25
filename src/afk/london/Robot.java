@@ -74,16 +74,33 @@ public abstract class Robot
         //throw new UnsupportedOperationException();
         setFlag(TURN_ANTICLOCK);
     }
+
     protected final void attack()
-    {    
+    {
         //throw new UnsupportedOperationException();
         setFlag(ATTACK_ACTION);
     }
+
     public void clearFlags()
     {
-        for(int x = 0; x < NUM_ACTIONS; x++)
+        for (int x = 0; x < NUM_ACTIONS; x++)
         {
             actionFlags[x] = false;
         }
+    }
+
+    public boolean[] getBotInputs()
+    {
+        run();
+        boolean[] temp = getActionFlags();
+        boolean[] botFlags = new boolean[temp.length];
+        System.arraycopy(temp, 0, botFlags, 0, temp.length);
+        clearFlags();
+        return botFlags;
+    }
+
+    public void feedback(RobotEvent event)
+    {
+        this.events = event;
     }
 }

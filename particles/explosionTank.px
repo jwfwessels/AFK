@@ -2,11 +2,13 @@
 ; author Daniel Smith
 acceleration 	= 0 -9.81 0
 angleJitter 	= 90 90 90 ; hemisphere (hopefully)
-speed 		= 10
-speedJitter 	= 10
+speed 		= 7
+speedJitter 	= 4
+scale           = 2.0
+scaleJitter     = 1
 spawnInterval 	= 0 ; explosion
-maxLife		= 1.0
-lifeJitter 	= 0.2
-numParticles 	= 28
+maxLife		= 2.0
+lifeJitter 	= 1.0
+numParticles 	= 50
 noDirection 	= false
 boundingBox 	= -30 32.5 -30	30 0 30
