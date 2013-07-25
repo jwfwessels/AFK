@@ -4,16 +4,12 @@ package afk.london;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.jar.*;
+import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -25,46 +21,42 @@ public class RobotLoader extends ClassLoader
 {
     private final String ROBOT_CLASS = "afk.london.Robot";
     
-    private ArrayList<Class<?>> bots = new ArrayList<Class<?>>(); 
-    //private ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-    //private ArrayList<byte[]> fileHash = new ArrayList<byte[]>();
-    private int numBots = 0;
+    private ArrayList<Class<?>> robotClasses = new ArrayList<Class<?>>(); 
     private byte[] tempByteArray = null;
-    private HashMap<String, Class<?>> classMap = new HashMap<String, Class<?>>();
-    private String error = "";
+    private Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+    private boolean robotExists;
     
-    //public Robot LoadRobot(String path)
     //Loads all necessary classes needed for the robot
     public void AddRobot(String path)
     {
-        error = "";
         if(path.endsWith(".class"))
         {
+            robotExists = false;
             loadFromClass(path);
+            if(!robotExists)
+            {
+                //TODO: throw RobotException
+            }
         }
         else if(path.endsWith(".jar"))
         {
-            loadFromJar(path);
+            robotExists = false;
+            loadJar(path);
+            if(!robotExists)
+            {
+                //TODO: throw RobotException
+            }
         }
         else
         {
-            error = path + " is not a valid file";
-            return;
-            //return null;
-        }
-        if(error.equals(""))
-        {
-            numBots++;
-            error = "Successfully loaded";
-        }
-        
+            // TODO: throw RobotException
+        }     
     }
     
-    //private Robot loadFromClass(String path)
     private void loadFromClass(String path)
     {
-        InputStream in = null;
-        File tempFile = null;
+        InputStream in;
+        File tempFile;
         try
         {
             tempFile = new File(path);
@@ -73,26 +65,20 @@ public class RobotLoader extends ClassLoader
         }
         catch(FileNotFoundException e)
         {
-            error = "Could not find file " + path;
+            //TODO: throw RobotException
             return;
         }
-        
         loadClass(in, tempFile.getName());
     }
     
     //Only loads class files in root directory at present
     //private Robot loadFromJar(String path)
-    private void loadFromJar(String path)
+    private void loadJar(String path)
     {
         try
         {
             JarFile jarFile = new JarFile(path);       
             Enumeration e = jarFile.entries();
-            URL[] urls = 
-            { 
-                new URL("jar:file:" + path + "!/") 
-            };
-            URLClassLoader cl = URLClassLoader.newInstance(urls);
 
             while(e.hasMoreElements()) 
             {
@@ -109,15 +95,16 @@ public class RobotLoader extends ClassLoader
                         String name = je.getName().substring(0, je.getName().lastIndexOf('.'));
                         loadClass(in, name);
                       }
-                   /* else if(je.getName().endsWith(".jar"))
+                    else if(je.getName().endsWith(".jar"))
                     {
+                        System.out.println("Jar" + je.getName());
                         //TODO: Load nested jars to allow use of libraries etc.
-                    }*/
+                    }
             }
         }
         catch(Exception e)
         {
-            error = "I don't know what has just happened. But something went wrong.";
+            //TODO: throw RobotException
         }
     }
     
@@ -129,53 +116,34 @@ public class RobotLoader extends ClassLoader
         {
             loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
             classMap.put(loadedClass.getName(), loadedClass);
+            if(loadedClass.getSuperclass().equals("afk.london.Robot"))
+            {
+                robotExists = true;
+                robotClasses.add(loadedClass);
+            }
         }
     }
     
-    //Returns instances of robots that are in classMap - to be used when game is started
-    public Robot[] getBots()
+    //Returns instances of robots that are in robotClasses - to be used when game is started
+    public Robot[] getRobotInstances()
     {
-        Robot[] bots = new Robot[numBots];
-        int x = 0;
-        for(Map.Entry entryPair : classMap.entrySet()) 
+        Robot[] bots = new Robot[robotClasses.size()];
+        for(int y = 0; y < robotClasses.size(); y++) 
         {
-            Class<?> tempClass = (Class<?>)entryPair.getValue();
-            Class superClass = tempClass.getSuperclass();
             Object obj = null;
-            if(superClass.getName() == ROBOT_CLASS)
+            try
             {
-                try
-                {
-                    obj = tempClass.getDeclaredConstructor().newInstance();
-                }
-                catch(Exception e)
-                {
-                    error = "Some error occurred";
-                }
-                // TODO: Catch exceptions individually
-               /* catch(NoSuchMethodException e)
-                {
-                    error = "Failed to use constructor of robot " + entryPair.getKey();
-                    return null;
-                    
-                }
-                catch(InstantiationException e)
-                {
-                    error = "Failed to instantiate robot " + entryPair.getKey();
-                    return null;
-                }*/
-                
-                bots[x] = (Robot)obj;
-                x++;
+                obj = (robotClasses.get(y)).getDeclaredConstructor().newInstance();
             }
-        } 
+            catch(Exception e)
+            {
+                //TODO: throw RobotException   
+            }
+            // TODO: Catch exceptions individually
+            bots[y] = (Robot)obj;
 
+        }
         return bots;
-    }
-    
-    public String getError()
-    {
-        return error;         
     }
     
     public void clearMaps()
