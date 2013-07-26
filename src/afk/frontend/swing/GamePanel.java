@@ -53,7 +53,7 @@ public class GamePanel extends JPanel implements ActionListener
     {
         fps = new JLabel("1");
         gfxEngine.setFPSComponent(fps);
-        fps.setBounds(640, 0, 100, 100);
+        fps.setBounds(0, 0, 50, 25);
         glCanvas.setBounds(0, 0, 1280, 786);
         hudLayer = new JLayeredPane();
 //        hudLayer.setLayout(new BorderLayout());
