@@ -7,6 +7,7 @@ package afk.frontend.swing;
 import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
+import afk.bot.london.London;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -115,7 +116,7 @@ public class RootWindow extends JFrame implements ActionListener
         try
         {
             this.getContentPane().setBackground(Color.BLUE);
-//            menuPanel.setBackground(Color.RED);
+//            menuPanel.setBackground(Color.BLACK);
 
         } catch (Exception err)
         {
@@ -123,10 +124,11 @@ public class RootWindow extends JFrame implements ActionListener
         }
     }
 
-    public void spawnGamePanel(DefaultListModel<String> lsSelectedModel, HashMap<String, String> botMap)
+    public void spawnGamePanel(London botEngine)
     {
+        // TODO: reciefe BotEngine from MenuPanal and psass it to TokYo's COnstructor
         GraphicsEngine renderer = GraphicsEngine.createInstance(false);
-        GameEngine engine = new Tokyo(renderer, lsSelectedModel, botMap);
+        GameEngine engine = new Tokyo(renderer, botEngine);
         System.out.println("START ENGINE THREAD");
         new Thread(engine).start();
 

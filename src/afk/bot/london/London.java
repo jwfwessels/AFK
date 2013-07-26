@@ -13,6 +13,7 @@ import java.util.ArrayList;
  */
 public class London extends RobotEngine
 {
+    ArrayList<String> botNames = new ArrayList<String>();
     public London()
     {
         robotLoader = new RobotLoader();
@@ -21,13 +22,25 @@ public class London extends RobotEngine
     @Override
     public Robot[] getRobotInstances()
     {
-        return robotLoader.getRobotInstances();
+        Robot[] bots = new Robot[botNames.size()];
+        for(int x = 0; x < botNames.size(); x++)
+        {
+            
+            bots[x] = robotLoader.getRobotInstance(botNames.get(x));
+            System.out.println("created bot: " + botNames.get(x));
+        }
+        return bots;
     }
     
     @Override
     public void addRobot(String path)
     {
         robotLoader.AddRobot(path);
+    }
+    
+    public void setParticipatingBots(ArrayList<String> _botNames)
+    {
+        botNames = _botNames;
     }
 
    /* public void registerBot(Robot bot)

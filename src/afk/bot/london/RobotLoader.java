@@ -18,10 +18,11 @@ import java.util.Map;
 
 public class RobotLoader extends ClassLoader
 {
-    private final String ROBOT_CLASS = "afk.london.Robot";
+    private final String ROBOT_CLASS = "afk.bot.london.Robot";
     
-    private ArrayList<Class<?>> robotClasses = new ArrayList<Class<?>>(); 
+    //private ArrayList<Class<?>> robotClasses = new ArrayList<Class<?>>(); 
     private byte[] tempByteArray = null;
+    private Map<String, Class<?>> robotMap = new HashMap<String, Class<?>>();
     private Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
     private boolean robotExists;
     
@@ -67,7 +68,7 @@ public class RobotLoader extends ClassLoader
             //TODO: throw RobotException
             return;
         }
-        loadClass(in, tempFile.getName());
+        loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
     }
     
     //Only loads class files in root directory at present
@@ -111,20 +112,49 @@ public class RobotLoader extends ClassLoader
     {    
         if(!classMap.containsKey(name))
         {
+            try
+            {
+                in.read(tempByteArray);
+            }
+            catch(Exception e)
+            {
+                  //TODO: throw Robot Exception      
+            }
             Class loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
             classMap.put(loadedClass.getName(), loadedClass);
-            if(loadedClass.getSuperclass().getName().equals(ROBOT_CLASS))
+            System.out.println("Class name: " + loadedClass.getSuperclass().getSuperclass().getName());
+            if(loadedClass.getSuperclass().getSuperclass().getName().equals(ROBOT_CLASS))
             {
+                System.out.println("It is a bot");
                 robotExists = true;
-                robotClasses.add(loadedClass);
+                //System.out.println("Adding class reference " + loadedClass.toString() + " with name " + name + " to robotMap");
+                robotMap.put(name, loadedClass);
+                System.out.println("loaded class: " + loadedClass.getName());
             }
         }
     }
     
     //Returns instances of robots that are in robotClasses - to be used when game is started
-    public Robot[] getRobotInstances()
+    public Robot getRobotInstance(String name)
     {
-        Robot[] bots = new Robot[robotClasses.size()];
+        Robot newBot = null;
+        //System.out.println("Attempting to retrieve reference with name " + name + " from map");
+        Class tempClass = robotMap.get(name);
+        
+        Object obj = null;
+        try
+        {
+            obj = (tempClass.getDeclaredConstructor().newInstance());
+            System.out.println("obj: " + obj.toString());
+        }
+        catch(Exception e)
+        {
+            //TODO: throw RobotException
+            e.printStackTrace();
+        }
+        
+        return (Robot)obj;
+        /*Robot[] bots = new Robot[robotClasses.size()];
         for(int y = 0; y < robotClasses.size(); y++) 
         {
             Object obj = null;
@@ -140,13 +170,13 @@ public class RobotLoader extends ClassLoader
             bots[y] = (Robot)obj;
 
         }
-        return bots;
+        return bots;*/
     }
     
     public void clearMaps()
     {
         classMap.clear();
-        robotClasses.clear();
+        robotMap.clear();
         
         //Hint to garbage collector
         System.gc();

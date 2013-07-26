@@ -1,5 +1,5 @@
 
-import afk.london.RobotClasses.LargeTank;
+import afk.bot.london.LargeTank;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
