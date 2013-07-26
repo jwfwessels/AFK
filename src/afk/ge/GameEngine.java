@@ -15,14 +15,9 @@ public abstract class GameEngine implements Runnable
 {
 
     protected GraphicsEngine gfxEngine;
-    protected London botEngine;
-
-//    protected abstract void loadResources();
-
-//    public abstract void addEntity(AbstractEntity tankEntity); //done by entityManager now
 
     public abstract void startGame();
-    
+
     @Override
     public abstract void run();
 

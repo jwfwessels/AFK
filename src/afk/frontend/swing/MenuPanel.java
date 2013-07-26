@@ -4,7 +4,10 @@
  */
 package afk.frontend.swing;
 
+import afk.london.London;
+import afk.london.Robot;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -13,6 +16,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.DefaultListModel;
@@ -30,7 +34,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class MenuPanel extends JPanel implements ActionListener
 {
-    //TODO; define components + parent ref
+// TODO; define components + parent ref
+// TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
 
     RootWindow parent;
     JPanel pnlBotSelButtons;
@@ -50,6 +55,7 @@ public class MenuPanel extends JPanel implements ActionListener
     private JList<String> lstSelectedBots;
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<String> lsSelectedModel;
+    private London botEngine;
 
     public MenuPanel(RootWindow parent)
     {
@@ -60,6 +66,7 @@ public class MenuPanel extends JPanel implements ActionListener
         LayoutManager layout = new GridLayout(1, 3);
         this.setLayout(layout);
 
+        botEngine = new London();
     }
 
     void setup()
@@ -151,7 +158,7 @@ public class MenuPanel extends JPanel implements ActionListener
 //        pnlSelected.setBackground(Color.cyan);
 
         pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
-//        pnlBotSelButtons.setBackground(Color.GRAY);
+//        pnlBotSelButtons.setBackground(Color.LIGHT_GRAY);
 
 
 
@@ -161,10 +168,11 @@ public class MenuPanel extends JPanel implements ActionListener
             public void actionPerformed(ActionEvent e)
             {
                 String selectedBot = lstAvailableBots.getSelectedValue();
-                System.out.println("selectedBot: "+ selectedBot);
+                System.out.println("selectedBot: " + selectedBot);
+//                JOptionPane.showMessageDialog(parent, "Select a bot");
                 if (selectedBot != null)
                 {
-                lsSelectedModel.addElement(selectedBot);
+                    lsSelectedModel.addElement(selectedBot);
                 }
             }
         });
@@ -208,15 +216,23 @@ public class MenuPanel extends JPanel implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                int option = fileChooser.showOpenDialog(parent);
-                if (option != JFileChooser.APPROVE_OPTION)
+                int option = fileChooser.showOpenDialog(parent.getContentPane());
+                if (option == JFileChooser.APPROVE_OPTION)
                 {
-                    return;
+                    System.out.println("file opened!");
+
+                    String botPath = fileChooser.getSelectedFile().getAbsolutePath();
+                    String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
+                    if (checkBots(botPath))
+                    {
+                        botMap.put(botName, botPath);
+                        lsAvailableModel.addElement(botName);
+                        System.out.println("added to available" + botName);
+                    } else
+                    {
+                        System.out.println("Error Loading Bots" + botEngine.getBotLoadingError());
+                    }
                 }
-                String botPath = fileChooser.getSelectedFile().getAbsolutePath();
-                String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
-                botMap.put(botName, botPath);
-                lsAvailableModel.addElement(botName);
             }
         });
 
@@ -226,18 +242,49 @@ public class MenuPanel extends JPanel implements ActionListener
             public void actionPerformed(ActionEvent e)
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
+                // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
+                ArrayList<String> bots = getParticipatingBots();
+                for (int i = 0; i < bots.size(); i++)
+                {
+                    String path = bots.get(i);
+                    Robot loadedBot = botEngine.loadBot(path);
+                    // TODO: call - arraylist.add(botengine.createBot(path)) , do check on created bot instance!
+                    botEngine.registerBot(loadedBot);
+                }
 
-                parent.spawnGamePanel(lsSelectedModel, botMap);
-                
+                parent.spawnGamePanel(botEngine);
+
             }
         });
 
+    }
+
+    public ArrayList<String> getParticipatingBots()
+    {
+        ArrayList<String> bots = new ArrayList<String>();
+        for (int x = 0; x < lsSelectedModel.size(); x++)
+        {
+            bots.add(botMap.get(lsSelectedModel.getElementAt(x)));
+        }
+        return bots;
+    }
+
+    private boolean checkBots(String path)
+    {
+        Robot loadedBot = botEngine.loadBot(path);
+        if (loadedBot == null)
+        {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+
     }
 
     class MenuPanel_Layout implements LayoutManager
