@@ -121,13 +121,13 @@ public class AthensTest
     {
         System.out.println("isKeyDown");
         int keyCode = 83;
-        
-        KeyEvent down = new KeyEvent(null, KeyEvent.KEY_PRESSED,
-                System.currentTimeMillis(), 0, keyCode, 's');
-        KeyEvent up = new KeyEvent(null, KeyEvent.KEY_RELEASED,
-                System.currentTimeMillis(), 0, keyCode, 's');
-        
         Component comp = instance.getAWTComponent();
+        
+        KeyEvent down = new KeyEvent(testFrame, KeyEvent.KEY_PRESSED,
+                System.currentTimeMillis(), 0, keyCode, 's');
+        KeyEvent up = new KeyEvent(testFrame, KeyEvent.KEY_RELEASED,
+                System.currentTimeMillis(), 0, keyCode, 's');
+        
         simulateEvent(down, comp);
 
         boolean expResult = true;
