@@ -5,7 +5,6 @@ import afk.gfx.Resource;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,17 +59,9 @@ public class AthensTest
     
     private void simulateEvent(AWTEvent e, Component c)
     {
-        try
-        {
-            Field f = AWTEvent.class.getField("focusManagerIsDispatching");
-            f.setAccessible(true);
-            f.set(e, Boolean.TRUE);
-            c.dispatchEvent(e);
-        }
-        catch (NoSuchFieldException ex){}
-        catch (SecurityException ex) {}
-        catch (IllegalArgumentException ex) {}
-        catch (IllegalAccessException ex) {}
+        c.requestFocusInWindow();
+        while (!c.hasFocus()) { /*spin*/ }
+        testFrame.dispatchEvent(e);
     }
     
     private void load(Athens instance)
@@ -123,9 +114,9 @@ public class AthensTest
         int keyCode = 83;
         Component comp = instance.getAWTComponent();
         
-        KeyEvent down = new KeyEvent(testFrame, KeyEvent.KEY_PRESSED,
+        KeyEvent down = new KeyEvent(comp, KeyEvent.KEY_PRESSED,
                 System.currentTimeMillis(), 0, keyCode, 's');
-        KeyEvent up = new KeyEvent(testFrame, KeyEvent.KEY_RELEASED,
+        KeyEvent up = new KeyEvent(comp, KeyEvent.KEY_RELEASED,
                 System.currentTimeMillis(), 0, keyCode, 's');
         
         simulateEvent(down, comp);
