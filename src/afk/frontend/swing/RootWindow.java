@@ -70,7 +70,10 @@ public class RootWindow extends JFrame implements ActionListener
             @Override
             public void windowClosing(WindowEvent windowevent)
             {
-                System.exit(0);
+                setDefaultCloseOperation(EXIT_ON_CLOSE);
+                /*Alternately: a popup window could prevent the user from 
+                 * accidentally closing the application.
+                 */
             }
         });
     }
