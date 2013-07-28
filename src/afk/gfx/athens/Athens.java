@@ -36,8 +36,8 @@ public class Athens extends GraphicsEngine
 {
 
     // loading queues
-    private Queue<AthensResource> loadQueue = new LinkedList<AthensResource>();
-    private Queue<AthensResource> unloadQueue = new LinkedList<AthensResource>();
+    protected Queue<AthensResource> loadQueue = new LinkedList<AthensResource>();
+    protected Queue<AthensResource> unloadQueue = new LinkedList<AthensResource>();
     // this gets called when loading is done
     private Runnable onLoadCallback;
     // resources
@@ -50,6 +50,7 @@ public class Athens extends GraphicsEngine
     private float aspect;
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
     private boolean[] keys = new boolean[1024];
+    private long frameCount = 0;
     private long lastUpdate;
     private float time = 0.0f;
     private float lastFPS = 0.0f;
@@ -187,6 +188,11 @@ public class Athens extends GraphicsEngine
         return glCanvas;
     }
 
+    public long getFrameCount()
+    {
+        return frameCount;
+    }
+
     @Override
     public void redisplay()
     {
@@ -208,7 +214,6 @@ public class Athens extends GraphicsEngine
 
     private void display(GL2 gl)
     {
-
         long nTime = System.nanoTime();
         long nanos = nTime - lastUpdate;
         lastUpdate = nTime;
@@ -253,6 +258,7 @@ public class Athens extends GraphicsEngine
 
             render(gl);
         }
+        frameCount++;
     }
 
     // helper function to load/unload all necessary/unnecessary resources
