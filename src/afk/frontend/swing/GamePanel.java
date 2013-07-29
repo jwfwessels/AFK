@@ -77,7 +77,6 @@ public class GamePanel extends JPanel implements ActionListener
 //    {
 //        //TODO;
 //    }
-
     private void styleComponents()
     {
         fps.setOpaque(false);
@@ -96,6 +95,8 @@ public class GamePanel extends JPanel implements ActionListener
 
         int panelWidth = 1280;
         int panelHeight = 786;
+        int w = 0;
+        int h = 0;
 
         @Override
         public void addLayoutComponent(String name, Component comp)
@@ -131,9 +132,10 @@ public class GamePanel extends JPanel implements ActionListener
         public void layoutContainer(Container parent)
         {
             Insets insets = parent.getInsets();
-
-            int w = parent.getSize().width;
-            int h = parent.getSize().height;
+            if ((w != parent.getSize().width) || (h != parent.getSize().height))
+            {
+                w = parent.getSize().width;
+                h = parent.getSize().height;
 
             int num1 = 0;
             Component c;
@@ -144,7 +146,9 @@ public class GamePanel extends JPanel implements ActionListener
             if (c.isVisible())
             {
                 c.setBounds(insets.left + num1, insets.top, (int) w, (int) h);
+
                 glCanvas.setSize(w, h);
+            }
             }
         }
     }
