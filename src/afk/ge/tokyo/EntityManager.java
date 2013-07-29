@@ -8,10 +8,10 @@ import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.Resource;
-import afk.london.RobotClasses.LargeTank;
-import afk.london.London;
-import afk.london.Robot;
-import afk.london.RobotClasses.SmallTank;
+import afk.bot.london.LargeTank;
+import afk.bot.london.London;
+import afk.bot.london.Robot;
+import afk.bot.london.SmallTank;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -89,10 +89,10 @@ public class EntityManager
 
     void createBots()
     {
-        ArrayList<Robot> bots = botEngine.getRobots();
-        for (int i = 0; i < bots.size(); i++)
+        Robot[] bots = botEngine.getRobotInstances();
+        for (int i = 0; i < bots.length; i++)
         {
-            createEntity(bots.get(i), SPAWN_POINTS[i], BOT_COLOURS[i]);
+            createEntity(bots[i], SPAWN_POINTS[i], BOT_COLOURS[i]);
         }
     }
 

@@ -6,7 +6,7 @@ package afk.ge.tokyo;
 
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
-import afk.london.London;
+import afk.bot.london.London;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

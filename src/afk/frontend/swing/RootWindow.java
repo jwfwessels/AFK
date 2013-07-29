@@ -7,7 +7,7 @@ package afk.frontend.swing;
 import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
-import afk.london.London;
+import afk.bot.london.London;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
