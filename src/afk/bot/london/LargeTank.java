@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.london.RobotClasses;
+package afk.bot.london;
 
-import afk.london.Robot;
+import afk.bot.london.Robot;
 
 /**
  *

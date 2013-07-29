@@ -7,8 +7,8 @@ package afk.ge.tokyo;
 import afk.ge.EntityState;
 import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
-import afk.london.Robot;
-import afk.london.RobotEvent;
+import afk.bot.london.Robot;
+import afk.bot.london.RobotEvent;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 

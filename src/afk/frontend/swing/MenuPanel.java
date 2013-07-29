@@ -4,8 +4,8 @@
  */
 package afk.frontend.swing;
 
-import afk.london.London;
-import afk.london.Robot;
+import afk.bot.london.London;
+import afk.bot.london.Robot;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -223,15 +223,17 @@ public class MenuPanel extends JPanel implements ActionListener
 
                     String botPath = fileChooser.getSelectedFile().getAbsolutePath();
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
-                    if (checkBots(botPath))
-                    {
-                        botMap.put(botName, botPath);
-                        lsAvailableModel.addElement(botName);
-                        System.out.println("added to available" + botName);
-                    } else
-                    {
-                        System.out.println("Error Loading Bots" + botEngine.getBotLoadingError());
-                    }
+                    //if (checkBots(botPath))
+                    //{
+                    botEngine.addRobot(botPath);
+                    botMap.put(botName, botPath);
+                    lsAvailableModel.addElement(botName);
+                    System.out.println("added to available" + botName);
+                    //} 
+                    //else
+                    //{
+                        //System.out.println("Error Loading Bots" + botEngine.getBotLoadingError());
+                    //}
                 }
             }
         });
@@ -243,14 +245,15 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
                 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
-                ArrayList<String> bots = getParticipatingBots();
-                for (int i = 0; i < bots.size(); i++)
-                {
-                    String path = bots.get(i);
-                    Robot loadedBot = botEngine.loadBot(path);
+                //ArrayList<String> bots = getParticipatingBots();
+                botEngine.setParticipatingBots(getParticipatingBots());
+                //for (int i = 0; i < bots.size(); i++)
+                //{
+                    //String path = bots.get(i);
+                    //Robot loadedBot = botEngine.addRobot(path);
                     // TODO: call - arraylist.add(botengine.createBot(path)) , do check on created bot instance!
-                    botEngine.registerBot(loadedBot);
-                }
+                    //botEngine.registerBot(loadedBot);
+                //}
 
                 parent.spawnGamePanel(botEngine);
 
@@ -264,12 +267,12 @@ public class MenuPanel extends JPanel implements ActionListener
         ArrayList<String> bots = new ArrayList<String>();
         for (int x = 0; x < lsSelectedModel.size(); x++)
         {
-            bots.add(botMap.get(lsSelectedModel.getElementAt(x)));
+            bots.add(lsSelectedModel.getElementAt(x));
         }
         return bots;
     }
 
-    private boolean checkBots(String path)
+   /* private boolean checkBots(String path)
     {
         Robot loadedBot = botEngine.loadBot(path);
         if (loadedBot == null)
@@ -277,7 +280,7 @@ public class MenuPanel extends JPanel implements ActionListener
             return false;
         }
         return true;
-    }
+    }*/
 
     @Override
     public void actionPerformed(ActionEvent e)
