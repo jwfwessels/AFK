@@ -8,19 +8,20 @@ import com.hackoeur.jglm.support.FastMath;
  * @author Jessica
  *
  */
-public class CircleBot extends LargeTank
+public class ScaredBot extends LargeTank
 {
 
     int movement = 0;
     int rotation = 0;
     boolean turning = true;
     private float thetaAngle;
+    
     boolean antiBot;
 
-    public CircleBot()
+    public ScaredBot()
     {
         super();
-
+        
         antiBot = Math.random() > 0.5;
     }
 
@@ -40,27 +41,26 @@ public class CircleBot extends LargeTank
             {
                 if (Float.compare(thetaAngle, 0) < 0)
                 {
-                    turnAntiClockwise();
+
+                    turnClockwise();
                     thetaAngle++;
                 }
                 if (Float.compare(thetaAngle, 0) > 0)
                 {
-                    turnClockwise();
+                    turnAntiClockwise();
                     thetaAngle--;
                 }
             }
-        } else
+        }
+        else
         {
             moveForward();
             if (events.hitWall())
             {
                 if (antiBot)
-                {
                     turnAntiClockwise();
-                } else
-                {
+                else
                     turnClockwise();
-                }
             }
         }
     }

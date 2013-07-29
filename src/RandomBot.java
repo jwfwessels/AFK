@@ -44,13 +44,12 @@ public class RandomBot extends SmallTank
             {
                 if (Float.compare(thetaAngle, 0) < 0)
                 {
-
-                    turnClockwise();
+                    turnAntiClockwise();
                     thetaAngle++;
                 }
                 if (Float.compare(thetaAngle, 0) > 0)
                 {
-                    turnAntiClockwise();
+                    turnClockwise();
                     thetaAngle--;
                 }
             }

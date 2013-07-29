@@ -60,10 +60,10 @@ public class TankEntity extends AbstractEntity
         }
         if (flags[Robot.TURN_CLOCK])
         {
-            current.rotation = current.rotation.add(new Vec3(0, ANGULAR_VELOCITY, 0));
+            current.rotation = current.rotation.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
         } else if (flags[Robot.TURN_ANTICLOCK])
         {
-            current.rotation = current.rotation.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
+            current.rotation = current.rotation.add(new Vec3(0, ANGULAR_VELOCITY, 0));
         }
         if (flags[Robot.ATTACK_ACTION])
         {
@@ -148,14 +148,14 @@ public class TankEntity extends AbstractEntity
     {
         float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
 
-        if (comp-size < -halfBoardSize)
+        if (comp - size < -halfBoardSize)
         {
             hitwall = true;
-            comp = -halfBoardSize+size;
-        } else if (comp+size > halfBoardSize)
+            comp = -halfBoardSize + size;
+        } else if (comp + size > halfBoardSize)
         {
             hitwall = true;
-            comp = halfBoardSize-size;
+            comp = halfBoardSize - size;
         }
 
         return comp;
