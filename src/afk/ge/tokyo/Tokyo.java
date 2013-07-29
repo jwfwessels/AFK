@@ -7,6 +7,7 @@ package afk.ge.tokyo;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
+import afk.gfx.GfxUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -23,7 +24,7 @@ public class Tokyo extends GameEngine
     final static float GAME_SPEED = 60;
     float t = 0.0f;
     final static float DELTA = 1.0f / GAME_SPEED;
-    final static double NANOS_PER_SECOND = (double) GraphicsEngine.NANOS_PER_SECOND;
+    final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     final static double TARGET_FPS = 60;
     final static double MIN_FPS = 25;

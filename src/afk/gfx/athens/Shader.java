@@ -27,8 +27,8 @@ public class Shader extends AthensResource
     @Override
     public void load(GL2 gl) throws IOException
     {
-        vertexShader = Utils.loadShaderProgram(gl, "shaders/"+name+"/vertex.glsl", GL2.GL_VERTEX_SHADER);
-        fragmentShader = Utils.loadShaderProgram(gl, "shaders/"+name+"/fragment.glsl", GL2.GL_FRAGMENT_SHADER);
+        vertexShader = AthensUtils.loadShaderProgram(gl, "shaders/"+name+"/vertex.glsl", GL2.GL_VERTEX_SHADER);
+        fragmentShader = AthensUtils.loadShaderProgram(gl, "shaders/"+name+"/fragment.glsl", GL2.GL_FRAGMENT_SHADER);
 
        /* Start by defining a shader program which acts as a container. */
        program = gl.glCreateProgram();
@@ -41,7 +41,7 @@ public class Shader extends AthensResource
        gl.glLinkProgram(program);
 
        /* Check if it linked  properly. */
-       Utils.checkProgramLogInfo(gl, program);
+       AthensUtils.checkProgramLogInfo(gl, program);
        
        loaded.set(true);
     }
@@ -65,35 +65,35 @@ public class Shader extends AthensResource
     
     public void updateUniform(GL2 gl, String name, Mat4 value)
     {
-        int uniform = Utils.findUniform(gl, name, program);
+        int uniform = AthensUtils.findUniform(gl, name, program);
         if (uniform == -1) return;
         gl.glUniformMatrix4fv(uniform, 1, false, value.getBuffer());
     }
     
     public void updateUniform(GL2 gl, String name, float value)
     {
-        int uniform = Utils.findUniform(gl, name, program);
+        int uniform = AthensUtils.findUniform(gl, name, program);
         if (uniform == -1) return;
         gl.glUniform1f(uniform, value);
     }
     
     public void updateUniform(GL2 gl, String name, Vec3 value)
     {
-        int uniform = Utils.findUniform(gl, name, program);
+        int uniform = AthensUtils.findUniform(gl, name, program);
         if (uniform == -1) return;
         gl.glUniform3fv(uniform, 1, value.getBuffer());
     }
     
     public void updateUniform(GL2 gl, String name, Vec4 value)
     {
-        int uniform = Utils.findUniform(gl, name, program);
+        int uniform = AthensUtils.findUniform(gl, name, program);
         if (uniform == -1) return;
         gl.glUniform4fv(uniform, 1, value.getBuffer());
     }
     
     public void updateUniform(GL2 gl, String name, int value)
     {
-        int uniform = Utils.findUniform(gl, name, program);
+        int uniform = AthensUtils.findUniform(gl, name, program);
         if (uniform == -1) return;
         gl.glUniform1i(uniform, value);
     }

@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -26,13 +28,14 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JLabel;
+import static afk.gfx.GfxUtils.*;
 
 /**
  * OpenGL 2.0 Implementation of the AFK Graphics Engine.
  *
  * @author Daniel
  */
-public class Athens extends GraphicsEngine
+public class Athens implements GraphicsEngine
 {
 
     // loading queues
@@ -40,6 +43,7 @@ public class Athens extends GraphicsEngine
     protected Queue<AthensResource> unloadQueue = new LinkedList<AthensResource>();
     // this gets called when loading is done
     private Runnable onLoadCallback;
+    protected Collection<GfxListener> listeners = new ArrayList<GfxListener>();
     // resources
     private Map<String, AthensResource>[] resources = new Map[Resource.NUM_RESOURCE_TYPES];
     // the scene's root entity
@@ -197,6 +201,18 @@ public class Athens extends GraphicsEngine
     public void redisplay()
     {
         glCanvas.display();
+    }
+    
+    @Override
+    public void addGfxEventListener(GfxListener listener)
+    {
+        listeners.add(listener);
+    }
+    
+    @Override
+    public void removeGfxEventListener(GfxListener listener)
+    {
+        listeners.remove(listener);
     }
 
     private void dispose(GL2 gl)

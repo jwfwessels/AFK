@@ -3,7 +3,6 @@ package afk.gfx.athens;
 
 import com.jogamp.common.nio.Buffers;
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -18,7 +17,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLException;
 
-public class Utils {
+public class AthensUtils {
     
     public static int
     findAttribute(GL2 gl, String name, int program)
@@ -67,7 +66,7 @@ public class Utils {
     static int
     loadShaderProgram(GL2 gl, String file, int shaderType)
     {
-        String source = Utils.loadFile(file);
+        String source = AthensUtils.loadFile(file);
         
         if (source == null) return -1;
         
@@ -208,31 +207,31 @@ public class Utils {
 
         int[] w_h = new int[2];
 
-        ByteBuffer data = Utils.loadTexture("skybox/terrain_positive_x.png", w_h);
+        ByteBuffer data = AthensUtils.loadTexture("skybox/terrain_positive_x.png", w_h);
         gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL.GL_RGB,
                 w_h[0], w_h[1], 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE, data);
 
-        data = Utils.loadTexture("skybox/terrain_negative_x.png", w_h);
+        data = AthensUtils.loadTexture("skybox/terrain_negative_x.png", w_h);
         gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL.GL_RGB,
                 w_h[0], w_h[1], 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE, data);
 
-        data = Utils.loadTexture("skybox/terrain_positive_y.png", w_h);
+        data = AthensUtils.loadTexture("skybox/terrain_positive_y.png", w_h);
         gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL.GL_RGB,
                 w_h[0], w_h[1], 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE, data);
-        data = Utils.loadTexture("skybox/terrain_negative_y.png", w_h);
+        data = AthensUtils.loadTexture("skybox/terrain_negative_y.png", w_h);
         gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL.GL_RGB,
                 w_h[0], w_h[1], 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE, data);
 
-        data = Utils.loadTexture("skybox/terrain_positive_z.png", w_h);
+        data = AthensUtils.loadTexture("skybox/terrain_positive_z.png", w_h);
         gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL.GL_RGB,
                 w_h[0], w_h[1], 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE, data);
         
-        data = Utils.loadTexture("skybox/terrain_negative_z.png", w_h);
+        data = AthensUtils.loadTexture("skybox/terrain_negative_z.png", w_h);
         gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL.GL_RGB,
                 w_h[0], w_h[1], 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE, data);

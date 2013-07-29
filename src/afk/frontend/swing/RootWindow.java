@@ -8,6 +8,7 @@ import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
+import afk.gfx.athens.Athens;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -129,7 +130,7 @@ public class RootWindow extends JFrame implements ActionListener
     public void spawnGamePanel(London botEngine)
     {
         // TODO: reciefe BotEngine from MenuPanal and psass it to TokYo's COnstructor
-        GraphicsEngine renderer = GraphicsEngine.createInstance(false);
+        GraphicsEngine renderer = new Athens(false);
         GameEngine engine = new Tokyo(renderer, botEngine);
         System.out.println("START ENGINE THREAD");
         new Thread(engine).start();
