@@ -9,16 +9,14 @@ import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.london.London;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,16 +48,16 @@ public class RootWindow extends JFrame implements ActionListener
 
     public RootWindow()
     {
+        LayoutManager layout = new RootWindow_Layout(this);
+        this.setLayout(layout);
+
         games = new ArrayList();
         gamePanels = new ArrayList<GamePanel>();
-        dim = new Dimension(1280, 786);
-        this.setPreferredSize(dim);
+
         contentPane = new JPanel();
         contentPane.setLayout(new CardLayout());
-        contentPane.setSize(1280, 786);
+//        contentPane.setSize(1280, 786);
         this.setContentPane(contentPane);
-        //        LayoutManager layout = new RootWindow_Layout();
-//        this.setLayout(layout);
 
         initComponents();
         addComponents();
@@ -70,7 +68,10 @@ public class RootWindow extends JFrame implements ActionListener
             @Override
             public void windowClosing(WindowEvent windowevent)
             {
-                setDefaultCloseOperation(EXIT_ON_CLOSE);
+//                dispose();
+                removeComponents();
+                System.exit(0);
+//                setDefaultCloseOperation(EXIT_ON_CLOSE);
                 /*Alternately: a popup window could prevent the user from 
                  * accidentally closing the application.
                  */
@@ -110,7 +111,7 @@ public class RootWindow extends JFrame implements ActionListener
             c.removeAll();
         } catch (Exception err)
         {
-            JOptionPane.showMessageDialog(null, "Removing components to rootWindow failed:\n" + err);
+            JOptionPane.showMessageDialog(null, "Removing components from rootWindow failed:\n" + err);
         }
     }
 
@@ -118,9 +119,7 @@ public class RootWindow extends JFrame implements ActionListener
     {
         try
         {
-            this.getContentPane().setBackground(Color.BLUE);
-//            menuPanel.setBackground(Color.BLACK);
-
+//            this.getContentPane().setBackground(Color.BLUE);
         } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);
@@ -140,18 +139,6 @@ public class RootWindow extends JFrame implements ActionListener
         final GamePanel gamePanel = new GamePanel(this, renderer);
         gamePanel.setup();
         gamePanels.add(gamePanel);
-//        gamePanel.add(glCanvas, BorderLayout.CENTER);
-        //vvvvv this is horrible
-//        gamePanel.addComponentListener(new ComponentAdapter()
-//        {
-//            @Override
-//            public void componentResized(ComponentEvent e)
-//            {
-//                super.componentResized(e);
-//                glCanvas.setSize(gamePanel.getSize());
-//            }
-//        });
-        //^^^^^ this is horrible
         contentPane.add(gamePanel);
         engine.startGame();
 

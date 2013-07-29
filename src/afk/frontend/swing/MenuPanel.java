@@ -7,7 +7,6 @@ package afk.frontend.swing;
 import afk.london.London;
 import afk.london.Robot;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -25,7 +24,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -62,8 +60,7 @@ public class MenuPanel extends JPanel implements ActionListener
         //TODO; set layout
         this.parent = parent;
 
-//        LayoutManager layout = new MenuPanel_Layout();
-        LayoutManager layout = new GridLayout(1, 3);
+        LayoutManager layout = new MenuPanel_Layout();
         this.setLayout(layout);
 
         botEngine = new London();
@@ -143,24 +140,17 @@ public class MenuPanel extends JPanel implements ActionListener
 
     }
 
-    private void removeComponents()
-    {
-        //TODO;
-    }
+//    private void removeComponents()
+//    {
+//        //TODO;
+//    }
 
     private void styleComponents()
     {
-        //TODO; set colours of components(here if you can)
-
+        // for testing
 //        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
-//        pnlAvailable.setBackground(Color.LIGHT_GRAY);
-
-//        pnlSelected.setBackground(Color.cyan);
-
-        pnlBotSelButtons.setBorder(new EmptyBorder(150, 150, 150, 150));
-//        pnlBotSelButtons.setBackground(Color.LIGHT_GRAY);
-
-
+//        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+//        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 
         btnAddBot.addActionListener(new ActionListener()
         {
@@ -290,6 +280,9 @@ public class MenuPanel extends JPanel implements ActionListener
     class MenuPanel_Layout implements LayoutManager
     {
 
+        int panelWidth = 1280;
+        int panelHeight = 786;
+
         @Override
         public void addLayoutComponent(String name, Component comp)
         {
@@ -300,18 +293,15 @@ public class MenuPanel extends JPanel implements ActionListener
         {
         }
 
-//    @Override
-//    public Dimension preferredLayoutSize(Container parent) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
         @Override
         public Dimension preferredLayoutSize(Container parent)
         {
             Dimension dim = new Dimension(0, 0);
 
             Insets insets = parent.getInsets();
-            dim.width = 640 + insets.left + insets.right;
-            dim.height = 360 + insets.top + insets.bottom;
+
+            dim.width = panelWidth + insets.left + insets.right;
+            dim.height = panelHeight + insets.top + insets.bottom;
 
             return dim;
         }
@@ -331,26 +321,37 @@ public class MenuPanel extends JPanel implements ActionListener
             int w = parent.getSize().width;
             int h = parent.getSize().height;
 
-            int num1 = 2;
+            int num1 = 0;
             Component c;
 
-            //heading
+            //pnlAvailable;
 
-            try
+            c = parent.getComponent(0);
+            int wVal = 220;
+            if (c.isVisible())
             {
-                int count = 0;
-                while ((c = parent.getComponent(count)) != null)
-                {
-                    c = parent.getComponent(count);
-                    if (c.isVisible())
-                    {
-                        c.setBounds(insets.left + 2, insets.top + num1, w - 4, (int) 60);
-                        num1 += c.getSize().height + 2;
-                    }
-                    count++;
-                }
-            } catch (Exception er)
+                wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) h);
+                num1 += c.getSize().width;
+            }
+            //pnlBotSelButtons
+
+            c = parent.getComponent(1);
+            if (c.isVisible())
             {
+                wVal = (w) >= 300 ? (w / 3) : 100;
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) h);
+                num1 += c.getSize().width;
+            }
+
+
+            //pnlSelected
+
+            c = parent.getComponent(2);
+            if (c.isVisible())
+            {
+                wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) h);
             }
         }
     }

@@ -17,6 +17,18 @@ import java.awt.LayoutManager;
 public class RootWindow_Layout implements LayoutManager
 {
 
+    int panelWidth = 1280;
+    int panelHeight = 786;
+    int panelWidthMin = 640;
+    int panelHeightMax = 480;
+
+    public RootWindow_Layout(Container parent)
+    {
+        //set window dimention constraints
+//        parent.setPreferredSize(new Dimension(panelWidth, panelHeight));
+//        parent.setMinimumSize(new Dimension(640, 480));
+    }
+
     @Override
     public void addLayoutComponent(String name, Component comp)
     {
@@ -31,9 +43,10 @@ public class RootWindow_Layout implements LayoutManager
     public Dimension preferredLayoutSize(Container parent)
     {
         Dimension dim = new Dimension(0, 0);
+
         Insets insets = parent.getInsets();
-        dim.width = 1280 + insets.left + insets.right;
-        dim.height = 786 + insets.top + insets.bottom;
+        dim.width = 0 + insets.left + insets.right;
+        dim.height = 0 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -41,7 +54,7 @@ public class RootWindow_Layout implements LayoutManager
     @Override
     public Dimension minimumLayoutSize(Container parent)
     {
-        Dimension dim = new Dimension(0, 0);
+        Dimension dim = new Dimension(640, 480);
         return dim;
     }
 
