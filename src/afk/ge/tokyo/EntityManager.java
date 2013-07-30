@@ -73,7 +73,8 @@ public class EntityManager
         new Vec3(1, 1, 0),
         new Vec3(1, 0, 1),
         new Vec3(0, 1, 1),
-        new Vec3(0.6f, 0.6f, 0.6f),
+        new Vec3(0.8f, 0.8f, 0.8f),
+        new Vec3(0.2f, 0.2f, 0.2f)
     };
     private Vec3[] SPAWN_POINTS =
     {
