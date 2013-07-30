@@ -124,7 +124,7 @@ public class TankEntity extends AbstractEntity
         System.out.println(name + " life: " + life);
         if (Float.compare(life, 0) <= 0)
         {
-            entityManager.RomoveEntity(this);
+            entityManager.removeEntity(this);
             entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0, 0)), this, 1);
         }
     }

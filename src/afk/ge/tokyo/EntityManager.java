@@ -22,10 +22,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class EntityManager
 {
-
+    
     public ArrayList<TankEntity> entities;
+    private ArrayList<AbstractEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
+    Resource cubeMesh;
+    Resource halfSphereMesh;
+    Resource ringMesh;
+    Resource primativeShader;
+    
     Resource tankMesh;
     Resource tankShader;
     Resource smallTankBody;
@@ -78,24 +84,39 @@ public class EntityManager
         new Vec3(0, 0, -20),
         new Vec3(20, 0, 0)
     };
-
+    
     public EntityManager(London botEngine, GraphicsEngine gfxEngine)
     {
         this.botEngine = botEngine;
         this.gfxEngine = gfxEngine;
         entities = new ArrayList<TankEntity>();
+        obstacles = new ArrayList<AbstractEntity>();
         subEntities = new ArrayList<AbstractEntity>();
     }
-
+    
+    private void createObstacles()
+    {
+        GfxEntity cubeGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        cubeGfxEntity.attachResource(cubeMesh);
+        cubeGfxEntity.attachResource(primativeShader);
+        cubeGfxEntity.setScale(5, 5, 5);
+        cubeGfxEntity.setPosition(0, 0, 0);
+        gfxEngine.getRootEntity().addChild(cubeGfxEntity);
+        
+        TankEntity ob = new TankEntity(null, cubeGfxEntity, this, 100);
+        ob.setColour(new Vec3(0.6f, 0.6f, 0.6f));
+    }
+    
     void createBots()
     {
+        createObstacles();
         Robot[] bots = botEngine.getRobotInstances();
         for (int i = 0; i < bots.length; i++)
         {
             createEntity(bots[i], SPAWN_POINTS[i], BOT_COLOURS[i]);
         }
     }
-
+    
     public void createEntity(Robot botController, Vec3 spawnPoint, Vec3 colour)
     {
         if (LargeTank.class.isInstance(botController))
@@ -109,7 +130,7 @@ public class EntityManager
             createSmallTank(botController, spawnPoint, colour);
         }
     }
-
+    
     public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 8;
@@ -119,29 +140,30 @@ public class EntityManager
         GfxEntity tankTracksEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankWheelsEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-
+        GfxEntity visionEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        
         tankGfxEntity.attachResource(smallTankBody);
         tankGfxEntity.attachResource(smallTankBodyTex);
         tankGfxEntity.attachResource(tankShader);
         tankGfxEntity.setScale(SCALE, SCALE, SCALE);
         tankGfxEntity.colour = colour;
-
+        
         tankBarrelEntity.attachResource(smallTankBarrel);
         tankBarrelEntity.attachResource(smallTankBarrelTex);
         tankBarrelEntity.attachResource(tankShader);
         tankBarrelEntity.setPosition(0.0f, 0.41522f, 0.28351f);
         tankBarrelEntity.colour = colour;
-
+        
         tankTracksEntity.attachResource(smallTankTracks);
         tankTracksEntity.attachResource(smallTankTracksTex);
         tankTracksEntity.attachResource(tankShader);
         tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
-
+        
         tankWheelsEntity.attachResource(smallTankWheels);
         tankWheelsEntity.attachResource(smallTankWheelsTex);
         tankWheelsEntity.attachResource(tankShader);
         tankWheelsEntity.colour = colour;
-
+        
         tankShadowEntity.attachResource(floorMesh);
         tankShadowEntity.attachResource(simpleShadowShader);
         tankShadowEntity.attachResource(smallTankShadowTex);
@@ -149,21 +171,29 @@ public class EntityManager
         tankShadowEntity.opacity = 0.99f;
         tankShadowEntity.yMove = 0.01f;
         tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
-
+        
+        //vision sphere
+        visionEntity.attachResource(ringMesh);
+        visionEntity.attachResource(primativeShader);
+        visionEntity.setScale(10, 10, 10);
+        visionEntity.colour = colour;
+//        visionEntity.opacity = 0.1f;
+        
         tankGfxEntity.setPosition(spawnPoint);
         tankGfxEntity.addChild(tankBarrelEntity);
         tankGfxEntity.addChild(tankTracksEntity);
         tankGfxEntity.addChild(tankWheelsEntity);
         tankGfxEntity.addChild(tankShadowEntity);
-
+        tankGfxEntity.addChild(visionEntity);
+        
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
-
+        
         TankEntity tank = new TankEntity(botController, tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
         return tank;
     }
-
+    
     public TankEntity createLargeTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 10;
@@ -174,36 +204,36 @@ public class EntityManager
         GfxEntity tankTurretEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankWheelsEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-
+        
         tankGfxEntity.attachResource(largeTankBody);
         tankGfxEntity.attachResource(largeTankBodyTex);
         tankGfxEntity.attachResource(tankShader);
         tankGfxEntity.setScale(SCALE, SCALE, SCALE);
         tankGfxEntity.colour = colour;
-
+        
         tankTurretEntity.attachResource(largeTankTurret);
         tankTurretEntity.attachResource(largeTankTurretTex);
         tankTurretEntity.attachResource(tankShader);
         tankTurretEntity.setPosition(0.0f, 0.17623f, -0.15976f);
         tankTurretEntity.colour = colour;
-
+        
         tankBarrelEntity.attachResource(largeTankBarrel);
         tankBarrelEntity.attachResource(largeTankBarrelTex);
         tankBarrelEntity.attachResource(tankShader);
         tankBarrelEntity.setPosition(0.0f, 0.03200f, 0.22199f);
         tankBarrelEntity.colour = colour;
         tankTurretEntity.addChild(tankBarrelEntity);
-
+        
         tankTracksEntity.attachResource(largeTankTracks);
         tankTracksEntity.attachResource(largeTankTracksTex);
         tankTracksEntity.attachResource(tankShader);
         tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
-
+        
         tankWheelsEntity.attachResource(largeTankWheels);
         tankWheelsEntity.attachResource(largeTankWheelsTex);
         tankWheelsEntity.attachResource(tankShader);
         tankWheelsEntity.colour = colour;
-
+        
         tankShadowEntity.attachResource(floorMesh);
         tankShadowEntity.attachResource(simpleShadowShader);
         tankShadowEntity.attachResource(largeTankShadowTex);
@@ -211,41 +241,41 @@ public class EntityManager
         tankShadowEntity.opacity = 0.99f;
         tankShadowEntity.yMove = 0.01f;
         tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
-
+        
         tankGfxEntity.setPosition(spawnPoint);
         tankGfxEntity.addChild(tankTurretEntity);
         tankGfxEntity.addChild(tankTracksEntity);
         tankGfxEntity.addChild(tankWheelsEntity);
         tankGfxEntity.addChild(tankShadowEntity);
-
+        
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
-
+        
         TankEntity tank = new TankEntity(botController, tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
         return tank;
     }
-
+    
     public ProjectileEntity createProjectile(AbstractEntity parent)
     {
-
+        
         float DAMAGE = 1.5f;
         //dont have a projectile model yet, mini tank will be bullet XD
         GfxEntity projectileGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-
+        
         projectileGfxEntity.attachResource(smallTankBody);
         projectileGfxEntity.attachResource(tankShader);
-
+        
         projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
         projectileGfxEntity.setPosition(5, 10, 5);
-
+        
         gfxEngine.getRootEntity().addChild(projectileGfxEntity);
         ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
         subEntities.add(projectile);
         projectile.name = parent.name + "projectile";
         return projectile;
     }
-
+    
     void updateEntities(float t, float delta)
     {
         for (int i = 0; i < entities.size(); i++)
@@ -257,7 +287,7 @@ public class EntityManager
             subEntities.get(i).update(t, delta);
         }
     }
-
+    
     void renderEntities(double alpha)
     {
         for (int i = 0; i < entities.size(); i++)
@@ -268,10 +298,19 @@ public class EntityManager
         {
             subEntities.get(i).render(alpha);
         }
+        for (int i = 0; i < obstacles.size(); i++)
+        {
+            obstacles.get(i).render(alpha);
+        }
     }
-
+    
     protected void loadResources()
     {
+        cubeMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "cube");
+        ringMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "ring");
+//        halfSphereMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "half_sphere");
+        primativeShader = gfxEngine.loadResource(Resource.SHADER, "primatives");
+        
         tankMesh = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "tank");
         smallTankBody = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_body");
         smallTankBarrel = gfxEngine.loadResource(Resource.WAVEFRONT_MESH, "small_tank_barrel");
@@ -297,7 +336,7 @@ public class EntityManager
         tankShader = gfxEngine.loadResource(Resource.SHADER, "monkey");
         floorMesh = gfxEngine.loadResource(Resource.PRIMITIVE_MESH, "quad");
         floorShader = gfxEngine.loadResource(Resource.SHADER, "floor");
-
+        
         explosionProjectile = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionProjectile");
         explosionTank = gfxEngine.loadResource(Resource.PARTICLE_PARAMETERS, "explosionTank");
         particleShader = gfxEngine.loadResource(Resource.SHADER, "texturedParticle");
@@ -308,7 +347,7 @@ public class EntityManager
             @Override
             public void run()
             {
-
+                
                 GfxEntity floorGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
                 floorGfxEntity.attachResource(floorMesh);
                 floorGfxEntity.attachResource(floorShader);
@@ -317,21 +356,23 @@ public class EntityManager
                         Tokyo.BOARD_SIZE,
                         Tokyo.BOARD_SIZE);
                 gfxEngine.getRootEntity().addChild(floorGfxEntity);
-
+                
+                
+                
                 loaded.set(true);
             }
         });
-
+        
     }
-
-    void RomoveSubEntity(AbstractEntity entity)
+    
+    void removeSubEntity(AbstractEntity entity)
     {
         GfxEntity gfxEntity = entity.getgfxEntity();
         gfxEntity.getParent().removeChild(gfxEntity);
         subEntities.remove(entity);
     }
-
-    void RomoveEntity(TankEntity entity)
+    
+    void removeEntity(TankEntity entity)
     {
         GfxEntity gfxEntity = entity.getgfxEntity();
         gfxEntity.getParent().removeChild(gfxEntity);
@@ -343,7 +384,7 @@ public class EntityManager
     void makeExplosion(Vec3 where, AbstractEntity parent, int type)
     {
         GfxEntity explosion = gfxEngine.createEntity(GfxEntity.PARTICLE_EMITTER);
-
+        
         if (type == 0)
         {
             explosion.attachResource(explosionProjectile);
@@ -354,13 +395,13 @@ public class EntityManager
         explosion.attachResource(particleShader);
         explosion.attachResource(billboardMesh);
         explosion.attachResource(explosionTexture);
-
+        
         explosion.colour = parent.getgfxEntity().colour;
         explosion.opacity = 0.9f;
         explosion.setScale(Vec3.VEC3_ZERO);
         explosion.setPosition(where);
         gfxEngine.getRootEntity().addChild(explosion);
-
+        
         explosion.active = true;
     }
 }
