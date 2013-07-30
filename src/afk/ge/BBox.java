@@ -205,6 +205,10 @@ public class BBox
     {
         Vec3 sizeA = extents;
         Vec3 sizeB = BBox.extents;
+        System.out.println("sizeA: " + sizeA);
+//        System.out.println("mA: " + m);
+        System.out.println("sizeB: " + sizeB);
+//        System.out.println("mB: " + BBox.m);
         Vec3[] rotA, rotB;
         rotA = getInvRot();
         rotB = BBox.getInvRot();

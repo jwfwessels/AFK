@@ -24,6 +24,7 @@ public class EntityManager
 {
 
     int NUMCUBES = 5;
+    int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
     public ArrayList<TankEntity> entities;
     public ArrayList<TankEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
@@ -74,15 +75,16 @@ public class EntityManager
         new Vec3(0, 1, 1),
         new Vec3(0.6f, 0.6f, 0.6f),
     };
-    private static Vec3[] SPAWN_POINTS =
+    private Vec3[] SPAWN_POINTS =
     {
-        new Vec3(-20, 0, -20),
-        new Vec3(20, 0, 20),
-        new Vec3(-20, 0, 20),
-        new Vec3(20, 0, -20),
-        new Vec3(-20, 0, 0),
-        new Vec3(0, 0, -20),
-        new Vec3(20, 0, 0)
+        new Vec3(-SPAWNVALUE, 0, -SPAWNVALUE),
+        new Vec3(SPAWNVALUE, 0, SPAWNVALUE),
+        new Vec3(-SPAWNVALUE, 0, SPAWNVALUE),
+        new Vec3(SPAWNVALUE, 0, -SPAWNVALUE),
+        new Vec3(0, 0, -SPAWNVALUE),
+        new Vec3(0, 0, -SPAWNVALUE),
+        new Vec3(-SPAWNVALUE, 0, 0),
+        new Vec3(SPAWNVALUE, 0, 0)
     };
 
     public EntityManager(London botEngine, GraphicsEngine gfxEngine)
@@ -92,12 +94,13 @@ public class EntityManager
         entities = new ArrayList<TankEntity>();
         obstacles = new ArrayList<TankEntity>();
         subEntities = new ArrayList<AbstractEntity>();
+        System.out.println("SPAWN_POINTS: " + SPAWNVALUE);
     }
 
     private void createObstacles()
     {
-        int min = -25;
-        int max = 25;
+        int min = -18;
+        int max = 18;
         for (int i = 0; i < NUMCUBES; i++)
         {
 
@@ -260,6 +263,7 @@ public class EntityManager
         TankEntity tank = new TankEntity(botController, tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
+        tank.setScaleForOBB(oBBEntity.getScale().scale(SCALE));
         return tank;
     }
 
@@ -341,6 +345,7 @@ public class EntityManager
         TankEntity tank = new TankEntity(botController, tankGfxEntity, this, TOTAL_LIFE);
         entities.add(tank);
         tank.name = "tank" + (entities.size() - 1);
+        tank.setScaleForOBB(oBBEntity.getScale().scale(SCALE));
         return tank;
     }
 

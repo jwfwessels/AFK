@@ -50,6 +50,11 @@ public class TankEntity extends AbstractEntity
 
     }
 
+    public void setScaleForOBB(Vec3 visualOBBScale)
+    {
+        scale = visualOBBScale;
+    }
+
     private Mat4 getMat4()
     {
         float yRot = current.rotation.getY();
@@ -170,7 +175,6 @@ public class TankEntity extends AbstractEntity
 ////            current.position = new Vec3(x, y, z);
 //        }
 //    }
-
 //    private float checkWall(float comp)
 //    {
 //        float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
@@ -187,7 +191,6 @@ public class TankEntity extends AbstractEntity
 //
 //        return comp;
 //    }
-
     void checkCollisions()
     {
         if (checkCollision())
@@ -203,6 +206,7 @@ public class TankEntity extends AbstractEntity
 
     protected boolean checkCollision()
     {
+        System.out.println("scaleA: " + scale);
         for (int i = 0; i < entityManager.entities.size(); i++)
         {
             TankEntity b = entityManager.entities.get(i);
