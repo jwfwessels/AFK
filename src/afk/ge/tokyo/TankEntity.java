@@ -207,7 +207,7 @@ public class TankEntity extends AbstractEntity
             {
                 if (obb.isBoxInBox(b.obb))
                 {
-                    System.out.println("collision");
+                    System.out.println("#collision");
                     return true;
                 }
             }
