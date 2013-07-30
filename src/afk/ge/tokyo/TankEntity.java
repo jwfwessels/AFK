@@ -63,6 +63,11 @@ public class TankEntity extends AbstractEntity
         return rotationMatrix;
     }
 
+    public void setOBB()
+    {
+        obb.set(getMat4(), new Vec3(2.5f, 2.5f, 2.5f));
+    }
+
     @Override
     public void update(float t, float dt)
     {
@@ -199,12 +204,17 @@ public class TankEntity extends AbstractEntity
 
     protected boolean checkCollision()
     {
-        for (int i = 0; i < entityManager.entities.size(); i++)
+//        for (int i = 0; i < entityManager.entities.size(); i++)
+            System.out.println("test " + entityManager.obstacles.size());
+        for (int i = 0; i < entityManager.obstacles.size(); i++)
         {
+            System.out.println("test!");
 
-            TankEntity b = entityManager.entities.get(i);
+//            TankEntity b = entityManager.entities.get(i);
+            TankEntity b = entityManager.obstacles.get(i);
             if (b != this)
             {
+                System.out.println("test!!");
                 if (obb.isBoxInBox(b.obb))
                 {
                     System.out.println("#collision");
@@ -213,6 +223,5 @@ public class TankEntity extends AbstractEntity
             }
         }
         return false;
-
     }
 }

@@ -27,10 +27,15 @@ public class SampleBot2 extends SmallTank
         if (running)
         {
             {
-                if (move < 0)
-                {
+//                if (move < 0)
+//                {
                     moveForward();
                     move++;
+//                }
+                if (turn < 45)
+                {
+                    turnAntiClockwise();
+                    turn++;
                 }
                 turns++;
                 float[] visibles = events.getVisibleBots();

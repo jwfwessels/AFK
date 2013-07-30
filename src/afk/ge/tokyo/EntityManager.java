@@ -24,7 +24,7 @@ public class EntityManager
 {
     
     public ArrayList<TankEntity> entities;
-    private ArrayList<AbstractEntity> obstacles;
+    public ArrayList<TankEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
     private GraphicsEngine gfxEngine;
     Resource cubeMesh;
@@ -90,7 +90,7 @@ public class EntityManager
         this.botEngine = botEngine;
         this.gfxEngine = gfxEngine;
         entities = new ArrayList<TankEntity>();
-        obstacles = new ArrayList<AbstractEntity>();
+        obstacles = new ArrayList<TankEntity>();
         subEntities = new ArrayList<AbstractEntity>();
     }
     
@@ -105,6 +105,8 @@ public class EntityManager
         
         TankEntity ob = new TankEntity(null, cubeGfxEntity, this, 100);
         ob.setColour(new Vec3(0.6f, 0.6f, 0.6f));
+        ob.setOBB();
+        obstacles.add(ob);
     }
     
     void createBots()
@@ -134,7 +136,7 @@ public class EntityManager
     public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 8;
-        float SCALE = 1.0f;
+        float SCALE = 2.0f;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankBarrelEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankTracksEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
