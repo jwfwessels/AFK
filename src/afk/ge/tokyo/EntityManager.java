@@ -178,7 +178,7 @@ public class EntityManager
         //OBB
         oBBEntity.attachResource(cubeMesh);
         oBBEntity.attachResource(primativeShader);
-        oBBEntity.setScale(0.5f, 0.5f, 0.5f);
+        oBBEntity.yScale = 0.5f;
         oBBEntity.colour = colour;
         oBBEntity.opacity = 0.2f;
 
@@ -194,8 +194,8 @@ public class EntityManager
         tankGfxEntity.addChild(tankTracksEntity);
         tankGfxEntity.addChild(tankWheelsEntity);
         tankGfxEntity.addChild(tankShadowEntity);
-        tankGfxEntity.addChild(oBBEntity);
         tankGfxEntity.addChild(visionEntity);
+        tankGfxEntity.addChild(oBBEntity);
         
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
         
