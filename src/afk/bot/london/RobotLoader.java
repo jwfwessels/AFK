@@ -87,7 +87,6 @@ public class RobotLoader extends ClassLoader
                     System.out.println("Jar Entry :)" + je.getName());
                     if(je.isDirectory())
                     {
-                        //System.out.println("Directory: " + je.getName());
                         continue;
                     }
                     else if(je.getName().endsWith(".class"))
