@@ -42,21 +42,4 @@ public class London extends RobotEngine
     {
         botNames = _botNames;
     }
-
-   /* public void registerBot(Robot bot)
-    {
-        robots.add(bot);
-    }
-    
-    public void resetBotLoader()
-    {
-        robots.clear();
-        robotLoader = new RobotLoader();
-        System.gc();
-    }
-
-    public ArrayList<Robot> getRobots()
-    {
-        return robots;
-    }*/
 }
