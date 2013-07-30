@@ -15,13 +15,12 @@ public class ScaredBot extends LargeTank
     int rotation = 0;
     boolean turning = true;
     private float thetaAngle;
-    
     boolean antiBot;
 
     public ScaredBot()
     {
         super();
-        
+
         antiBot = Math.random() > 0.5;
     }
 
@@ -51,16 +50,22 @@ public class ScaredBot extends LargeTank
                     thetaAngle--;
                 }
             }
-        }
-        else
+        } else
         {
-            moveForward();
             if (events.hitWall())
             {
                 if (antiBot)
+                {
+                    moveBackwards();
                     turnAntiClockwise();
-                else
+                } else
+                {
+                    moveBackwards();
                     turnClockwise();
+                }
+            } else
+            {
+                moveForward();
             }
         }
     }

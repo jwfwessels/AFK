@@ -205,10 +205,6 @@ public class BBox
     {
         Vec3 sizeA = extents;
         Vec3 sizeB = BBox.extents;
-        System.out.println("sizeA: " + sizeA);
-        System.out.println("mA: " + m);
-        System.out.println("sizeB: " + sizeB);
-        System.out.println("mB: " + BBox.m);
         Vec3[] rotA, rotB;
         rotA = getInvRot();
         rotB = BBox.getInvRot();
@@ -230,7 +226,6 @@ public class BBox
 
         // Vector separating the centers of Box B and of Box A	
         Vec3 vSepWS = BBox.getCenterPoint().subtract(getCenterPoint());
-        System.out.println("vSepWS" + vSepWS);
         // Rotated into Box A's coordinates
         Vec3 vSepA = new Vec3(
                 vSepWS.dot(rotA[0]),

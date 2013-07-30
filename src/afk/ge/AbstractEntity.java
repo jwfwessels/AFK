@@ -28,6 +28,7 @@ public abstract class AbstractEntity
     protected EntityState previous;
     protected float mass;
     protected float size;
+    protected Vec3 scale;
     protected EntityManager entityManager;
     protected float TOTAL_LIFE;
     protected float life;

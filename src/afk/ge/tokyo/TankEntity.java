@@ -29,7 +29,6 @@ public class TankEntity extends AbstractEntity
     private final int viewingDistanceSqr;
     // TODO: just a quick temp hack variable to get feedback working...
     protected boolean hitwall;
-    protected boolean collision;
     Robot botController;
     protected BBox obb;
 
@@ -38,7 +37,8 @@ public class TankEntity extends AbstractEntity
         super(gfxEntity, entityManager);
         this.botController = botController;
         life = TOTAL_LIFE = totalLife;
-        size = 2.0f;
+        size = 2;
+        scale = gfxEntity.getScale();
         mass = 2.0f;
         RateOfFire = Tokyo.DELTA * 120;
         lastShot = -1;
@@ -66,7 +66,7 @@ public class TankEntity extends AbstractEntity
 
     public void setOBB()
     {
-        obb.set(getMat4(), new Vec3(2.5f, 2.5f, 2.5f));
+        obb.set(getMat4(), scale.scale(0.5f));
     }
 
     @Override
@@ -97,14 +97,14 @@ public class TankEntity extends AbstractEntity
             fireProjectile(t);
         }
         integrate(current, t, dt);
-        obb.set(getMat4(), new Vec3(size / 2, size / 2, size / 2));
+        obb.set(getMat4(), scale.scale(0.5f));
     }
 
     private void eventFeedback()
     {
         // TODO: need to check hits as well.
         // TODO: temporary? doing quick-and-dirty bounds checking...
-        checkWalls();
+//        checkWalls();
         ArrayList<Float> visible = checkVisible();
         RobotEvent feedbackEvent = new RobotEvent(visible, false, false, hitwall);
         botController.feedback(feedbackEvent);
@@ -157,47 +157,47 @@ public class TankEntity extends AbstractEntity
     }
 
     // TODO: rudimentary bounds checking, just to make sure tanks don't venture off into the wild.
-    private void checkWalls()
-    {
-        hitwall = false;
+//    private void checkWalls()
+//    {
+//        hitwall = false;
+//
+////        float x = checkWall(current.position.getX());
+////        float y = checkWall(current.position.getY());
+////        float z = checkWall(current.position.getZ());
+//
+//        if (hitwall)
+//        {
+////            current.position = new Vec3(x, y, z);
+//        }
+//    }
 
-        float x = checkWall(current.position.getX());
-        float y = checkWall(current.position.getY());
-        float z = checkWall(current.position.getZ());
-
-        if (hitwall)
-        {
-            current.position = new Vec3(x, y, z);
-        }
-    }
-
-    private float checkWall(float comp)
-    {
-        float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
-
-        if (comp - size < -halfBoardSize)
-        {
-            hitwall = true;
-            comp = -halfBoardSize + size;
-        } else if (comp + size > halfBoardSize)
-        {
-            hitwall = true;
-            comp = halfBoardSize - size;
-        }
-
-        return comp;
-    }
+//    private float checkWall(float comp)
+//    {
+//        float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
+//
+//        if (comp - size < -halfBoardSize)
+//        {
+//            hitwall = true;
+//            comp = -halfBoardSize + size;
+//        } else if (comp + size > halfBoardSize)
+//        {
+//            hitwall = true;
+//            comp = halfBoardSize - size;
+//        }
+//
+//        return comp;
+//    }
 
     void checkCollisions()
     {
         if (checkCollision())
         {
             current.position = previous.position;
-            collision = true;
+            hitwall = true;
             System.out.println("collision");
         } else
         {
-            collision = false;
+            hitwall = false;
             System.out.println("safe");
         }
         eventFeedback();
@@ -205,20 +205,24 @@ public class TankEntity extends AbstractEntity
 
     protected boolean checkCollision()
     {
-//        for (int i = 0; i < entityManager.entities.size(); i++)
-            System.out.println("test " + entityManager.obstacles.size());
+        for (int i = 0; i < entityManager.entities.size(); i++)
+        {
+            TankEntity b = entityManager.entities.get(i);
+            if (b != this)
+            {
+                if (obb.isBoxInBox(b.obb))
+                {
+                    return true;
+                }
+            }
+        }
         for (int i = 0; i < entityManager.obstacles.size(); i++)
         {
-            System.out.println("test!");
-
-//            TankEntity b = entityManager.entities.get(i);
             TankEntity b = entityManager.obstacles.get(i);
             if (b != this)
             {
-                System.out.println("test!!");
                 if (obb.isBoxInBox(b.obb))
                 {
-                    System.out.println("#collision");
                     return true;
                 }
             }
