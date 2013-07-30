@@ -194,11 +194,9 @@ public class TankEntity extends AbstractEntity
         {
             current.position = previous.position;
             hitwall = true;
-            System.out.println("collision");
         } else
         {
             hitwall = false;
-            System.out.println("safe");
         }
         eventFeedback();
     }

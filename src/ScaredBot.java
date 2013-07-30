@@ -56,11 +56,9 @@ public class ScaredBot extends LargeTank
             {
                 if (antiBot)
                 {
-                    moveBackwards();
                     turnAntiClockwise();
                 } else
                 {
-                    moveBackwards();
                     turnClockwise();
                 }
             } else

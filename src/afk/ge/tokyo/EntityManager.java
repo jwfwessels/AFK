@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class EntityManager
 {
 
+    int NUMCUBES = 5;
     public ArrayList<TankEntity> entities;
     public ArrayList<TankEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
@@ -95,60 +96,70 @@ public class EntityManager
 
     private void createObstacles()
     {
-        GfxEntity cubeGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        int min = -25;
+        int max = 25;
+        for (int i = 0; i < NUMCUBES; i++)
+        {
+
+            GfxEntity cubeGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+            cubeGfxEntity.attachResource(cubeMesh);
+            cubeGfxEntity.attachResource(primativeShader);
+            cubeGfxEntity.setScale(5, 5, 5);
+
+            cubeGfxEntity.setPosition(min + (int) (Math.random() * ((max - min) + 1)), 0, min + (int) (Math.random() * ((max - min) + 1)));
+            gfxEngine.getRootEntity().addChild(cubeGfxEntity);
+
+            TankEntity obsticleCube = new TankEntity(null, cubeGfxEntity, this, 100);
+            obsticleCube.setColour(new Vec3(0.6f, 0.6f, 0.6f));
+            obsticleCube.setOBB();
+            obstacles.add(obsticleCube);
+
+        }
         GfxEntity cubeNGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity cubeSGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity cubeEGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity cubeWGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
 
-        cubeGfxEntity.attachResource(cubeMesh);
         cubeNGfxEntity.attachResource(cubeMesh);
         cubeSGfxEntity.attachResource(cubeMesh);
         cubeEGfxEntity.attachResource(cubeMesh);
         cubeWGfxEntity.attachResource(cubeMesh);
 
-        cubeGfxEntity.attachResource(primativeShader);
         cubeNGfxEntity.attachResource(primativeShader);
         cubeSGfxEntity.attachResource(primativeShader);
         cubeEGfxEntity.attachResource(primativeShader);
         cubeWGfxEntity.attachResource(primativeShader);
-        
-        cubeGfxEntity.setScale(5, 5, 5);
+
         cubeNGfxEntity.setScale(50, 1, 0.5f);
         cubeSGfxEntity.setScale(50, 1, 0.5f);
         cubeEGfxEntity.setScale(0.5f, 1, 50);
         cubeWGfxEntity.setScale(0.5f, 1, 50);
-        
-        cubeGfxEntity.setPosition(0, 0, 0);
+
         cubeNGfxEntity.setPosition(0, 0, -25);
         cubeSGfxEntity.setPosition(0, 0, 25);
         cubeEGfxEntity.setPosition(25, 0, 0);
         cubeWGfxEntity.setPosition(-25, 0, 0);
-        
-        gfxEngine.getRootEntity().addChild(cubeGfxEntity);
+
         gfxEngine.getRootEntity().addChild(cubeNGfxEntity);
         gfxEngine.getRootEntity().addChild(cubeSGfxEntity);
         gfxEngine.getRootEntity().addChild(cubeEGfxEntity);
         gfxEngine.getRootEntity().addChild(cubeWGfxEntity);
 
-        TankEntity ob = new TankEntity(null, cubeGfxEntity, this, 100);
         TankEntity nWall = new TankEntity(null, cubeNGfxEntity, this, 100);
         TankEntity sWall = new TankEntity(null, cubeSGfxEntity, this, 100);
         TankEntity eWall = new TankEntity(null, cubeEGfxEntity, this, 100);
         TankEntity wWall = new TankEntity(null, cubeWGfxEntity, this, 100);
-        ob.setColour(new Vec3(0.6f, 0.6f, 0.6f));
-        nWall.setColour(new Vec3(0.9f, 0.6f, 0.6f));
-        sWall.setColour(new Vec3(0.6f, 0.9f, 0.6f));
-        eWall.setColour(new Vec3(0.6f, 0.6f, 0.9f));
-        wWall.setColour(new Vec3(0.9f, 0.9f, 0.9f));
-        
-        ob.setOBB();
+
+        nWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
+        sWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
+        eWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
+        wWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
+
         nWall.setOBB();
         sWall.setOBB();
         eWall.setOBB();
         wWall.setOBB();
-        
-        obstacles.add(ob);
+
         obstacles.add(nWall);
         obstacles.add(sWall);
         obstacles.add(eWall);
@@ -225,6 +236,7 @@ public class EntityManager
         oBBEntity.attachResource(cubeMesh);
         oBBEntity.attachResource(primativeShader);
         oBBEntity.yScale = 0.55f;
+        oBBEntity.xScale = 0.80f;
         oBBEntity.colour = colour;
         oBBEntity.opacity = 0.2f;
 
@@ -305,6 +317,7 @@ public class EntityManager
         oBBEntity.attachResource(cubeMesh);
         oBBEntity.attachResource(primativeShader);
         oBBEntity.yScale = 0.30f;
+        oBBEntity.xScale = 0.60f;
         oBBEntity.colour = colour;
         oBBEntity.opacity = 0.2f;
 
