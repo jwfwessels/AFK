@@ -134,12 +134,13 @@ public class EntityManager
     public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
     {
         float TOTAL_LIFE = 8;
-        float SCALE = 2.0f;
+        float SCALE = 1.0f;
         GfxEntity tankGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankBarrelEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankTracksEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankWheelsEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity tankShadowEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        GfxEntity oBBEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         GfxEntity visionEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
         
         tankGfxEntity.attachResource(smallTankBody);
@@ -172,10 +173,17 @@ public class EntityManager
         tankShadowEntity.yMove = 0.01f;
         tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
         
+        //OBB
+        oBBEntity.attachResource(cubeMesh);
+        oBBEntity.attachResource(primativeShader);
+        oBBEntity.setScale(0.5f, 0.5f, 0.5f);
+        oBBEntity.colour = colour;
+        oBBEntity.opacity = 0.2f;
+
         //vision sphere
         visionEntity.attachResource(ringMesh);
         visionEntity.attachResource(primativeShader);
-        visionEntity.setScale(10, 10, 10);
+        visionEntity.setScale(5, 5, 5);
         visionEntity.colour = colour;
 //        visionEntity.opacity = 0.1f;
         
@@ -184,6 +192,7 @@ public class EntityManager
         tankGfxEntity.addChild(tankTracksEntity);
         tankGfxEntity.addChild(tankWheelsEntity);
         tankGfxEntity.addChild(tankShadowEntity);
+        tankGfxEntity.addChild(oBBEntity);
         tankGfxEntity.addChild(visionEntity);
         
         gfxEngine.getRootEntity().addChild(tankGfxEntity);
@@ -281,6 +290,10 @@ public class EntityManager
         for (int i = 0; i < entities.size(); i++)
         {
             entities.get(i).update(t, delta);
+        }
+        for (int i = 0; i < entities.size(); i++)
+        {
+            entities.get(i).checkCollisions();
         }
         for (int i = 0; i < subEntities.size(); i++)
         {

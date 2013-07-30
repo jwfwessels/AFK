@@ -1,6 +1,5 @@
 
-import afk.bot.london.Robot;
-import com.hackoeur.jglm.support.FastMath;
+import afk.bot.london.SmallTank;
 
 /**
  * Sample class of what coded bot will look like
@@ -8,7 +7,7 @@ import com.hackoeur.jglm.support.FastMath;
  * @author Jessica
  *
  */
-public class SampleBot2 extends Robot
+public class SampleBot2 extends SmallTank 
 {
 
     boolean running = true;

@@ -20,11 +20,11 @@ public class BBox
     private Mat4 m;
     private Vec3 extents;
     
-    BBox() {}
-    BBox( final Mat4 m, final Vec3 extents ) 
+    public BBox() {}
+    public BBox( final Mat4 m, final Vec3 extents ) 
             { set( m, extents );	}
     /** BL = Low values corner point, BH = High values corner point. */
-    BBox( final Mat4 m, final Vec3 bl, final Vec3 bh ) 
+    public BBox( final Mat4 m, final Vec3 bl, final Vec3 bh ) 
             { set( m, bl, bh );	}
 
     public final void set( final Mat4 m, final Vec3 extents )
@@ -181,7 +181,7 @@ public class BBox
      * @param BBox the other box to check.
      * @return true if any part of the given box is inside this box.
      */
-    boolean isBoxInBox(BBox BBox )
+    public boolean isBoxInBox(BBox BBox )
     {
 	Vec3 sizeA = extents;
         Vec3 sizeB = BBox.extents;

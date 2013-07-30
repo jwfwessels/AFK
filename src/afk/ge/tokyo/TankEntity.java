@@ -9,6 +9,10 @@ import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.bot.london.Robot;
 import afk.bot.london.RobotEvent;
+import afk.ge.BBox;
+import afk.gfx.athens.AthensEntity;
+import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
 import java.util.ArrayList;
 
@@ -25,14 +29,16 @@ public class TankEntity extends AbstractEntity
     private final int viewingDistanceSqr;
     // TODO: just a quick temp hack variable to get feedback working...
     protected boolean hitwall;
+    protected boolean collision;
     Robot botController;
+    protected BBox obb;
 
     public TankEntity(Robot botController, GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
     {
         super(gfxEntity, entityManager);
         this.botController = botController;
         life = TOTAL_LIFE = totalLife;
-        size = 1.4f;
+        size = 2.0f;
         mass = 2.0f;
         RateOfFire = Tokyo.DELTA * 120;
         lastShot = -1;
@@ -40,6 +46,21 @@ public class TankEntity extends AbstractEntity
         viewingDistanceSqr = 10 * 10;
         VELOCITY = 1f;
         ANGULAR_VELOCITY = 1f;
+        obb = new BBox();
+
+    }
+
+    private Mat4 getMat4()
+    {
+        float yRot = current.rotation.getY();
+        float xRot = current.rotation.getX();
+        float zRot = current.rotation.getZ();
+
+        Mat4 rotationMatrix = new Mat4(1.0f);
+        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, AthensEntity.X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.Y_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
+        return rotationMatrix;
     }
 
     @Override
@@ -70,7 +91,7 @@ public class TankEntity extends AbstractEntity
             fireProjectile(t);
         }
         integrate(current, t, dt);
-        eventFeedback();
+        obb.set(getMat4(), new Vec3(size / 2, size / 2, size / 2));
     }
 
     private void eventFeedback()
@@ -159,5 +180,39 @@ public class TankEntity extends AbstractEntity
         }
 
         return comp;
+    }
+
+    void checkCollisions()
+    {
+        if (checkCollision())
+        {
+            current.position = previous.position;
+            collision = true;
+            System.out.println("collision");
+        } else
+        {
+            collision = false;
+            System.out.println("safe");
+        }
+        eventFeedback();
+    }
+
+    protected boolean checkCollision()
+    {
+        for (int i = 0; i < entityManager.entities.size(); i++)
+        {
+
+            TankEntity b = entityManager.entities.get(i);
+            if (b != this)
+            {
+                if (obb.isBoxInBox(b.obb))
+                {
+                    System.out.println("collision");
+                    return true;
+                }
+            }
+        }
+        return false;
+
     }
 }
