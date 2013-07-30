@@ -56,11 +56,12 @@ public class TankEntity extends AbstractEntity
         float xRot = current.rotation.getX();
         float zRot = current.rotation.getZ();
 
-        Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, AthensEntity.X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.Y_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
-        return rotationMatrix;
+        Mat4 bboxMAtrix = new Mat4(1.0f);
+        bboxMAtrix = Matrices.translate(bboxMAtrix, current.position);
+        bboxMAtrix = Matrices.rotate(bboxMAtrix, xRot, AthensEntity.X_AXIS);
+        bboxMAtrix = Matrices.rotate(bboxMAtrix, yRot, AthensEntity.Y_AXIS);
+        bboxMAtrix = Matrices.rotate(bboxMAtrix, zRot, AthensEntity.Z_AXIS);
+        return bboxMAtrix;
     }
 
     public void setOBB()
