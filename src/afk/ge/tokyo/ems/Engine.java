@@ -80,18 +80,18 @@ public class Engine implements EntityListener
     
     public void addSystem(ISystem system)
     {
-        if (system.start(this))
+        if (system.init(this))
         {
             systems.add(system);
         }
     }
     
-    public void update(double delta)
+    public void update(float t, float dt)
     {
         updating = true;
         for (ISystem s : systems)
         {
-            s.update(delta);
+            s.update(t, dt);
         }
         updating = false;
         
@@ -106,7 +106,7 @@ public class Engine implements EntityListener
     public void removeSystem(ISystem system)
     {
         if (systems.remove(system))
-            system.end();
+            system.destroy();
     }
     
     public void shutDown()
@@ -114,7 +114,7 @@ public class Engine implements EntityListener
         while (updating) { /* spin */ }
         
         for (ISystem s : systems)
-            s.end();
+            s.destroy();
         
         systems.clear();
     }

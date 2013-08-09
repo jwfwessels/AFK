@@ -52,7 +52,7 @@ public abstract class AbstractEntity
      * inner class used as a data structure to perform integration for entity
      * position updates.
      */
-    protected class Derivative
+    public static class Derivative
     {
 
         Vec3 velocity;
@@ -129,7 +129,7 @@ public abstract class AbstractEntity
      * @param t
      * @param dt
      */
-    protected void integrate(EntityState state, float t, float dt)
+    public static void integrate(EntityState state, float t, float dt)
     {
         //        state.velocity = new Vec3(0.01f, 0, 0);
         Derivative a = evaluate(state, t, 0.0f, null);
@@ -155,7 +155,7 @@ public abstract class AbstractEntity
      * @param derivative
      * @return
      */
-    protected Derivative evaluate(EntityState state, float t, float dt, Derivative derivative)
+    public static Derivative evaluate(EntityState state, float t, float dt, Derivative derivative)
     {
         if (derivative != null)
         {
@@ -167,6 +167,7 @@ public abstract class AbstractEntity
         output.velocity = state.velocity;
         //        output.force = acceleration(state, t + dt);
         forces(state, t + dt, output);
+        
         //TODO
         //output.spin
         //output.force
@@ -180,9 +181,10 @@ public abstract class AbstractEntity
      * @param par
      * @param output
      */
-    protected void forces(EntityState state, float par, Derivative output)
+    public static void forces(EntityState state, float par, Derivative output)
     {
-        output.force = state.position.multiply(-10);
+        //output.force = state.position.multiply(-10);
+        output.force = Vec3.VEC3_ZERO;
     }
 
     /**

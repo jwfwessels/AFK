@@ -6,7 +6,7 @@ package afk.ge.tokyo.ems;
  */
 public interface ISystem
 {
-    public boolean start(Engine engine);
-    public void update(double delta);
-    public void end();
+    public boolean init(Engine engine);
+    public void update(float t, float dt);
+    public void destroy();
 }

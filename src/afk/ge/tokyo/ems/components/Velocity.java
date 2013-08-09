@@ -1,4 +1,4 @@
-package afk.ge.tokyo.components;
+package afk.ge.tokyo.ems.components;
 
 import com.hackoeur.jglm.Vec3;
 
@@ -8,7 +8,7 @@ import com.hackoeur.jglm.Vec3;
  */
 public class Velocity {
     
-    Vec3 v;
-    Vec3 av;
+    public Vec3 v;
+    public Vec3 av;
     
 }

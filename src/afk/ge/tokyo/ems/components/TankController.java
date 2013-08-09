@@ -1,12 +1,12 @@
-package afk.ge.tokyo.components;
+package afk.ge.tokyo.ems.components;
 
 /**
  *
  * @author daniel
  */
-public class HelicopterController
+public class TankController
 {
-    int flagSize = 11;
+    int flagSize = 9;
     
     int moveForward = 0;
     int moveBackward = 1;
@@ -17,8 +17,4 @@ public class HelicopterController
     int turretAnticlock = 6;
     int barrelUp = 7;
     int barrelDown = 8;
-    int moveLeft = 9;
-    int moveRight = 10;
-    int land = 11;
-    int fly = 12;
 }

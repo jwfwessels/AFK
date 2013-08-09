@@ -7,6 +7,8 @@ package afk.ge.tokyo;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
+import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.systems.MovementSystem;
 import afk.gfx.GfxUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,6 +20,7 @@ public class Tokyo extends GameEngine
 {
 
     EntityManager entityManager;
+    Engine engine;
     boolean running = true;
     private AtomicBoolean gameInProgress = new AtomicBoolean(false);
     public static final float BOARD_SIZE = 50;
@@ -45,6 +48,9 @@ public class Tokyo extends GameEngine
     @Override
     public void run()
     {
+        engine = new Engine();
+        engine.addSystem(new MovementSystem());
+        
 //        System.out.println("" + javax.swing.SwingUtilities.isEventDispatchThread());
         entityManager.loadResources();
         while (!entityManager.loaded.get())
@@ -101,7 +107,8 @@ public class Tokyo extends GameEngine
     @Override
     protected void updateGame()
     {
-        entityManager.updateEntities(t, DELTA);
+        //entityManager.updateEntities(t, DELTA);
+        engine.update(t, DELTA);
     }
 
     @Override
