@@ -37,13 +37,23 @@ public class RenderSystem implements ISystem
             gfx.colour = node.renderable.colour;
         }
         
-        //gfxEngine.redisplay();
+        // TODO: make this happen
+//        List<WeaponRenderableNode> weapNodes = ...
+//        for (WRNode node : nodes)
+//        {
+//            GfxEntity gfx = node.renderable.gfx;
+//
+//            GfxEntity turret = gfx.getSubEntity(node.weapRend.turret);
+//            turret.rotY = node.weapon.turretAngle;
+//
+//            GfxEntity barrel = turret.getSubEntity(node.weapRend.barrel);
+//            barrel.rotZ = node.weapon.barrelAngle;
+//        }
     }
 
     @Override
     public void destroy()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

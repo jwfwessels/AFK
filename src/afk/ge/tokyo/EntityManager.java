@@ -21,10 +21,7 @@ import afk.ge.tokyo.ems.components.TankController;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.components.Weapon;
 import com.hackoeur.jglm.Vec3;
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
