@@ -6,13 +6,13 @@ import com.hackoeur.jglm.Vec3;
  *
  * @author daniel
  */
-public class State {
-    
+public class State
+{
+
     /// PREVIOUS STATE ///
     public Vec3 prevPos;
     public Vec3 prevRot;
     public Vec3 prevScale;
-    
     /// CURRENT STATE ///
     public Vec3 pos;
     public Vec3 rot;
@@ -27,6 +27,11 @@ public class State {
         this.rot = rot;
         this.scale = scale;
     }
-    
-    
+
+    public void setPrev(Vec3 prevPos, Vec3 prevRot, Vec3 prevScale)
+    {
+        this.prevPos = prevPos;
+        this.prevRot = prevRot;
+        this.prevScale = prevScale;
+    }
 }

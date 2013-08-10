@@ -26,7 +26,7 @@ public class RobotLoader extends ClassLoader
     private boolean robotExists;
     
     //Loads all necessary classes needed for the robot specified by path
-    public void AddRobot(String path)
+    public void addRobot(String path)
     {
         if(path.endsWith(".class"))
         {
@@ -49,7 +49,7 @@ public class RobotLoader extends ClassLoader
         else
         {
             // TODO: throw RobotException
-        }     
+        }
     }
     
     private void loadFromClass(String path)

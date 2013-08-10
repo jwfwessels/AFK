@@ -10,5 +10,11 @@ public class Velocity {
     
     public Vec3 v;
     public Vec3 av;
+
+    public Velocity()
+    {
+        this.v = Vec3.VEC3_ZERO;
+        this.av = Vec3.VEC3_ZERO;
+    }
     
 }

@@ -10,6 +10,8 @@ import afk.bot.london.London;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.MovementSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
+import afk.ge.tokyo.ems.systems.RobotSystem;
+import afk.ge.tokyo.ems.systems.TankControllerSystem;
 import afk.gfx.GfxUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,11 +39,7 @@ public class Tokyo extends GameEngine
 
     public Tokyo(GraphicsEngine gfxEngine, London botEngine)
     {
-        ///possible move somewhere else later///
         engine = new Engine();
-        engine.addSystem(new MovementSystem());
-        engine.addSystem(new RenderSystem());
-        ///
 
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
@@ -50,6 +48,13 @@ public class Tokyo extends GameEngine
 
         entityManager = new EntityManager(botEngine, gfxEngine, engine);
         System.out.println("gfx" + gfxEngine.getFPS());
+        
+        ///possible move somewhere else later///
+        engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
+        engine.addSystem(new TankControllerSystem(entityManager));
+        engine.addSystem(new MovementSystem());
+        engine.addSystem(new RenderSystem());
+        ///
     }
 
     @Override

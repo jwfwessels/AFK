@@ -74,35 +74,36 @@ public class TankEntity extends AbstractEntity
         obb.set(getMat4(), scale.scale(0.5f));
     }
 
+    // NOTE: J will remember (Muahahahahahahaha)
     @Override
     public void update(float t, float dt)
     {
-        boolean[] flags = botController.getBotInputs();
-        float angle = -(float) Math.toRadians(current.rotation.getY());
-        float sin = (float) Math.sin(angle);
-        float cos = (float) Math.cos(angle);
-        previous = new EntityState(current);
-        current.velocity = Vec3.VEC3_ZERO;
-        if (flags[Robot.MOVE_FRONT])
-        {
-            current.velocity = current.velocity.add(new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos));
-        } else if (flags[Robot.MOVE_BACK])
-        {
-            current.velocity = current.velocity.add(new Vec3(VELOCITY * sin, 0, -(VELOCITY * cos)));
-        }
-        if (flags[Robot.TURN_CLOCK])
-        {
-            current.rotation = current.rotation.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
-        } else if (flags[Robot.TURN_ANTICLOCK])
-        {
-            current.rotation = current.rotation.add(new Vec3(0, ANGULAR_VELOCITY, 0));
-        }
-        if (flags[Robot.ATTACK_ACTION])
-        {
-            fireProjectile(t);
-        }
-        integrate(current, t, dt);
-        obb.set(getMat4(), scale.scale(0.5f));
+//        boolean[] flags = botController.getBotInputs();
+//        float angle = -(float) Math.toRadians(current.rotation.getY());
+//        float sin = (float) Math.sin(angle);
+//        float cos = (float) Math.cos(angle);
+//        previous = new EntityState(current);
+//        current.velocity = Vec3.VEC3_ZERO;
+//        if (flags[Robot.MOVE_FRONT])
+//        {
+//            current.velocity = current.velocity.add(new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos));
+//        } else if (flags[Robot.MOVE_BACK])
+//        {
+//            current.velocity = current.velocity.add(new Vec3(VELOCITY * sin, 0, -(VELOCITY * cos)));
+//        }
+//        if (flags[Robot.TURN_CLOCK])
+//        {
+//            current.rotation = current.rotation.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
+//        } else if (flags[Robot.TURN_ANTICLOCK])
+//        {
+//            current.rotation = current.rotation.add(new Vec3(0, ANGULAR_VELOCITY, 0));
+//        }
+//        if (flags[Robot.ATTACK_ACTION])
+//        {
+//            fireProjectile(t);
+//        }
+//        integrate(current, t, dt);
+//        obb.set(getMat4(), scale.scale(0.5f));
     }
 
     private void eventFeedback()

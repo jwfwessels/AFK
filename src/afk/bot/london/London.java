@@ -6,6 +6,9 @@ package afk.bot.london;
 
 import afk.bot.RobotEngine;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  *
@@ -13,6 +16,9 @@ import java.util.ArrayList;
  */
 public class London extends RobotEngine
 {
+    /// refactor
+    Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
+    
     ArrayList<String> botNames = new ArrayList<String>();
     public London()
     {
@@ -28,6 +34,9 @@ public class London extends RobotEngine
             
             bots[x] = robotLoader.getRobotInstance(botNames.get(x));
             System.out.println("created bot: " + botNames.get(x));
+            
+            /// refactor
+            robots.put(bots[x].getId(), bots[x]);
         }
         return bots;
     }
@@ -35,11 +44,34 @@ public class London extends RobotEngine
     @Override
     public void addRobot(String path)
     {
-        robotLoader.AddRobot(path);
+        robotLoader.addRobot(path);
     }
     
     public void setParticipatingBots(ArrayList<String> _botNames)
     {
         botNames = _botNames;
     }
+    
+    /// refactor
+    @Override
+    public void execute()
+    {
+        for (Robot robot : robots.values())
+        {
+            robot.clearFlags();
+            robot.run();
+            
+            // FIXME: uncomment once the data system is set up
+            //db.getController(robot.id).flags = robot.getActionFlags();
+        }
+    }
+    
+    // FIXME:
+    @Override
+    public boolean[] getFlags(UUID id)
+    {
+        return robots.get(id).getActionFlags();
+    }
+    
+    
 }
