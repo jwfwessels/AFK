@@ -1,5 +1,6 @@
 package afk.gfx;
 
+import afk.ge.tokyo.ems.components.Renderable;
 import java.awt.Component;
 
 /**
@@ -39,57 +40,6 @@ public interface GraphicsEngine
     public void redisplay();
     
     /**
-     * Causes all resources in the load queue to be loaded into memory, and all
-     * resources in the unload queue to be unloaded from memory. The actual
-     * loading and unloading occurs in the next update cycle, so a call to
-     * redisplay may be necessary. Once all resources have been loaded/unloaded
-     * the callback is executed.
-     * <br/>
-     * <em>Note:</em> The callback is executed in the graphics engine's update
-     * thread, so if you wish to do any sort of fancy stuff please make a new
-     * thread. Thank you.
-     * @param callback the callback to be executed once the loading/unloading
-     * is complete.
-     */
-    public void dispatchLoadQueue(Runnable callback);
-    
-    /**
-     * Adds the specified resource to the load queue.
-     * @param type the type of resource to load (see afk.gfx.Resource for a list
-     * of types).
-     * @param resource The name of the resource to load.
-     * @return a Resource object representing the resource to be loaded.
-     */
-    public Resource loadResource(int type, String resource);
-    
-    /**
-     * Adds the specified resource to the unload queue.
-     * @param resource the Resource object to unload.
-     */
-    public void unloadResource(Resource resource);
-    
-    /**
-     * Adds all loaded resources into the unload queue. This method also clears
-     * the load queue. A subsequent call to dispatchLoadQueue will thereby
-     * result in there being no loaded resources.
-     */
-    public void unloadEverything();
-    
-    /**
-     * Creates a GfxEntity.
-     * @param behaviour The behaviour of the entity. See afx.gfx.GfxEntity for a
-     * list of available behaviours.
-     * @return The created GfxEntity.
-     */
-    public GfxEntity createEntity(int behaviour);
-    
-    /**
-     * Gets the scene's root entity.
-     * @return the scene's root entity.
-     */
-    public GfxEntity getRootEntity();
-    
-    /**
      * Reads the status of a key on the keyboard.
      * @param keyCode the key to read.
      * @return true if the key is currently pressed, false otherwise.
@@ -124,10 +74,11 @@ public interface GraphicsEngine
     public float getFPS();
     
     
-        /**
+    /**
      * register swing component for frame rate updates.
      * @param comp the component to register for Updates.
      */
     public void setFPSComponent(Component comp);
     
+    public GfxEntity getGfxEntity(Renderable renderable);
 }

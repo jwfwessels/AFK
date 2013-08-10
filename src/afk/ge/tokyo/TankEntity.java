@@ -4,7 +4,6 @@
  */
 package afk.ge.tokyo;
 
-import afk.ge.EntityState;
 import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
 import afk.bot.london.Robot;
@@ -122,9 +121,9 @@ public class TankEntity extends AbstractEntity
         if (lastShot == -1 || Float.compare(ready, RateOfFire) >= 0)
         {
             lastShot = t;
-            ProjectileEntity bullet = entityManager.createProjectile(this);
-            bullet.setColour(new Vec3(0.75f, 0.0f, 0.0f));
-            bullet.setState(current);
+            //ProjectileEntity bullet = entityManager.createProjectile(this); // <- FIXME
+            //bullet.setColour(new Vec3(0.75f, 0.0f, 0.0f));
+            //bullet.setState(current);
             System.out.println("BANG!!!");
         }
     }
