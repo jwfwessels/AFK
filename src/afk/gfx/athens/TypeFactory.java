@@ -54,8 +54,6 @@ public class TypeFactory
             AthensEntity tankTracksEntity = createEntity(NORMAL);
             AthensEntity tankWheelsEntity = createEntity(NORMAL);
             AthensEntity tankShadowEntity = createEntity(NORMAL);
-            AthensEntity oBBEntity = createEntity(NORMAL);
-            AthensEntity visionEntity = createEntity(NORMAL);
 
             rootGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_body"));
             rootGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_body"));
@@ -87,8 +85,6 @@ public class TypeFactory
             rootGfxEntity.addChild(tankTracksEntity);
             rootGfxEntity.addChild(tankWheelsEntity);
             rootGfxEntity.addChild(tankShadowEntity);
-            rootGfxEntity.addChild(visionEntity);
-            rootGfxEntity.addChild(oBBEntity);
             
             return rootGfxEntity;
         }
@@ -139,6 +135,11 @@ public class TypeFactory
             tankShadowEntity.yMove = 0.01f;
             tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
             
+            rootGfxEntity.addChild(tankTurretEntity);
+            rootGfxEntity.addChild(tankTracksEntity);
+            rootGfxEntity.addChild(tankWheelsEntity);
+            rootGfxEntity.addChild(tankShadowEntity);
+            
             return rootGfxEntity;
         }
         
@@ -166,7 +167,7 @@ public class TypeFactory
         {
             AthensEntity gfxEntity = createEntity(GfxEntity.NORMAL);
             gfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "cube"));
-            gfxEntity.attachResource(resourceManager.getResource(SHADER, "primative"));
+            gfxEntity.attachResource(resourceManager.getResource(SHADER, "primatives"));
             
             return gfxEntity;
         }
@@ -179,7 +180,7 @@ public class TypeFactory
         public AthensEntity create()
         {
             AthensEntity floorGfxEntity = createEntity(GfxEntity.NORMAL);
-            floorGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "cube"));
+            floorGfxEntity.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "quad"));
             floorGfxEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
             
             return floorGfxEntity;

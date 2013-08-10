@@ -32,10 +32,8 @@ public class RenderSystem implements ISystem
     public void update(float t, float dt)
     {
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
-        System.out.println("this is my render sequence");
         for (RenderNode node : nodes)
         {
-            System.out.println("\t i render this " + node);
             GfxEntity gfx = gfxEngine.getGfxEntity(node.renderable);
             
             gfx.setPosition(node.state.pos);

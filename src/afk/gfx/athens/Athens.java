@@ -295,7 +295,6 @@ public class Athens implements GraphicsEngine
     {
         for (AthensEntity entity : entities.values())
         {
-            System.out.println("i draw this " + entity + " yet again");
             entity.draw(gl, camera, sun);
         }
     }

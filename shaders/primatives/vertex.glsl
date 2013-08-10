@@ -25,7 +25,6 @@ void main()
 
     vec3 v = normalize(eye-g_position);
     vec3 l = normalize(sun);
-    vec3 r = normalize(reflect(-l,g_normal));
 
     ip = ia + max(dot(l,g_normal),0)*id; // + pow(max(dot(r,v),0),s)*is;
 

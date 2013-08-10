@@ -1,7 +1,6 @@
 package afk.ge.tokyo.ems.components;
 
 import com.hackoeur.jglm.Vec3;
-import java.util.UUID;
 
 /**
  *

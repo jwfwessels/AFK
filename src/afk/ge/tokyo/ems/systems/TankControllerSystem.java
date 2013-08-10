@@ -5,11 +5,9 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.bot.london.Robot;
-import afk.ge.EntityState;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.ge.tokyo.ems.nodes.TankControlNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
@@ -44,7 +42,6 @@ public class TankControllerSystem implements ISystem
     public void update(float t, float dt)
     {
         List<TankControlNode> nodes = engine.getNodeList(TankControlNode.class);
-        System.out.println("I'm walking on " + nodes.size() + " sunshines");
         for (TankControlNode node : nodes)
         {
             boolean[] flags = node.controller.inputFlags;
