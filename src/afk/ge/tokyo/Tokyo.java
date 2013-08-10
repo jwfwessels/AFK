@@ -9,6 +9,7 @@ import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.MovementSystem;
+import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.gfx.GfxUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -36,21 +37,25 @@ public class Tokyo extends GameEngine
 
     public Tokyo(GraphicsEngine gfxEngine, London botEngine)
     {
+        ///possible move somewhere else later///
+        engine = new Engine();
+        engine.addSystem(new MovementSystem());
+        engine.addSystem(new RenderSystem());
+        ///
+
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
 
         this.gfxEngine = gfxEngine;
 
-        entityManager = new EntityManager(botEngine, gfxEngine);
+        entityManager = new EntityManager(botEngine, gfxEngine, engine);
         System.out.println("gfx" + gfxEngine.getFPS());
     }
 
     @Override
     public void run()
     {
-        engine = new Engine();
-        engine.addSystem(new MovementSystem());
-        
+
 //        System.out.println("" + javax.swing.SwingUtilities.isEventDispatchThread());
         entityManager.loadResources();
         while (!entityManager.loaded.get())
@@ -107,7 +112,7 @@ public class Tokyo extends GameEngine
     @Override
     protected void updateGame()
     {
-        //entityManager.updateEntities(t, DELTA);
+        entityManager.updateEntities(t, DELTA);
         engine.update(t, DELTA);
     }
 

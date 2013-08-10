@@ -12,7 +12,12 @@ import afk.bot.london.LargeTank;
 import afk.bot.london.London;
 import afk.bot.london.Robot;
 import afk.bot.london.SmallTank;
+import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.Entity;
+import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Vec3;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -64,6 +69,7 @@ public class EntityManager
     Resource simpleShadowShader;
     Resource explosionTexture;
     London botEngine;
+    Engine engine;
     protected AtomicBoolean loaded = new AtomicBoolean(false);
     private static final Vec3[] BOT_COLOURS =
     {
@@ -88,91 +94,76 @@ public class EntityManager
         new Vec3(SPAWNVALUE, 0, 0)
     };
 
-    public EntityManager(London botEngine, GraphicsEngine gfxEngine)
+    public EntityManager(London botEngine, GraphicsEngine gfxEngine, Engine engine)
     {
         this.botEngine = botEngine;
         this.gfxEngine = gfxEngine;
+        this.engine = engine;
         entities = new ArrayList<TankEntity>();
         obstacles = new ArrayList<TankEntity>();
         subEntities = new ArrayList<AbstractEntity>();
         System.out.println("SPAWN_POINTS: " + SPAWNVALUE);
     }
 
-    private void createObstacles()
+    public void spawnStuff()
+    {
+        createGraphicWall(new Vec3(0, 0, -25), new Vec3(50, 1, 0.5f));
+        createGraphicWall(new Vec3(0, 0, 25), new Vec3(50, 1, 0.5f));
+        createGraphicWall(new Vec3(25, 0, 0), new Vec3(0.5f, 1, 50));
+        createGraphicWall(new Vec3(-25, 0, 0), new Vec3(0.5f, 1, 50));
+    }
+
+    public void createGraphicWall(Vec3 pos, Vec3 scale)
+    {
+        ///refactor into resource loader///
+        GfxEntity gfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+        gfxEntity.attachResource(cubeMesh);
+        gfxEntity.attachResource(primativeShader);
+        gfxEngine.getRootEntity().addChild(gfxEntity);
+        ///
+        Entity wall = new Entity();
+        wall.add(new State(pos, Vec3.VEC3_ZERO, scale));
+        wall.add(new Renderable("cube", "primatives", "", new Vec3(0.75f, 0.75f, 0.75f), gfxEntity));
+
+        engine.addEntity(wall);
+        System.out.println("added graphic wall");
+    }
+
+    private void createObstacles(Vec3 scale)
     {
         int min = -18;
         int max = 18;
         for (int i = 0; i < NUMCUBES; i++)
         {
+            ///refactor into resource loader///
+            GfxEntity gfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
+            gfxEntity.attachResource(cubeMesh);
+            gfxEntity.attachResource(primativeShader);
+            Vec3 pos = new Vec3(min + (int) (Math.random() * ((max - min) + 1)), 0, min + (int) (Math.random() * ((max - min) + 1)));
+            gfxEngine.getRootEntity().addChild(gfxEntity);
+            ///
 
-            GfxEntity cubeGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-            cubeGfxEntity.attachResource(cubeMesh);
-            cubeGfxEntity.attachResource(primativeShader);
-            cubeGfxEntity.setScale(5, 5, 5);
+            Entity cube = new Entity();
+            cube.add(new State(pos, Vec3.VEC3_ZERO, scale));
+            cube.add(new Renderable("cube", "primatives", "", new Vec3(0.75f, 0.75f, 0.75f), gfxEntity));
 
-            cubeGfxEntity.setPosition(min + (int) (Math.random() * ((max - min) + 1)), 0, min + (int) (Math.random() * ((max - min) + 1)));
-            gfxEngine.getRootEntity().addChild(cubeGfxEntity);
+            engine.addEntity(cube);
+            System.out.println("added graphic wall");
 
-            TankEntity obsticleCube = new TankEntity(null, cubeGfxEntity, this, 100);
-            obsticleCube.setColour(new Vec3(0.6f, 0.6f, 0.6f));
-            obsticleCube.setOBB();
-            obstacles.add(obsticleCube);
+            TankEntity obsticleCube = new TankEntity(null, gfxEntity, this, 100);
+
+
+            // TODO: add collision System.
+//            obsticleCube.setOBB();
+//            obstacles.add(obsticleCube);
 
         }
-        GfxEntity cubeNGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        GfxEntity cubeSGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        GfxEntity cubeEGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-        GfxEntity cubeWGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
-
-        cubeNGfxEntity.attachResource(cubeMesh);
-        cubeSGfxEntity.attachResource(cubeMesh);
-        cubeEGfxEntity.attachResource(cubeMesh);
-        cubeWGfxEntity.attachResource(cubeMesh);
-
-        cubeNGfxEntity.attachResource(primativeShader);
-        cubeSGfxEntity.attachResource(primativeShader);
-        cubeEGfxEntity.attachResource(primativeShader);
-        cubeWGfxEntity.attachResource(primativeShader);
-
-        cubeNGfxEntity.setScale(50, 1, 0.5f);
-        cubeSGfxEntity.setScale(50, 1, 0.5f);
-        cubeEGfxEntity.setScale(0.5f, 1, 50);
-        cubeWGfxEntity.setScale(0.5f, 1, 50);
-
-        cubeNGfxEntity.setPosition(0, 0, -25);
-        cubeSGfxEntity.setPosition(0, 0, 25);
-        cubeEGfxEntity.setPosition(25, 0, 0);
-        cubeWGfxEntity.setPosition(-25, 0, 0);
-
-        gfxEngine.getRootEntity().addChild(cubeNGfxEntity);
-        gfxEngine.getRootEntity().addChild(cubeSGfxEntity);
-        gfxEngine.getRootEntity().addChild(cubeEGfxEntity);
-        gfxEngine.getRootEntity().addChild(cubeWGfxEntity);
-
-        TankEntity nWall = new TankEntity(null, cubeNGfxEntity, this, 100);
-        TankEntity sWall = new TankEntity(null, cubeSGfxEntity, this, 100);
-        TankEntity eWall = new TankEntity(null, cubeEGfxEntity, this, 100);
-        TankEntity wWall = new TankEntity(null, cubeWGfxEntity, this, 100);
-
-        nWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
-        sWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
-        eWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
-        wWall.setColour(new Vec3(0.1f, 0.1f, 0.1f));
-
-        nWall.setOBB();
-        sWall.setOBB();
-        eWall.setOBB();
-        wWall.setOBB();
-
-        obstacles.add(nWall);
-        obstacles.add(sWall);
-        obstacles.add(eWall);
-        obstacles.add(wWall);
     }
 
     void createBots()
     {
-        createObstacles();
+        spawnStuff();
+        createObstacles(new Vec3(5, 5, 5));
         Robot[] bots = botEngine.getRobotInstances();
         for (int i = 0; i < bots.length; i++)
         {

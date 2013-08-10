@@ -27,7 +27,6 @@ public class RenderSystem implements ISystem
     public void update(float t, float dt)
     {
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
-        
         for (RenderNode node : nodes)
         {
             GfxEntity gfx = node.renderable.gfx;
@@ -35,6 +34,7 @@ public class RenderSystem implements ISystem
             gfx.setPosition(node.state.pos);
             gfx.setRotation(node.state.rot);
             gfx.setScale(node.state.scale);
+            gfx.colour = node.renderable.colour;
         }
         
         //gfxEngine.redisplay();
