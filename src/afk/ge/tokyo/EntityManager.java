@@ -12,6 +12,7 @@ import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Bullet;
 import afk.ge.tokyo.ems.components.Controller;
+import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TankController;
@@ -32,6 +33,9 @@ public class EntityManager
     public static final int BULLET_SPEED = 10;
     public static final float FIRE_RATE = 1f;
     public static final int WEAPON_AMMO = 0;
+    public static final int SMALL_TANK_HP = 80;
+    public static final String SMALL_TANK_TYPE = "smallTank";
+    public static final Vec3 SMALL_TANK_EXTENTS = new Vec3(0.461f,1.0f,0.203f);
 
     int NUMCUBES = 5;
     int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
@@ -112,6 +116,7 @@ public class EntityManager
 
             Entity cube = new Entity();
             cube.add(new State(pos, Vec3.VEC3_ZERO, scale));
+            cube.add(new BBoxComponent(scale.scale(0.5f)));
             cube.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
             engine.addEntity(cube);
@@ -144,10 +149,11 @@ public class EntityManager
         Entity tank = new Entity();
         tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
         // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale))); // big tank collision box
-        tank.add(new BBoxComponent(new Vec3(0.461f,1.0f,0.203f).multiply(scale))); // small tank collision box
+        tank.add(new BBoxComponent(SMALL_TANK_EXTENTS.multiply(scale))); // small tank collision box
         tank.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
         tank.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f/FIRE_RATE, WEAPON_AMMO));
-        tank.add(new Renderable("smallTank", colour));
+        tank.add(new Life(SMALL_TANK_HP));
+        tank.add(new Renderable(SMALL_TANK_TYPE, colour));
         tank.add(new Controller(id));
         tank.add(new TankController());
 

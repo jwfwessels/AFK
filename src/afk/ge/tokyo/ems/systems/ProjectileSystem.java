@@ -9,6 +9,7 @@ import afk.ge.AbstractEntity;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.ProjectileNode;
@@ -49,8 +50,12 @@ public class ProjectileSystem implements ISystem
                 BBox bbox = new BBox(node.state, node.bbox.extent);
                 if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
                 {
+                    Life life = node.entity.get(Life.class);
+                    if (life != null)
+                    {
+                        life.hp -= bullet.bullet.damage;
+                    }
                     engine.removeEntity(bullet.entity);
-                    engine.removeEntity(node.entity);
                 }
             }
             
