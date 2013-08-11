@@ -62,7 +62,7 @@ public class TypeFactory
             tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_barrel"));
             tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_barrel"));
             tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankBarrelEntity.setPosition(0.0f, 0.41522f, 0.28351f);
+            tankBarrelEntity.position = new Vec3(0.0f, 0.41522f, 0.28351f);
 
             tankTracksEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_tracks"));
             tankTracksEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_tracks"));
@@ -78,8 +78,8 @@ public class TypeFactory
             tankShadowEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_shadow"));
             tankShadowEntity.colour = Vec3.VEC3_ZERO;
             tankShadowEntity.opacity = 0.99f;
-            tankShadowEntity.yMove = 0.01f;
-            tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
+            tankShadowEntity.position = new Vec3(0,0.01f,0);
+            tankShadowEntity.scale = new Vec3(1.5f, 0, 1.5f);
             
             rootGfxEntity.addChild(tankBarrelEntity);
             rootGfxEntity.addChild(tankTracksEntity);
@@ -110,12 +110,12 @@ public class TypeFactory
             tankTurretEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_turret"));
             tankTurretEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_turret"));
             tankTurretEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankTurretEntity.setPosition(0.0f, 0.17623f, -0.15976f);
+            tankTurretEntity.position = new Vec3(0.0f, 0.17623f, -0.15976f);
 
             tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_barrel"));
             tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_barrel"));
             tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankBarrelEntity.setPosition(0.0f, 0.03200f, 0.22199f);
+            tankBarrelEntity.position = new Vec3(0.0f, 0.03200f, 0.22199f);
             tankTurretEntity.addChild(tankBarrelEntity);
 
             tankTracksEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_tracks"));
@@ -132,8 +132,8 @@ public class TypeFactory
             tankShadowEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_shadow"));
             tankShadowEntity.colour = Vec3.VEC3_ZERO;
             tankShadowEntity.opacity = 0.99f;
-            tankShadowEntity.yMove = 0.01f;
-            tankShadowEntity.xScale = tankShadowEntity.zScale = 1.5f;
+            tankShadowEntity.position = new Vec3(0,0.01f,0);
+            tankShadowEntity.scale = new Vec3(1.5f, 0, 1.5f);
             
             rootGfxEntity.addChild(tankTurretEntity);
             rootGfxEntity.addChild(tankTracksEntity);

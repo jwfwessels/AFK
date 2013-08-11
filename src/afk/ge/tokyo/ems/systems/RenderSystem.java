@@ -36,9 +36,9 @@ public class RenderSystem implements ISystem
         {
             GfxEntity gfx = gfxEngine.getGfxEntity(node.renderable);
             
-            gfx.setPosition(node.state.pos);
-            gfx.setRotation(node.state.rot);
-            gfx.setScale(node.state.scale);
+            gfx.position = node.state.pos;
+            gfx.rotation = node.state.rot;
+            gfx.scale = node.state.scale;
             gfx.colour = node.renderable.colour;
         }
         

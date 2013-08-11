@@ -69,7 +69,7 @@ public abstract class AbstractEntity
     protected AbstractEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         gfxPos = gfxEntity;
-        current = new EntityState(gfxPos.getPosition());
+        current = new EntityState(gfxPos.position);
         previous = new EntityState(current);
         this.entityManager = entityManager;
     }
@@ -226,8 +226,8 @@ public abstract class AbstractEntity
     public void render(double alpha)
     {
         EntityState gfxState = interpolate(alpha);
-        gfxPos.setPosition(gfxState.position);
-        gfxPos.setRotation(gfxState.rotation);
+        gfxPos.position = (gfxState.position);
+        gfxPos.rotation = (gfxState.rotation);
     }
 
     /**

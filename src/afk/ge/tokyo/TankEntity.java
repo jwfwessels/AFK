@@ -37,7 +37,7 @@ public class TankEntity extends AbstractEntity
         this.botController = botController;
         life = TOTAL_LIFE = totalLife;
         size = 2;
-        scale = gfxEntity.getScale();
+        scale = gfxEntity.scale;
         mass = 2.0f;
         RateOfFire = Tokyo.DELTA * 120;
         lastShot = -1;

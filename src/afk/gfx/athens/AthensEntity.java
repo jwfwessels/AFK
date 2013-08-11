@@ -36,12 +36,11 @@ public class AthensEntity extends GfxEntity
     @Override
     public Vec3 getWorldPosition()
     {
-        Vec3 move = new Vec3(xMove,yMove,zMove);
         if (parent != null)
         {
-            move = parent.worldMatrix.multiply(move.toPoint()).getXYZ();
+            return parent.worldMatrix.multiply(position.toPoint()).getXYZ();
         }
-        return move;
+        return position;
     }
     
     protected Mat4 createWorldMatrix()
