@@ -30,7 +30,7 @@ public class TankEntity extends AbstractEntity
     // TODO: just a quick temp hack variable to get feedback working...
     protected boolean hitwall;
     Robot botController;
-    protected BBox obb;
+    public BBox obb;
 
     public TankEntity(Robot botController, GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
     {
@@ -141,7 +141,7 @@ public class TankEntity extends AbstractEntity
                 float theta = isVisible(this, b, halfFOV, viewingDistanceSqr);
                 if (!Float.isNaN(theta))
                 {
-//                    System.out.println(this.name + " <(©)> " + b.name + "  " + theta + "°");
+//                    System.out.println(this.name + " <( )> " + b.name + "  " + theta);
                     targets.add(theta);
                 }
             }
@@ -161,36 +161,6 @@ public class TankEntity extends AbstractEntity
         }
     }
 
-    // TODO: rudimentary bounds checking, just to make sure tanks don't venture off into the wild.
-//    private void checkWalls()
-//    {
-//        hitwall = false;
-//
-////        float x = checkWall(current.position.getX());
-////        float y = checkWall(current.position.getY());
-////        float z = checkWall(current.position.getZ());
-//
-//        if (hitwall)
-//        {
-////            current.position = new Vec3(x, y, z);
-//        }
-//    }
-//    private float checkWall(float comp)
-//    {
-//        float halfBoardSize = Tokyo.BOARD_SIZE * 0.5f;
-//
-//        if (comp - size < -halfBoardSize)
-//        {
-//            hitwall = true;
-//            comp = -halfBoardSize + size;
-//        } else if (comp + size > halfBoardSize)
-//        {
-//            hitwall = true;
-//            comp = halfBoardSize - size;
-//        }
-//
-//        return comp;
-//    }
     void checkCollisions()
     {
         if (checkCollision())
@@ -206,7 +176,6 @@ public class TankEntity extends AbstractEntity
 
     protected boolean checkCollision()
     {
-        System.out.println("scaleA: " + scale);
         for (int i = 0; i < entityManager.entities.size(); i++)
         {
             TankEntity b = entityManager.entities.get(i);

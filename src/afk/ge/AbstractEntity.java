@@ -5,6 +5,7 @@
 package afk.ge;
 
 import afk.ge.tokyo.EntityManager;
+import afk.ge.tokyo.TankEntity;
 import afk.gfx.GfxEntity;
 import afk.gfx.athens.AthensEntity;
 import com.hackoeur.jglm.Mat4;
@@ -197,7 +198,7 @@ public abstract class AbstractEntity
      */
     protected EntityState interpolate(double alphaD)
     {
-        float alpha = (float)alphaD;
+        float alpha = (float) alphaD;
         EntityState tempState = new EntityState(current);
         //state = currentState * alpha = previousState* (1.0-alpha);
         tempState.position = previous.position.multiply(1 - alpha).add(current.position.multiply(alpha));
@@ -252,6 +253,10 @@ public abstract class AbstractEntity
      */
     protected boolean intersectionTesting(AbstractEntity a, AbstractEntity b)
     {
+///          doesnt work for some unknown reason
+//        TankEntity target = (TankEntity) b;
+//        return target.obb.isLineInBox(a.previous.position, a.current.position);
+///
         Vec3 B = (a.current.position.subtract(a.previous.position)).subtract(b.current.position.subtract(b.previous.position));
         double bSqr = B.getLengthSquared();
         if (Double.compare(bSqr, 0.0f) == 0)
