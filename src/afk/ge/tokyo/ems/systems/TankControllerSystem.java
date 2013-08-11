@@ -5,11 +5,9 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.bot.london.Robot;
-import afk.ge.EntityState;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.ge.tokyo.ems.nodes.TankControlNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
@@ -68,7 +66,7 @@ public class TankControllerSystem implements ISystem
             }
             if (true)//flags[Robot.ATTACK_ACTION]
             {
-                node.weapon.timeSinceLastFire += t;
+                node.weapon.timeSinceLastFire += dt;
                 if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)
                 {
                     node.weapon.timeSinceLastFire = 0;

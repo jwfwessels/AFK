@@ -249,8 +249,8 @@ public class EntityManager
 
         Entity tank = new Entity();
         tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
-        tank.add(new Velocity());
-        tank.add(new Weapon(10, 20, 2, 2, 0));
+        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+        tank.add(new Weapon(10, 20, 10, 2, 2, 0));
         tank.add(new Renderable("cube", "primatives", "", colour, rootGfxEntity));
         tank.add(new Controller(id));
         tank.add(new TankController());
@@ -417,8 +417,6 @@ public class EntityManager
 
     public void createProjectileNEU(Entity parent, Weapon weapon, State current)
     {
-
-        float DAMAGE = 1.5f;
         //dont have a projectile model yet, mini tank will be bullet XD
 
 ///refactor into resource loader///
@@ -431,10 +429,13 @@ public class EntityManager
 ///
         Entity projectile = new Entity();
         State state = new State(current, new Vec3(0, 0.8f, 0));
-        state.scale = new Vec3(0.1f, 0.1f, 0.1f);
+        state.scale = new Vec3(0.3f, 0.3f, 0.3f);
         projectile.add(state);
-        projectile.add(new Velocity());
-        projectile.add(new Renderable(null, null, null, Vec3.VEC3_ZERO, projectileGfxEntity));
+        float angle = -(float) Math.toRadians(state.rot.getY());
+        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle);
+        projectile.add(new Velocity(new Vec3(-weapon.speed*sin, 0, weapon.speed*cos), Vec3.VEC3_ZERO));
+        projectile.add(new Renderable(null, null, null, new Vec3(0.5f,0.5f,0.5f), projectileGfxEntity));
         projectile.add(new Bullet(weapon.range, weapon.damage));
         projectile.add(new ParentEntity(parent));
 
