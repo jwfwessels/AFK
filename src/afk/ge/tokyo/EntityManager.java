@@ -35,7 +35,7 @@ public class EntityManager
     public static final int WEAPON_AMMO = 0;
     public static final int SMALL_TANK_HP = 80;
     public static final String SMALL_TANK_TYPE = "smallTank";
-    public static final Vec3 SMALL_TANK_EXTENTS = new Vec3(0.461f,1.0f,0.203f);
+    public static final Vec3 SMALL_TANK_EXTENTS = new Vec3(0.4385f,0.2505f,0.5f);
 
     int NUMCUBES = 5;
     int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
