@@ -8,6 +8,7 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
 import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
 import afk.ge.tokyo.ems.systems.ProjectileSystem;
@@ -57,6 +58,7 @@ public class Tokyo extends GameEngine
         engine.addSystem(new MovementSystem());
         engine.addSystem(new ProjectileSystem());
         engine.addSystem(new LifeSystem());
+        engine.addSystem(new CollisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
         ///
     }

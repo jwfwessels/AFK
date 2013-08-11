@@ -72,6 +72,11 @@ public class London extends RobotEngine
     {
         return robots.get(id).getActionFlags();
     }
-    
+
+    @Override
+    public void setEvents(UUID id, RobotEvent events)
+    {
+        robots.get(id).events = events;
+    }
     
 }

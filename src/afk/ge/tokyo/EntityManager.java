@@ -100,6 +100,7 @@ public class EntityManager
     {
         Entity wall = new Entity();
         wall.add(new State(pos, Vec3.VEC3_ZERO, scale));
+        wall.add(new BBoxComponent(scale.scale(0.5f)));
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
         engine.addEntity(wall);
@@ -114,19 +115,7 @@ public class EntityManager
             
             Vec3 pos = new Vec3(min + (int) (Math.random() * ((max - min) + 1)), 0, min + (int) (Math.random() * ((max - min) + 1)));
 
-            Entity cube = new Entity();
-            cube.add(new State(pos, Vec3.VEC3_ZERO, scale));
-            cube.add(new BBoxComponent(scale.scale(0.5f)));
-            cube.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
-
-            engine.addEntity(cube);
-
-            //;TankEntity obsticleCube = new TankEntity(null, gfxEntity, this, 100);
-
-
-            // TODO: add collision System.
-//            obsticleCube.setOBB();
-//            obstacles.add(obsticleCube);
+            createGraphicWall(pos, scale);
 
         }
     }
@@ -206,7 +195,6 @@ public class EntityManager
         projectile.add(new Bullet(weapon.range, weapon.damage, parent));
 
         engine.addEntity(projectile);
-        System.out.println("added Bullet");
     }
     
     void updateEntities(float t, float delta)

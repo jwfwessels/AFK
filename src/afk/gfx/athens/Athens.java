@@ -454,7 +454,6 @@ public class Athens implements GraphicsEngine
         AthensEntity entity = entities.get(renderable);
         if (entity == null)
         {
-            System.out.println("creating a new " + renderable.type);
             entity = typeFactory.createInstance(renderable.type);
             entities.put(renderable, entity);
         }

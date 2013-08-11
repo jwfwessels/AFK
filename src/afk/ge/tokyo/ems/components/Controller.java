@@ -17,5 +17,6 @@ public class Controller
     public Controller(UUID id)
     {
         this.id = id;
+        events = new RobotEvent();
     }
 }

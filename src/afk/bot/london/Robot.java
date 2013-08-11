@@ -41,7 +41,7 @@ public abstract class Robot
     public Robot()
     {
         actionFlags = new boolean[NUM_ACTIONS];
-        events = new RobotEvent(new ArrayList<Float>(), false, false, false);
+        events = new RobotEvent();
         
         /// refactor
         id = UUID.randomUUID();

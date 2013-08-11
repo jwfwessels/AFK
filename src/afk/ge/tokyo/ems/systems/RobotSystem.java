@@ -5,10 +5,10 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
+import afk.bot.london.RobotEvent;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.ControllerNode;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,10 +35,20 @@ public class RobotSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
+        List<ControllerNode> nodes = engine.getNodeList(ControllerNode.class);
+        
+        // pass events to each robot
+        for (ControllerNode node : nodes)
+	{
+            botEngine.setEvents(node.controller.id, node.controller.events);
+            
+            // clear events for next tick
+            node.controller.events = new RobotEvent();
+	}
+        
         botEngine.execute();
         
-        // FIXME: take this out once db system is complete
-        List<ControllerNode> nodes = engine.getNodeList(ControllerNode.class);
+        // get input flags from each robot
 	for (ControllerNode node : nodes)
 	{
             node.controller.inputFlags = botEngine.getFlags(node.controller.id);
