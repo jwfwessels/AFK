@@ -47,7 +47,7 @@ public class Tokyo extends GameEngine
 
         this.gfxEngine = gfxEngine;
 
-        entityManager = new EntityManager(botEngine, gfxEngine, engine);
+        entityManager = new EntityManager(botEngine, engine);
         System.out.println("gfx" + gfxEngine.getFPS());
         
         ///possible move somewhere else later///
@@ -55,19 +55,13 @@ public class Tokyo extends GameEngine
         engine.addSystem(new TankControllerSystem(entityManager));
         engine.addSystem(new MovementSystem());
         engine.addSystem(new ProjectileSystem());
-        engine.addSystem(new RenderSystem());
+        engine.addSystem(new RenderSystem(gfxEngine));
         ///
     }
 
     @Override
     public void run()
     {
-
-//        System.out.println("" + javax.swing.SwingUtilities.isEventDispatchThread());
-        entityManager.loadResources();
-        while (!entityManager.loaded.get())
-        { /* spin */ }
-
         gameLoop();
     }
 

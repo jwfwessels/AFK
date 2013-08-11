@@ -1,6 +1,5 @@
 package afk.ge.tokyo.ems.components;
 
-import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Vec3;
 
 /**
@@ -8,22 +7,14 @@ import com.hackoeur.jglm.Vec3;
  * @author daniel
  */
 public class Renderable {
-    public String mesh;
-    public String shader;
-    public String texture;
+    
+    public String type;
     public Vec3 colour;
-    
-    // FIXME: hack
-    public GfxEntity gfx;
-    
-    // TODO: ResourcePackage resources;
 
-    public Renderable(String mesh, String shader, String texture, Vec3 colour, GfxEntity gfx)
+    public Renderable(String type, Vec3 colour)
     {
-        this.mesh = mesh;
-        this.shader = shader;
-        this.texture = texture;
+        this.type = type;
         this.colour = colour;
-        this.gfx = gfx;
     }
+    
 }

@@ -63,21 +63,6 @@ public class AthensTest
         while (!c.hasFocus()) { /*spin*/ }
         testFrame.dispatchEvent(e);
     }
-    
-    private void load(Athens instance)
-    {
-        final AtomicBoolean loading = new AtomicBoolean(true);
-        instance.dispatchLoadQueue(new Runnable() {
-
-            @Override
-            public void run()
-            {
-                loading.set(false);
-            }
-        });
-        instance.redisplay();
-        while (loading.get()) { /* spin */ }
-    }
 
     /**
      * Test of getAWTComponent method, of class Athens.
@@ -172,92 +157,6 @@ public class AthensTest
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of loadResource method, of class Athens.
-     */
-    @Test
-    public void testLoadResource()
-    {
-        System.out.println("loadResource");
-        int type = Resource.TEXTURE_2D;
-        String name = "monkey";
-        Resource expResult = AthensResource.create(type, name);
-        Resource result = instance.loadResource(type, name);
-        assertEquals(expResult, result);
-        assertTrue("Resource not in load queue",
-                instance.loadQueue.contains(result));
-        assertFalse("Resource already loaded",
-                result.isLoaded());
-    }
-
-    /**
-     * Test of unloadResource method, of class Athens.
-     */
-    @Test
-    public void testUnloadResource()
-    {
-        System.out.println("unloadResource");
-        int type = Resource.TEXTURE_2D;
-        String name = "monkey";
-        Resource result = instance.loadResource(type, name);
-        load(instance);
-        instance.unloadResource(result);
-        assertTrue("Resource not in unload queue",
-                instance.unloadQueue.contains(result));
-    }
-
-    /**
-     * Test of unloadEverything method, of class Athens.
-     */
-    @Test
-    public void testUnloadEverything()
-    {
-        System.out.println("unloadEverything");
-        instance.loadResource(Resource.TEXTURE_2D, "monkey");
-        instance.loadResource(Resource.WAVEFRONT_MESH, "tank");
-        load(instance);
-        instance.unloadEverything();
-        assertTrue("load queue not empty", instance.loadQueue.isEmpty());
-        assertFalse("unload queue empty", instance.unloadQueue.isEmpty());
-    }
-
-    /**
-     * Test of createEntity method, of class Athens.
-     */
-    @Test
-    public void testCreateEntity()
-    {
-        System.out.println("createEntity");
-        int behaviour = GfxEntity.NORMAL;
-        GfxEntity result = instance.createEntity(behaviour);
-        assertNotNull(result);
-    }
-
-    /**
-     * Test of dispatchLoadQueue method, of class Athens.
-     */
-    @Test
-    public void testDispatchLoadQueue()
-    {
-        System.out.println("dispatchLoadQueue");
-        Resource resource =
-                instance.loadResource(Resource.TEXTURE_2D, "monkey");
-        assertFalse("resource already loaded", resource.isLoaded());
-        load(instance);
-        assertTrue("resource not loaded", resource.isLoaded());
-    }
-
-    /**
-     * Test of getRootEntity method, of class Athens.
-     */
-    @Test
-    public void testGetRootEntity()
-    {
-        System.out.println("getRootEntity");
-        GfxEntity result = instance.getRootEntity();
-        assertNotNull(result);
     }
 
     /**
