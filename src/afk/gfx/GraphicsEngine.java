@@ -80,5 +80,7 @@ public interface GraphicsEngine
      */
     public void setFPSComponent(Component comp);
     
+    public void prime();
     public GfxEntity getGfxEntity(Renderable renderable);
+    public void post();
 }

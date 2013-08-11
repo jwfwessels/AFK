@@ -10,13 +10,13 @@ public class Weapon {
     public float fireInterval, timeSinceLastFire;
     public int ammo;
 
-    public Weapon(float range, float damage, float speed, float fireInterval, float timeSinceLastFire, int ammo)
+    public Weapon(float range, float damage, float speed, float fireInterval, int ammo)
     {
         this.range = range;
         this.damage = damage;
         this.speed = speed;
         this.fireInterval = fireInterval;
-        this.timeSinceLastFire = timeSinceLastFire;
+        this.timeSinceLastFire = fireInterval;
         this.ammo = ammo;
     }
     

@@ -48,7 +48,6 @@ public class TankControllerSystem implements ISystem
             float angle = -(float) Math.toRadians(node.state.rot.getY());
             float sin = (float) Math.sin(angle);
             float cos = (float) Math.cos(angle);
-            node.state.setPrev(node.state.pos, node.state.rot, node.state.scale);
             node.velocity.v = Vec3.VEC3_ZERO;
             if (flags[Robot.MOVE_FRONT])
             {

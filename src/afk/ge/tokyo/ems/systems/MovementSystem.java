@@ -1,6 +1,5 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.EntityState;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.State;
@@ -31,6 +30,7 @@ public class MovementSystem implements ISystem
         
         for (MovementNode node : nodes)
         {
+            node.state.setPrev(node.state.pos, node.state.rot, node.state.scale);
             integrate(node.state, node.velocity, t, dt);
         }
     }

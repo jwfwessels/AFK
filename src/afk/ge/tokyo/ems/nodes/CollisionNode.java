@@ -1,7 +1,7 @@
 package afk.ge.tokyo.ems.nodes;
 
 import afk.ge.tokyo.ems.Node;
-import afk.ge.tokyo.ems.components.BBox;
+import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.State;
 
 /**
@@ -10,6 +10,6 @@ import afk.ge.tokyo.ems.components.State;
  */
 public class CollisionNode extends Node
 {
-    public BBox bbox;
+    public BBoxComponent bbox;
     public State state;
 }

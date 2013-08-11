@@ -9,7 +9,7 @@ import afk.gfx.GfxEntity;
 import afk.bot.london.Robot;
 import afk.bot.london.RobotEvent;
 import afk.ge.BBox;
-import afk.gfx.athens.AthensEntity;
+import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -62,9 +62,9 @@ public class TankEntity extends AbstractEntity
 
         Mat4 bboxMAtrix = new Mat4(1.0f);
         bboxMAtrix = Matrices.translate(bboxMAtrix, current.position);
-        bboxMAtrix = Matrices.rotate(bboxMAtrix, xRot, AthensEntity.X_AXIS);
-        bboxMAtrix = Matrices.rotate(bboxMAtrix, yRot, AthensEntity.Y_AXIS);
-        bboxMAtrix = Matrices.rotate(bboxMAtrix, zRot, AthensEntity.Z_AXIS);
+        bboxMAtrix = Matrices.rotate(bboxMAtrix, xRot, X_AXIS);
+        bboxMAtrix = Matrices.rotate(bboxMAtrix, yRot, Y_AXIS);
+        bboxMAtrix = Matrices.rotate(bboxMAtrix, zRot, Z_AXIS);
         return bboxMAtrix;
     }
 

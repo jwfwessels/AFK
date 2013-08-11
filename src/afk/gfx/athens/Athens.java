@@ -23,7 +23,8 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JLabel;
 import static afk.gfx.GfxUtils.*;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +37,8 @@ public class Athens implements GraphicsEngine
     protected Collection<GfxListener> listeners = new ArrayList<GfxListener>();
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
-    protected Map<Renderable, AthensEntity> entities = new HashMap<Renderable, AthensEntity>();
+    protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
+    protected List<Renderable> removed = new ArrayList<Renderable>();
     private int w_width, w_height;
     private float aspect;
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
@@ -212,21 +214,12 @@ public class Athens implements GraphicsEngine
         time += delta;
         lastFPS += delta;
 
-//        int counter = 0;
-//        float tempFps = 0.0f;
-//        float avgFps = 0.0f;
-        fps = (1.0f / delta);
-//        if (counter < 60)
-//        {
-//            counter++;
-//            tempFps += fps;
-//        } else
-//        {
-//            avgFps = tempFps / 60;
-//            tempFps = 0.0f;
-//            counter = 0;
-//        }
-        fpsComp.setText(String.format("FPS: %.0f", fps));
+        if (lastFPS >= fpsInterval)
+        {
+            fps = (1.0f / delta);
+            fpsComp.setText(String.format("FPS: %.0f", fps));
+            lastFPS = 0;
+        }
         
         resourceManager.update(gl);
         update(delta);
@@ -277,6 +270,9 @@ public class Athens implements GraphicsEngine
         }
 
         updateView();
+        
+        for (Renderable r : removed)
+            entities.remove(r);
 
         for (AthensEntity entity : entities.values())
             entity.update(delta);
@@ -444,6 +440,15 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
+    public void prime()
+    {
+        for (AthensEntity entity : entities.values())
+        {
+            entity.used = false;
+        }
+    }
+
+    @Override
     public GfxEntity getGfxEntity(Renderable renderable)
     {
         AthensEntity entity = entities.get(renderable);
@@ -453,7 +458,17 @@ public class Athens implements GraphicsEngine
             entity = typeFactory.createInstance(renderable.type);
             entities.put(renderable, entity);
         }
+        entity.used = true;
         return entity;
+    }
+
+    @Override
+    public void post()
+    {
+        for (Map.Entry<Renderable, AthensEntity> e : entities.entrySet())
+        {
+            if (!e.getValue().used) removed.add(e.getKey());
+        }
     }
     
 }

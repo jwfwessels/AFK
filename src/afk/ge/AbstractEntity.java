@@ -6,7 +6,7 @@ package afk.ge;
 
 import afk.ge.tokyo.EntityManager;
 import afk.gfx.GfxEntity;
-import afk.gfx.athens.AthensEntity;
+import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -309,9 +309,9 @@ public abstract class AbstractEntity
             return Float.NaN;
         }
         Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, AthensEntity.X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.Y_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, Y_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, Z_AXIS);
         Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
         Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
 

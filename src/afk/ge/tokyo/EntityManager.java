@@ -9,9 +9,9 @@ import afk.bot.london.London;
 import afk.bot.london.Robot;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
+import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Bullet;
 import afk.ge.tokyo.ems.components.Controller;
-import afk.ge.tokyo.ems.components.ParentEntity;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TankController;
@@ -27,6 +27,11 @@ import java.util.UUID;
  */
 public class EntityManager
 {
+    public static final int WEAPON_RANGE = 50;
+    public static final int WEAPON_DAMAGE = 20;
+    public static final int BULLET_SPEED = 10;
+    public static final float FIRE_RATE = 1f;
+    public static final int WEAPON_AMMO = 0;
 
     int NUMCUBES = 5;
     int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
@@ -94,7 +99,6 @@ public class EntityManager
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
         engine.addEntity(wall);
-        System.out.println("added graphic wall");
     }
 
     private void createObstacles(Vec3 scale)
@@ -111,7 +115,6 @@ public class EntityManager
             cube.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
             engine.addEntity(cube);
-            System.out.println("added Obstacles wall");
 
             //;TankEntity obsticleCube = new TankEntity(null, gfxEntity, this, 100);
 
@@ -140,14 +143,15 @@ public class EntityManager
 
         Entity tank = new Entity();
         tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
+        // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale))); // big tank collision box
+        tank.add(new BBoxComponent(new Vec3(0.461f,1.0f,0.203f).multiply(scale))); // small tank collision box
         tank.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
-        tank.add(new Weapon(10, 20, 10, 2, 2, 0));
+        tank.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f/FIRE_RATE, WEAPON_AMMO));
         tank.add(new Renderable("smallTank", colour));
         tank.add(new Controller(id));
         tank.add(new TankController());
 
         engine.addEntity(tank);
-        System.out.println("added Entity wall");
     }
 
 //    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
@@ -184,8 +188,6 @@ public class EntityManager
 
     public void createProjectileNEU(Entity parent, Weapon weapon, State current)
     {
-        //dont have a projectile model yet, mini tank will be bullet XD
-
         Entity projectile = new Entity();
         State state = new State(current, new Vec3(0, 0.8f, 0));
         state.scale = new Vec3(0.3f, 0.3f, 0.3f);
@@ -195,8 +197,7 @@ public class EntityManager
         float cos = (float) Math.cos(angle);
         projectile.add(new Velocity(new Vec3(-weapon.speed*sin, 0, weapon.speed*cos), Vec3.VEC3_ZERO));
         projectile.add(new Renderable("projectile", new Vec3(0.5f,0.5f,0.5f)));
-        projectile.add(new Bullet(weapon.range, weapon.damage));
-        projectile.add(new ParentEntity(parent));
+        projectile.add(new Bullet(weapon.range, weapon.damage, parent));
 
         engine.addEntity(projectile);
         System.out.println("added Bullet");

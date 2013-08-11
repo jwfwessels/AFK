@@ -152,7 +152,7 @@ public class TypeFactory
         {
             AthensEntity projectileGfxEntity = createEntity(GfxEntity.NORMAL);
 
-            projectileGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "cube"));
+            projectileGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "shell"));
             projectileGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
             
             return projectileGfxEntity;

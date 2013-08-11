@@ -1,9 +1,12 @@
 package afk.ge;
 
+import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import static com.hackoeur.jglm.support.FastMath.*;
+import static com.hackoeur.jglm.Matrices.*;
+import static afk.gfx.GfxUtils.*;
 
 /**
  * Oriented Bounding Box. Stored as a matrix (without scaling) and Extents( x,
@@ -35,6 +38,19 @@ public class BBox
     public BBox(final Mat4 m, final Vec3 bl, final Vec3 bh)
     {
         set(m, bl, bh);
+    }
+    
+    public BBox(State state, Vec3 extents)
+    {
+        m = new Mat4(1);
+        
+        m = translate(m, state.pos);
+
+        m = rotate(m, state.rot.getY(), Y_AXIS);
+        m = rotate(m, state.rot.getX(), X_AXIS);
+        m = rotate(m, state.rot.getZ(), Z_AXIS);
+        
+        this.extents = extents;
     }
 
     public final void set(final Mat4 m, final Vec3 extents)

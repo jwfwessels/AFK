@@ -6,11 +6,11 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
 import afk.ge.AbstractEntity;
+import afk.ge.BBox;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
-import afk.ge.tokyo.ems.nodes.ControllerNode;
 import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
@@ -36,30 +36,30 @@ public class ProjectileSystem implements ISystem
     public void update(float t, float dt)
     {
 
-        List<ProjectileNode> nodesA = engine.getNodeList(ProjectileNode.class);
-        List<CollisionNode> nodesB = engine.getNodeList(CollisionNode.class);
-        for (ProjectileNode projectileNode : nodesA)
+        List<ProjectileNode> bullets = engine.getNodeList(ProjectileNode.class);
+        List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
+        for (ProjectileNode bullet : bullets)
         {
-            for (CollisionNode collisionNode : nodesB)
+            // collision testing for box
+            for (CollisionNode node : nodes)
             {
-                if (intersectionTesting(projectileNode.state, collisionNode.state))
+                // to stop shells from exploding inside the tank's barrel:
+                if (node.entity == bullet.bullet.parent) continue;
+                
+                BBox bbox = new BBox(node.state, node.bbox.extent);
+                if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
                 {
-                    System.out.println(projectileNode.relation.parent + " ==> " + collisionNode);
-//                    b.hit(DAMAGE);
-//                    hit(DAMAGE);
-
-                    // TODO: possible create explosion at the /exact/ location of impact?
-//                    entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0.75f, 0)), this.parent, 0);
+                    engine.removeEntity(bullet.entity);
+                    engine.removeEntity(node.entity);
                 }
-
-                float dist = projectileNode.state.pos.subtract(projectileNode.state.pos).getLength();
-                projectileNode.bullet.rangeLeft -= dist;
-                if (Float.compare(projectileNode.bullet.rangeLeft, 0) <= 0)
-                {
-                    engine.removeEntity(projectileNode.entity);
-                }
-
-
+            }
+            
+            // range testing for box
+            float dist = bullet.state.prevPos.subtract(bullet.state.pos).getLength();
+            bullet.bullet.rangeLeft -= dist;
+            if (Float.compare(bullet.bullet.rangeLeft, 0) <= 0)
+            {
+                engine.removeEntity(bullet.entity);
             }
         }
     }

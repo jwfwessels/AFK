@@ -31,6 +31,7 @@ public class RenderSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
+        gfxEngine.prime();
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
         for (RenderNode node : nodes)
         {
@@ -54,6 +55,8 @@ public class RenderSystem implements ISystem
 //            GfxEntity barrel = turret.getSubEntity(node.weapRend.barrel);
 //            barrel.rotZ = node.weapon.barrelAngle;
 //        }
+        
+        gfxEngine.post();
     }
 
     @Override
