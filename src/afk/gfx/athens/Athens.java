@@ -309,7 +309,7 @@ public class Athens implements GraphicsEngine
 
         // set background colour to white
         // TODO: allow this to be set through an interface
-        gl.glClearColor(1.0f, 0.0f, 1.0f, 0.0f);
+        gl.glClearColor(87.0f/256.0f, 220.0f/256.0f, 225.0f/256.0f, 0.0f);
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
