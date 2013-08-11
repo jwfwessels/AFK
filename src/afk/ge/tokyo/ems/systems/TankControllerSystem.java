@@ -22,15 +22,15 @@ public class TankControllerSystem implements ISystem
 {
 
     Engine engine;
-    EntityManager manager;
+    EntityManager entityManager;
     /// considr removing this, and useing component data///
     float VELOCITY = 1f;
     float ANGULAR_VELOCITY = 1f;
     ///
-    
-    public TankControllerSystem(EntityManager manager)
+
+    public TankControllerSystem(EntityManager entityManager)
     {
-        this.manager = manager;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -44,7 +44,6 @@ public class TankControllerSystem implements ISystem
     public void update(float t, float dt)
     {
         List<TankControlNode> nodes = engine.getNodeList(TankControlNode.class);
-        System.out.println("I'm walking on " + nodes.size() + " sunshines");
         for (TankControlNode node : nodes)
         {
             boolean[] flags = node.controller.inputFlags;
@@ -67,8 +66,15 @@ public class TankControllerSystem implements ISystem
             {
                 node.state.rot = node.state.rot.add(new Vec3(0, ANGULAR_VELOCITY, 0));
             }
-            System.out.println("v: " + node.velocity.v);
-            System.out.println("rot: " + node.state.rot);
+            if (true)//flags[Robot.ATTACK_ACTION]
+            {
+                node.weapon.timeSinceLastFire += t;
+                if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)
+                {
+                    node.weapon.timeSinceLastFire = 0;
+                    entityManager.createProjectileNEU(node.entity, node.weapon, node.state);
+                }
+            }
         }
     }
 

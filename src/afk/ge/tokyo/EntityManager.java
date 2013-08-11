@@ -14,7 +14,9 @@ import afk.bot.london.Robot;
 import afk.bot.london.SmallTank;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
+import afk.ge.tokyo.ems.components.Bullet;
 import afk.ge.tokyo.ems.components.Controller;
+import afk.ge.tokyo.ems.components.ParentEntity;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TankController;
@@ -191,7 +193,7 @@ public class EntityManager
         }
     }
 
-    private void createTankEntityNEU(UUID id,Vec3 spawnPoint, Vec3 colour)
+    private void createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(2, 2, 2);
 ///refactor into resource loader///
@@ -248,7 +250,7 @@ public class EntityManager
         Entity tank = new Entity();
         tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
         tank.add(new Velocity());
-        tank.add(new Weapon());
+        tank.add(new Weapon(10, 20, 2, 2, 0));
         tank.add(new Renderable("cube", "primatives", "", colour, rootGfxEntity));
         tank.add(new Controller(id));
         tank.add(new TankController());
@@ -413,24 +415,31 @@ public class EntityManager
         return tank;
     }
 
-    public ProjectileEntity createProjectile(AbstractEntity parent)
+    public void createProjectileNEU(Entity parent, Weapon weapon, State current)
     {
 
         float DAMAGE = 1.5f;
         //dont have a projectile model yet, mini tank will be bullet XD
+
+///refactor into resource loader///
         GfxEntity projectileGfxEntity = gfxEngine.createEntity(GfxEntity.NORMAL);
 
         projectileGfxEntity.attachResource(smallTankBody);
         projectileGfxEntity.attachResource(tankShader);
 
-        projectileGfxEntity.setScale(0.1f, 0.1f, 0.1f);
-        projectileGfxEntity.setPosition(5, 10, 5);
-
         gfxEngine.getRootEntity().addChild(projectileGfxEntity);
-        ProjectileEntity projectile = new ProjectileEntity(projectileGfxEntity, this, parent, DAMAGE);
-        subEntities.add(projectile);
-        projectile.name = parent.name + "projectile";
-        return projectile;
+///
+        Entity projectile = new Entity();
+        State state = new State(current, new Vec3(0, 0.8f, 0));
+        state.scale = new Vec3(0.1f, 0.1f, 0.1f);
+        projectile.add(state);
+        projectile.add(new Velocity());
+        projectile.add(new Renderable(null, null, null, Vec3.VEC3_ZERO, projectileGfxEntity));
+        projectile.add(new Bullet(weapon.range, weapon.damage));
+        projectile.add(new ParentEntity(parent));
+
+        engine.addEntity(projectile);
+        System.out.println("added Bullet");
     }
 
     void updateEntities(float t, float delta)

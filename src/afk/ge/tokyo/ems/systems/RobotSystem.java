@@ -42,7 +42,6 @@ public class RobotSystem implements ISystem
 	for (ControllerNode node : nodes)
 	{
             node.controller.inputFlags = botEngine.getFlags(node.controller.id);
-            System.out.println("flags: " + Arrays.toString(node.controller.inputFlags));
 	}
     }
 

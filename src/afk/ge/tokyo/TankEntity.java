@@ -116,18 +116,18 @@ public class TankEntity extends AbstractEntity
         botController.feedback(feedbackEvent);
     }
 
-    private void fireProjectile(float t)
-    {
-        float ready = t - lastShot;
-        if (lastShot == -1 || Float.compare(ready, RateOfFire) >= 0)
-        {
-            lastShot = t;
-            ProjectileEntity bullet = entityManager.createProjectile(this);
-            bullet.setColour(new Vec3(0.75f, 0.0f, 0.0f));
-            bullet.setState(current);
-            System.out.println("BANG!!!");
-        }
-    }
+//    private void fireProjectile(float t)
+//    {
+//        float ready = t - lastShot;
+//        if (lastShot == -1 || Float.compare(ready, RateOfFire) >= 0)
+//        {
+//            lastShot = t;
+//            ProjectileEntity bullet = entityManager.createProjectile(this);
+//            bullet.setColour(new Vec3(0.75f, 0.0f, 0.0f));
+//            bullet.setState(current);
+//            System.out.println("BANG!!!");
+//        }
+//    }
 
     protected ArrayList<Float> checkVisible()
     {

@@ -18,6 +18,16 @@ public class State
     public Vec3 rot;
     public Vec3 scale;
 
+    public State(State original, Vec3 posShift)
+    {
+        this.prevPos = original.pos.add(posShift);
+        this.prevRot = original.rot;
+        this.prevScale = original.scale;
+        this.pos = original.pos.add(posShift);
+        this.rot = original.rot;
+        this.scale = original.scale;
+    }
+
     public State(Vec3 pos, Vec3 rot, Vec3 scale)
     {
         this.prevPos = pos;
