@@ -44,7 +44,7 @@ public class BBox
     {
         m = new Mat4(1);
         
-        m = translate(m, state.pos);
+        m = translate(m, state.pos.add(new Vec3(0,extents.getY(),0)));
 
         m = rotate(m, state.rot.getY(), Y_AXIS);
         m = rotate(m, state.rot.getX(), X_AXIS);
