@@ -44,4 +44,11 @@ public class State
         this.prevRot = prevRot;
         this.prevScale = prevScale;
     }
+    
+    public void set(Vec3 pos, Vec3 rot, Vec3 scale)
+    {
+        this.pos = pos;
+        this.rot = rot;
+        this.scale = scale;
+    }
 }

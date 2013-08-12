@@ -136,8 +136,8 @@ public class TypeFactory
             tankShadowEntity.scale = new Vec3(1.5f, 0, 1.5f);
             
             rootGfxEntity.addChild(tankTurretEntity);
-            rootGfxEntity.addChild(tankTracksEntity);
             rootGfxEntity.addChild(tankWheelsEntity);
+            rootGfxEntity.addChild(tankTracksEntity);
             rootGfxEntity.addChild(tankShadowEntity);
             
             return rootGfxEntity;

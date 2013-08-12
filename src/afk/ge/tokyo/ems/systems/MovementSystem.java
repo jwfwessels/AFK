@@ -6,6 +6,7 @@ import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.nodes.MovementNode;
 import com.hackoeur.jglm.Vec3;
+import static java.lang.Math.*;
 import java.util.List;
 
 /**
@@ -46,8 +47,12 @@ public class MovementSystem implements ISystem
      */
     public static class Derivative
     {
-        Vec3 velocity;
-        Vec3 force;
+        Vec3 dx = Vec3.VEC3_ZERO;
+        Vec3 dv = Vec3.VEC3_ZERO;
+        
+        // angular
+        Vec3 dax = Vec3.VEC3_ZERO;
+        Vec3 dav = Vec3.VEC3_ZERO;
     }
     
     /**
@@ -70,16 +75,15 @@ public class MovementSystem implements ISystem
      */
     public static void integrate(State state, Velocity velocity, float t, float dt)
     {
-        //        state.velocity = new Vec3(0.01f, 0, 0);
-        Derivative a = evaluate(state, velocity, t, 0.0f, null);
+        Derivative a = evaluate(state, velocity, t, 0.0f, new Derivative());
         Derivative b = evaluate(state, velocity, t, dt * 0.5f, a);
         Derivative c = evaluate(state, velocity, t, dt * 0.5f, b);
         Derivative d = evaluate(state, velocity, t, dt, c);
-        state.pos = state.pos.add(d.velocity.add(a.velocity.add((b.velocity.add(c.velocity)).multiply(2))).multiply((float) ((1.0f / 6.0f) * dt)));
-        //TODO
-        //state.orientation
-        //state.angularMomentum
-        //state.recalculate();
+        
+        state.pos = state.pos.add(d.dx.add(a.dx.add((b.dx.add(c.dx)).multiply(2))).multiply((float) (dt / 6.0f)));
+        state.rot = state.rot.add(d.dax.add(a.dax.add((b.dax.add(c.dax)).multiply(2))).multiply((float) (dt / 6.0f)));
+        velocity.v = velocity.v.add(d.dv.add(a.dv.add((b.dv.add(c.dv)).multiply(2))).multiply((float) (dt / 6.0f)));
+        velocity.av = velocity.av.add(d.dav.add(a.dav.add((b.dav.add(c.dav)).multiply(2))).multiply((float) (dt / 6.0f)));
     }
 
     /**
@@ -88,26 +92,40 @@ public class MovementSystem implements ISystem
      * object.
      *
      * @param state
+     * @param velocity
      * @param t <i>current time</i>
      * @param dt <i>time-step length</i>
      * @param derivative
      * @return
      */
-    public static Derivative evaluate(State state, Velocity velocity,
-            float t, float dt, Derivative derivative)
+    public static Derivative evaluate(final State state, final Velocity velocity,
+            final float t, final float dt, final Derivative derivative)
     {
-        if (derivative != null)
-        {
-            state.pos = state.pos.add(derivative.velocity.multiply(dt));
-        }
+        //Vec3 pos = state.pos.add(derivative.dx.multiply(dt));
+        Vec3 v = velocity.v.add(derivative.dv.multiply(dt));
+        Vec3 av = velocity.av.add(derivative.dav.multiply(dt));
+        
         Derivative output = new Derivative();
-        output.velocity = velocity.v;
-        //        output.force = acceleration(state, t + dt);
-        //TODO
-        //output.spin
-        //output.force
-        //output.torque
+        output.dx = v;
+        output.dv = Vec3.VEC3_ZERO; //acceleration(velocity,dt);
+        output.dax = av;
+        output.dav = Vec3.VEC3_ZERO; //angularAcceleration(velocity,dt);
+        
         return output;
+    }
+    
+    public static Vec3 acceleration(final Velocity velocity, final float dt)
+    {
+        final float c = 0f;
+        
+        return velocity.v.getNegated().scale((float)pow(c, dt)).add(velocity.a);
+    }
+    
+    public static Vec3 angularAcceleration(final Velocity velocity, final float dt)
+    {
+        final float c = 0f;
+        
+        return velocity.av.getNegated().scale((float)pow(c, dt)).add(velocity.aa);
     }
     
 }

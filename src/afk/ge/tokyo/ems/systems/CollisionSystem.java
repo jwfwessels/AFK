@@ -7,6 +7,7 @@ import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
+import com.hackoeur.jglm.Vec3;
 import java.util.List;
 
 /**
@@ -43,6 +44,15 @@ public class CollisionSystem implements ISystem
                 
                 if (boxA.isBoxInBox(boxB))
                 {
+                    System.out.println("colliding!");
+                    nodeA.state.set(nodeA.state.prevPos, nodeA.state.prevRot, nodeA.state.prevScale);
+                    Velocity v = nodeA.entity.get(Velocity.class);
+                    v.v = v.a = v.av = v.aa = Vec3.VEC3_ZERO;
+                    nodeB.state.set(nodeB.state.prevPos, nodeB.state.prevRot, nodeB.state.prevScale);
+                    v = nodeB.entity.get(Velocity.class);
+                    if (v != null)
+                        v.v = v.a = v.av = v.aa = Vec3.VEC3_ZERO;
+                    
                     Controller controller = nodeA.entity.get(Controller.class);
                     if (controller != null)
                     {

@@ -21,10 +21,6 @@ public class TankControllerSystem implements ISystem
 
     Engine engine;
     EntityManager entityManager;
-    /// considr removing this, and useing component data///
-    float VELOCITY = 1f;
-    float ANGULAR_VELOCITY = 1f;
-    ///
 
     public TankControllerSystem(EntityManager entityManager)
     {
@@ -48,20 +44,25 @@ public class TankControllerSystem implements ISystem
             float angle = -(float) Math.toRadians(node.state.rot.getY());
             float sin = (float) Math.sin(angle);
             float cos = (float) Math.cos(angle);
-            node.velocity.v = Vec3.VEC3_ZERO;
             if (flags[Robot.MOVE_FRONT])
             {
-                node.velocity.v = node.velocity.v.add(new Vec3(-(VELOCITY * sin), 0, VELOCITY * cos));
+                node.velocity.v = new Vec3(-(node.motor.topSpeed * sin), 0, node.motor.topSpeed * cos);
             } else if (flags[Robot.MOVE_BACK])
             {
-                node.velocity.v = node.velocity.v.add(new Vec3(VELOCITY * sin, 0, -(VELOCITY * cos)));
+                node.velocity.v = new Vec3(node.motor.topSpeed * sin, 0, -(node.motor.topSpeed * cos));
+            } else
+            {
+                node.velocity.v = Vec3.VEC3_ZERO;
             }
             if (flags[Robot.TURN_CLOCK])
             {
-                node.state.rot = node.state.rot.add(new Vec3(0, -ANGULAR_VELOCITY, 0));
+                node.velocity.av = new Vec3(0, -node.motor.angularVelocity, 0);
             } else if (flags[Robot.TURN_ANTICLOCK])
             {
-                node.state.rot = node.state.rot.add(new Vec3(0, ANGULAR_VELOCITY, 0));
+                node.velocity.av = new Vec3(0, node.motor.angularVelocity, 0);
+            } else
+            {
+                node.velocity.av = Vec3.VEC3_ZERO;
             }
             if (true)//flags[Robot.ATTACK_ACTION]
             {

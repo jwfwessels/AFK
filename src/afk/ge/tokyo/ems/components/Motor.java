@@ -6,8 +6,19 @@ package afk.ge.tokyo.ems.components;
  */
 public class Motor
 {
-    public float fuelLeft;
-    public float rateOfConsumption;
-    public float acceleration;
+    // TODO:
+//    public float fuelLeft;
+//    public float rateOfConsumption;
     public float topSpeed;
+    
+    // specific to tanks perhaps?
+    public float angularVelocity;
+
+    public Motor(float topSpeed, float angularVelocity)
+    {
+        this.topSpeed = topSpeed;
+        this.angularVelocity = angularVelocity;
+    }
+    
+    
 }
