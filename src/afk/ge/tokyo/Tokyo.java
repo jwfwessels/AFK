@@ -15,6 +15,7 @@ import afk.ge.tokyo.ems.systems.ProjectileSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.ge.tokyo.ems.systems.RobotSystem;
 import afk.ge.tokyo.ems.systems.TankControllerSystem;
+import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -59,6 +60,7 @@ public class Tokyo extends GameEngine
         engine.addSystem(new ProjectileSystem());
         engine.addSystem(new LifeSystem());
         engine.addSystem(new CollisionSystem());
+        engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
         ///
     }

@@ -15,7 +15,7 @@ public class RobotEvent
 {
     
     /** List of visible bots as angles from where tank is facing. Empty if there are none. */
-    protected List<Float> visibleBots;
+    public List<Float> visibleBots;
     
     /** True if bot was hit by another. */
     public boolean gotHit; // TODO: change to reflect where hit came from
