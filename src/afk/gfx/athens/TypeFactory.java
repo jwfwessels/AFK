@@ -30,7 +30,7 @@ public class TypeFactory
         factories.put("projectile", new ProjectileFactory());
         factories.put("wall", new WallFactory());
         factories.put("floor", new FloorFactory());
-        factories.put("particle", new ExplosionFactory(0));
+        factories.put("particle", new ParticleFactory());
     }
     
     public AthensEntity createInstance(String type)
@@ -186,30 +186,19 @@ public class TypeFactory
         }
         
     }
-    private class ExplosionFactory implements TypeFactoryThing
+    private class ParticleFactory implements TypeFactoryThing
     {
-        String type;
-
-        public ExplosionFactory(int type)
-        {
-            this.type = type == 0 ? "explosionProjectile" : "explosionTank";
-        }
 
         @Override
         public AthensEntity create()
         {
-            AthensEntity explosion = createEntity(GfxEntity.PARTICLE_EMITTER);
-
-            explosion.attachResource(resourceManager.getResource(PARTICLE_PARAMETERS, type));
+            AthensEntity particle = createEntity(GfxEntity.BILLBOARD_SPHERICAL);
             
-            explosion.attachResource(resourceManager.getResource(PARTICLE_PARAMETERS, "texturedParticle"));
-            explosion.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "billboard"));
-            explosion.attachResource(resourceManager.getResource(TEXTURE_2D, "explosion"));
+            particle.attachResource(resourceManager.getResource(SHADER, "texturedParticle"));
+            particle.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "billboard"));
+            particle.attachResource(resourceManager.getResource(TEXTURE_2D, "explosion"));
             
-            explosion.opacity = 0.9f;
-            explosion.active = true;
-            
-            return explosion;
+            return particle;
         }
         
     }

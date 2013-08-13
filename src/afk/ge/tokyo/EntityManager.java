@@ -23,13 +23,16 @@ import afk.ge.tokyo.ems.components.Targetable;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.components.Vision;
 import afk.ge.tokyo.ems.components.Weapon;
-import afk.ge.tokyo.ems.nodes.ParticleEmitterNode;
 import static afk.gfx.GfxUtils.*;
-import afk.gfx.athens.particles.Particle;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
+import com.jogamp.graph.geom.AABBox;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
@@ -64,6 +67,9 @@ public class EntityManager
     public ArrayList<TankEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
     private Queue<Entity> particles = new ArrayDeque<Entity>();
+    
+    private ParticleEmitter[] emitters;
+    
     London botEngine;
     Engine engine;
     private static final Vec3[] BOT_COLOURS =
@@ -97,6 +103,17 @@ public class EntityManager
         obstacles = new ArrayList<TankEntity>();
         subEntities = new ArrayList<AbstractEntity>();
         System.out.println("SPAWN_POINTS: " + SPAWNVALUE);
+        
+        emitters = new ParticleEmitter[2];
+        try
+        {
+            emitters[0] = loadParticleParameters("explosionProjectile");
+            emitters[1] = loadParticleParameters("explosionTank");
+        }
+        catch (IOException ex)
+        {
+            System.err.println("Error loading particle config: " + ex.getMessage());
+        }
     }
 
     public void spawnStuff()
@@ -272,27 +289,29 @@ public class EntityManager
         {
             pie = new Entity();
             pie.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new Lifetime(0));
             pie.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
             pie.add(new Renderable("particle", Vec3.VEC3_ZERO));
         }
         
         State state = pie.get(State.class);
         Velocity velocity = pie.get(Velocity.class);
+        Lifetime lifetime = pie.get(Lifetime.class);
+        Renderable renderable = pie.get(Renderable.class);
         
-        Vec3 move = emitterState.pos;
+        Vec3 pos = emitterState.pos;
         Vec3 rot = emitterState.rot;
         Vec3 scale = emitterState.scale;
             
-        state.pos = new Vec3(
-                jitter(move.getX(), scale.getX()),
-                jitter(move.getY(), scale.getY()),
-                jitter(move.getZ(), scale.getZ())
-            );
-        state.scale = new Vec3(jitter(emitter.scale, emitter.scaleJitter));
+        state.reset(new Vec3(
+                jitter(pos.getX(), scale.getX()),
+                jitter(pos.getY(), scale.getY()),
+                jitter(pos.getZ(), scale.getZ())
+            ),
+            Vec3.VEC3_ZERO,
+            new Vec3(jitter(emitter.scale, emitter.scaleJitter)));
 
         Vec3 dir;
-
-
         if (emitter.noDirection)
         {
             // uniform sphere distribution
@@ -319,11 +338,7 @@ public class EntityManager
 
         velocity.v = dir.scale(speed);
         
-        Lifetime lifetime = pie.get(Lifetime.class);
-        lifetime.life = 0;
-        lifetime.maxLife = jitter(emitter.maxLife, emitter.lifeJitter);
-        
-        Renderable renderable = pie.get(Renderable.class);
+        lifetime.life = jitter(emitter.maxLife, emitter.lifeJitter);
         
         renderable.colour = emitter.colour;
         
@@ -336,8 +351,9 @@ public class EntityManager
         
         entity.add(new State(where, Vec3.VEC3_ZERO, new Vec3(1,1,1)));
         
-         // TODO:
-        entity.add(new ParticleEmitter());
+        ParticleEmitter emitter = new ParticleEmitter(emitters[type]);
+        emitter.colour = parent.get(Renderable.class).colour;
+        entity.add(emitter);
         
         engine.addEntity(entity);
     }
@@ -346,5 +362,128 @@ public class EntityManager
     {
         // TODO: consider making queue bounded so as to limit lots of particles
         particles.offer(entity);
+    }
+    
+    public static ParticleEmitter loadParticleParameters(String name) throws IOException
+    {
+        ParticleEmitter emitter = new ParticleEmitter();
+        loadParticleParameters(emitter, name);
+        return emitter;
+    }
+    
+    public static void loadParticleParameters(ParticleEmitter emitter, String name) throws IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader("particles/"+name+".px"));
+        try
+        {
+            
+            String line;
+            for(int lineNumber = 1; (line = br.readLine()) != null; lineNumber++)
+            {
+                line = line.replaceFirst(";.*$", "").trim();
+                
+                if (line.isEmpty()) continue;
+                
+                String[] split1 = line.split("\\s*=\\s*");
+                
+                String param = split1[0];
+                String value = split1[1];
+                
+                
+                Field field;
+                try
+                {
+                    field = ParticleEmitter.class.getField(param);
+                } catch (NoSuchFieldException ex)
+                {
+                        throw new IOException("Invalid parameter name [" + param
+                                + "] on line " + lineNumber);
+                } catch (SecurityException ex)
+                {
+                        throw new IOException("Parameter error [" + param
+                                + "] on line " + lineNumber + ": " + ex.getMessage());
+                }
+                
+                Class fieldClass = field.getType();
+                
+                
+                
+                try
+                {
+                    if (fieldClass == Vec3.class)
+                        field.set(emitter, parseVec3(value));
+                    else if (fieldClass == AABBox.class)
+                        field.set(emitter,parseAABBox(value));
+                    else field.set(emitter, getWrapperClass(fieldClass).getMethod("valueOf", String.class).invoke(null, value));
+                }
+                catch (NumberFormatException nfe)
+                {
+                    throw new IOException("Invalid value on line " + lineNumber + ": "
+                            + nfe.getMessage());
+                }
+                catch (ReflectiveOperationException ex)
+                {
+                    throw new IOException("Fatal error on line " + lineNumber + ": "
+                            + ex.getMessage());
+                }
+            }
+        }
+        finally
+        {
+            br.close();
+        }
+    }
+    
+    private static Class getWrapperClass(Class clazz)
+    {
+        if (clazz == int.class)
+            return Integer.class;
+        if (clazz == short.class)
+            return Short.class;
+        if (clazz == byte.class)
+            return Byte.class;
+        if (clazz == long.class)
+            return Long.class;
+        if (clazz == float.class)
+            return Float.class;
+        if (clazz == double.class)
+            return Double.class;
+        if (clazz == boolean.class)
+            return Boolean.class;
+        if (clazz == char.class)
+            return Character.class;
+        return Object.class;
+    }
+    
+    private static Vec3 parseVec3(String values)
+    {
+        String[] split = values.split("\\s+");
+        
+        if (split.length != 3)
+            throw new NumberFormatException("Invalid number of parameters: "
+                    + "need 3, found " + split.length);
+        
+        return new Vec3(
+                Float.parseFloat(split[0]),
+                Float.parseFloat(split[1]),
+                Float.parseFloat(split[2])
+            );
+    }
+    private static AABBox parseAABBox(String values)
+    {
+        String[] split = values.split("\\s+");
+        
+        if (split.length != 6)
+            throw new NumberFormatException("Invalid number of parameters: "
+                    + "need 6, found " + split.length);
+        
+        return new AABBox(
+                Float.parseFloat(split[0]),
+                Float.parseFloat(split[1]),
+                Float.parseFloat(split[2]),
+                Float.parseFloat(split[3]),
+                Float.parseFloat(split[4]),
+                Float.parseFloat(split[5])
+            );
     }
 }

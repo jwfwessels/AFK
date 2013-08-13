@@ -7,11 +7,9 @@ package afk.ge.tokyo.ems.components;
 public class Lifetime
 {
     public float life;
-    public float maxLife;
 
-    public Lifetime(float life, float maxLife)
+    public Lifetime(float life)
     {
         this.life = life;
-        this.maxLife = maxLife;
     }
 }

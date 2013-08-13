@@ -5,6 +5,7 @@
 package afk.ge.tokyo.ems.components;
 
 import com.hackoeur.jglm.Vec3;
+import com.jogamp.graph.geom.AABBox;
 
 /**
  *
@@ -53,6 +54,36 @@ public class ParticleEmitter
     
     /** Colour of spawned particles. */
     public Vec3 colour = Vec3.VEC3_ZERO;
+    
+    /**
+     * Bounding box within which particles are allowed to exists.
+     * Can be null to represent infinite space.
+     */
+    public AABBox boundingBox = null;
+
+    public ParticleEmitter()
+    {
+    }
+
+    public ParticleEmitter(ParticleEmitter other)
+    {
+        this.acceleration = other.acceleration;
+        this.angleJitter = other.angleJitter;
+        this.boundingBox = other.boundingBox;
+        this.colour = other.colour;
+        this.lifeJitter = other.lifeJitter;
+        this.maxLife = other.maxLife;
+        this.noDirection = other.noDirection;
+        this.numParticles = other.numParticles;
+        this.scale = other.scale;
+        this.scaleJitter = other.scaleJitter;
+        this.spawnInterval = other.spawnInterval;
+        this.speed = other.speed;
+        this.speedJitter = other.speed;
+        this.timeSinceLastSpawn = other.timeSinceLastSpawn;
+    }
+
+    
     
     
 }

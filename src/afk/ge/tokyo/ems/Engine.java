@@ -95,12 +95,12 @@ public class Engine implements EntityListener
         }
         updating = false;
         
-        for (Entity e : toAdd)
-            addEntity(e);
-        toAdd.clear();
         for (Entity e : toRemove)
             removeEntity(e);
         toRemove.clear();
+        for (Entity e : toAdd)
+            addEntity(e);
+        toAdd.clear();
     }
     
     public void removeSystem(ISystem system)
