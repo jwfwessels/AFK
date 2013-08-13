@@ -19,7 +19,9 @@ import afk.ge.tokyo.ems.components.ParticleEmitter;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TankController;
+import afk.ge.tokyo.ems.components.Targetable;
 import afk.ge.tokyo.ems.components.Velocity;
+import afk.ge.tokyo.ems.components.Vision;
 import afk.ge.tokyo.ems.components.Weapon;
 import afk.ge.tokyo.ems.nodes.ParticleEmitterNode;
 import static afk.gfx.GfxUtils.*;
@@ -52,6 +54,9 @@ public class EntityManager
     public static final Vec3 LARGE_TANK_EXTENTS = new Vec3(0.311f,0.1355f,0.5f);
     public static final float SMALL_TANK_SCALE = 2;
     public static final float LARGE_TANK_SCALE = 3.5f;
+    public static final int TANK_VDIST = 15;
+    public static final int TANK_FOVY = 70;
+    public static final int TANK_FOVX = 170;
 
     int NUMCUBES = 5;
     int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
@@ -162,6 +167,8 @@ public class EntityManager
         tank.add(new Life(SMALL_TANK_HP));
         tank.add(new Renderable(LARGE_TANK_TYPE, colour));
         tank.add(new Controller(id));
+        tank.add(new Targetable());
+        tank.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
         tank.add(new TankController());
 
         engine.addEntity(tank);

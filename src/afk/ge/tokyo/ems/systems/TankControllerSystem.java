@@ -64,7 +64,7 @@ public class TankControllerSystem implements ISystem
             {
                 node.velocity.av = Vec3.VEC3_ZERO;
             }
-            if (true)//flags[Robot.ATTACK_ACTION]
+            if (flags[Robot.ATTACK_ACTION])
             {
                 node.weapon.timeSinceLastFire += dt;
                 if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)

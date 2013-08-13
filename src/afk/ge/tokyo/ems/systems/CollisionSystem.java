@@ -42,9 +42,9 @@ public class CollisionSystem implements ISystem
                 
                 BBox boxB = new BBox(nodeB.state, nodeB.bbox.extent);
                 
+                // FIXME: bots check against each other twice
                 if (boxA.isBoxInBox(boxB))
                 {
-                    System.out.println("colliding!");
                     nodeA.state.set(nodeA.state.prevPos, nodeA.state.prevRot, nodeA.state.prevScale);
                     Velocity v = nodeA.entity.get(Velocity.class);
                     v.v = v.a = v.av = v.aa = Vec3.VEC3_ZERO;
