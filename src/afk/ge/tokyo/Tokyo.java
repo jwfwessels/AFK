@@ -10,7 +10,9 @@ import afk.bot.london.London;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
+import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
+import afk.ge.tokyo.ems.systems.ParticleSystem;
 import afk.ge.tokyo.ems.systems.ProjectileSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.ge.tokyo.ems.systems.RobotSystem;
@@ -56,9 +58,11 @@ public class Tokyo extends GameEngine
         engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
         engine.addSystem(new TankControllerSystem(entityManager));
         engine.addSystem(new MovementSystem());
-        engine.addSystem(new ProjectileSystem());
+        engine.addSystem(new ProjectileSystem(entityManager));
         engine.addSystem(new LifeSystem());
         engine.addSystem(new CollisionSystem());
+        engine.addSystem(new ParticleSystem(entityManager));
+        engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new RenderSystem(gfxEngine));
         ///
     }

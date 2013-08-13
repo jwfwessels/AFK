@@ -13,14 +13,24 @@ import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Bullet;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Life;
+import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Motor;
+import afk.ge.tokyo.ems.components.ParticleEmitter;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TankController;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.components.Weapon;
+import afk.ge.tokyo.ems.nodes.ParticleEmitterNode;
+import static afk.gfx.GfxUtils.*;
+import afk.gfx.athens.particles.Particle;
+import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.UUID;
 
 /**
@@ -48,6 +58,7 @@ public class EntityManager
     public ArrayList<TankEntity> entities;
     public ArrayList<TankEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
+    private Queue<Entity> particles = new ArrayDeque<Entity>();
     London botEngine;
     Engine engine;
     private static final Vec3[] BOT_COLOURS =
@@ -245,9 +256,88 @@ public class EntityManager
     {
         entities.remove(entity);
     }
-
-    void makeExplosion(Vec3 where, AbstractEntity parent, int type)
+    
+    /** A Pie is a flat plane that always faces your face. */
+    public void makePie(State emitterState, ParticleEmitter emitter)
     {
-        // FIXME?
+        Entity pie = particles.poll();
+        if (pie == null)
+        {
+            pie = new Entity();
+            pie.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new Renderable("particle", Vec3.VEC3_ZERO));
+        }
+        
+        State state = pie.get(State.class);
+        Velocity velocity = pie.get(Velocity.class);
+        
+        Vec3 move = emitterState.pos;
+        Vec3 rot = emitterState.rot;
+        Vec3 scale = emitterState.scale;
+            
+        state.pos = new Vec3(
+                jitter(move.getX(), scale.getX()),
+                jitter(move.getY(), scale.getY()),
+                jitter(move.getZ(), scale.getZ())
+            );
+        state.scale = new Vec3(jitter(emitter.scale, emitter.scaleJitter));
+
+        Vec3 dir;
+
+
+        if (emitter.noDirection)
+        {
+            // uniform sphere distribution
+            dir = new Vec3(
+                    (float)random.nextGaussian(),
+                    (float)random.nextGaussian(),
+                    (float)random.nextGaussian()
+                )
+                .getUnitVector();
+        }
+        else
+        {
+            // uniform cone distribution (I think)
+            Mat4 rotation = Matrices.rotate(new Mat4(1.0f), jitter(rot.getX(), emitter.angleJitter.getX()), X_AXIS);
+            rotation = Matrices.rotate(rotation, jitter(rot.getY(), emitter.angleJitter.getY()), Y_AXIS);
+            rotation = Matrices.rotate(rotation, jitter(rot.getZ(), emitter.angleJitter.getZ()), Z_AXIS);
+
+            Vec4 newRotation = rotation.multiply(ANCHOR);
+
+            dir = new Vec3(newRotation.getX(),newRotation.getY(),newRotation.getZ());
+        }
+
+        float speed = jitter(emitter.speed, emitter.speedJitter);
+
+        velocity.v = dir.scale(speed);
+        
+        Lifetime lifetime = pie.get(Lifetime.class);
+        lifetime.life = 0;
+        lifetime.maxLife = jitter(emitter.maxLife, emitter.lifeJitter);
+        
+        Renderable renderable = pie.get(Renderable.class);
+        
+        renderable.colour = emitter.colour;
+        
+        engine.addEntity(pie);
+    }
+
+    public void makeExplosion(Vec3 where, Entity parent, int type)
+    {
+        Entity entity = new Entity();
+        
+        entity.add(new State(where, Vec3.VEC3_ZERO, new Vec3(1,1,1)));
+        
+         // TODO:
+        entity.add(new ParticleEmitter());
+        
+        engine.addEntity(entity);
+    }
+
+    public void recyclePie(Entity entity)
+    {
+        // TODO: consider making queue bounded so as to limit lots of particles
+        particles.offer(entity);
     }
 }

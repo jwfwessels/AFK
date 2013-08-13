@@ -30,8 +30,7 @@ public class TypeFactory
         factories.put("projectile", new ProjectileFactory());
         factories.put("wall", new WallFactory());
         factories.put("floor", new FloorFactory());
-        factories.put("projectileExplosion", new ExplosionFactory(0));
-        factories.put("tankExplosion", new ExplosionFactory(1));
+        factories.put("particle", new ExplosionFactory(0));
     }
     
     public AthensEntity createInstance(String type)

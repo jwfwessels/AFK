@@ -7,6 +7,7 @@ package afk.ge.tokyo.ems.systems;
 import afk.bot.RobotEngine;
 import afk.ge.AbstractEntity;
 import afk.ge.BBox;
+import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.Life;
@@ -25,6 +26,12 @@ public class ProjectileSystem implements ISystem
 {
 
     Engine engine;
+    EntityManager manager;
+    
+    public ProjectileSystem(EntityManager manager)
+    {
+        this.manager = manager;
+    }
 
     @Override
     public boolean init(Engine engine)
@@ -55,6 +62,7 @@ public class ProjectileSystem implements ISystem
                     {
                         life.hp -= bullet.bullet.damage;
                     }
+                    manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0);
                     engine.removeEntity(bullet.entity);
                 }
             }

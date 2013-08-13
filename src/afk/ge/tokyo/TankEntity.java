@@ -157,7 +157,7 @@ public class TankEntity extends AbstractEntity
         if (Float.compare(life, 0) <= 0)
         {
             entityManager.removeEntity(this);
-            entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0, 0)), this, 1);
+//            entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0, 0)), this, 1);
         }
     }
 
