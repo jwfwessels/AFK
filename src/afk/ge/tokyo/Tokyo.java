@@ -7,6 +7,7 @@ package afk.ge.tokyo;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
+import afk.bot.london.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
@@ -19,7 +20,10 @@ import afk.ge.tokyo.ems.systems.RobotSystem;
 import afk.ge.tokyo.ems.systems.TankControllerSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -72,7 +76,15 @@ public class Tokyo extends GameEngine
     @Override
     public void run()
     {
-        gameLoop();
+        // FIXME: move bot loading somewhere closer to the ui
+        try
+        {
+            loadBots();
+            gameLoop();
+        } catch (RobotException ex)
+        {
+            System.err.println("Robot loading error: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -90,7 +102,6 @@ public class Tokyo extends GameEngine
         { /* spin! */
 
         }
-        loadBots();
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
         int i = 0;
@@ -132,7 +143,7 @@ public class Tokyo extends GameEngine
         gfxEngine.redisplay();
     }
 
-    private boolean loadBots()
+    private boolean loadBots() throws RobotException
     {
         entityManager.createBots();
         System.out.println("Botsloaded");

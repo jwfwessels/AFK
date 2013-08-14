@@ -7,6 +7,7 @@ package afk.ge.tokyo;
 import afk.ge.AbstractEntity;
 import afk.bot.london.London;
 import afk.bot.london.Robot;
+import afk.bot.london.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
@@ -156,7 +157,7 @@ public class EntityManager
         }
     }
 
-    void createBots()
+    void createBots() throws RobotException
     {
         spawnStuff();
         createObstacles(new Vec3(5, 5, 5));
