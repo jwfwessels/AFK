@@ -119,6 +119,7 @@ public class MenuPanel extends JPanel implements ActionListener
         lsSelectedModel = new DefaultListModel();
         
         pnlRobotError = new JPanel();
+        pnlRobotError.setLayout(new BorderLayout());
         txtErrorConsole = new JTextField();
     }
 
@@ -361,7 +362,6 @@ public class MenuPanel extends JPanel implements ActionListener
             }
             
            
-            
             //pnlError
             
             c = parent.getComponent(3);
@@ -371,9 +371,7 @@ public class MenuPanel extends JPanel implements ActionListener
                 hVal = h / 5;
                 wVal = w;
                 c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
-            }
-            
-                   
+            }       
         }
     }
 }
