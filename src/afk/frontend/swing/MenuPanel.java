@@ -27,6 +27,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -56,7 +57,7 @@ public class MenuPanel extends JPanel implements ActionListener
     JButton btnStartMatch;
     JButton btnLoadBot;
     
-    JTextField txtErrorConsole;
+    JTextArea txtErrorConsole;
     
     private HashMap<String, String> botMap;
     private JFileChooser fileChooser;
@@ -119,8 +120,9 @@ public class MenuPanel extends JPanel implements ActionListener
         lsSelectedModel = new DefaultListModel();
         
         pnlRobotError = new JPanel();
-        txtErrorConsole = new JTextField("sgirheujgsbdjvbij");
+        txtErrorConsole = new JTextArea("sgirheujgsbdjvbij");
         txtErrorConsole.setEditable(false);
+        //txtErrorConsole.setSize(txtErrorConsole.get);
         pnlRobotError.setLayout(new BorderLayout());
         
     }
@@ -328,6 +330,7 @@ public class MenuPanel extends JPanel implements ActionListener
             int num2 = 0;
             Component c;
 
+            
             //pnlAvailable;
 
             c = parent.getComponent(0);
@@ -337,9 +340,11 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = ((h / 5) * 4);
-                c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/ hVal);
+                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num1 += c.getSize().width;
             }
+            
+            
             //pnlBotSelButtons
 
             c = parent.getComponent(1);
@@ -347,7 +352,7 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 wVal = (w) >= 300 ? (w / 3) : 100;
                 hVal = (h / 5) * 4;
-                c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/hVal);
+                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num1 += c.getSize().width;
             }
 
@@ -359,7 +364,7 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = (h / 5) * 4;
-                c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/ hVal);
+                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num2 += c.getSize().height;
             }
             
@@ -369,7 +374,6 @@ public class MenuPanel extends JPanel implements ActionListener
             c = parent.getComponent(3);
             if(c.isVisible())
             {           
-                System.out.println("Hi");
                 hVal = h / 5;
                 wVal = w;
                 c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
