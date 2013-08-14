@@ -25,6 +25,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -37,17 +38,24 @@ public class MenuPanel extends JPanel implements ActionListener
 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
 
     RootWindow parent;
+    
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
     JPanel pnlSelected;
+    JPanel pnlRobotError;
+    
     JLabel lblAvailable;
     JLabel lblSelected;
+    
     JButton btnAddBot;
     JButton btnAddAllBots;
     JButton btnRemoveBot;
     JButton btnRemoveAllBots;
     JButton btnStartMatch;
     JButton btnLoadBot;
+    
+    JTextField txtErrorConsole;
+    
     private HashMap<String, String> botMap;
     private JFileChooser fileChooser;
     private JList<String> lstAvailableBots;
@@ -101,12 +109,15 @@ public class MenuPanel extends JPanel implements ActionListener
 
         fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle("Load Bot");
-        fileChooser.setFileFilter(new FileNameExtensionFilter("java class file", "class", "jar"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter(".class, .jar", "class", "jar"));
 
         lstAvailableBots = new JList();
         lstSelectedBots = new JList();
         lsAvailableModel = new DefaultListModel();
         lsSelectedModel = new DefaultListModel();
+        
+        pnlRobotError = new JPanel();
+        txtErrorConsole = new JTextField();
     }
 
     private void addComponents()
@@ -121,10 +132,10 @@ public class MenuPanel extends JPanel implements ActionListener
         lstAvailableBots.setModel(lsAvailableModel);
         lstSelectedBots.setModel(lsSelectedModel);
 
-
         this.add(pnlAvailable);
         this.add(pnlBotSelButtons);
         this.add(pnlSelected);
+        this.add(pnlRobotError);        
 
         pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
         pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
@@ -138,6 +149,8 @@ public class MenuPanel extends JPanel implements ActionListener
 
         pnlSelected.add(lblSelected, BorderLayout.NORTH);
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
+        
+        pnlRobotError.add(txtErrorConsole);
 
     }
 
@@ -160,7 +173,6 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 String selectedBot = lstAvailableBots.getSelectedValue();
                 System.out.println("selectedBot: " + selectedBot);
-//                JOptionPane.showMessageDialog(parent, "Select a bot");
                 if (selectedBot != null)
                 {
                     lsSelectedModel.addElement(selectedBot);
@@ -236,16 +248,7 @@ public class MenuPanel extends JPanel implements ActionListener
             {
                 // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
                 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
-                //ArrayList<String> bots = getParticipatingBots();
                 botEngine.setParticipatingBots(getParticipatingBots());
-                //for (int i = 0; i < bots.size(); i++)
-                //{
-                    //String path = bots.get(i);
-                    //Robot loadedBot = botEngine.addRobot(path);
-                    // TODO: call - arraylist.add(botengine.createBot(path)) , do check on created bot instance!
-                    //botEngine.registerBot(loadedBot);
-                //}
-
                 parent.spawnGamePanel(botEngine);
 
             }
@@ -322,10 +325,12 @@ public class MenuPanel extends JPanel implements ActionListener
 
             c = parent.getComponent(0);
             int wVal = 220;
+            int hVal = 0;
             if (c.isVisible())
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) h);
+                hVal = ((h / 5) * 4);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/ hVal);
                 num1 += c.getSize().width;
             }
             //pnlBotSelButtons
@@ -334,7 +339,8 @@ public class MenuPanel extends JPanel implements ActionListener
             if (c.isVisible())
             {
                 wVal = (w) >= 300 ? (w / 3) : 100;
-                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) h);
+                hVal = (h / 5) * 4;
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/hVal);
                 num1 += c.getSize().width;
             }
 
@@ -345,8 +351,21 @@ public class MenuPanel extends JPanel implements ActionListener
             if (c.isVisible())
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) h);
+                hVal = (h / 5) * 4;
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/ hVal);
             }
+            
+            //pnlError
+            
+            c = parent.getComponent(3);
+            if(c.isVisible())
+            {                
+                hVal = h / 5;
+                wVal = w;
+                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+            }
+            
+                   
         }
     }
 }
