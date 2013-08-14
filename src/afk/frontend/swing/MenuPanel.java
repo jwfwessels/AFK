@@ -8,6 +8,7 @@ import afk.bot.london.London;
 import afk.bot.london.Robot;
 import afk.bot.london.RobotException;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -19,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -162,9 +164,10 @@ public class MenuPanel extends JPanel implements ActionListener
     private void styleComponents()
     {
         // for testing
-//        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
-//        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-//        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
+        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
         btnAddBot.addActionListener(new ActionListener()
         {
@@ -319,6 +322,7 @@ public class MenuPanel extends JPanel implements ActionListener
             int h = parent.getSize().height;
 
             int num1 = 0;
+            int num2 = 0;
             Component c;
 
             //pnlAvailable;
@@ -353,16 +357,20 @@ public class MenuPanel extends JPanel implements ActionListener
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = (h / 5) * 4;
                 c.setBounds(insets.left + num1, insets.top, (int) wVal, /*(int) h*/ hVal);
+                num2 += c.getSize().height;
             }
+            
+           
             
             //pnlError
             
             c = parent.getComponent(3);
             if(c.isVisible())
-            {                
+            {           
+                System.out.println("Hi");
                 hVal = h / 5;
                 wVal = w;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
             }
             
                    
