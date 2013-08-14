@@ -143,7 +143,7 @@ public class MenuPanel extends JPanel implements ActionListener
         this.add(pnlBotSelButtons);
         this.add(pnlSelected);
         this.add(pnlRobotError);        
-
+        
         pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
         pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
         pnlAvailable.add(btnLoadBot, BorderLayout.SOUTH);
@@ -173,11 +173,11 @@ public class MenuPanel extends JPanel implements ActionListener
         //pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
         //pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
         //pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
-
-        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+       
+        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         
         btnAddBot.addActionListener(new ActionListener()
         {
