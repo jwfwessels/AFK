@@ -119,8 +119,10 @@ public class MenuPanel extends JPanel implements ActionListener
         lsSelectedModel = new DefaultListModel();
         
         pnlRobotError = new JPanel();
+        txtErrorConsole = new JTextField("sgirheujgsbdjvbij");
+        txtErrorConsole.setEditable(false);
         pnlRobotError.setLayout(new BorderLayout());
-        txtErrorConsole = new JTextField();
+        
     }
 
     private void addComponents()
