@@ -1,10 +1,12 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.AbstractEntity;
+import afk.ge.BBox;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.TargetableNode;
 import afk.ge.tokyo.ems.nodes.VisionNode;
 import static afk.gfx.GfxUtils.*;
@@ -36,10 +38,12 @@ public class VisionSystem implements ISystem
     {
         List<VisionNode> vnodes = engine.getNodeList(VisionNode.class);
         List<TargetableNode> tnodes = engine.getNodeList(TargetableNode.class);
+        List<CollisionNode> cnodes = engine.getNodeList(CollisionNode.class);
         
         for (VisionNode vnode : vnodes)
         {
             List<Float> thetas = new ArrayList<Float>();
+            targetloop:
             for (TargetableNode tnode : tnodes)
             {
                 if (tnode.entity == vnode.entity)
@@ -53,7 +57,22 @@ public class VisionSystem implements ISystem
                     );
                 
                 if (!Float.isNaN(theta))
+                {
+                    // stop tanks from targeting innocent walls
+                    for (CollisionNode cnode : cnodes)
+                    {
+                        // to stop tanks from blocking their own vision
+                        if (cnode.entity == vnode.entity || cnode.entity == tnode.entity) continue;
+
+                        BBox bbox = new BBox(cnode.state, cnode.bbox.extent);
+                        if (bbox.isLineInBox(vnode.state.pos, tnode.state.pos))
+                        {
+                            continue targetloop;
+                        }
+                    }
+                    
                     thetas.add(theta);
+                }
             }
             Controller controller = vnode.entity.get(Controller.class);
             if (controller != null)
@@ -66,7 +85,6 @@ public class VisionSystem implements ISystem
     @Override
     public void destroy()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**

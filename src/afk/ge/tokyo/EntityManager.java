@@ -61,7 +61,7 @@ public class EntityManager
     public static final int TANK_VDIST = 15;
     public static final int TANK_FOVY = 70;
     public static final int TANK_FOVX = 170;
-    int NUMCUBES = 5;
+    int NUMCUBES = 10;
     int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
     public ArrayList<TankEntity> entities;
     public ArrayList<TankEntity> obstacles;
