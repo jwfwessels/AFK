@@ -95,7 +95,7 @@ public class MenuPanel extends JPanel implements ActionListener
         lblAvailable = new JLabel("Available Bots");
 
         pnlBotSelButtons = new JPanel();
-        pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
+        //pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
 
         pnlSelected = new JPanel();
         lblSelected = new JLabel("Selected Bots");
@@ -122,7 +122,7 @@ public class MenuPanel extends JPanel implements ActionListener
         pnlRobotError = new JPanel();
         txtErrorConsole = new JTextArea("sgirheujgsbdjvbij");
         txtErrorConsole.setEditable(false);
-        //txtErrorConsole.setSize(txtErrorConsole.get);
+        txtErrorConsole.setForeground(Color.red);
         pnlRobotError.setLayout(new BorderLayout());
         
     }
@@ -169,11 +169,16 @@ public class MenuPanel extends JPanel implements ActionListener
     private void styleComponents()
     {
         // for testing
-        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
-        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
-        pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
+        //pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.RED));
+        //pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        //pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        //pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
+        pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        
         btnAddBot.addActionListener(new ActionListener()
         {
             @Override
@@ -354,8 +359,9 @@ public class MenuPanel extends JPanel implements ActionListener
                 hVal = (h / 5) * 4;
                 c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num1 += c.getSize().width;
+                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int)(hVal/ 7)));
+                pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal/12, wVal/3, wVal/12, wVal/3));
             }
-
 
             //pnlSelected
 
