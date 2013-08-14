@@ -5,6 +5,7 @@
 package afk.bot;
 
 import afk.bot.london.Robot;
+import afk.bot.london.RobotException;
 import afk.bot.london.RobotLoader;
 import java.util.ArrayList;
 
@@ -16,8 +17,8 @@ public abstract class RobotEngine
 {
     protected RobotLoader robotLoader;
     
-    public abstract Robot[] getRobotInstances();
-    public abstract void addRobot(String path);
+    public abstract Robot[] getRobotInstances() throws RobotException;
+    public abstract void addRobot(String path) throws RobotException;
     
     
 }

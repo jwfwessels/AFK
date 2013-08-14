@@ -26,7 +26,7 @@ public class RobotLoader extends ClassLoader
     private boolean robotExists;
     
     //Loads all necessary classes needed for the robot specified by path
-    public void AddRobot(String path)
+    public void AddRobot(String path) throws RobotException
     {
         if(path.endsWith(".class"))
         {
@@ -34,7 +34,7 @@ public class RobotLoader extends ClassLoader
             loadFromClass(path);
             if(!robotExists)
             {
-                //TODO: throw RobotException
+                throw new RobotException("???");
             }
         }
         else if(path.endsWith(".jar"))
@@ -43,16 +43,16 @@ public class RobotLoader extends ClassLoader
             loadJar(path);
             if(!robotExists)
             {
-                //TODO: throw RobotException
+                throw new RobotException("???");
             }
         }
         else
         {
-            // TODO: throw RobotException
+            throw new RobotException("???");
         }     
     }
     
-    private void loadFromClass(String path)
+    private void loadFromClass(String path) throws RobotException
     {
         InputStream in;
         File tempFile;
@@ -64,16 +64,12 @@ public class RobotLoader extends ClassLoader
         }
         catch(FileNotFoundException e)
         {
-            //TODO: throw RobotException
-            e.printStackTrace();
-            return;
+            throw new RobotException("???");
         }
         loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
     }
     
-    //Only loads class files in root directory at present
-    //private Robot loadFromJar(String path)
-    private void loadJar(String path)
+    private void loadJar(String path) throws RobotException
     {
         try
         {
@@ -98,19 +94,17 @@ public class RobotLoader extends ClassLoader
                     }
                     /*else if(je.getName().endsWith(".jar"))
                     {
-                        System.out.println("Jar" + je.getName());
                         //TODO: Load nested jars to allow use of libraries etc.
                     }*/
             }
         }
         catch(Exception e)
         {
-            e.printStackTrace();
-            //TODO: throw RobotException
+            throw new RobotException("???");
         }
     }
     
-    public void loadClass(InputStream in, String name)
+    public void loadClass(InputStream in, String name) throws RobotException
     {    
         if(!classMap.containsKey(name))
         {
@@ -121,8 +115,7 @@ public class RobotLoader extends ClassLoader
             }
             catch(Exception e)
             {
-                e.printStackTrace();
-                  //TODO: throw Robot Exception      
+                throw new RobotException("???");    
             }
             System.out.println(tempByteArray.toString());
             Class loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
@@ -141,7 +134,7 @@ public class RobotLoader extends ClassLoader
     }
     
     //Returns instances of robots that are in robotClasses - to be used when game is started
-    public Robot getRobotInstance(String name)
+    public Robot getRobotInstance(String name) throws RobotException
     {
         Class tempClass = robotMap.get(name);
         
@@ -153,8 +146,7 @@ public class RobotLoader extends ClassLoader
         }
         catch(Exception e)
         {
-            //TODO: throw RobotException
-            e.printStackTrace();
+            throw new RobotException("???");
         }
         
         return (Robot)obj;

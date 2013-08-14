@@ -20,22 +20,38 @@ public class London extends RobotEngine
     }
     
     @Override
-    public Robot[] getRobotInstances()
+    public Robot[] getRobotInstances() throws RobotException
     {
         Robot[] bots = new Robot[botNames.size()];
         for(int x = 0; x < botNames.size(); x++)
-        {
-            
-            bots[x] = robotLoader.getRobotInstance(botNames.get(x));
-            System.out.println("created bot: " + botNames.get(x));
+        { 
+            try
+            {
+                bots[x] = robotLoader.getRobotInstance(botNames.get(x));
+                System.out.println("created bot: " + botNames.get(x));
+            }
+            catch(RobotException e)
+            {
+                System.out.println("In London: " + e.getMessage());
+                  throw e;
+            }
         }
         return bots;
     }
     
     @Override
-    public void addRobot(String path)
+    public void addRobot(String path) throws RobotException
     {
-        robotLoader.AddRobot(path);
+        try
+        {
+            robotLoader.AddRobot(path);
+        }
+        catch(RobotException e)
+        {
+            //TODO: Error reporting
+            System.out.println("In London: " + e.getMessage());
+            throw e;
+        }
     }
     
     public void setParticipatingBots(ArrayList<String> _botNames)
