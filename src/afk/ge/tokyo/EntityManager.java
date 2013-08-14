@@ -267,14 +267,7 @@ public class EntityManager
         State state = pie.get(State.class);
         Velocity velocity = pie.get(Velocity.class);
         Lifetime lifetime = pie.get(Lifetime.class);
-        /// This was the problem as to why particles didnt display, but the fix is dirty
-        /// so the problem is htat gfx map pf renderable to gfx entity doesnt like that 
-        ///we are reusing renderables? or it removes the renderable and cant find it in the lookup?
-//        Renderable renderable = pie.get(Renderable.class);
-        pie.remove(Readable.class);
-        Renderable renderable = new Renderable("particle", Vec3.VEC3_ZERO);
-        pie.add(renderable);
-        ///
+        Renderable renderable = pie.get(Renderable.class);
 
         Vec3 pos = emitterState.pos;
         Vec3 rot = emitterState.rot;

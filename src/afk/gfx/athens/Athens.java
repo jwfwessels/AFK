@@ -273,6 +273,7 @@ public class Athens implements GraphicsEngine
         
         for (Renderable r : removed)
             entities.remove(r);
+        removed.clear();
 
         for (AthensEntity entity : entities.values())
             entity.update(delta);
