@@ -6,6 +6,7 @@ package afk.frontend.swing;
 
 import afk.bot.london.London;
 import afk.bot.london.Robot;
+import afk.bot.london.RobotException;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -213,17 +214,17 @@ public class MenuPanel extends JPanel implements ActionListener
 
                     String botPath = fileChooser.getSelectedFile().getAbsolutePath();
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
-                    //if (checkBots(botPath))
-                    //{
-                    botEngine.addRobot(botPath);
-                    botMap.put(botName, botPath);
-                    lsAvailableModel.addElement(botName);
-                    System.out.println("added to available" + botName);
-                    //} 
-                    //else
-                    //{
-                        //System.out.println("Error Loading Bots" + botEngine.getBotLoadingError());
-                    //}
+                    try
+                    {
+                        botEngine.addRobot(botPath);
+                        botMap.put(botName, botPath);
+                        lsAvailableModel.addElement(botName);
+                        System.out.println("added to available" + botName);
+                    }
+                    catch(RobotException ex)
+                    {
+                        System.out.println(":) In frontend: " + ex.getMessage());
+                    }
                 }
             }
         });
@@ -261,16 +262,6 @@ public class MenuPanel extends JPanel implements ActionListener
         }
         return bots;
     }
-
-   /* private boolean checkBots(String path)
-    {
-        Robot loadedBot = botEngine.loadBot(path);
-        if (loadedBot == null)
-        {
-            return false;
-        }
-        return true;
-    }*/
 
     @Override
     public void actionPerformed(ActionEvent e)

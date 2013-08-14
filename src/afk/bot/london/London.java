@@ -26,25 +26,41 @@ public class London extends RobotEngine
     }
     
     @Override
-    public Robot[] getRobotInstances()
+    public Robot[] getRobotInstances() throws RobotException
     {
         Robot[] bots = new Robot[botNames.size()];
         for(int x = 0; x < botNames.size(); x++)
         {
-            
-            bots[x] = robotLoader.getRobotInstance(botNames.get(x));
-            System.out.println("created bot: " + botNames.get(x));
-            
-            /// refactor
-            robots.put(bots[x].getId(), bots[x]);
+            try
+            {
+                bots[x] = robotLoader.getRobotInstance(botNames.get(x));
+                System.out.println("created bot: " + botNames.get(x));
+                
+                /// adding bot to 'robots' hashmap
+                robots.put(bots[x].getId(), bots[x]);
+            }
+            catch(RobotException e)
+            {
+                System.out.println("In London: " + e.getMessage());
+                  throw e;
+            }
         }
         return bots;
     }
     
     @Override
-    public void addRobot(String path)
+    public void addRobot(String path) throws RobotException
     {
-        robotLoader.addRobot(path);
+        try
+        {
+            robotLoader.addRobot(path);
+        }
+        catch(RobotException e)
+        {
+            //TODO: Error reporting
+            System.out.println("In London: " + e.getMessage());
+            throw e;
+        }
     }
     
     public void setParticipatingBots(ArrayList<String> _botNames)
@@ -52,7 +68,8 @@ public class London extends RobotEngine
         botNames = _botNames;
     }
     
-    /// refactor
+    /// this is where bot execution actually happens
+    // TODO: multithread this bad-boy
     @Override
     public void execute()
     {
@@ -66,7 +83,7 @@ public class London extends RobotEngine
         }
     }
     
-    // FIXME:
+    // FIXME: db thing...
     @Override
     public boolean[] getFlags(UUID id)
     {
