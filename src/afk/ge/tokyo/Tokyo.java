@@ -54,7 +54,7 @@ public class Tokyo extends GameEngine
 
         entityManager = new EntityManager(botEngine, engine);
         System.out.println("gfx" + gfxEngine.getFPS());
-        
+
         ///possible move somewhere else later///
         engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
         engine.addSystem(new TankControllerSystem(entityManager));
@@ -123,15 +123,12 @@ public class Tokyo extends GameEngine
     @Override
     protected void updateGame()
     {
-        entityManager.updateEntities(t, DELTA);
         engine.update(t, DELTA);
     }
 
     @Override
     protected void render(double alpha)
     {
-        entityManager.renderEntities(alpha);
-
         gfxEngine.redisplay();
     }
 

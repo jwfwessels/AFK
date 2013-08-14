@@ -79,7 +79,7 @@ public class ProjectileEntity extends AbstractEntity
         System.out.println(name + " life: " + life);
         if (Float.compare(life, 0) <= 0)
         {
-            entityManager.removeSubEntity(this);
+//            entityManager.removeSubEntity(this);
         }
     }
 
@@ -92,7 +92,7 @@ public class ProjectileEntity extends AbstractEntity
         RANGE -= dist;
         if (Float.compare(RANGE, 0) <= 0)
         {
-            entityManager.removeSubEntity(this);
+//            entityManager.removeSubEntity(this);
         }
     }
 }
