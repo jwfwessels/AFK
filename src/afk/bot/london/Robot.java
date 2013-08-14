@@ -5,6 +5,8 @@
 package afk.bot.london;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * @author Jessica
@@ -22,6 +24,10 @@ public abstract class Robot
     public static final int ATTACK_ACTION = 4;
     private boolean[] actionFlags;
     protected RobotEvent events;
+    
+    
+    /// refactor
+    private UUID id;
 
     /*
      * Abstract method that will be implemented by user
@@ -35,7 +41,15 @@ public abstract class Robot
     public Robot()
     {
         actionFlags = new boolean[NUM_ACTIONS];
-        events = new RobotEvent(new ArrayList<Float>(), false, false, false);
+        events = new RobotEvent();
+        
+        /// refactor
+        id = UUID.randomUUID();
+    }
+
+    public UUID getId()
+    {
+        return id;
     }
 
     private void setFlag(int index)
@@ -48,7 +62,7 @@ public abstract class Robot
 
     public boolean[] getActionFlags()
     {
-        return actionFlags.clone();
+        return Arrays.copyOf(actionFlags, actionFlags.length);
     }
 
     protected final void moveForward()
@@ -87,16 +101,6 @@ public abstract class Robot
         {
             actionFlags[x] = false;
         }
-    }
-
-    public boolean[] getBotInputs()
-    {
-        run();
-        boolean[] temp = getActionFlags();
-        boolean[] botFlags = new boolean[temp.length];
-        System.arraycopy(temp, 0, botFlags, 0, temp.length);
-        clearFlags();
-        return botFlags;
     }
 
     public void feedback(RobotEvent event)

@@ -6,7 +6,7 @@ package afk.ge;
 
 import afk.ge.tokyo.EntityManager;
 import afk.gfx.GfxEntity;
-import afk.gfx.athens.AthensEntity;
+import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -28,6 +28,7 @@ public abstract class AbstractEntity
     protected EntityState previous;
     protected float mass;
     protected float size;
+    protected Vec3 scale;
     protected EntityManager entityManager;
     protected float TOTAL_LIFE;
     protected float life;
@@ -51,7 +52,7 @@ public abstract class AbstractEntity
      * inner class used as a data structure to perform integration for entity
      * position updates.
      */
-    protected class Derivative
+    public static class Derivative
     {
 
         Vec3 velocity;
@@ -68,7 +69,7 @@ public abstract class AbstractEntity
     protected AbstractEntity(GfxEntity gfxEntity, EntityManager entityManager)
     {
         gfxPos = gfxEntity;
-        current = new EntityState(gfxPos.getPosition());
+        current = new EntityState(gfxPos.position);
         previous = new EntityState(current);
         this.entityManager = entityManager;
     }
@@ -128,7 +129,7 @@ public abstract class AbstractEntity
      * @param t
      * @param dt
      */
-    protected void integrate(EntityState state, float t, float dt)
+    public static void integrate(EntityState state, float t, float dt)
     {
         //        state.velocity = new Vec3(0.01f, 0, 0);
         Derivative a = evaluate(state, t, 0.0f, null);
@@ -154,7 +155,7 @@ public abstract class AbstractEntity
      * @param derivative
      * @return
      */
-    protected Derivative evaluate(EntityState state, float t, float dt, Derivative derivative)
+    public static Derivative evaluate(EntityState state, float t, float dt, Derivative derivative)
     {
         if (derivative != null)
         {
@@ -166,6 +167,7 @@ public abstract class AbstractEntity
         output.velocity = state.velocity;
         //        output.force = acceleration(state, t + dt);
         forces(state, t + dt, output);
+        
         //TODO
         //output.spin
         //output.force
@@ -179,9 +181,10 @@ public abstract class AbstractEntity
      * @param par
      * @param output
      */
-    protected void forces(EntityState state, float par, Derivative output)
+    public static void forces(EntityState state, float par, Derivative output)
     {
-        output.force = state.position.multiply(-10);
+        //output.force = state.position.multiply(-10);
+        output.force = Vec3.VEC3_ZERO;
     }
 
     /**
@@ -223,8 +226,8 @@ public abstract class AbstractEntity
     public void render(double alpha)
     {
         EntityState gfxState = interpolate(alpha);
-        gfxPos.setPosition(gfxState.position);
-        gfxPos.setRotation(gfxState.rotation);
+        gfxPos.position = (gfxState.position);
+        gfxPos.rotation = (gfxState.rotation);
     }
 
     /**
@@ -306,9 +309,9 @@ public abstract class AbstractEntity
             return Float.NaN;
         }
         Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, AthensEntity.X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, AthensEntity.Y_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, AthensEntity.Z_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, Y_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, Z_AXIS);
         Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
         Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
 

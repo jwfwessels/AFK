@@ -51,16 +51,21 @@ public class CircleBot extends LargeTank
             }
         } else
         {
-            moveForward();
+
             if (events.hitWall())
             {
                 if (antiBot)
                 {
+//                    moveBackwards();
                     turnAntiClockwise();
                 } else
                 {
+//                    moveBackwards();
                     turnClockwise();
                 }
+            } else
+            {
+                moveForward();
             }
         }
     }

@@ -41,6 +41,6 @@ public class EntityState
 
     protected void recalculate()
     {
-        velocity = momentum.multiply(inverseMass);
+        //velocity = momentum.multiply(inverseMass);
     }
 }

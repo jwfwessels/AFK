@@ -3,7 +3,7 @@ package afk.gfx.athens.particles;
 import afk.gfx.Camera;
 import afk.gfx.Resource;
 import afk.gfx.athens.AthensEntity;
-import afk.gfx.athens.AthensResource;
+import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -11,7 +11,6 @@ import com.hackoeur.jglm.Vec4;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 /**

@@ -4,13 +4,13 @@ import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
-import com.hackoeur.jglm.Matrices;
+import static com.hackoeur.jglm.Matrices.*;
 import com.hackoeur.jglm.Vec3;
-import com.hackoeur.jglm.Vec4;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import static afk.gfx.GfxUtils.*;
 
 /**
  *
@@ -18,9 +18,6 @@ import javax.media.opengl.GL2;
  */
 public class AthensEntity extends GfxEntity
 {
-    public static final Vec3 X_AXIS = new Vec3(1,0,0);
-    public static final Vec3 Y_AXIS = new Vec3(0,1,0);
-    public static final Vec3 Z_AXIS = new Vec3(0,0,1);
     
     protected Mesh mesh = null;
     protected Texture texture = null;
@@ -32,33 +29,34 @@ public class AthensEntity extends GfxEntity
     protected AthensEntity parent = null;
     
     protected Mat4 worldMatrix;
+    
+    protected boolean used = true;
 
     @Override
     public Vec3 getWorldPosition()
     {
-        Vec3 move = new Vec3(xMove,yMove,zMove);
         if (parent != null)
         {
-            move = parent.worldMatrix.multiply(move.toPoint()).getXYZ();
+            return parent.worldMatrix.multiply(position.toPoint()).getXYZ();
         }
-        return move;
+        return position;
     }
     
     protected Mat4 createWorldMatrix()
     {
         Mat4 monkeyWorld = new Mat4(1f);
 
-        monkeyWorld = Matrices.translate(monkeyWorld, getWorldPosition());
+        monkeyWorld = translate(monkeyWorld, getWorldPosition());
 
         Vec3 worldRot = getWorldRotation();
         
-        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
+        monkeyWorld = rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
         
-        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getX(), X_AXIS);
+        monkeyWorld = rotate(monkeyWorld, worldRot.getX(), X_AXIS);
 
-        monkeyWorld = Matrices.rotate(monkeyWorld, worldRot.getZ(), Z_AXIS);
+        monkeyWorld = rotate(monkeyWorld, worldRot.getZ(), Z_AXIS);
 
-        monkeyWorld = Matrices.scale(monkeyWorld, getWorldScale());
+        monkeyWorld = scale(monkeyWorld, getWorldScale());
         
         return monkeyWorld;
     }

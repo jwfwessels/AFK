@@ -15,6 +15,7 @@ public class RandomBot extends SmallTank
     int rotation = 0;
     boolean turning = true;
     private float thetaAngle;
+    boolean retaliating = false;
 
     public RandomBot()
     {
@@ -24,15 +25,15 @@ public class RandomBot extends SmallTank
     @Override
     public void run()
     {
+        float[] visibles = events.getVisibleBots();
         if (events.hitWall())
         {
-            movement = 200;
-            rotation = 180;
-            turning = true;
+            movement = 10;
+            rotation = 45;
+            if (retaliating) turning = !turning;
+            retaliating = !retaliating;
         }
-
-        float[] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+	if (visibles.length > 0)
         {
             thetaAngle = visibles[0];
             float diff = FastMath.abs(thetaAngle);
@@ -53,7 +54,11 @@ public class RandomBot extends SmallTank
                     thetaAngle--;
                 }
             }
-        } else if (turning)
+        } else if (retaliating)
+        {
+            retaliate();
+        }
+        else if (turning)
         {
             turn();
         } else
@@ -62,7 +67,7 @@ public class RandomBot extends SmallTank
         }
     }
 
-    public void turn()
+    private void turn()
     {
         if (rotation > 0)
         {
@@ -75,7 +80,7 @@ public class RandomBot extends SmallTank
         }
     }
 
-    public void move()
+    private void move()
     {
         if (movement > 0)
         {
@@ -85,6 +90,34 @@ public class RandomBot extends SmallTank
         {
             movement = (int) (Math.random() * 800);
             turning = true;
+        }
+    }
+    
+    private void retaliate()
+    {
+        if (turning)
+        {
+            if (rotation > 0)
+            {
+                turnClockwise();
+                rotation--;
+            } else
+            {
+                retaliating = false;
+                turning = !turning;
+            }
+        }
+        else
+        {
+            if (movement > 0)
+            {
+                moveBackwards();
+                movement--;
+            } else
+            {
+                retaliating = false;
+                turning = !turning;
+            }
         }
     }
 }

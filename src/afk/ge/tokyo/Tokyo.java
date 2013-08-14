@@ -7,8 +7,23 @@ package afk.ge.tokyo;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
+import afk.bot.london.RobotException;
+import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.systems.CollisionSystem;
+import afk.ge.tokyo.ems.systems.LifeSystem;
+import afk.ge.tokyo.ems.systems.LifetimeSystem;
+import afk.ge.tokyo.ems.systems.MovementSystem;
+import afk.ge.tokyo.ems.systems.ParticleSystem;
+import afk.ge.tokyo.ems.systems.ProjectileSystem;
+import afk.ge.tokyo.ems.systems.RenderSystem;
+import afk.ge.tokyo.ems.systems.RobotSystem;
+import afk.ge.tokyo.ems.systems.TankControllerSystem;
+import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,6 +33,7 @@ public class Tokyo extends GameEngine
 {
 
     EntityManager entityManager;
+    Engine engine;
     boolean running = true;
     private AtomicBoolean gameInProgress = new AtomicBoolean(false);
     public static final float BOARD_SIZE = 50;
@@ -33,24 +49,42 @@ public class Tokyo extends GameEngine
 
     public Tokyo(GraphicsEngine gfxEngine, London botEngine)
     {
+        engine = new Engine();
+
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
 
         this.gfxEngine = gfxEngine;
 
-        entityManager = new EntityManager(botEngine, gfxEngine);
+        entityManager = new EntityManager(botEngine, engine);
         System.out.println("gfx" + gfxEngine.getFPS());
+
+        ///possible move somewhere else later///
+        engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
+        engine.addSystem(new TankControllerSystem(entityManager));
+        engine.addSystem(new MovementSystem());
+        engine.addSystem(new ProjectileSystem(entityManager));
+        engine.addSystem(new LifeSystem());
+        engine.addSystem(new CollisionSystem());
+        engine.addSystem(new ParticleSystem(entityManager));
+        engine.addSystem(new LifetimeSystem(entityManager));
+        engine.addSystem(new VisionSystem());
+        engine.addSystem(new RenderSystem(gfxEngine));
+        ///
     }
 
     @Override
     public void run()
     {
-//        System.out.println("" + javax.swing.SwingUtilities.isEventDispatchThread());
-        entityManager.loadResources();
-        while (!entityManager.loaded.get())
-        { /* spin */ }
-
-        gameLoop();
+        // FIXME: move bot loading somewhere closer to the ui
+        try
+        {
+            loadBots();
+            gameLoop();
+        } catch (RobotException ex)
+        {
+            System.err.println("Robot loading error: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -68,7 +102,6 @@ public class Tokyo extends GameEngine
         { /* spin! */
 
         }
-        loadBots();
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
         int i = 0;
@@ -101,18 +134,16 @@ public class Tokyo extends GameEngine
     @Override
     protected void updateGame()
     {
-        entityManager.updateEntities(t, DELTA);
+        engine.update(t, DELTA);
     }
 
     @Override
     protected void render(double alpha)
     {
-        entityManager.renderEntities(alpha);
-
         gfxEngine.redisplay();
     }
 
-    private boolean loadBots()
+    private boolean loadBots() throws RobotException
     {
         entityManager.createBots();
         System.out.println("Botsloaded");

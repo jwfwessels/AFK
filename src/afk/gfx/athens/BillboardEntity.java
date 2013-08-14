@@ -58,7 +58,7 @@ public class BillboardEntity extends AthensEntity
                 roty,
                 new Vec3(0,1,0));
         
-        world = Matrices.scale(world, getScale());
+        world = Matrices.scale(world, getWorldScale());
         
         return world;
     }

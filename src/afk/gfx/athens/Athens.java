@@ -1,11 +1,10 @@
 package afk.gfx.athens;
 
+import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
-import afk.gfx.Resource;
-import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.*;
 import com.jogamp.opengl.util.Animator;
 import java.awt.Component;
@@ -13,13 +12,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -29,6 +23,9 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JLabel;
 import static afk.gfx.GfxUtils.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * OpenGL 2.0 Implementation of the AFK Graphics Engine.
@@ -37,19 +34,11 @@ import static afk.gfx.GfxUtils.*;
  */
 public class Athens implements GraphicsEngine
 {
-
-    // loading queues
-    protected Queue<AthensResource> loadQueue = new LinkedList<AthensResource>();
-    protected Queue<AthensResource> unloadQueue = new LinkedList<AthensResource>();
-    // this gets called when loading is done
-    private Runnable onLoadCallback;
     protected Collection<GfxListener> listeners = new ArrayList<GfxListener>();
-    // resources
-    private Map<String, AthensResource>[] resources = new Map[Resource.NUM_RESOURCE_TYPES];
-    // the scene's root entity
-    private AthensEntity rootEntity;
-    // flag indicating that the load queue has been dispatched
-    private boolean loadQueueDispatched = false;
+    protected ResourceManager resourceManager;
+    protected TypeFactory typeFactory;
+    protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
+    protected List<Renderable> removed = new ArrayList<Renderable>();
     private int w_width, w_height;
     private float aspect;
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
@@ -78,11 +67,9 @@ public class Athens implements GraphicsEngine
 
     public Athens(boolean autodraw)
     {
-        for (int i = 0; i < resources.length; i++)
-        {
-            resources[i] = new HashMap<String, AthensResource>();
-        }
-
+        resourceManager = new ResourceManager();
+        typeFactory = new TypeFactory(resourceManager);
+        
         glProfile = GLProfile.getDefault();
 
         glCaps = new GLCapabilities(glProfile);
@@ -181,8 +168,6 @@ public class Athens implements GraphicsEngine
             animator.start();
         }
 
-        rootEntity = new AthensEntity();
-
     }
 
     @Override
@@ -217,15 +202,7 @@ public class Athens implements GraphicsEngine
 
     private void dispose(GL2 gl)
     {
-        for (int i = 0; i < resources.length; i++)
-        {
-            for (Map.Entry<String, AthensResource> entry : resources[i].entrySet())
-            {
-                AthensResource resource = entry.getValue();
-                System.out.println("Unloading " + resource);
-                resource.unload(gl);
-            }
-        }
+        resourceManager.dispose(gl);
     }
 
     private void display(GL2 gl)
@@ -237,73 +214,23 @@ public class Athens implements GraphicsEngine
         time += delta;
         lastFPS += delta;
 
-//        int counter = 0;
-//        float tempFps = 0.0f;
-//        float avgFps = 0.0f;
-        fps = (1.0f / delta);
-//        if (counter < 60)
-//        {
-//            counter++;
-//            tempFps += fps;
-//        } else
-//        {
-//            avgFps = tempFps / 60;
-//            tempFps = 0.0f;
-//            counter = 0;
-//        }
-        fpsComp.setText(String.format("FPS: %.0f", fps));
-        // TODO: move loading into a loading state rather.
-        // This should allow for loading progress bars and such.
-        // just put it here for now.
-        if (loadQueueDispatched)
+        if (lastFPS >= fpsInterval)
         {
-            loadResources(gl);
-
-            loadQueueDispatched = false;
-
-            // notify caller that load is complete
-            onLoadCallback.run();
-        } else
-        {
-            update(delta);
-
-            for (GfxListener l : listeners)
-            {
-                l.update(delta);
-            }
-
-            render(gl);
+            fps = (1.0f / delta);
+            fpsComp.setText(String.format("FPS: %.0f", fps));
+            lastFPS = 0;
         }
+        
+        resourceManager.update(gl);
+        update(delta);
+
+        for (GfxListener l : listeners)
+        {
+            l.update(delta);
+        }
+
+        render(gl);
         frameCount++;
-    }
-
-    // helper function to load/unload all necessary/unnecessary resources
-    private void loadResources(GL2 gl)
-    {
-
-        // unload resources in unload queue
-        while (!unloadQueue.isEmpty())
-        {
-            AthensResource resource = unloadQueue.poll();
-            System.out.println("Unloading " + resource);
-
-            resources[resource.getType()].remove(resource.getName()).unload(gl);
-        }
-
-        // load resources in load queue
-        while (!loadQueue.isEmpty())
-        {
-            AthensResource resource = loadQueue.poll();
-            System.out.println("Loading " + resource);
-            try
-            {
-                resource.load(gl);
-                resources[resource.getType()].put(resource.getName(), resource);
-            } catch (IOException ex)
-            {
-                System.err.println("Unable to load " + resource + ": " + ex.getMessage());
-            }
-        }
     }
 
     private void update(float delta)
@@ -343,8 +270,13 @@ public class Athens implements GraphicsEngine
         }
 
         updateView();
+        
+        for (Renderable r : removed)
+            entities.remove(r);
+        removed.clear();
 
-        rootEntity.update(delta);
+        for (AthensEntity entity : entities.values())
+            entity.update(delta);
     }
 
     private void render(GL2 gl)
@@ -358,7 +290,10 @@ public class Athens implements GraphicsEngine
 
     private void renderScene(GL2 gl, Camera cam)
     {
-        rootEntity.draw(gl, camera, sun);
+        for (AthensEntity entity : entities.values())
+        {
+            entity.draw(gl, camera, sun);
+        }
     }
 
     private void init(GL2 gl)
@@ -371,7 +306,7 @@ public class Athens implements GraphicsEngine
 
         // set background colour to white
         // TODO: allow this to be set through an interface
-        gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        gl.glClearColor(87.0f/256.0f, 220.0f/256.0f, 225.0f/256.0f, 0.0f);
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
@@ -494,120 +429,6 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
-    public Resource loadResource(int type, String name)
-    {
-        if (loadQueueDispatched)
-        {
-            // TODO: throw something about already dispatching a load queue
-            return null;
-        }
-
-        AthensResource resource = resources[type].get(name);
-
-        // don't bother loading something that's already loaded
-        if (resource != null)
-        {
-            return resource;
-        }
-
-        resource = AthensResource.create(type, name);
-
-        if (!unloadQueue.remove(resource))
-        {
-            loadQueue.add(resource);
-        }
-
-        return resource;
-    }
-
-    @Override
-    public void unloadResource(Resource resource)
-    {
-        if (loadQueueDispatched)
-        {
-            // TODO: throw something about already dispatching a load queue
-            return;
-        }
-
-        // can't unload resource that isn't loaded
-        if (!resources[resource.getType()].containsKey(resource.getName()))
-        {
-            return;
-        }
-
-        if (!loadQueue.remove((AthensResource) resource))
-        {
-            unloadQueue.add((AthensResource) resource);
-        }
-    }
-
-    @Override
-    public void unloadEverything()
-    {
-        if (loadQueueDispatched)
-        {
-            // TODO: throw something about already dispatching a load queue
-            return;
-        }
-
-        loadQueue.clear();
-
-        // add every single loaded resource to unload queue
-        for (int i = 0; i < resources.length; i++)
-        {
-            for (Map.Entry<String, AthensResource> entry : resources[i].entrySet())
-            {
-                unloadQueue.add(entry.getValue());
-            }
-        }
-    }
-
-    @Override
-    public GfxEntity createEntity(int behaviour)
-    {
-        // TODO: research possible performance hit is we use Class.newInstance() instead of using ints
-
-        AthensEntity entity;
-        switch (behaviour)
-        {
-            case GfxEntity.NORMAL:
-                entity = new AthensEntity();
-                break;
-            case GfxEntity.BILLBOARD_SPHERICAL:
-                entity = new BillboardEntity(true);
-                break;
-            case GfxEntity.BILLBOARD_CYLINDRICAL:
-                entity = new BillboardEntity(false);
-                break;
-            case GfxEntity.PARTICLE_EMITTER:
-                entity = new ParticleEmitter();
-                break;
-            default:
-                // TODO: throw new InvalidEntityBehaviourException();
-                return null;
-        }
-
-        return entity;
-    }
-
-    @Override
-    public void dispatchLoadQueue(Runnable callback)
-    {
-        if (loadQueue == null || loadQueue.isEmpty())
-        {
-            // TODO: throw something
-        }
-        loadQueueDispatched = true;
-        onLoadCallback = callback;
-    }
-
-    @Override
-    public GfxEntity getRootEntity()
-    {
-        return rootEntity;
-    }
-
-    @Override
     public float getFPS()
     {
         return fps;
@@ -618,4 +439,36 @@ public class Athens implements GraphicsEngine
     {
         fpsComp = (JLabel) comp;
     }
+
+    @Override
+    public void prime()
+    {
+        for (AthensEntity entity : entities.values())
+        {
+            entity.used = false;
+        }
+    }
+
+    @Override
+    public GfxEntity getGfxEntity(Renderable renderable)
+    {
+        AthensEntity entity = entities.get(renderable);
+        if (entity == null)
+        {
+            entity = typeFactory.createInstance(renderable.type);
+            entities.put(renderable, entity);
+        }
+        entity.used = true;
+        return entity;
+    }
+
+    @Override
+    public void post()
+    {
+        for (Map.Entry<Renderable, AthensEntity> e : entities.entrySet())
+        {
+            if (!e.getValue().used) removed.add(e.getKey());
+        }
+    }
+    
 }

@@ -67,7 +67,7 @@ public class ProjectileEntity extends AbstractEntity
                 hit(DAMAGE);
 
                 // TODO: possible create explosion at the /exact/ location of impact?
-                entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0.75f, 0)), this.parent, 0);
+//                entityManager.makeExplosion(this.current.position.add(new Vec3(0, 0.75f, 0)), this.parent, 0);
             }
         }
     }
@@ -79,7 +79,7 @@ public class ProjectileEntity extends AbstractEntity
         System.out.println(name + " life: " + life);
         if (Float.compare(life, 0) <= 0)
         {
-            entityManager.RomoveSubEntity(this);
+//            entityManager.removeSubEntity(this);
         }
     }
 
@@ -92,7 +92,7 @@ public class ProjectileEntity extends AbstractEntity
         RANGE -= dist;
         if (Float.compare(RANGE, 0) <= 0)
         {
-            entityManager.RomoveSubEntity(this);
+//            entityManager.removeSubEntity(this);
         }
     }
 }

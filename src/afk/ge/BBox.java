@@ -1,14 +1,17 @@
 package afk.ge;
 
+import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import static com.hackoeur.jglm.support.FastMath.*;
+import static com.hackoeur.jglm.Matrices.*;
+import static afk.gfx.GfxUtils.*;
 
 /**
- * Oriented Bounding Box. Stored as a matrix (without scaling)
- * and Extents( x, y, z ).
- * 
+ * Oriented Bounding Box. Stored as a matrix (without scaling) and Extents( x,
+ * y, z ).
+ *
  * Ported to java from this article:
  * http://www.3dkingdoms.com/weekly/weekly.php?a=21
  *
@@ -19,30 +22,59 @@ public class BBox
 
     private Mat4 m;
     private Vec3 extents;
-    
-    BBox() {}
-    BBox( final Mat4 m, final Vec3 extents ) 
-            { set( m, extents );	}
-    /** BL = Low values corner point, BH = High values corner point. */
-    BBox( final Mat4 m, final Vec3 bl, final Vec3 bh ) 
-            { set( m, bl, bh );	}
 
-    public final void set( final Mat4 m, final Vec3 extents )
+    public BBox()
+    {
+    }
+
+    public BBox(final Mat4 m, final Vec3 extents)
+    {
+        set(m, extents);
+    }
+
+    /**
+     * BL = Low values corner point, BH = High values corner point.
+     */
+    public BBox(final Mat4 m, final Vec3 bl, final Vec3 bh)
+    {
+        set(m, bl, bh);
+    }
+    
+    public BBox(State state, Vec3 extents)
+    {
+        m = new Mat4(1);
+        
+        m = translate(m, state.pos.add(new Vec3(0,extents.getY(),0)));
+
+        m = rotate(m, state.rot.getY(), Y_AXIS);
+        m = rotate(m, state.rot.getX(), X_AXIS);
+        m = rotate(m, state.rot.getZ(), Z_AXIS);
+        
+        this.extents = extents;
+    }
+
+    public final void set(final Mat4 m, final Vec3 extents)
     {
         this.m = m;
         this.extents = extents;
-    }	
-    public final void set( final Mat4 m, final Vec3 bl, final Vec3 bh )
-    {
-     this.m = m;
-     this.m.translate((bh.add(bl)).multiply(0.5f));
-     extents = (bh.subtract(bl)).multiply(0.5f);
     }
 
-    public Vec3 getSize() 
-            { return extents.multiply(2.0f); }
-    public Vec3 getCenterPoint() 
-            { return m.getTranslate(); }
+    public final void set(final Mat4 m, final Vec3 bl, final Vec3 bh)
+    {
+        this.m = m;
+        this.m.translate((bh.add(bl)).multiply(0.5f));
+        extents = (bh.subtract(bl)).multiply(0.5f);
+    }
+
+    public Vec3 getSize()
+    {
+        return extents.multiply(2.0f);
+    }
+
+    public Vec3 getCenterPoint()
+    {
+        return m.getTranslate();
+    }
 
     /**
      * Check if a point is in this bounding box.
@@ -96,6 +128,7 @@ public class BBox
     /**
      * Check if the bounding box is completely behind a plane (defined by a
      * normal and a point).
+     *
      * @param inNorm the normal of the plane.
      * @param inP a point on the plane.
      * @return true if the box is completely behind a plane, false otherwise.
@@ -119,14 +152,15 @@ public class BBox
 
     /**
      * Does the Line (l1, l2) intersect the Box?
+     *
      * @param l1 first point of line segment.
      * @param l2 second point of line segment.
      * @return true if line (l1, l2) intersects the box.
      */
-    public boolean isLineInBox(final Vec3 l1, final Vec3 l2 )
-{	
-	// Put line in box space
-	Mat4 mInv = m.invertSimple();
+    public boolean isLineInBox(final Vec3 l1, final Vec3 l2)
+    {
+        // Put line in box space
+        Mat4 mInv = m.invertSimple();
         Vec4 lb1 = mInv.multiply(l1.toPoint());
         Vec4 lb2 = mInv.multiply(l2.toPoint());
 
@@ -144,7 +178,7 @@ public class BBox
                 return false;
             }
         }
-        
+
         // Crossproducts of line and each axis
         if ((abs(lMid.getY() * l.getZ()) - lMid.getZ() * l.getY()) > (extents.getY() * lExt.getZ() + extents.getZ() * lExt.getY()))
         {
@@ -161,30 +195,36 @@ public class BBox
         // No separating axis, the line intersects
         return true;
     }
-    
+
     /**
      * Returns a 3x3 rotation matrix as vectors.
+     *
      * @retrun an array of vectors containing the rotation part of the matrix.
      */
     Vec3[] getInvRot()
     {
         Vec3[] pvRot = new Vec3[3];
-	pvRot[0] = m.<Vec4>getColumn(0).getXYZ();
+        pvRot[0] = m.<Vec4>getColumn(0).getXYZ();
         pvRot[1] = m.<Vec4>getColumn(1).getXYZ();
         pvRot[2] = m.<Vec4>getColumn(2).getXYZ();
         return pvRot;
     }
 
     /**
-     * Check if any part of a box is inside any part of another box.
-     * Uses the separating axis test.
+     * Check if any part of a box is inside any part of another box. Uses the
+     * separating axis test.
+     *
      * @param BBox the other box to check.
      * @return true if any part of the given box is inside this box.
      */
-    boolean isBoxInBox(BBox BBox )
+    public boolean isBoxInBox(BBox BBox)
     {
-	Vec3 sizeA = extents;
+        Vec3 sizeA = extents;
         Vec3 sizeB = BBox.extents;
+//        System.out.println("sizeA: " + sizeA);
+//        System.out.println("mA: " + m);
+//        System.out.println("sizeB: " + sizeB);
+//        System.out.println("mB: " + BBox.m);
         Vec3[] rotA, rotB;
         rotA = getInvRot();
         rotB = BBox.getInvRot();
@@ -210,18 +250,20 @@ public class BBox
         Vec3 vSepA = new Vec3(
                 vSepWS.dot(rotA[0]),
                 vSepWS.dot(rotA[1]),
-                vSepWS.dot(rotA[2])
-            );
+                vSepWS.dot(rotA[2]));
 
-     // Test if any of A's basis vectors separate the box
-        for( i = 0; i < 3; i++ )
-	{
-		extentA = sizeA.get(i);
-		extentB = sizeB.dot( new Vec3( ar[i][0], ar[i][1], ar[i][2] ) );
-		separation = abs( vSepA.get(i) );
+        // Test if any of A's basis vectors separate the box
+        for (i = 0; i < 3; i++)
+        {
+            extentA = sizeA.get(i);
+            extentB = sizeB.dot(new Vec3(ar[i][0], ar[i][1], ar[i][2]));
+            separation = abs(vSepA.get(i));
 
-		if( separation > extentA + extentB ) return false;
-	}
+            if (separation > extentA + extentB)
+            {
+                return false;
+            }
+        }
 
         // Test if any of B's basis vectors separate the box
         for (k = 0; k < 3; k++)

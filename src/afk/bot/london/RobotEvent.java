@@ -5,6 +5,7 @@
 package afk.bot.london;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,18 +15,26 @@ public class RobotEvent
 {
     
     /** List of visible bots as angles from where tank is facing. Empty if there are none. */
-    protected ArrayList<Float> visibleBots;
+    public List<Float> visibleBots;
     
     /** True if bot was hit by another. */
-    protected boolean gotHit; // TODO: change to reflect where hit came from
+    public boolean gotHit; // TODO: change to reflect where hit came from
     
     /** True if bot successfully hit another. */
-    protected boolean didHit;
+    public boolean didHit;
     
     /** true if bot drove into a wall. */
-    protected boolean hitWall;
+    public boolean hitWall;
 
-    public RobotEvent(ArrayList<Float> visibleBots, boolean gotHit, boolean didHit, boolean hitWall)
+    public RobotEvent()
+    {
+        visibleBots = new ArrayList<Float>();
+        gotHit = false;
+        didHit = false;
+        hitWall = false;
+    }
+
+    public RobotEvent(List<Float> visibleBots, boolean gotHit, boolean didHit, boolean hitWall)
     {
         this.visibleBots = visibleBots;
         this.gotHit = gotHit;

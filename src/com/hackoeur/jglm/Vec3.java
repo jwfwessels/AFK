@@ -38,6 +38,11 @@ public final class Vec3 extends AbstractVec {
 		this.y = y;
 		this.z = z;
 	}
+        
+        public Vec3(final float v)
+        {
+            this.x = this.y = this.z = v;
+        }
 	
 	public Vec3(final Vec3 vec) {
 		this.x = vec.x;
