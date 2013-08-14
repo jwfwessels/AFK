@@ -32,19 +32,21 @@ public class RobotLoader extends ClassLoader
             loadFromClass(path);
             if (!robotExists)
             {
-                throw new RobotException("???");
+                throw new RobotException(path + " is not a valid Robot class");
             }
-        } else if (path.endsWith(".jar"))
+        }
+        else if (path.endsWith(".jar"))
         {
             robotExists = false;
             loadJar(path);
             if (!robotExists)
             {
-                throw new RobotException("???");
+                throw new RobotException("No robot found. " + path + " must contain a class implementing Robot");
             }
-        } else
+        }
+        else
         {
-            throw new RobotException("???");
+            throw new RobotException(path + "Is not a valid file format");
         }
     }
 
@@ -57,9 +59,10 @@ public class RobotLoader extends ClassLoader
             tempFile = new File(path);
             in = new FileInputStream(tempFile);
             tempByteArray = new byte[(int) tempFile.length()];
-        } catch (FileNotFoundException e)
+        }
+        catch (FileNotFoundException e)
         {
-            throw new RobotException("???");
+            throw new RobotException("Could not fine file " + path);
         }
         loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
     }
@@ -75,11 +78,11 @@ public class RobotLoader extends ClassLoader
             {
                 JarEntry je = (JarEntry) e.nextElement();
                 tempByteArray = new byte[(int) je.getSize()];
-                System.out.println("Jar Entry :)" + je.getName());
                 if (je.isDirectory())
                 {
                     continue;
-                } else if (je.getName().endsWith(".class"))
+                } 
+                else if (je.getName().endsWith(".class"))
                 {
                     //TODO: Check for multiple Robot classes within a jar - report on this or only use the first one found - prevent cheating
                     InputStream in = jarFile.getInputStream(je);
@@ -91,9 +94,10 @@ public class RobotLoader extends ClassLoader
                  //TODO: Load nested jars to allow use of libraries etc.
                  }*/
             }
-        } catch (Exception e)
+        } 
+        catch (Exception e)
         {
-            throw new RobotException("???");
+            throw new RobotException("An error ocurred while loading jar file " + path);
         }
     }
 
@@ -135,9 +139,10 @@ public class RobotLoader extends ClassLoader
         {
             obj = (tempClass.getDeclaredConstructor().newInstance());
             System.out.println("obj: " + obj.toString());
-        } catch (Exception e)
+        } 
+        catch (Exception e)
         {
-            throw new RobotException("???");
+            throw new RobotException("Failed to create instance of " + name);
         }
 
         return (Robot) obj;

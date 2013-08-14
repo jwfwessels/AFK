@@ -120,7 +120,7 @@ public class MenuPanel extends JPanel implements ActionListener
         lsSelectedModel = new DefaultListModel();
         
         pnlRobotError = new JPanel();
-        txtErrorConsole = new JTextArea("sgirheujgsbdjvbij");
+        txtErrorConsole = new JTextArea();
         txtErrorConsole.setEditable(false);
         txtErrorConsole.setForeground(Color.red);
         pnlRobotError.setLayout(new BorderLayout());
