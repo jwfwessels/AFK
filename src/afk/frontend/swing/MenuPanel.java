@@ -235,8 +235,6 @@ public class MenuPanel extends JPanel implements ActionListener
                 int option = fileChooser.showOpenDialog(parent.getContentPane());
                 if (option == JFileChooser.APPROVE_OPTION)
                 {
-                    System.out.println("file opened!");
-
                     String botPath = fileChooser.getSelectedFile().getAbsolutePath();
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
                     try
@@ -244,11 +242,10 @@ public class MenuPanel extends JPanel implements ActionListener
                         botEngine.addRobot(botPath);
                         botMap.put(botName, botPath);
                         lsAvailableModel.addElement(botName);
-                        System.out.println("added to available" + botName);
                     }
                     catch(RobotException ex)
                     {
-                        System.out.println(":) In frontend: " + ex.getMessage());
+                        txtErrorConsole.setText("Error: " + ex.getMessage());
                     }
                 }
             }
@@ -344,7 +341,7 @@ public class MenuPanel extends JPanel implements ActionListener
             if (c.isVisible())
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-                hVal = ((h / 5) * 4);
+                hVal = ((h / 8) * 7);
                 c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num1 += c.getSize().width;
             }
@@ -356,7 +353,7 @@ public class MenuPanel extends JPanel implements ActionListener
             if (c.isVisible())
             {
                 wVal = (w) >= 300 ? (w / 3) : 100;
-                hVal = (h / 5) * 4;
+                hVal = (h / 8) * 7;
                 c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num1 += c.getSize().width;
                 pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int)(hVal/ 7)));
@@ -369,7 +366,7 @@ public class MenuPanel extends JPanel implements ActionListener
             if (c.isVisible())
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-                hVal = (h / 5) * 4;
+                hVal = (h / 8) * 7;
                 c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num2 += c.getSize().height;
             }
@@ -380,7 +377,7 @@ public class MenuPanel extends JPanel implements ActionListener
             c = parent.getComponent(3);
             if(c.isVisible())
             {           
-                hVal = h / 5;
+                hVal = h / 8;
                 wVal = w;
                 c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
             }       

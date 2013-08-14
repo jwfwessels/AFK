@@ -34,15 +34,13 @@ public class London extends RobotEngine
             try
             {
                 bots[x] = robotLoader.getRobotInstance(botNames.get(x));
-                System.out.println("created bot: " + botNames.get(x));
                 
                 /// adding bot to 'robots' hashmap
                 robots.put(bots[x].getId(), bots[x]);
             }
             catch(RobotException e)
             {
-                System.out.println("In London: " + e.getMessage());
-                  throw e;
+                throw e;
             }
         }
         return bots;
@@ -58,7 +56,6 @@ public class London extends RobotEngine
         catch(RobotException e)
         {
             //TODO: Error reporting
-            System.out.println("In London: " + e.getMessage());
             throw e;
         }
     }
