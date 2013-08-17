@@ -21,7 +21,8 @@ public class RobotConfigPanel extends JPanel
     
     public RobotConfigPanel(RootWindow _root)
     {
-        root = _root;        
+        root = _root;   
+        setup();
     }
     
     public void initComponents()
