@@ -35,7 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  * @author Jw
  */
-public class MenuPanel extends JPanel implements ActionListener
+public class MenuPanel extends JPanel //implements ActionListener
 {
 // TODO; define components + parent ref
 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
@@ -276,13 +276,13 @@ public class MenuPanel extends JPanel implements ActionListener
         return bots;
     }
 
-    @Override
+    /*@Override
     public void actionPerformed(ActionEvent e)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
 
-    }
+    }*/
 
     class MenuPanel_Layout implements LayoutManager
     {
