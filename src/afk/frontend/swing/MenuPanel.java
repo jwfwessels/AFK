@@ -33,7 +33,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author Jw
+ * @author Jessica
  */
 public class MenuPanel extends JPanel //implements ActionListener
 {
@@ -276,19 +276,11 @@ public class MenuPanel extends JPanel //implements ActionListener
         return bots;
     }
 
-    /*@Override
-    public void actionPerformed(ActionEvent e)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
-
-    }*/
-
     class MenuPanel_Layout implements LayoutManager
     {
 
-        int panelWidth = 1280;
-        int panelHeight = 786;
+        int panelWidth = 800;
+        int panelHeight = 600;
 
         @Override
         public void addLayoutComponent(String name, Component comp)
@@ -316,7 +308,7 @@ public class MenuPanel extends JPanel //implements ActionListener
         @Override
         public Dimension minimumLayoutSize(Container parent)
         {
-            Dimension dim = new Dimension(0, 0);
+            Dimension dim = new Dimension(600, 800);
             return dim;
         }
 

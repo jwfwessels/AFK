@@ -49,6 +49,8 @@ public class RootWindow extends JFrame implements ActionListener
 
     public RootWindow()
     {
+        super();
+        this.setBounds(0, 0, 100, 100);
         LayoutManager layout = new RootWindow_Layout(this);
         this.setLayout(layout);
 
@@ -57,7 +59,6 @@ public class RootWindow extends JFrame implements ActionListener
 
         contentPane = new JPanel();
         contentPane.setLayout(new CardLayout());
-//        contentPane.setSize(1280, 786);
         this.setContentPane(contentPane);
 
         initComponents();
@@ -86,7 +87,9 @@ public class RootWindow extends JFrame implements ActionListener
         {
             menuPanel = new MenuPanel(this);
             menuPanel.setup();
-        } catch (Exception e)
+  
+        } 
+        catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Intitializing components for rootWindow failed:\n" + e);
         }
@@ -94,11 +97,13 @@ public class RootWindow extends JFrame implements ActionListener
 
     private void addComponents()
     {
-
+        RobotConfigPanel pan = new RobotConfigPanel(this);
         try
         {
-            contentPane.add(menuPanel);
-        } catch (Exception e)
+            //contentPane.add(menuPanel);
+            contentPane.add(pan);
+        } 
+        catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Adding components to rootWindow failed:\n" + e);
         }
@@ -110,7 +115,8 @@ public class RootWindow extends JFrame implements ActionListener
         {
             Container c = this.getContentPane();
             c.removeAll();
-        } catch (Exception err)
+        } 
+        catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Removing components from rootWindow failed:\n" + err);
         }
@@ -121,7 +127,8 @@ public class RootWindow extends JFrame implements ActionListener
         try
         {
 //            this.getContentPane().setBackground(Color.BLUE);
-        } catch (Exception err)
+        } 
+        catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);
         }

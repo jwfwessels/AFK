@@ -93,8 +93,8 @@ public class GamePanel extends JPanel implements ActionListener
     class GamePanel_Layout implements LayoutManager
     {
 
-        int panelWidth = 1280;
-        int panelHeight = 786;
+        int panelWidth = 800;
+        int panelHeight = 600;
         int w = 0;
         int h = 0;
 

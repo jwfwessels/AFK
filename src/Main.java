@@ -7,8 +7,8 @@ import afk.ge.tokyo.Tokyo;
 public class Main
 {
 
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 768;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
     public static final String TITLE = "AFK Arena";
     public static final float TANK_ANGULAR_VELOCITY = 30.0f;
     public static final int TANK_VELOCITY = 5;
@@ -19,6 +19,8 @@ public class Main
     {
 //        renderer = GraphicsEngine.createInstance(false);
 //        engine = new Tokyo(renderer);
+        
+        
         RootWindow window = new RootWindow();
         window.start();
     }

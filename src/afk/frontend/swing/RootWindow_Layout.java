@@ -11,19 +11,19 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 
 /**
- *
+ * 
  * @author Jw
  */
 public class RootWindow_Layout implements LayoutManager
 {
-
-    int panelWidth = 1280;
-    int panelHeight = 786;
-    int panelWidthMin = 640;
-    int panelHeightMax = 480;
+    int panelWidth = 800;
+    int panelHeight = 600;
+    int panelWidthMin = 800;
+    int panelHeightMax = 600;
 
     public RootWindow_Layout(Container parent)
     {
+        
         //set window dimention constraints
 //        parent.setPreferredSize(new Dimension(panelWidth, panelHeight));
 //        parent.setMinimumSize(new Dimension(640, 480));
@@ -42,7 +42,7 @@ public class RootWindow_Layout implements LayoutManager
     @Override
     public Dimension preferredLayoutSize(Container parent)
     {
-        Dimension dim = new Dimension(0, 0);
+        Dimension dim = new Dimension(800, 600);
 
         Insets insets = parent.getInsets();
         dim.width = 0 + insets.left + insets.right;
@@ -54,7 +54,7 @@ public class RootWindow_Layout implements LayoutManager
     @Override
     public Dimension minimumLayoutSize(Container parent)
     {
-        Dimension dim = new Dimension(640, 480);
+        Dimension dim = new Dimension(800, 600);
         return dim;
     }
 
