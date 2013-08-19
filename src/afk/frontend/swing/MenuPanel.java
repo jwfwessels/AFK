@@ -7,6 +7,7 @@ package afk.frontend.swing;
 import afk.bot.london.London;
 import afk.bot.london.Robot;
 import afk.bot.london.RobotException;
+import java.awt.AWTEventMulticaster;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -15,8 +16,11 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,9 +30,13 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -57,6 +65,9 @@ public class MenuPanel extends JPanel //implements ActionListener
     JButton btnStartMatch;
     JButton btnLoadBot;
     
+    JPopupMenu configMenu;
+    JMenuItem configMenuItem;
+    
     JTextArea txtErrorConsole;
     
     private HashMap<String, String> botMap;
@@ -65,6 +76,7 @@ public class MenuPanel extends JPanel //implements ActionListener
     private JList<String> lstSelectedBots;
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<String> lsSelectedModel;
+    private Point p;
     private London botEngine;
 
     public MenuPanel(RootWindow parent)
@@ -125,6 +137,8 @@ public class MenuPanel extends JPanel //implements ActionListener
         txtErrorConsole.setForeground(Color.red);
         pnlRobotError.setLayout(new BorderLayout());
         
+        configMenu = new JPopupMenu();
+        configMenuItem = new JMenuItem("Configure");
     }
 
     private void addComponents()
@@ -158,7 +172,10 @@ public class MenuPanel extends JPanel //implements ActionListener
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
         
         pnlRobotError.add(txtErrorConsole);
-
+        
+        configMenu.add(configMenuItem);
+        configMenuItem.setHorizontalTextPosition(JMenuItem.RIGHT);
+        
     }
 
 //    private void removeComponents()
@@ -263,6 +280,23 @@ public class MenuPanel extends JPanel //implements ActionListener
 
             }
         });
+        
+        configMenuItem.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent event) 
+            {
+                System.out.println("Menu option clicked");
+                int item = lstSelectedBots.locationToIndex(p);
+                System.out.println(item + ": " + lsSelectedModel.get(item));
+                parent.showConfigPanel();
+                
+            }
+        });
+        
+        lstSelectedBots.addMouseListener(new MousePopupListener());
+        
+        
 
     }
 
@@ -373,6 +407,39 @@ public class MenuPanel extends JPanel //implements ActionListener
                 wVal = w;
                 c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
             }       
+        }
+    }
+    
+    class MousePopupListener extends MouseAdapter
+    {
+        @Override
+        public void mousePressed(MouseEvent e) 
+        {
+            checkPopup(e);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) 
+        {
+            checkPopup(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) 
+        {
+            checkPopup(e);
+        }
+
+        private void checkPopup(MouseEvent e) 
+        {
+            if (e.isPopupTrigger()) 
+            {
+                p = new Point(e.getX(), e.getY());
+                if(lstSelectedBots.locationToIndex(p) != -1)
+                {
+                    configMenu.show(lstSelectedBots, e.getX(), e.getY());
+                }
+            }
         }
     }
 }

@@ -97,11 +97,11 @@ public class RootWindow extends JFrame implements ActionListener
 
     private void addComponents()
     {
-        RobotConfigPanel pan = new RobotConfigPanel(this);
+        //RobotConfigPanel pan = new RobotConfigPanel(this);
         try
         {
-            //contentPane.add(menuPanel);
-            contentPane.add(pan);
+            contentPane.add(menuPanel);
+            //contentPane.add(pan);
         } 
         catch (Exception e)
         {
@@ -157,6 +157,20 @@ public class RootWindow extends JFrame implements ActionListener
         //hack to get awt keyEvents to register
         gamePanel.glCanvas.requestFocus();
 
+        contentPane.invalidate();
+        contentPane.validate();
+    }
+    
+    public void showConfigPanel()
+    {
+        RobotConfigPanel configPanel = new RobotConfigPanel(this);
+        contentPane.add(configPanel);
+        
+        CardLayout cl = (CardLayout)contentPane.getLayout();
+        cl.next(contentPane);
+        
+        configPanel.requestFocus();
+        
         contentPane.invalidate();
         contentPane.validate();
     }
