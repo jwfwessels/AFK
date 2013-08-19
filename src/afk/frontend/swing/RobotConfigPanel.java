@@ -32,6 +32,7 @@ public class RobotConfigPanel extends JPanel
     JLabel lblRConfig;
     
     JPanel pnlModel;
+    JPanel pnlCanvas;
     Component glCanvas;
     JButton btnPrev;
     JButton btnNext;
@@ -44,7 +45,6 @@ public class RobotConfigPanel extends JPanel
     JComboBox cmbColour;
     JButton btnBack;
     JButton btnSave;
-    //COMPONENTS!!!
     
     public RobotConfigPanel(RootWindow _root)
     {
@@ -58,6 +58,7 @@ public class RobotConfigPanel extends JPanel
         lblRConfig = new JLabel("Robot Configuration");
     
         pnlModel = new JPanel();
+        pnlCanvas = new JPanel();
         //glCanvas
         btnPrev = new JButton("<");
         btnNext = new JButton(">");
@@ -74,11 +75,12 @@ public class RobotConfigPanel extends JPanel
     
     public void addComponents()
     {
-        pnlModel.setLayout(new BorderLayout());
-        pnlModel.add(btnPrev, BorderLayout.WEST);
-        pnlModel.add(btnNext, BorderLayout.EAST);
-        pnlModel.add(btnBrowse, BorderLayout.SOUTH);
-        //add glCanvas 
+        pnlModel.setLayout(new ModelPanel_Layout());
+        pnlModel.add(btnPrev);
+        pnlModel.add(pnlCanvas);
+        pnlModel.add(btnNext);
+        pnlModel.add(btnBrowse);
+        //add glCanvas to pnlCanvas
         
         pnlSettings.setLayout(new GridLayout(2, 3));
         pnlSettings.add(lblRName);
@@ -95,12 +97,8 @@ public class RobotConfigPanel extends JPanel
     
     public void styleComponents()
     {
-        //pnlModel.setLayout(new BorderLayout());
         pnlModel.setBorder(new LineBorder(Color.yellow));
-        
-        
-        
-        //TODO: change this to custom layout
+        pnlCanvas.setBorder(new LineBorder(Color.red));
         this.setLayout(new RobotConfigPanel_Layout());
     }
 
@@ -179,41 +177,112 @@ public class RobotConfigPanel extends JPanel
                 c.setSize(new Dimension(w/2, (int)hVal));
                 c.setBounds((w/2) - (c.getWidth() / 2), num1, w/2, (int)hVal);
                 num1 += hVal;
-            }
+            }    
+        }
+    }
 
-            /*c = parent.getComponent(1);
-            if (c.isVisible())
-            {
-                wVal = (w) >= 300 ? (w / 3) : 100;
-                hVal = (h / 8) * 7;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
-                num1 += c.getSize().width;
-                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int)(hVal/ 7)));
-                pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal/12, wVal/3, wVal/12, wVal/3));
-            }
-
-            //pnlSelected
-
-            c = parent.getComponent(2);
-            if (c.isVisible())
-            {
-                wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-                hVal = (h / 8) * 7;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
-                num2 += c.getSize().height;
-            }
+    
+    class ModelPanel_Layout implements LayoutManager
+    {
+        int panelWidth = pnlModel.getWidth();
+        int panelHeight = pnlModel.getHeight();
+        @Override
+        public void addLayoutComponent(String name, Component comp) 
+        {
             
-           
-            //pnlError
+        }
+
+        @Override
+        public void removeLayoutComponent(Component comp) 
+        {
             
-            c = parent.getComponent(3);
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container parent) 
+        {
+            Dimension dim = new Dimension(0, 0);
+
+            Insets insets = parent.getInsets();
+
+            dim.width = panelWidth + insets.left + insets.right;
+            dim.height = panelHeight + insets.top + insets.bottom;
+
+            return dim;
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container parent) 
+        {
+            Dimension dim = new Dimension(600, 800);
+            return dim;
+        }
+
+        @Override
+        public void layoutContainer(Container parent) 
+        {
+            Insets insets = parent.getInsets();
+
+            int w = parent.getSize().width;
+            int h = parent.getSize().height;
+
+            int numW = 0;
+            int numH = 0;
+            int hVal = 0;
+            int wVal = 0;
+            Component c;
+            
+            //btnPrev
+            
+            c = parent.getComponent(0);
+            
             if(c.isVisible())
-            {           
-                hVal = h / 8;
-                wVal = w;
-                c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
-            } */      
+            {
+                hVal = (int)(h / 6);
+                wVal = (int)(w / 8);
+                c.setSize(new Dimension((int)wVal, (int)hVal));
+                c.setBounds(insets.left, (h / 2) - c.getHeight() / 2, wVal, hVal);
+                numW += wVal;
+            }
+            
+            //pnlCanvas
+            
+            c = parent.getComponent(1);
+            
+            if(c.isVisible())
+            {
+                wVal = (int)((w / 8) * 6);
+                hVal = (int)((h / 8) * 6);
+                c.setSize(new Dimension((int)wVal, (int)hVal));
+                c.setBounds(numW, (h / 2) - c.getHeight() / 2, wVal, hVal);
+                numW += wVal;
+                numH += hVal + (h / 2) - c.getHeight() / 2;
+            } 
+            
+            //btnNext
+            
+            c = parent.getComponent(2);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)(h / 6);
+                wVal = (int)(w / 8);
+                c.setSize(new Dimension((int)wVal, (int)hVal));
+                c.setBounds(numW, (h / 2) - c.getHeight() / 2, wVal, hVal);
+                numW += wVal;
+            } 
+            
+            //btnBrowse
         
+            c = parent.getComponent(3);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)(h - numH);
+                wVal = (int)(w / 5);
+                c.setSize(new Dimension((int)wVal, (int)hVal));
+                c.setBounds(((w / 2) - (c.getWidth() / 2)), numH, wVal, hVal);
+            } 
         }
     }
     
