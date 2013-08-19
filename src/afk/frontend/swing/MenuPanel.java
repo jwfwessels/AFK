@@ -435,7 +435,10 @@ public class MenuPanel extends JPanel //implements ActionListener
             if (e.isPopupTrigger()) 
             {
                 p = new Point(e.getX(), e.getY());
-                if(lstSelectedBots.locationToIndex(p) != -1)
+                System.out.println("lsSelected size: " + lsSelectedModel.getSize());
+                System.out.println("Point pos: " + lstSelectedBots.locationToIndex(p));
+                //if(lstSelectedBots.locationToIndex(p) <= lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size() - 1).getHeight())
+                if(lstSelectedBots.locationToIndex(p) >= 0 && p.getY() <= lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size() - 1).getY() + lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size()).getHeight())
                 {
                     configMenu.show(lstSelectedBots, e.getX(), e.getY());
                 }
