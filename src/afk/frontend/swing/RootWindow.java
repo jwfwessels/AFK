@@ -174,6 +174,17 @@ public class RootWindow extends JFrame implements ActionListener
         contentPane.invalidate();
         contentPane.validate();
     }
+    
+    public void recallMenuPanel()
+    {
+        CardLayout cl = (CardLayout)contentPane.getLayout();
+        cl.next(contentPane);
+        
+        menuPanel.requestFocus();
+        
+        contentPane.invalidate();
+        contentPane.validate();
+    }
 
     @Override
     public void actionPerformed(ActionEvent e)

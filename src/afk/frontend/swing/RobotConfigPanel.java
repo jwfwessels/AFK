@@ -12,6 +12,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -101,6 +103,17 @@ public class RobotConfigPanel extends JPanel
         pnlCanvas.setBorder(new LineBorder(Color.red));
         pnlSettings.setBorder(new LineBorder(Color.blue));
         this.setLayout(new RobotConfigPanel_Layout());
+        
+        
+        btnBack.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("BACK!!!!!");
+                root.recallMenuPanel();
+            }
+        });
     }
 
     private void setup()
