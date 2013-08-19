@@ -42,7 +42,7 @@ public class RobotConfigPanel extends JPanel
     JLabel lblRName;
     JTextField txtName;
     JLabel lblRColour;
-    JComboBox cmbColour;
+    JComboBox cmbColour; // Change to colour picker
     JButton btnBack;
     JButton btnSave;
     
@@ -82,7 +82,7 @@ public class RobotConfigPanel extends JPanel
         pnlModel.add(btnBrowse);
         //add glCanvas to pnlCanvas
         
-        pnlSettings.setLayout(new GridLayout(2, 3));
+        pnlSettings.setLayout(new SettingsPanel_Layout());
         pnlSettings.add(lblRName);
         pnlSettings.add(txtName);
         pnlSettings.add(lblRColour);
@@ -99,6 +99,7 @@ public class RobotConfigPanel extends JPanel
     {
         pnlModel.setBorder(new LineBorder(Color.yellow));
         pnlCanvas.setBorder(new LineBorder(Color.red));
+        pnlSettings.setBorder(new LineBorder(Color.blue));
         this.setLayout(new RobotConfigPanel_Layout());
     }
 
@@ -113,6 +114,7 @@ public class RobotConfigPanel extends JPanel
     {
         int panelWidth = 800;
         int panelHeight = 600;
+        
         @Override
         public void addLayoutComponent(String name, Component comp) 
         {
@@ -153,7 +155,7 @@ public class RobotConfigPanel extends JPanel
             int w = parent.getSize().width;
             int h = parent.getSize().height;
 
-            int num1 = 0;
+            int numH = 0;
             int hVal = 0;
             Component c;
 
@@ -163,21 +165,33 @@ public class RobotConfigPanel extends JPanel
 
             if (c.isVisible())
             {
-                hVal = h /10;
+                hVal = (h / 10) / 2;
                 c.setSize(new Dimension(120, (int)hVal));
-                c.setBounds((w/2) - (c.getWidth() / 2), insets.top, 120, (int)hVal);
-                num1 += hVal;
+                c.setBounds((w / 2) - (c.getWidth() / 2), insets.top, 120, (int)hVal);
+                numH += hVal;
             }
             
             //pnlModel
+            
             c = parent.getComponent(1);
             if(c.isVisible())
             {
-                hVal = (h /10) * 6;
-                c.setSize(new Dimension(w/2, (int)hVal));
-                c.setBounds((w/2) - (c.getWidth() / 2), num1, w/2, (int)hVal);
-                num1 += hVal;
+                hVal = (h / 10) * 6;
+                c.setSize(new Dimension(w / 2, (int)hVal));
+                c.setBounds((w / 2) - (c.getWidth() / 2), numH, w / 2, (int)hVal);
+                numH += hVal;
             }    
+            
+            //pnlSetings
+            
+            c = parent.getComponent(2);
+            if(c.isVisible())
+            {
+                hVal = (h / 10) * 3;
+                c.setSize(new Dimension((w / 2), (int)hVal));
+                c.setBounds((w / 2) - (c.getWidth() / 2), numH, w / 2, (int)hVal);
+            }
+           
         }
     }
 
@@ -186,6 +200,7 @@ public class RobotConfigPanel extends JPanel
     {
         int panelWidth = pnlModel.getWidth();
         int panelHeight = pnlModel.getHeight();
+        
         @Override
         public void addLayoutComponent(String name, Component comp) 
         {
@@ -228,8 +243,8 @@ public class RobotConfigPanel extends JPanel
 
             int numW = 0;
             int numH = 0;
-            int hVal = 0;
-            int wVal = 0;
+            int hVal;
+            int wVal;
             Component c;
             
             //btnPrev
@@ -283,6 +298,139 @@ public class RobotConfigPanel extends JPanel
                 c.setSize(new Dimension((int)wVal, (int)hVal));
                 c.setBounds(((w / 2) - (c.getWidth() / 2)), numH, wVal, hVal);
             } 
+        }
+    }
+    
+    class SettingsPanel_Layout implements LayoutManager
+    {
+        int panelWidth = pnlModel.getWidth();
+        int panelHeight = pnlModel.getHeight();
+        
+        @Override
+        public void addLayoutComponent(String name, Component comp) 
+        {
+            
+        }
+
+        @Override
+        public void removeLayoutComponent(Component comp) 
+        {
+            
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container parent) 
+        {
+            Dimension dim = new Dimension(0, 0);
+
+            Insets insets = parent.getInsets();
+
+            dim.width = panelWidth + insets.left + insets.right;
+            dim.height = panelHeight + insets.top + insets.bottom;
+
+            return dim;
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container parent) 
+        {
+            Dimension dim = new Dimension(600, 800);
+            return dim;
+        }
+
+        @Override
+        public void layoutContainer(Container parent) 
+        {
+            Insets insets = parent.getInsets();
+
+            int w = parent.getSize().width;
+            int h = parent.getSize().height;
+
+            int numW = w / 18;
+            int numH = h / 8;
+            int hVal;
+            int wVal;
+            Component c;
+            
+            //lblRName
+            
+            c = parent.getComponent(0);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)((h / 9) * 2) ;
+                wVal = (int)(w / 4);
+                c.setBounds(numW, numH, wVal, hVal);
+                numW += wVal + (w / 8);
+            }
+            
+            //txtName
+            
+            c = parent.getComponent(1);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)((h / 9) * 2);
+                wVal = (int)(w / 4);
+                c.setBounds(numW, numH, wVal, hVal);
+                numW += wVal + (w / 8);
+                numH += hVal + (h / 18);
+            }
+            
+            //lblRColour
+            
+            numW = w / 18;
+            
+            c = parent.getComponent(2);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)((h / 9) * 2) ;
+                wVal = (int)(w / 4);
+                c.setBounds(numW, numH, wVal, hVal);
+                numW += wVal + (w / 8);
+            }
+            
+            //cmbColour
+            
+            c = parent.getComponent(3);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)((h / 9) * 2);
+                wVal = (int)(w / 4);
+                c.setBounds(numW, numH, wVal, hVal);
+                numW += wVal + (w / 8);
+                numH += hVal + (h / 18);
+            }
+            
+            //btnBack
+            
+            numW = w / 18;
+            
+            c = parent.getComponent(4);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)((h / 9) * 2) ;
+                wVal = (int)(w / 4);
+                c.setSize(wVal, hVal);
+                c.setBounds((numW / 2) + (c.getWidth() / 2), numH, wVal, hVal);
+                numW += wVal + (w / 8);
+            }
+            
+            //btnSave
+            
+            c = parent.getComponent(5);
+            
+            if(c.isVisible())
+            {
+                hVal = (int)((h / 9) * 2) ;
+                wVal = (int)(w / 4);
+                c.setSize(wVal, hVal);
+                c.setBounds((numW) + (c.getWidth() / 2), numH, wVal, hVal);
+                numW += wVal + (w / 8);
+            }
         }
     }
     
