@@ -277,7 +277,6 @@ public class MenuPanel extends JPanel //implements ActionListener
                 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
                 botEngine.setParticipatingBots(getParticipatingBots());
                 parent.spawnGamePanel(botEngine);
-
             }
         });
         
@@ -295,9 +294,6 @@ public class MenuPanel extends JPanel //implements ActionListener
         });
         
         lstSelectedBots.addMouseListener(new MousePopupListener());
-        
-        
-
     }
 
     public ArrayList<String> getParticipatingBots()
@@ -319,11 +315,13 @@ public class MenuPanel extends JPanel //implements ActionListener
         @Override
         public void addLayoutComponent(String name, Component comp)
         {
+            
         }
 
         @Override
         public void removeLayoutComponent(Component comp)
         {
+            
         }
 
         @Override
@@ -357,7 +355,6 @@ public class MenuPanel extends JPanel //implements ActionListener
             int num1 = 0;
             int num2 = 0;
             Component c;
-
             
             //pnlAvailable;
 
@@ -371,7 +368,6 @@ public class MenuPanel extends JPanel //implements ActionListener
                 c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num1 += c.getSize().width;
             }
-            
             
             //pnlBotSelButtons
 
@@ -396,7 +392,6 @@ public class MenuPanel extends JPanel //implements ActionListener
                 c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
                 num2 += c.getSize().height;
             }
-            
            
             //pnlError
             
@@ -437,7 +432,6 @@ public class MenuPanel extends JPanel //implements ActionListener
                 p = new Point(e.getX(), e.getY());
                 System.out.println("lsSelected size: " + lsSelectedModel.getSize());
                 System.out.println("Point pos: " + lstSelectedBots.locationToIndex(p));
-                //if(lstSelectedBots.locationToIndex(p) <= lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size() - 1).getHeight())
                 if(lstSelectedBots.locationToIndex(p) >= 0 && p.getY() <= lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size() - 1).getY() + lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size()).getHeight())
                 {
                     configMenu.show(lstSelectedBots, e.getX(), e.getY());
