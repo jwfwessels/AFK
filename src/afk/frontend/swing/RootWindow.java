@@ -4,20 +4,19 @@
  */
 package afk.frontend.swing;
 
+import afk.bot.RobotEngine;
 import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
-import afk.bot.london.London;
 import afk.gfx.athens.Athens;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.UUID;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,7 +25,7 @@ import javax.swing.JPanel;
  *
  * @author Jw
  */
-public class RootWindow extends JFrame implements ActionListener
+public class RootWindow extends JFrame
 {
 
     //TODO; define components
@@ -127,23 +126,18 @@ public class RootWindow extends JFrame implements ActionListener
         }
     }
 
-    public void spawnGamePanel(London botEngine)
+    public void spawnGamePanel(UUID[] participants, RobotEngine botEngine)
     {
-        // TODO: reciefe BotEngine from MenuPanal and psass it to TokYo's COnstructor
-        GraphicsEngine renderer = new Athens(false);
-        GameEngine engine = new Tokyo(renderer, botEngine);
-        System.out.println("START ENGINE THREAD");
-        new Thread(engine).start();
+        GraphicsEngine gfxEngine = new Athens(false);
+        GameEngine gameEngine = new Tokyo(gfxEngine, botEngine);
 
-        games.add(engine);
+        games.add(gameEngine);
 
-        final GamePanel gamePanel = new GamePanel(this, renderer);
+        final GamePanel gamePanel = new GamePanel(this, gfxEngine);
         gamePanel.setup();
         gamePanels.add(gamePanel);
         contentPane.add(gamePanel);
-        engine.startGame();
-
-
+        gameEngine.startGame(participants);
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);
@@ -152,11 +146,5 @@ public class RootWindow extends JFrame implements ActionListener
 
         contentPane.invalidate();
         contentPane.validate();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

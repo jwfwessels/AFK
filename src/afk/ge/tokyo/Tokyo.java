@@ -4,10 +4,9 @@
  */
 package afk.ge.tokyo;
 
+import afk.bot.RobotEngine;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
-import afk.bot.london.London;
-import afk.bot.london.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
@@ -20,34 +19,32 @@ import afk.ge.tokyo.ems.systems.RobotSystem;
 import afk.ge.tokyo.ems.systems.TankControllerSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.hackoeur.jglm.Vec3;
+import java.util.UUID;
 
 /**
  *
  * @author Jw
  */
-public class Tokyo extends GameEngine
+public class Tokyo implements GameEngine, Runnable
 {
 
-    EntityManager entityManager;
-    Engine engine;
-    boolean running = true;
-    private AtomicBoolean gameInProgress = new AtomicBoolean(false);
+    private EntityManager entityManager;
+    private Engine engine;
+    private GraphicsEngine gfxEngine;
+    private boolean running = true;
     public static final float BOARD_SIZE = 50;
-    final static float GAME_SPEED = 60;
-    float t = 0.0f;
-    final static float DELTA = 1.0f / GAME_SPEED;
-    final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
+    public final static float GAME_SPEED = 60;
+    private float t = 0.0f;
+    public final static float DELTA = 1.0f / GAME_SPEED;
+    public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
-    final static double TARGET_FPS = 60;
-    final static double MIN_FPS = 25;
-    final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
-    final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
+    public final static double TARGET_FPS = 60;
+    public final static double MIN_FPS = 25;
+    public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
+    public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
 
-    public Tokyo(GraphicsEngine gfxEngine, London botEngine)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
     {
         engine = new Engine();
 
@@ -56,7 +53,7 @@ public class Tokyo extends GameEngine
 
         this.gfxEngine = gfxEngine;
 
-        entityManager = new EntityManager(botEngine, engine);
+        entityManager = new EntityManager(engine);
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
@@ -74,34 +71,24 @@ public class Tokyo extends GameEngine
     }
 
     @Override
+    public void startGame(UUID[] participants)
+    {
+        entityManager.spawnStuff();
+        entityManager.createObstacles(new Vec3(5, 5, 5));
+        for (int i = 0; i < participants.length; i++)
+        {
+            entityManager.createTankEntityNEU(
+                    participants[i],
+                    EntityManager.SPAWN_POINTS[i],
+                    EntityManager.BOT_COLOURS[i]);
+        }
+        
+        new Thread(this).start();
+    }
+
+    @Override
     public void run()
     {
-        // FIXME: move bot loading somewhere closer to the ui
-        try
-        {
-            loadBots();
-            gameLoop();
-        } catch (RobotException ex)
-        {
-            System.err.println("Robot loading error: " + ex.getMessage());
-        }
-    }
-
-    @Override
-    public void startGame()
-    {
-//        System.out.println("startGame! " + javax.swing.SwingUtilities.isEventDispatchThread());
-        gameInProgress.set(true);
-
-    }
-
-    @Override
-    protected void gameLoop()
-    {
-        while (!gameInProgress.get())
-        { /* spin! */
-
-        }
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
         int i = 0;
@@ -121,32 +108,13 @@ public class Tokyo extends GameEngine
             int x = 0;
             while (accumulator >= DELTA)
             {
-                updateGame();
+                engine.update(t, DELTA);
                 t += DELTA;
                 accumulator -= DELTA;
                 x++;
             }
             double alpha = accumulator / DELTA;
-            render(alpha);
+            gfxEngine.redisplay();
         }
-    }
-
-    @Override
-    protected void updateGame()
-    {
-        engine.update(t, DELTA);
-    }
-
-    @Override
-    protected void render(double alpha)
-    {
-        gfxEngine.redisplay();
-    }
-
-    private boolean loadBots() throws RobotException
-    {
-        entityManager.createBots();
-        System.out.println("Botsloaded");
-        return true;
     }
 }

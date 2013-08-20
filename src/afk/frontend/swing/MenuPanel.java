@@ -4,9 +4,9 @@
  */
 package afk.frontend.swing;
 
+import afk.bot.RobotEngine;
+import afk.bot.RobotException;
 import afk.bot.london.London;
-import afk.bot.london.Robot;
-import afk.bot.london.RobotException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,6 +20,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,14 +31,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author Jw
  */
-public class MenuPanel extends JPanel implements ActionListener
+public class MenuPanel extends JPanel
 {
 // TODO; define components + parent ref
 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
@@ -65,7 +67,7 @@ public class MenuPanel extends JPanel implements ActionListener
     private JList<String> lstSelectedBots;
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<String> lsSelectedModel;
-    private London botEngine;
+    private RobotEngine botEngine;
 
     public MenuPanel(RootWindow parent)
     {
@@ -239,7 +241,7 @@ public class MenuPanel extends JPanel implements ActionListener
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
                     try
                     {
-                        botEngine.addRobot(botPath);
+                        botEngine.loadRobot(botPath);
                         botMap.put(botName, botPath);
                         lsAvailableModel.addElement(botName);
                     }
@@ -256,32 +258,26 @@ public class MenuPanel extends JPanel implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
-                // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
-                botEngine.setParticipatingBots(getParticipatingBots());
-                parent.spawnGamePanel(botEngine);
-
+                parent.spawnGamePanel(getParticipatingBots(), botEngine);
             }
         });
 
     }
 
-    public ArrayList<String> getParticipatingBots()
+    public UUID[] getParticipatingBots()
     {
-        ArrayList<String> bots = new ArrayList<String>();
-        for (int x = 0; x < lsSelectedModel.size(); x++)
+        UUID[] ids = new UUID[lsSelectedModel.size()];
+        for (int i = 0; i < ids.length; i++)
         {
-            bots.add(lsSelectedModel.getElementAt(x));
+            try
+            {
+                ids[i] = botEngine.addRobot(lsSelectedModel.getElementAt(i));
+            } catch (RobotException ex)
+            {
+                txtErrorConsole.setText("Error: " + ex.getMessage());
+            }
         }
-        return bots;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
-
+        return ids;
     }
 
     class MenuPanel_Layout implements LayoutManager
