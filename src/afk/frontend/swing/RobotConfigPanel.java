@@ -4,6 +4,7 @@
  */
 package afk.frontend.swing;
 
+import afk.bot.london.RobotConfig;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,13 +46,17 @@ public class RobotConfigPanel extends JPanel
     JLabel lblRName;
     JTextField txtName;
     JLabel lblRColour;
-    JComboBox cmbColour; // Change to colour picker
+    JButton btnColour;
+    JColorChooser colColour;
     JButton btnBack;
     JButton btnSave;
     
-    public RobotConfigPanel(RootWindow _root)
+    private RobotConfig config;
+    
+    public RobotConfigPanel(RootWindow _root, RobotConfig botConfig)
     {
-        root = _root;   
+        root = _root;
+        config = botConfig;
         setup();
         this.setBounds(0,0, 800, 600);
     }
@@ -70,7 +76,8 @@ public class RobotConfigPanel extends JPanel
         lblRName = new JLabel("Robot Name");
         txtName = new JTextField("Name");
         lblRColour = new JLabel("Robot Colour");
-        cmbColour = new JComboBox<String>();
+        btnColour = new JButton("Change Colour");
+        colColour = new JColorChooser();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");          
     }
@@ -88,7 +95,7 @@ public class RobotConfigPanel extends JPanel
         pnlSettings.add(lblRName);
         pnlSettings.add(txtName);
         pnlSettings.add(lblRColour);
-        pnlSettings.add(cmbColour);
+        pnlSettings.add(btnColour);
         pnlSettings.add(btnBack);
         pnlSettings.add(btnSave);
         
@@ -104,6 +111,9 @@ public class RobotConfigPanel extends JPanel
         pnlSettings.setBorder(new LineBorder(Color.blue));
         this.setLayout(new RobotConfigPanel_Layout());
         
+        colColour.setPreviewPanel(new JPanel());
+        
+        txtName.setText(config.getName());   
         
         btnBack.addActionListener(new ActionListener()
         {
@@ -112,6 +122,15 @@ public class RobotConfigPanel extends JPanel
             {
                 System.out.println("BACK!!!!!");
                 root.recallMenuPanel();
+            }
+        });
+        
+        btnColour.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Color newBotColour = colColour.showDialog(root, "Choose Robot Color", new Color(config.getColourR(), config.getColourG(), config.getColourB()));
             }
         });
     }
@@ -383,11 +402,11 @@ public class RobotConfigPanel extends JPanel
             
             if(c.isVisible())
             {
-                hVal = (int)((h / 9) * 2);
+                hVal = (int)((h / 10) * 2);
                 wVal = (int)(w / 4);
                 c.setBounds(numW, numH, wVal, hVal);
                 numW += wVal + (w / 8);
-                numH += hVal + (h / 18);
+                numH += hVal + (h / 14);
             }
             
             //lblRColour
@@ -404,17 +423,17 @@ public class RobotConfigPanel extends JPanel
                 numW += wVal + (w / 8);
             }
             
-            //cmbColour
+            //btnColour
             
             c = parent.getComponent(3);
             
             if(c.isVisible())
             {
-                hVal = (int)((h / 9) * 2);
-                wVal = (int)(w / 4);
+                hVal = (int)((h / 10) * 2);
+                wVal = (int)(w / 3);
                 c.setBounds(numW, numH, wVal, hVal);
                 numW += wVal + (w / 8);
-                numH += hVal + (h / 18);
+                numH += hVal + (h / 14);
             }
             
             //btnBack

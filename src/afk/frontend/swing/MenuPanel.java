@@ -6,6 +6,7 @@ package afk.frontend.swing;
 
 import afk.bot.london.London;
 import afk.bot.london.Robot;
+import afk.bot.london.RobotConfig;
 import afk.bot.london.RobotException;
 import java.awt.AWTEventMulticaster;
 import java.awt.BorderLayout;
@@ -71,6 +72,9 @@ public class MenuPanel extends JPanel //implements ActionListener
     JTextArea txtErrorConsole;
     
     private HashMap<String, String> botMap;
+    
+    private ArrayList<RobotConfig> botConfigs;
+    
     private JFileChooser fileChooser;
     private JList<String> lstAvailableBots;
     private JList<String> lstSelectedBots;
@@ -87,6 +91,7 @@ public class MenuPanel extends JPanel //implements ActionListener
         LayoutManager layout = new MenuPanel_Layout();
         this.setLayout(layout);
 
+        botConfigs = new ArrayList<RobotConfig>();
         botEngine = new London();
     }
 
@@ -206,6 +211,7 @@ public class MenuPanel extends JPanel //implements ActionListener
                 if (selectedBot != null)
                 {
                     lsSelectedModel.addElement(selectedBot);
+                    botConfigs.add(new RobotConfig(selectedBot));
                 }
             }
         });
@@ -218,6 +224,7 @@ public class MenuPanel extends JPanel //implements ActionListener
                 for (int i = 0; i < lsAvailableModel.size(); i++)
                 {
                     lsSelectedModel.addElement(lsAvailableModel.getElementAt(i));
+                    botConfigs.add(new RobotConfig(lsAvailableModel.getElementAt(i)));
                 }
             }
         });
@@ -227,8 +234,12 @@ public class MenuPanel extends JPanel //implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String selectedBot = lstSelectedBots.getSelectedValue();
-                lsSelectedModel.removeElement(selectedBot);
+                if(lstSelectedBots.getSelectedIndex() != -1)
+                {
+                    String selectedBot = lstSelectedBots.getSelectedValue();
+                    lsSelectedModel.removeElement(selectedBot);
+                    botConfigs.remove(lstSelectedBots.getSelectedIndex());
+                }
             }
         });
 
@@ -240,6 +251,7 @@ public class MenuPanel extends JPanel //implements ActionListener
                 while (!lsSelectedModel.isEmpty())
                 {
                     lsSelectedModel.removeElementAt(0);
+                    botConfigs.remove(0);
                 }
             }
         });
@@ -288,7 +300,7 @@ public class MenuPanel extends JPanel //implements ActionListener
                 System.out.println("Menu option clicked");
                 int item = lstSelectedBots.locationToIndex(p);
                 System.out.println(item + ": " + lsSelectedModel.get(item));
-                parent.showConfigPanel();
+                parent.showConfigPanel(botConfigs.get(item));
                 
             }
         });

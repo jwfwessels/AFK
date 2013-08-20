@@ -8,6 +8,7 @@ import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.bot.london.London;
+import afk.bot.london.RobotConfig;
 import afk.gfx.athens.Athens;
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -161,9 +162,9 @@ public class RootWindow extends JFrame implements ActionListener
         contentPane.validate();
     }
     
-    public void showConfigPanel()
+    public void showConfigPanel(RobotConfig config)
     {
-        RobotConfigPanel configPanel = new RobotConfigPanel(this);
+        RobotConfigPanel configPanel = new RobotConfigPanel(this, config);
         contentPane.add(configPanel);
         
         CardLayout cl = (CardLayout)contentPane.getLayout();

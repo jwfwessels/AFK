@@ -19,6 +19,8 @@ public class London extends RobotEngine
     /// refactor
     Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
     
+    ArrayList<RobotConfig> botConfigs = new ArrayList<RobotConfig>();
+    
     ArrayList<String> botNames = new ArrayList<String>();
     public London()
     {
