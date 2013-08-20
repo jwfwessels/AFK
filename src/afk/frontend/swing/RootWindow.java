@@ -5,6 +5,7 @@
 package afk.frontend.swing;
 
 import afk.bot.RobotEngine;
+import afk.frontend.Frontend;
 import afk.ge.GameEngine;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
@@ -25,7 +26,7 @@ import javax.swing.JPanel;
  *
  * @author Jw
  */
-public class RootWindow extends JFrame
+public class RootWindow extends JFrame implements Frontend
 {
 
     //TODO; define components
@@ -35,15 +36,30 @@ public class RootWindow extends JFrame
     private MenuPanel menuPanel;
     private ArrayList<GamePanel> gamePanels;
 
-    public void start()
+    @Override
+    public void showMain()
     {
-        //TODO; currently a bit of a hack since this is not the main thread its called by main
         this.setTitle("AFK Arena");
         this.pack();
         this.setLocationByPlatform(true);
         this.setVisible(true);
-//        menuPanel.setVisible(false);
-//        gamePanel.setVisible(false);
+    }
+
+    @Override
+    public void showGame()
+    {
+        final GamePanel gamePanel = new GamePanel(this, null /* coordinator.getViewingPanel() */);
+        gamePanel.setup();
+        gamePanels.add(gamePanel);
+        contentPane.add(gamePanel);
+
+        CardLayout cl = (CardLayout) contentPane.getLayout();
+        cl.next(contentPane);
+        //hack to get awt keyEvents to register
+        gamePanel.glCanvas.requestFocus();
+
+        contentPane.invalidate();
+        contentPane.validate();
     }
 
     public RootWindow()
@@ -146,5 +162,29 @@ public class RootWindow extends JFrame
 
         contentPane.invalidate();
         contentPane.validate();
+    }
+
+    @Override
+    public void showError(String message)
+    {
+        menuPanel.showError(message);
+    }
+
+    @Override
+    public void showWarning(String message)
+    {
+        menuPanel.showError(message);
+    }
+
+    @Override
+    public void showMessage(String message)
+    {
+        menuPanel.showError(message);
+    }
+
+    @Override
+    public void showAlert(String message)
+    {
+        JOptionPane.showMessageDialog(rootPane, message, "Alert!", JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -17,12 +17,9 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -43,24 +40,19 @@ public class MenuPanel extends JPanel
 // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
 
     RootWindow parent;
-    
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
     JPanel pnlSelected;
     JPanel pnlRobotError;
-    
     JLabel lblAvailable;
     JLabel lblSelected;
-    
     JButton btnAddBot;
     JButton btnAddAllBots;
     JButton btnRemoveBot;
     JButton btnRemoveAllBots;
     JButton btnStartMatch;
     JButton btnLoadBot;
-    
     JTextArea txtErrorConsole;
-    
     private HashMap<String, String> botMap;
     private JFileChooser fileChooser;
     private JList<String> lstAvailableBots;
@@ -120,13 +112,13 @@ public class MenuPanel extends JPanel
         lstSelectedBots = new JList();
         lsAvailableModel = new DefaultListModel();
         lsSelectedModel = new DefaultListModel();
-        
+
         pnlRobotError = new JPanel();
         txtErrorConsole = new JTextArea();
         txtErrorConsole.setEditable(false);
         txtErrorConsole.setForeground(Color.red);
         pnlRobotError.setLayout(new BorderLayout());
-        
+
     }
 
     private void addComponents()
@@ -144,8 +136,8 @@ public class MenuPanel extends JPanel
         this.add(pnlAvailable);
         this.add(pnlBotSelButtons);
         this.add(pnlSelected);
-        this.add(pnlRobotError);        
-        
+        this.add(pnlRobotError);
+
         pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
         pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
         pnlAvailable.add(btnLoadBot, BorderLayout.SOUTH);
@@ -158,7 +150,7 @@ public class MenuPanel extends JPanel
 
         pnlSelected.add(lblSelected, BorderLayout.NORTH);
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
-        
+
         pnlRobotError.add(txtErrorConsole);
 
     }
@@ -167,7 +159,6 @@ public class MenuPanel extends JPanel
 //    {
 //        //TODO;
 //    }
-
     private void styleComponents()
     {
         // for testing
@@ -175,12 +166,12 @@ public class MenuPanel extends JPanel
         //pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
         //pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
         //pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
-       
+
         pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        
+
         btnAddBot.addActionListener(new ActionListener()
         {
             @Override
@@ -244,10 +235,9 @@ public class MenuPanel extends JPanel
                         botEngine.loadRobot(botPath);
                         botMap.put(botName, botPath);
                         lsAvailableModel.addElement(botName);
-                    }
-                    catch(RobotException ex)
+                    } catch (RobotException ex)
                     {
-                        txtErrorConsole.setText("Error: " + ex.getMessage());
+                        showError(ex.getMessage());
                     }
                 }
             }
@@ -274,10 +264,15 @@ public class MenuPanel extends JPanel
                 ids[i] = botEngine.addRobot(lsSelectedModel.getElementAt(i));
             } catch (RobotException ex)
             {
-                txtErrorConsole.setText("Error: " + ex.getMessage());
+                showError(ex.getMessage());
             }
         }
         return ids;
+    }
+
+    public void showError(String message)
+    {
+        txtErrorConsole.setText("Error: " + message);
     }
 
     class MenuPanel_Layout implements LayoutManager
@@ -328,7 +323,7 @@ public class MenuPanel extends JPanel
             int num2 = 0;
             Component c;
 
-            
+
             //pnlAvailable;
 
             c = parent.getComponent(0);
@@ -338,11 +333,11 @@ public class MenuPanel extends JPanel
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = ((h / 8) * 7);
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num1 += c.getSize().width;
             }
-            
-            
+
+
             //pnlBotSelButtons
 
             c = parent.getComponent(1);
@@ -350,10 +345,10 @@ public class MenuPanel extends JPanel
             {
                 wVal = (w) >= 300 ? (w / 3) : 100;
                 hVal = (h / 8) * 7;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num1 += c.getSize().width;
-                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int)(hVal/ 7)));
-                pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal/12, wVal/3, wVal/12, wVal/3));
+                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int) (hVal / 7)));
+                pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal / 12, wVal / 3, wVal / 12, wVal / 3));
             }
 
             //pnlSelected
@@ -363,20 +358,20 @@ public class MenuPanel extends JPanel
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = (h / 8) * 7;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num2 += c.getSize().height;
             }
-            
-           
+
+
             //pnlError
-            
+
             c = parent.getComponent(3);
-            if(c.isVisible())
-            {           
+            if (c.isVisible())
+            {
                 hVal = h / 8;
                 wVal = w;
-                c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
-            }       
+                c.setBounds(insets.left, insets.top + num2, (int) wVal, (int) hVal);
+            }
         }
     }
 }
