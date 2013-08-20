@@ -11,17 +11,18 @@ import java.util.UUID;
  *
  * @author Jessica
  */
-public interface RobotEngine 
+public interface RobotEngine
 {
+
     public UUID addRobot(String path) throws RobotException;
-    public void loadRobot(String path) throws RobotException;
-    
+
+    //public void loadRobot(String path) throws RobotException; // refactored to separate RobotLoader interface
     
     /// refactor
     public void execute();
-    // FIXME: remove once db system is up and running
+
+    // FIXME: remove once db system is up and running ???
     public boolean[] getFlags(UUID id);
+
     public void setEvents(UUID id, RobotEvent events);
-    
-    
 }

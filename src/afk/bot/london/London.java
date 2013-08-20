@@ -6,6 +6,7 @@ package afk.bot.london;
 
 import afk.bot.RobotException;
 import afk.bot.RobotEngine;
+import afk.bot.RobotLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,7 +19,12 @@ public class London implements RobotEngine
 {
     
     private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
-    private RobotLoader robotLoader = new RobotLoader();
+    private RobotLoader robotLoader;
+
+    public London(RobotLoader robotLoader)
+    {
+        this.robotLoader = robotLoader;
+    }
 
     @Override
     public UUID addRobot(String path) throws RobotException
@@ -27,19 +33,6 @@ public class London implements RobotEngine
         UUID id = r.getId();
         robots.put(id, r);
         return id;
-    }
-
-    @Override
-    public void loadRobot(String path) throws RobotException
-    {
-        try
-        {
-            robotLoader.addRobot(path);
-        } catch (RobotException e)
-        {
-            //TODO: Error reporting
-            throw e;
-        }
     }
 
     /// this is where bot execution actually happens

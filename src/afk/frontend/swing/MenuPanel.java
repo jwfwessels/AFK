@@ -4,6 +4,9 @@
  */
 package afk.frontend.swing;
 
+import afk.AFKCoordinator;
+import afk.Coordinator;
+import afk.GameCoordinator;
 import afk.bot.RobotEngine;
 import afk.bot.RobotException;
 import afk.bot.london.London;
@@ -17,9 +20,12 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.UUID;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -59,7 +65,7 @@ public class MenuPanel extends JPanel
     private JList<String> lstSelectedBots;
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<String> lsSelectedModel;
-    private RobotEngine botEngine;
+    private Coordinator coordinator;
 
     public MenuPanel(RootWindow parent)
     {
@@ -68,8 +74,8 @@ public class MenuPanel extends JPanel
 
         LayoutManager layout = new MenuPanel_Layout();
         this.setLayout(layout);
-
-        botEngine = new London();
+        
+        coordinator = new AFKCoordinator();
     }
 
     void setup()
@@ -232,7 +238,7 @@ public class MenuPanel extends JPanel
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
                     try
                     {
-                        botEngine.loadRobot(botPath);
+                        coordinator.loadRobot(botPath);
                         botMap.put(botName, botPath);
                         lsAvailableModel.addElement(botName);
                     } catch (RobotException ex)
@@ -248,26 +254,22 @@ public class MenuPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                parent.spawnGamePanel(getParticipatingBots(), botEngine);
+                for (int i = 0; i < lsSelectedModel.size(); i++)
+                {
+                    coordinator.addRobot(lsSelectedModel.getElementAt(i));
+                }
+                lsSelectedModel.clear();
+                GameCoordinator game = coordinator.newGame();
+                try
+                {
+                    parent.spawnGamePanel(game);
+                } catch (RobotException ex)
+                {
+                    showError(ex.getMessage());
+                }
             }
         });
 
-    }
-
-    public UUID[] getParticipatingBots()
-    {
-        UUID[] ids = new UUID[lsSelectedModel.size()];
-        for (int i = 0; i < ids.length; i++)
-        {
-            try
-            {
-                ids[i] = botEngine.addRobot(lsSelectedModel.getElementAt(i));
-            } catch (RobotException ex)
-            {
-                showError(ex.getMessage());
-            }
-        }
-        return ids;
     }
 
     public void showError(String message)

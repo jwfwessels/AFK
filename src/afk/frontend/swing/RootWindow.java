@@ -4,12 +4,9 @@
  */
 package afk.frontend.swing;
 
-import afk.bot.RobotEngine;
+import afk.GameCoordinator;
+import afk.bot.RobotException;
 import afk.frontend.Frontend;
-import afk.ge.GameEngine;
-import afk.ge.tokyo.Tokyo;
-import afk.gfx.GraphicsEngine;
-import afk.gfx.athens.Athens;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -17,7 +14,6 @@ import java.awt.LayoutManager;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.UUID;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,9 +42,9 @@ public class RootWindow extends JFrame implements Frontend
     }
 
     @Override
-    public void showGame()
+    public void showGame(GameCoordinator game)
     {
-        final GamePanel gamePanel = new GamePanel(this, null /* coordinator.getViewingPanel() */);
+        final GamePanel gamePanel = new GamePanel(this, game);
         gamePanel.setup();
         gamePanels.add(gamePanel);
         contentPane.add(gamePanel);
@@ -142,18 +138,16 @@ public class RootWindow extends JFrame implements Frontend
         }
     }
 
-    public void spawnGamePanel(UUID[] participants, RobotEngine botEngine)
+    public void spawnGamePanel(GameCoordinator game) throws RobotException
     {
-        GraphicsEngine gfxEngine = new Athens(false);
-        GameEngine gameEngine = new Tokyo(gfxEngine, botEngine);
+        GamePanel gamePanel = new GamePanel(this, game);
 
-        games.add(gameEngine);
+        games.add(gamePanel);
 
-        final GamePanel gamePanel = new GamePanel(this, gfxEngine);
         gamePanel.setup();
         gamePanels.add(gamePanel);
         contentPane.add(gamePanel);
-        gameEngine.startGame(participants);
+        game.start();
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);

@@ -214,7 +214,7 @@ public class Athens implements GraphicsEngine
         time += delta;
         lastFPS += delta;
 
-        if (lastFPS >= fpsInterval)
+        if (fpsComp != null && lastFPS >= fpsInterval)
         {
             fps = (1.0f / delta);
             fpsComp.setText(String.format("FPS: %.0f", fps));

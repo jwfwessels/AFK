@@ -16,14 +16,20 @@ public interface Coordinator
     public void loadRobot(String path) throws RobotException;
     
     /**
-     * Adds an instance of a Robot to the current game setup
+     * Adds a Robot to the current game setup
      * @param path the path to the .class or .jar file
-     * @throws RobotException if any error occured during the instantiation.
      */
-    public void addRobot(String path) throws RobotException;
+    public void addRobot(String path);
     
     /**
-     * Starts a new AFK game with the current configuration.
+     * Removes a Robot from the current game setup
+     * @param path the path to the .class or .jar file
      */
-    public GameCoordinator startGame();
+    public void removeRobot(String path);
+    
+    /**
+     * Creates a new game with the current configuration and resets the
+     * configuration.
+     */
+    public GameCoordinator newGame();
 }

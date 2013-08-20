@@ -4,15 +4,13 @@
  */
 package afk.frontend.swing;
 
-import afk.gfx.GraphicsEngine;
+import afk.GameCoordinator;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -21,22 +19,18 @@ import javax.swing.JPanel;
  *
  * @author Jw
  */
-public class GamePanel extends JPanel implements ActionListener
+public class GamePanel extends JPanel
 {
 
     RootWindow parent;
-    GraphicsEngine gfxEngine;
     Component glCanvas;
     JLayeredPane hudLayer;
     JLabel fps;
 
-    //    private JButton btnStartMatch;
-    //TODO; define components + parent ref
-    public GamePanel(RootWindow parent, GraphicsEngine renderer)
+    public GamePanel(RootWindow parent, GameCoordinator game)
     {
         this.parent = parent;
-        gfxEngine = renderer;
-        glCanvas = gfxEngine.getAWTComponent();
+        glCanvas = game.getAWTComponent();
         System.out.println("glCanvas" + glCanvas.getName());
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
@@ -46,7 +40,6 @@ public class GamePanel extends JPanel implements ActionListener
 
     void setup()
     {
-        //TODO; call init, add, style
         initComponents();
         addComponents();
         styleComponents();
@@ -54,9 +47,9 @@ public class GamePanel extends JPanel implements ActionListener
 
     private void initComponents()
     {
-        //TODO; instatiate components
         fps = new JLabel("1");
-        gfxEngine.setFPSComponent(fps);
+        // FIXME: find a new way to show FPS
+        //gfxEngine.setFPSComponent(fps);
         hudLayer = new JLayeredPane();
         System.out.println("size2" + hudLayer.getSize().toString());
 //        btnStartMatch = new JButton("Start");
@@ -82,12 +75,6 @@ public class GamePanel extends JPanel implements ActionListener
         fps.setOpaque(false);
         fps.setBounds(0, 0, 50, 25);
         hudLayer.setBackground(Color.BLUE);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     class GamePanel_Layout implements LayoutManager

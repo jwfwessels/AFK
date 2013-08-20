@@ -1,5 +1,6 @@
 package afk;
 
+import afk.bot.RobotException;
 import java.awt.Component;
 
 /**
@@ -13,4 +14,9 @@ public interface GameCoordinator
      * @return the AWT component for viewing the game.
      */
     public Component getAWTComponent();
+    
+    /**
+     * Start the game.
+     */
+    public void start() throws RobotException;
 }
