@@ -300,8 +300,7 @@ public class MenuPanel extends JPanel //implements ActionListener
                 System.out.println("Menu option clicked");
                 int item = lstSelectedBots.locationToIndex(p);
                 System.out.println(item + ": " + lsSelectedModel.get(item));
-                parent.showConfigPanel(botConfigs.get(item));
-                
+                parent.showConfigPanel(botConfigs.get(item));  
             }
         });
         

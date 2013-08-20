@@ -53,12 +53,16 @@ public class RobotConfigPanel extends JPanel
     
     private RobotConfig config;
     
-    public RobotConfigPanel(RootWindow _root, RobotConfig botConfig)
+    public RobotConfigPanel(RootWindow _root)
     {
         root = _root;
-        config = botConfig;
         setup();
         this.setBounds(0,0, 800, 600);
+    }
+    
+    public void setRobotConfig(RobotConfig botConfig)
+    {
+        config = botConfig;
     }
     
     public void initComponents()
@@ -120,7 +124,6 @@ public class RobotConfigPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("BACK!!!!!");
                 root.recallMenuPanel();
             }
         });

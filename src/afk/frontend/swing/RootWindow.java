@@ -35,6 +35,7 @@ public class RootWindow extends JFrame implements ActionListener
     ArrayList games;
     private JPanel contentPane;
     private MenuPanel menuPanel;
+    private RobotConfigPanel configPanel;
     private ArrayList<GamePanel> gamePanels;
 
     public void start()
@@ -87,6 +88,7 @@ public class RootWindow extends JFrame implements ActionListener
         try
         {
             menuPanel = new MenuPanel(this);
+            configPanel = new RobotConfigPanel(this);
             menuPanel.setup();
   
         } 
@@ -98,11 +100,10 @@ public class RootWindow extends JFrame implements ActionListener
 
     private void addComponents()
     {
-        //RobotConfigPanel pan = new RobotConfigPanel(this);
         try
         {
             contentPane.add(menuPanel);
-            //contentPane.add(pan);
+            contentPane.add(configPanel);
         } 
         catch (Exception e)
         {
@@ -163,14 +164,13 @@ public class RootWindow extends JFrame implements ActionListener
     }
     
     public void showConfigPanel(RobotConfig config)
-    {
-        RobotConfigPanel configPanel = new RobotConfigPanel(this, config);
-        contentPane.add(configPanel);
-        
+    {        
         CardLayout cl = (CardLayout)contentPane.getLayout();
         cl.next(contentPane);
         
+        configPanel.setRobotConfig(config);
         configPanel.requestFocus();
+        
         
         contentPane.invalidate();
         contentPane.validate();
