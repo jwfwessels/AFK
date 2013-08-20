@@ -4,12 +4,10 @@
  */
 package afk.frontend.swing;
 
-import afk.AFKCoordinator;
-import afk.Coordinator;
-import afk.GameCoordinator;
-import afk.bot.RobotEngine;
+import afk.game.AFKCoordinator;
+import afk.game.Coordinator;
+import afk.game.GameCoordinator;
 import afk.bot.RobotException;
-import afk.bot.london.London;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,12 +18,8 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -42,8 +36,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class MenuPanel extends JPanel
 {
-// TODO; define components + parent ref
-// TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
 
     RootWindow parent;
     JPanel pnlBotSelButtons;
@@ -69,7 +61,6 @@ public class MenuPanel extends JPanel
 
     public MenuPanel(RootWindow parent)
     {
-        //TODO; set layout
         this.parent = parent;
 
         LayoutManager layout = new MenuPanel_Layout();
@@ -80,7 +71,6 @@ public class MenuPanel extends JPanel
 
     void setup()
     {
-        //TODO; call init, add, style
         initComponents();
         addComponents();
         styleComponents();
@@ -88,8 +78,6 @@ public class MenuPanel extends JPanel
 
     private void initComponents()
     {
-        //TODO; instatiate components
-        //TODO; run components setup(init & add), set visible 
         pnlAvailable = new JPanel();
         pnlAvailable.setLayout(new BorderLayout());
         lblAvailable = new JLabel("Available Bots");
@@ -129,7 +117,6 @@ public class MenuPanel extends JPanel
 
     private void addComponents()
     {
-        //TODO; get container, add components to container.
         Iterator it = botMap.keySet().iterator();
 
         while (it.hasNext())

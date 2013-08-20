@@ -4,7 +4,7 @@
  */
 package afk.frontend.swing;
 
-import afk.GameCoordinator;
+import afk.game.GameCoordinator;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;

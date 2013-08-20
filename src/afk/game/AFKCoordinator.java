@@ -1,4 +1,4 @@
-package afk;
+package afk.game;
 
 import afk.bot.RobotEngine;
 import afk.bot.RobotException;

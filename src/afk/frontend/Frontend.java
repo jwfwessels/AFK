@@ -1,6 +1,6 @@
 package afk.frontend;
 
-import afk.GameCoordinator;
+import afk.game.GameCoordinator;
 
 /**
  *

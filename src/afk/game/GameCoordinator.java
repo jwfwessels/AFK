@@ -1,4 +1,4 @@
-package afk;
+package afk.game;
 
 import afk.bot.RobotException;
 import java.awt.Component;
@@ -19,4 +19,17 @@ public interface GameCoordinator
      * Start the game.
      */
     public void start() throws RobotException;
+    
+    /**
+     * Registers a game listener to receive game events such as game over and
+     * player death.
+     * @param listener 
+     */
+    public void addGameListener(GameListener listener);
+    
+    /**
+     * De-register a game listener.
+     * @param listener 
+     */
+    public void removeGameListener(GameListener listener);
 }

@@ -4,7 +4,7 @@
  */
 package afk.frontend.swing;
 
-import afk.GameCoordinator;
+import afk.game.GameCoordinator;
 import afk.bot.RobotException;
 import afk.frontend.Frontend;
 import java.awt.CardLayout;

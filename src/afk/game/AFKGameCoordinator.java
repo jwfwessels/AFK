@@ -1,4 +1,4 @@
-package afk;
+package afk.game;
 
 import afk.bot.RobotEngine;
 import afk.bot.RobotException;
@@ -9,6 +9,8 @@ import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ public class AFKGameCoordinator implements GameCoordinator
     private GraphicsEngine gfxEngine;
     private RobotEngine botEngine;
     private List<String> participants;
+    private Collection<GameListener> listeners = new ArrayList<GameListener>();
 
     public AFKGameCoordinator(RobotLoader botLoader, List<String> participants)
     {
@@ -50,6 +53,18 @@ public class AFKGameCoordinator implements GameCoordinator
         }
         
         gameEngine.startGame(ids);
+    }
+
+    @Override
+    public void addGameListener(GameListener listener)
+    {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeGameListener(GameListener listener)
+    {
+        listeners.remove(listener);
     }
     
 }
