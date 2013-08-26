@@ -27,10 +27,10 @@ public class GamePanel extends JPanel
     JLayeredPane hudLayer;
     JLabel fps;
 
-    public GamePanel(RootWindow parent, GameCoordinator game)
+    public GamePanel(RootWindow parent, GameCoordinator gameCoordinator)
     {
         this.parent = parent;
-        glCanvas = game.getAWTComponent();
+        glCanvas = gameCoordinator.getAWTComponent();
         System.out.println("glCanvas" + glCanvas.getName());
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);

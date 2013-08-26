@@ -42,9 +42,9 @@ public class RootWindow extends JFrame implements Frontend
     }
 
     @Override
-    public void showGame(GameCoordinator game)
+    public void showGame(GameCoordinator gameCoordinator)
     {
-        final GamePanel gamePanel = new GamePanel(this, game);
+        final GamePanel gamePanel = new GamePanel(this, gameCoordinator);
         gamePanel.setup();
         gamePanels.add(gamePanel);
         contentPane.add(gamePanel);
@@ -138,16 +138,16 @@ public class RootWindow extends JFrame implements Frontend
         }
     }
 
-    public void spawnGamePanel(GameCoordinator game) throws RobotException
+    public void spawnGamePanel(GameCoordinator gameCoordinator) throws RobotException
     {
-        GamePanel gamePanel = new GamePanel(this, game);
+        GamePanel gamePanel = new GamePanel(this, gameCoordinator);
 
         games.add(gamePanel);
 
         gamePanel.setup();
         gamePanels.add(gamePanel);
         contentPane.add(gamePanel);
-        game.start();
+        gameCoordinator.start();
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);

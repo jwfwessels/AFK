@@ -246,10 +246,10 @@ public class MenuPanel extends JPanel
                     coordinator.addRobot(lsSelectedModel.getElementAt(i));
                 }
                 lsSelectedModel.clear();
-                GameCoordinator game = coordinator.newGame();
+                GameCoordinator gameCoordinator = coordinator.newGame();
                 try
                 {
-                    parent.spawnGamePanel(game);
+                    parent.spawnGamePanel(gameCoordinator);
                 } catch (RobotException ex)
                 {
                     showError(ex.getMessage());

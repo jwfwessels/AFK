@@ -51,8 +51,8 @@ public class AFKCoordinator implements Coordinator
     public GameCoordinator newGame()
     {
         
-        GameCoordinator game = new AFKGameCoordinator(botLoader, participants);
+        GameCoordinator gameCoordinator = new AFKGameCoordinator(botLoader, participants);
         
-        return game;
+        return gameCoordinator;
     }
 }

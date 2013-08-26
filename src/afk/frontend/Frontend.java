@@ -10,7 +10,7 @@ public interface Frontend
 {
     public void showMain();
     
-    public void showGame(GameCoordinator game);
+    public void showGame(GameCoordinator gameCoordinator);
     
     public void showError(String message);
     
