@@ -4,8 +4,9 @@
  */
 package afk.bot.london;
 
+import afk.bot.RobotException;
 import afk.bot.RobotEngine;
-import java.util.ArrayList;
+import afk.bot.RobotLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -14,57 +15,26 @@ import java.util.UUID;
  *
  * @author Jessica
  */
-public class London extends RobotEngine
+public class London implements RobotEngine
 {
-    /// refactor
-    Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
     
-    ArrayList<String> botNames = new ArrayList<String>();
-    public London()
+    private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
+    private RobotLoader robotLoader;
+
+    public London(RobotLoader robotLoader)
     {
-        robotLoader = new RobotLoader();
+        this.robotLoader = robotLoader;
     }
-    
+
     @Override
-    public Robot[] getRobotInstances() throws RobotException
+    public UUID addRobot(String path) throws RobotException
     {
-        Robot[] bots = new Robot[botNames.size()];
-        for(int x = 0; x < botNames.size(); x++)
-        {
-            try
-            {
-                bots[x] = robotLoader.getRobotInstance(botNames.get(x));
-                
-                /// adding bot to 'robots' hashmap
-                robots.put(bots[x].getId(), bots[x]);
-            }
-            catch(RobotException e)
-            {
-                throw e;
-            }
-        }
-        return bots;
+        Robot r = robotLoader.getRobotInstance(path);
+        UUID id = r.getId();
+        robots.put(id, r);
+        return id;
     }
-    
-    @Override
-    public void addRobot(String path) throws RobotException
-    {
-        try
-        {
-            robotLoader.addRobot(path);
-        }
-        catch(RobotException e)
-        {
-            //TODO: Error reporting
-            throw e;
-        }
-    }
-    
-    public void setParticipatingBots(ArrayList<String> _botNames)
-    {
-        botNames = _botNames;
-    }
-    
+
     /// this is where bot execution actually happens
     // TODO: multithread this bad-boy
     @Override
@@ -74,12 +44,12 @@ public class London extends RobotEngine
         {
             robot.clearFlags();
             robot.run();
-            
+
             // FIXME: uncomment once the data system is set up
             //db.getController(robot.id).flags = robot.getActionFlags();
         }
     }
-    
+
     // FIXME: db thing...
     @Override
     public boolean[] getFlags(UUID id)
@@ -92,5 +62,4 @@ public class London extends RobotEngine
     {
         robots.get(id).events = events;
     }
-    
 }

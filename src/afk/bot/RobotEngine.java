@@ -4,29 +4,25 @@
  */
 package afk.bot;
 
-import afk.bot.london.Robot;
 import afk.bot.london.RobotEvent;
-import afk.bot.london.RobotException;
-import afk.bot.london.RobotLoader;
 import java.util.UUID;
 
 /**
  *
  * @author Jessica
  */
-public abstract class RobotEngine 
+public interface RobotEngine
 {
-    protected RobotLoader robotLoader;
-    
-    public abstract Robot[] getRobotInstances() throws RobotException;
-    public abstract void addRobot(String path) throws RobotException;
-    
+
+    public UUID addRobot(String path) throws RobotException;
+
+    //public void loadRobot(String path) throws RobotException; // refactored to separate RobotLoader interface
     
     /// refactor
-    public abstract void execute();
-    // FIXME: remove once db system is up and running
-    public abstract boolean[] getFlags(UUID id);
-    public abstract void setEvents(UUID id, RobotEvent events);
-    
-    
+    public void execute();
+
+    // FIXME: remove once db system is up and running ???
+    public boolean[] getFlags(UUID id);
+
+    public void setEvents(UUID id, RobotEvent events);
 }

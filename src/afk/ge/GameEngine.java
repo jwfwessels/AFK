@@ -4,26 +4,15 @@
  */
 package afk.ge;
 
-import afk.gfx.GraphicsEngine;
-import afk.bot.london.London;
+import java.util.UUID;
 
 /**
  *
  * @author Jw
  */
-public abstract class GameEngine implements Runnable
+public interface GameEngine
 {
 
-    protected GraphicsEngine gfxEngine;
-
-    public abstract void startGame();
-
-    @Override
-    public abstract void run();
-
-    protected abstract void gameLoop();
-
-    protected abstract void updateGame();
-
-    protected abstract void render(double alpha);
+    public void startGame(UUID[] participants);
+    
 }

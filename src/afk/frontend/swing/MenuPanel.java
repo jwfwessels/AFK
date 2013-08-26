@@ -4,10 +4,10 @@
  */
 package afk.frontend.swing;
 
-import afk.bot.london.London;
-import afk.bot.london.Robot;
-import afk.bot.london.RobotException;
-import java.awt.AWTEventMulticaster;
+import afk.game.AFKCoordinator;
+import afk.game.Coordinator;
+import afk.game.GameCoordinator;
+import afk.bot.RobotException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
@@ -34,30 +33,22 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author Jessica
  */
-public class MenuPanel extends JPanel //implements ActionListener
+public class MenuPanel extends JPanel
 {
-// TODO; define components + parent ref
-// TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
 
     RootWindow parent;
-    
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
     JPanel pnlSelected;
     JPanel pnlRobotError;
-    
     JLabel lblAvailable;
     JLabel lblSelected;
-    
     JButton btnAddBot;
     JButton btnAddAllBots;
     JButton btnRemoveBot;
@@ -69,7 +60,6 @@ public class MenuPanel extends JPanel //implements ActionListener
     JMenuItem configMenuItem;
     
     JTextArea txtErrorConsole;
-    
     private HashMap<String, String> botMap;
     private JFileChooser fileChooser;
     private JList<String> lstAvailableBots;
@@ -77,22 +67,20 @@ public class MenuPanel extends JPanel //implements ActionListener
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<String> lsSelectedModel;
     private Point p;
-    private London botEngine;
+    private Coordinator coordinator;
 
     public MenuPanel(RootWindow parent)
     {
-        //TODO; set layout
         this.parent = parent;
 
         LayoutManager layout = new MenuPanel_Layout();
         this.setLayout(layout);
-
-        botEngine = new London();
+        
+        coordinator = new AFKCoordinator();
     }
 
     void setup()
     {
-        //TODO; call init, add, style
         initComponents();
         addComponents();
         styleComponents();
@@ -100,8 +88,6 @@ public class MenuPanel extends JPanel //implements ActionListener
 
     private void initComponents()
     {
-        //TODO; instatiate components
-        //TODO; run components setup(init & add), set visible 
         pnlAvailable = new JPanel();
         pnlAvailable.setLayout(new BorderLayout());
         lblAvailable = new JLabel("Available Bots");
@@ -130,7 +116,7 @@ public class MenuPanel extends JPanel //implements ActionListener
         lstSelectedBots = new JList();
         lsAvailableModel = new DefaultListModel();
         lsSelectedModel = new DefaultListModel();
-        
+
         pnlRobotError = new JPanel();
         txtErrorConsole = new JTextArea();
         txtErrorConsole.setEditable(false);
@@ -143,7 +129,6 @@ public class MenuPanel extends JPanel //implements ActionListener
 
     private void addComponents()
     {
-        //TODO; get container, add components to container.
         Iterator it = botMap.keySet().iterator();
 
         while (it.hasNext())
@@ -156,8 +141,8 @@ public class MenuPanel extends JPanel //implements ActionListener
         this.add(pnlAvailable);
         this.add(pnlBotSelButtons);
         this.add(pnlSelected);
-        this.add(pnlRobotError);        
-        
+        this.add(pnlRobotError);
+
         pnlAvailable.add(lblAvailable, BorderLayout.NORTH);
         pnlAvailable.add(lstAvailableBots, BorderLayout.CENTER);
         pnlAvailable.add(btnLoadBot, BorderLayout.SOUTH);
@@ -170,7 +155,7 @@ public class MenuPanel extends JPanel //implements ActionListener
 
         pnlSelected.add(lblSelected, BorderLayout.NORTH);
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
-        
+
         pnlRobotError.add(txtErrorConsole);
         
         configMenu.add(configMenuItem);
@@ -182,7 +167,6 @@ public class MenuPanel extends JPanel //implements ActionListener
 //    {
 //        //TODO;
 //    }
-
     private void styleComponents()
     {
         // for testing
@@ -190,12 +174,12 @@ public class MenuPanel extends JPanel //implements ActionListener
         //pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
         //pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLUE));
         //pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
-       
+
         pnlAvailable.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlBotSelButtons.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        
+
         btnAddBot.addActionListener(new ActionListener()
         {
             @Override
@@ -256,13 +240,12 @@ public class MenuPanel extends JPanel //implements ActionListener
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
                     try
                     {
-                        botEngine.addRobot(botPath);
+                        coordinator.loadRobot(botPath);
                         botMap.put(botName, botPath);
                         lsAvailableModel.addElement(botName);
-                    }
-                    catch(RobotException ex)
+                    } catch (RobotException ex)
                     {
-                        txtErrorConsole.setText("Error: " + ex.getMessage());
+                        showError(ex.getMessage());
                     }
                 }
             }
@@ -273,10 +256,19 @@ public class MenuPanel extends JPanel //implements ActionListener
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                // TODO: Change tab - use selected list model as bots for match - names map to paths in botMap
-                // TODO: Change MenuPanel to have a BotEngine, to perform testing in relation to laoding bots.
-                botEngine.setParticipatingBots(getParticipatingBots());
-                parent.spawnGamePanel(botEngine);
+                for (int i = 0; i < lsSelectedModel.size(); i++)
+                {
+                    coordinator.addRobot(lsSelectedModel.getElementAt(i));
+                }
+                lsSelectedModel.clear();
+                GameCoordinator gameCoordinator = coordinator.newGame();
+                try
+                {
+                    parent.spawnGamePanel(gameCoordinator);
+                } catch (RobotException ex)
+                {
+                    showError(ex.getMessage());
+                }
             }
         });
         
@@ -296,14 +288,9 @@ public class MenuPanel extends JPanel //implements ActionListener
         lstSelectedBots.addMouseListener(new MousePopupListener());
     }
 
-    public ArrayList<String> getParticipatingBots()
+    public void showError(String message)
     {
-        ArrayList<String> bots = new ArrayList<String>();
-        for (int x = 0; x < lsSelectedModel.size(); x++)
-        {
-            bots.add(lsSelectedModel.getElementAt(x));
-        }
-        return bots;
+        txtErrorConsole.setText("Error: " + message);
     }
 
     class MenuPanel_Layout implements LayoutManager
@@ -365,7 +352,7 @@ public class MenuPanel extends JPanel //implements ActionListener
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = ((h / 8) * 7);
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num1 += c.getSize().width;
             }
             
@@ -376,10 +363,10 @@ public class MenuPanel extends JPanel //implements ActionListener
             {
                 wVal = (w) >= 300 ? (w / 3) : 100;
                 hVal = (h / 8) * 7;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num1 += c.getSize().width;
-                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int)(hVal/ 7)));
-                pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal/12, wVal/3, wVal/12, wVal/3));
+                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int) (hVal / 7)));
+                pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal / 12, wVal / 3, wVal / 12, wVal / 3));
             }
 
             //pnlSelected
@@ -389,19 +376,19 @@ public class MenuPanel extends JPanel //implements ActionListener
             {
                 wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
                 hVal = (h / 8) * 7;
-                c.setBounds(insets.left + num1, insets.top, (int)wVal, (int)hVal);
+                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num2 += c.getSize().height;
             }
            
             //pnlError
-            
+
             c = parent.getComponent(3);
-            if(c.isVisible())
-            {           
+            if (c.isVisible())
+            {
                 hVal = h / 8;
                 wVal = w;
-                c.setBounds(insets.left, insets.top + num2, (int)wVal, (int)hVal);
-            }       
+                c.setBounds(insets.left, insets.top + num2, (int) wVal, (int) hVal);
+            }
         }
     }
     

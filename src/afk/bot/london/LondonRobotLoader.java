@@ -1,5 +1,7 @@
 package afk.bot.london;
 
+import afk.bot.RobotLoader;
+import afk.bot.RobotException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,7 +16,7 @@ import java.util.Map;
  *
  * @author Jessica
  */
-public class RobotLoader extends ClassLoader
+public class LondonRobotLoader extends ClassLoader implements RobotLoader
 {
 
     private final String ROBOT_CLASS = "afk.bot.london.Robot";
@@ -24,6 +26,7 @@ public class RobotLoader extends ClassLoader
     private boolean robotExists;
 
     //Loads all necessary classes needed for the robot specified by path
+    @Override
     public void addRobot(String path) throws RobotException
     {
         if (path.endsWith(".class"))
@@ -101,7 +104,7 @@ public class RobotLoader extends ClassLoader
         }
     }
 
-    public void loadClass(InputStream in, String name) throws RobotException
+    private void loadClass(InputStream in, String name) throws RobotException
     {
         if (!classMap.containsKey(name))
         {
@@ -130,6 +133,7 @@ public class RobotLoader extends ClassLoader
     }
 
     //Returns instances of robots that are in robotClasses - to be used when game is started
+    @Override
     public Robot getRobotInstance(String name) throws RobotException
     {
         Class tempClass = robotMap.get(name);
@@ -148,6 +152,7 @@ public class RobotLoader extends ClassLoader
         return (Robot) obj;
     }
 
+    @Override
     public void clearMaps()
     {
         classMap.clear();

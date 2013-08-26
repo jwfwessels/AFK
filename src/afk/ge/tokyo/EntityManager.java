@@ -4,10 +4,11 @@
  */
 package afk.ge.tokyo;
 
+import afk.bot.RobotEngine;
 import afk.ge.AbstractEntity;
 import afk.bot.london.London;
 import afk.bot.london.Robot;
-import afk.bot.london.RobotException;
+import afk.bot.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
@@ -63,15 +64,14 @@ public class EntityManager
     public static final int TANK_FOVY = 70;
     public static final int TANK_FOVX = 170;
     int NUMCUBES = 10;
-    int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
+    public static final int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
     public ArrayList<TankEntity> entities;
     public ArrayList<TankEntity> obstacles;
     private ArrayList<AbstractEntity> subEntities;
     private Queue<Entity> particles = new ArrayDeque<Entity>();
     private ParticleEmitter[] emitters;
-    London botEngine;
     Engine engine;
-    private static final Vec3[] BOT_COLOURS =
+    public static final Vec3[] BOT_COLOURS =
     {
         new Vec3(1, 0, 0),
         new Vec3(0, 0, 1),
@@ -82,7 +82,7 @@ public class EntityManager
         new Vec3(0.95f, 0.95f, 0.95f),
         new Vec3(0.2f, 0.2f, 0.2f)
     };
-    private Vec3[] SPAWN_POINTS =
+    public static final Vec3[] SPAWN_POINTS =
     {
         new Vec3(-SPAWNVALUE, 0, -SPAWNVALUE),
         new Vec3(SPAWNVALUE, 0, SPAWNVALUE),
@@ -94,9 +94,8 @@ public class EntityManager
         new Vec3(SPAWNVALUE, 0, 0)
     };
 
-    public EntityManager(London botEngine, Engine engine)
+    public EntityManager(Engine engine)
     {
-        this.botEngine = botEngine;
         this.engine = engine;
         entities = new ArrayList<TankEntity>();
         obstacles = new ArrayList<TankEntity>();
@@ -143,7 +142,7 @@ public class EntityManager
         engine.addEntity(wall);
     }
 
-    private void createObstacles(Vec3 scale)
+    public void createObstacles(Vec3 scale)
     {
         int min = -18;
         int max = 18;
@@ -156,20 +155,8 @@ public class EntityManager
 
         }
     }
-
-    void createBots() throws RobotException
-    {
-        spawnStuff();
-        createObstacles(new Vec3(5, 5, 5));
-        Robot[] bots = botEngine.getRobotInstances();
-        for (int i = 0; i < bots.length; i++)
-        {
-            UUID id = bots[i].getId();
-            createTankEntityNEU(id, SPAWN_POINTS[i], BOT_COLOURS[i]);
-        }
-    }
-
-    private void createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
+    
+    public void createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
 

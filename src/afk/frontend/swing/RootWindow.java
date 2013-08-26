@@ -4,17 +4,13 @@
  */
 package afk.frontend.swing;
 
-import afk.ge.GameEngine;
-import afk.ge.tokyo.Tokyo;
-import afk.gfx.GraphicsEngine;
-import afk.bot.london.London;
-import afk.gfx.athens.Athens;
+import afk.game.GameCoordinator;
+import afk.bot.RobotException;
+import afk.frontend.Frontend;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -26,7 +22,7 @@ import javax.swing.JPanel;
  *
  * @author Jw
  */
-public class RootWindow extends JFrame implements ActionListener
+public class RootWindow extends JFrame implements Frontend
 {
 
     //TODO; define components
@@ -37,15 +33,30 @@ public class RootWindow extends JFrame implements ActionListener
     private RobotConfigPanel configPanel;
     private ArrayList<GamePanel> gamePanels;
 
-    public void start()
+    @Override
+    public void showMain()
     {
-        //TODO; currently a bit of a hack since this is not the main thread its called by main
         this.setTitle("AFK Arena");
         this.pack();
         this.setLocationByPlatform(true);
         this.setVisible(true);
-//        menuPanel.setVisible(false);
-//        gamePanel.setVisible(false);
+    }
+
+    @Override
+    public void showGame(GameCoordinator gameCoordinator)
+    {
+        final GamePanel gamePanel = new GamePanel(this, gameCoordinator);
+        gamePanel.setup();
+        gamePanels.add(gamePanel);
+        contentPane.add(gamePanel);
+
+        CardLayout cl = (CardLayout) contentPane.getLayout();
+        cl.next(contentPane);
+        //hack to get awt keyEvents to register
+        gamePanel.glCanvas.requestFocus();
+
+        contentPane.invalidate();
+        contentPane.validate();
     }
 
     public RootWindow()
@@ -135,23 +146,16 @@ public class RootWindow extends JFrame implements ActionListener
         }
     }
 
-    public void spawnGamePanel(London botEngine)
+    public void spawnGamePanel(GameCoordinator gameCoordinator) throws RobotException
     {
-        // TODO: reciefe BotEngine from MenuPanal and psass it to TokYo's COnstructor
-        GraphicsEngine renderer = new Athens(false);
-        GameEngine engine = new Tokyo(renderer, botEngine);
-        System.out.println("START ENGINE THREAD");
-        new Thread(engine).start();
+        GamePanel gamePanel = new GamePanel(this, gameCoordinator);
 
-        games.add(engine);
+        games.add(gamePanel);
 
-        final GamePanel gamePanel = new GamePanel(this, renderer);
         gamePanel.setup();
         gamePanels.add(gamePanel);
         contentPane.add(gamePanel);
-        engine.startGame();
-
-
+        gameCoordinator.start();
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.next(contentPane);
@@ -185,8 +189,26 @@ public class RootWindow extends JFrame implements ActionListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent e)
+    public void showError(String message)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        menuPanel.showError(message);
+    }
+
+    @Override
+    public void showWarning(String message)
+    {
+        menuPanel.showError(message);
+    }
+
+    @Override
+    public void showMessage(String message)
+    {
+        menuPanel.showError(message);
+    }
+
+    @Override
+    public void showAlert(String message)
+    {
+        JOptionPane.showMessageDialog(rootPane, message, "Alert!", JOptionPane.ERROR_MESSAGE);
     }
 }
