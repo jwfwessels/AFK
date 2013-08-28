@@ -1,13 +1,9 @@
 package afk.bot.london;
 
-import afk.bot.Robot;
-import java.util.Arrays;
-import java.util.UUID;
-
 /**
  * @author Jessica
  */
-public abstract class TankRobot implements Robot
+public abstract class TankRobot extends AbstractRobot
 {
 
     public static final int NUM_ACTIONS = 5;
@@ -17,37 +13,16 @@ public abstract class TankRobot implements Robot
     public static final int TURN_CLOCK = 2;
     public static final int TURN_ANTICLOCK = 3;
     public static final int ATTACK_ACTION = 4;
-    private boolean[] actionFlags;
-    protected RobotEvent events;
-    private UUID id;
 
     public TankRobot()
     {
-        actionFlags = new boolean[NUM_ACTIONS];
-        events = new RobotEvent();
-
-        id = UUID.randomUUID();
+        super(NUM_ACTIONS);
     }
 
-    @Override
-    public final UUID getId()
+    // to make the super constructor hidden from subclasses
+    private TankRobot(int numActions)
     {
-        return id;
-    }
-
-    @Override
-    public final void setFlag(int index, boolean value)
-    {
-        if (index <= NUM_ACTIONS && index >= 0)
-        {
-            actionFlags[index] = value;
-        }
-    }
-
-    @Override
-    public final boolean[] getActionFlags()
-    {
-        return Arrays.copyOf(actionFlags, actionFlags.length);
+        super(numActions);
     }
 
     protected final void moveForward()
@@ -77,20 +52,5 @@ public abstract class TankRobot implements Robot
     protected final void attack()
     {
         setFlag(ATTACK_ACTION, true);
-    }
-
-    @Override
-    public final void clearFlags()
-    {
-        for (int x = 0; x < NUM_ACTIONS; x++)
-        {
-            actionFlags[x] = false;
-        }
-    }
-
-    @Override
-    public final void feedback(RobotEvent event)
-    {
-        this.events = event;
     }
 }
