@@ -27,11 +27,10 @@ public class RootWindow extends JFrame implements Frontend
 
     //TODO; define components
     Dimension dim;
-    ArrayList games;
     private JPanel contentPane;
     private MenuPanel menuPanel;
     private RobotConfigPanel configPanel;
-    private ArrayList<GamePanel> gamePanels;
+    private GamePanel gamePanel;
 
     @Override
     public void showMain()
@@ -42,32 +41,12 @@ public class RootWindow extends JFrame implements Frontend
         this.setVisible(true);
     }
 
-    @Override
-    public void showGame(GameCoordinator gameCoordinator)
-    {
-        final GamePanel gamePanel = new GamePanel(this, gameCoordinator);
-        gamePanel.setup();
-        gamePanels.add(gamePanel);
-        contentPane.add(gamePanel);
-
-        CardLayout cl = (CardLayout) contentPane.getLayout();
-        cl.next(contentPane);
-        //hack to get awt keyEvents to register
-        gamePanel.glCanvas.requestFocus();
-
-        contentPane.invalidate();
-        contentPane.validate();
-    }
-
     public RootWindow()
     {
         super();
         this.setBounds(0, 0, 100, 100);
         LayoutManager layout = new RootWindow_Layout(this);
         this.setLayout(layout);
-
-        games = new ArrayList();
-        gamePanels = new ArrayList<GamePanel>();
 
         contentPane = new JPanel();
         contentPane.setLayout(new CardLayout());
@@ -112,8 +91,8 @@ public class RootWindow extends JFrame implements Frontend
     {
         try
         {
-            contentPane.add(menuPanel);
-            contentPane.add(configPanel);
+            contentPane.add(menuPanel, "menu");
+            contentPane.add(configPanel, "config");
         } 
         catch (Exception e)
         {
@@ -146,19 +125,17 @@ public class RootWindow extends JFrame implements Frontend
         }
     }
 
-    public void spawnGamePanel(GameCoordinator gameCoordinator) throws RobotException
-    {
-        GamePanel gamePanel = new GamePanel(this, gameCoordinator);
 
-        games.add(gamePanel);
+    @Override
+    public void showGame(GameCoordinator gameCoordinator)
+    {
+        gamePanel = new GamePanel(this, gameCoordinator);
 
         gamePanel.setup();
-        gamePanels.add(gamePanel);
-        contentPane.add(gamePanel);
-        gameCoordinator.start();
+        contentPane.add(gamePanel, "game");
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
-        cl.next(contentPane);
+        cl.show(contentPane, "game");
         //hack to get awt keyEvents to register
         gamePanel.glCanvas.requestFocus();
 
@@ -169,7 +146,7 @@ public class RootWindow extends JFrame implements Frontend
     public void showConfigPanel()
     {        
         CardLayout cl = (CardLayout)contentPane.getLayout();
-        cl.next(contentPane);
+        cl.show(contentPane, "config");
         
         configPanel.requestFocus();
         
@@ -180,7 +157,7 @@ public class RootWindow extends JFrame implements Frontend
     public void recallMenuPanel()
     {
         CardLayout cl = (CardLayout)contentPane.getLayout();
-        cl.next(contentPane);
+        cl.show(contentPane, "menu");
         
         menuPanel.requestFocus();
         

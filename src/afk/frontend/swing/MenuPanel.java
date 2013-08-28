@@ -23,6 +23,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -262,12 +264,13 @@ public class MenuPanel extends JPanel
                 }
                 lsSelectedModel.clear();
                 GameCoordinator gameCoordinator = coordinator.newGame();
+                parent.showGame(gameCoordinator);
                 try
                 {
-                    parent.spawnGamePanel(gameCoordinator);
+                    gameCoordinator.start();
                 } catch (RobotException ex)
                 {
-                    showError(ex.getMessage());
+                    parent.showError(ex.getMessage());
                 }
             }
         });
