@@ -25,30 +25,45 @@ public abstract class TankRobot extends AbstractRobot
         super(numActions);
     }
 
+    /**
+     * Moves the tank forward this game tick.
+     */
     protected final void moveForward()
     {
         setFlag(MOVE_FRONT, true);
         setFlag(MOVE_BACK, false);
     }
 
+    /**
+     * Moves the tank backward this game tick.
+     */
     protected final void moveBackwards()
     {
         setFlag(MOVE_BACK, true);
         setFlag(MOVE_FRONT, false);
     }
 
+    /**
+     * Turns the tank clockwise this game tick.
+     */
     protected final void turnClockwise()
     {
         setFlag(TURN_CLOCK, true);
         setFlag(TURN_ANTICLOCK, false);
     }
 
+    /**
+     * Turns the tank anticlockwise this game tick.
+     */
     protected final void turnAntiClockwise()
     {
         setFlag(TURN_ANTICLOCK, true);
         setFlag(TURN_CLOCK, false);
     }
 
+    /**
+     * Attempts to fire a projectile this game tick.
+     */
     protected final void attack()
     {
         setFlag(ATTACK_ACTION, true);
