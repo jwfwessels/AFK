@@ -1,5 +1,5 @@
 
-import afk.bot.london.SmallTank;
+import afk.bot.london.TankRobot;
 
 /**
  * Sample class of what coded bot will look like
@@ -7,7 +7,7 @@ import afk.bot.london.SmallTank;
  * @author Jessica
  *
  */
-public class SampleBot2 extends SmallTank 
+public class SampleBot2 extends TankRobot 
 {
 
     boolean running = true;

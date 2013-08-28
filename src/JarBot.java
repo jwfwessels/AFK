@@ -1,5 +1,5 @@
 
-import afk.bot.london.SmallTank;
+import afk.bot.london.TankRobot;
 
 
 /**
@@ -8,7 +8,7 @@ import afk.bot.london.SmallTank;
  * @author Jessica
  *
  */
-public class JarBot extends SmallTank
+public class JarBot extends TankRobot
 {
     //int movement = 0;
     //int rotation = 0;

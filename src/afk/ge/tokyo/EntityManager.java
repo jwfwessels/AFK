@@ -7,7 +7,7 @@ package afk.ge.tokyo;
 import afk.bot.RobotEngine;
 import afk.ge.AbstractEntity;
 import afk.bot.london.London;
-import afk.bot.london.Robot;
+import afk.bot.london.TankRobot;
 import afk.bot.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;

@@ -6,7 +6,7 @@ package afk.ge.tokyo;
 
 import afk.ge.AbstractEntity;
 import afk.gfx.GfxEntity;
-import afk.bot.london.Robot;
+import afk.bot.london.TankRobot;
 import afk.bot.london.RobotEvent;
 import afk.ge.BBox;
 import static afk.gfx.GfxUtils.*;
@@ -28,10 +28,10 @@ public class TankEntity extends AbstractEntity
     private final int viewingDistanceSqr;
     // TODO: just a quick temp hack variable to get feedback working...
     protected boolean hitwall;
-    Robot botController;
+    TankRobot botController;
     protected BBox obb;
 
-    public TankEntity(Robot botController, GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
+    public TankEntity(TankRobot botController, GfxEntity gfxEntity, EntityManager entityManager, float totalLife)
     {
         super(gfxEntity, entityManager);
         this.botController = botController;

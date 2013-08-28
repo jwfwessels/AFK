@@ -134,7 +134,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader
 
     //Returns instances of robots that are in robotClasses - to be used when game is started
     @Override
-    public Robot getRobotInstance(String name) throws RobotException
+    public TankRobot getRobotInstance(String name) throws RobotException
     {
         Class tempClass = robotMap.get(name);
 
@@ -149,7 +149,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader
             throw new RobotException("Failed to create instance of " + name);
         }
 
-        return (Robot) obj;
+        return (TankRobot) obj;
     }
 
     @Override

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class London implements RobotEngine
 {
     
-    private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
+    private Map<UUID, TankRobot> robots = new HashMap<UUID, TankRobot>();
     private RobotLoader robotLoader;
 
     public London(RobotLoader robotLoader)
@@ -29,7 +29,7 @@ public class London implements RobotEngine
     @Override
     public UUID addRobot(String path) throws RobotException
     {
-        Robot r = robotLoader.getRobotInstance(path);
+        TankRobot r = robotLoader.getRobotInstance(path);
         UUID id = r.getId();
         robots.put(id, r);
         return id;
@@ -40,7 +40,7 @@ public class London implements RobotEngine
     @Override
     public void execute()
     {
-        for (Robot robot : robots.values())
+        for (TankRobot robot : robots.values())
         {
             robot.clearFlags();
             robot.run();

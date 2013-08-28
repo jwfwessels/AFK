@@ -1,19 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.bot.london;
 
-import java.util.ArrayList;
+import afk.bot.Robot;
 import java.util.Arrays;
 import java.util.UUID;
 
 /**
  * @author Jessica
  */
-public abstract class Robot
+public abstract class TankRobot implements Robot
 {
-    //Method user will have to implement
 
     public static final int NUM_ACTIONS = 5;
     //Index mapping of flag array
@@ -24,78 +19,68 @@ public abstract class Robot
     public static final int ATTACK_ACTION = 4;
     private boolean[] actionFlags;
     protected RobotEvent events;
-    
-    
-    /// refactor
     private UUID id;
 
-    /*
-     * Abstract method that will be implemented by user
-     */
-    public abstract void run();
-
-    /*
-     * Methods bot actions
-     * Declared as final to prevent overriding
-     */
-    public Robot()
+    public TankRobot()
     {
         actionFlags = new boolean[NUM_ACTIONS];
         events = new RobotEvent();
-        
-        /// refactor
+
         id = UUID.randomUUID();
     }
 
-    public UUID getId()
+    @Override
+    public final UUID getId()
     {
         return id;
     }
 
-    private void setFlag(int index)
+    @Override
+    public final void setFlag(int index, boolean value)
     {
         if (index <= NUM_ACTIONS && index >= 0)
         {
-            actionFlags[index] = true;
+            actionFlags[index] = value;
         }
     }
 
-    public boolean[] getActionFlags()
+    @Override
+    public final boolean[] getActionFlags()
     {
         return Arrays.copyOf(actionFlags, actionFlags.length);
     }
 
     protected final void moveForward()
     {
-        //throw new UnsupportedOperationException();
-        setFlag(MOVE_FRONT);
+        setFlag(MOVE_FRONT, true);
+        setFlag(MOVE_BACK, false);
     }
 
     protected final void moveBackwards()
     {
-        //throw new UnsupportedOperationException();
-        setFlag(MOVE_BACK);
+        setFlag(MOVE_BACK, true);
+        setFlag(MOVE_FRONT, false);
     }
 
     protected final void turnClockwise()
     {
-        //throw new UnsupportedOperationException();
-        setFlag(TURN_CLOCK);
+        setFlag(TURN_CLOCK, true);
+        setFlag(TURN_ANTICLOCK, false);
     }
 
     protected final void turnAntiClockwise()
     {
-        //throw new UnsupportedOperationException();
-        setFlag(TURN_ANTICLOCK);
+        setFlag(TURN_ANTICLOCK, true);
+        setFlag(TURN_CLOCK, false);
     }
 
     protected final void attack()
     {
-        //throw new UnsupportedOperationException();
-        setFlag(ATTACK_ACTION);
+        setFlag(ATTACK_ACTION, true);
     }
 
-    public void clearFlags()
+    @Override
+    public final void clearFlags()
     {
         for (int x = 0; x < NUM_ACTIONS; x++)
         {
@@ -103,7 +88,8 @@ public abstract class Robot
         }
     }
 
-    public void feedback(RobotEvent event)
+    @Override
+    public final void feedback(RobotEvent event)
     {
         this.events = event;
     }
