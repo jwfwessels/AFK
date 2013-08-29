@@ -1,6 +1,7 @@
 package afk.gfx.athens;
 
-import afk.gfx.Camera;
+import afk.gfx.AbstractCamera;
+import afk.gfx.PerspectiveCamera;
 import afk.gfx.GfxEntity;
 import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
@@ -68,7 +69,7 @@ public class AthensEntity extends GfxEntity
                 entity.update(delta);
     }
     
-    protected void draw(GL2 gl, Camera camera, Vec3 sun)
+    protected void draw(GL2 gl, AbstractCamera camera, Vec3 sun)
     {
         // by default, active sets visibility of entity
         if (!active) return;

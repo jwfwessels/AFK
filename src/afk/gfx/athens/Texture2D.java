@@ -32,9 +32,8 @@ public class Texture2D extends Texture
         loaded.set(true);
     }
     
-    private void setup(GL2 gl, ByteBuffer data, int width, int height)
+    protected static void setup(GL2 gl, ByteBuffer data, int width, int height)
     {
-        
         gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB,
                 width, height, 0, GL.GL_RGB,
                 GL.GL_UNSIGNED_BYTE,

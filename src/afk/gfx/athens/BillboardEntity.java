@@ -4,7 +4,8 @@
  */
 package afk.gfx.athens;
 
-import afk.gfx.Camera;
+import afk.gfx.AbstractCamera;
+import afk.gfx.PerspectiveCamera;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
@@ -24,7 +25,7 @@ public class BillboardEntity extends AthensEntity
         this.spherical = spherical;
     }
     
-    private Mat4 createWorldMatrix(Camera camera)
+    private Mat4 createWorldMatrix(AbstractCamera camera)
     {
         Mat4 world = new Mat4(1f);
 
@@ -64,7 +65,7 @@ public class BillboardEntity extends AthensEntity
     }
 
     @Override
-    protected void draw(GL2 gl, Camera camera, Vec3 sun)
+    protected void draw(GL2 gl, AbstractCamera camera, Vec3 sun)
     {
         if (!active) return;
         

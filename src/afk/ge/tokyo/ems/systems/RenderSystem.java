@@ -2,8 +2,10 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.nodes.HUDNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.GfxEntity;
+import afk.gfx.GfxHUD;
 import afk.gfx.GraphicsEngine;
 import java.util.List;
 
@@ -43,18 +45,20 @@ public class RenderSystem implements ISystem
             gfx.colour = node.renderable.colour;
         }
         
-        // TODO: make this happen
-//        List<WeaponRenderableNode> weapNodes = ...
-//        for (WRNode node : nodes)
-//        {
-//            GfxEntity gfx = node.renderable.gfx;
-//
-//            GfxEntity turret = gfx.getSubEntity(node.weapRend.turret);
-//            turret.rotY = node.weapon.turretAngle;
-//
-//            GfxEntity barrel = turret.getSubEntity(node.weapRend.barrel);
-//            barrel.rotZ = node.weapon.barrelAngle;
-//        }
+        List<HUDNode> hnodes = engine.getNodeList(HUDNode.class);
+        for (HUDNode hnode : hnodes)
+        {
+            GfxHUD hud = gfxEngine.getGfxHUD(hnode.image);
+            
+            hud.setPosition((int)hnode.state.pos.getX(),
+                    (int)hnode.state.pos.getY());
+            
+            if (hnode.image.isUpdated())
+            {
+                hud.setImage(hnode.image.getImage());
+                hnode.image.setUpdated(false);
+            }
+        }
         
         gfxEngine.post();
     }

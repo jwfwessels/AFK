@@ -1,6 +1,6 @@
 package afk.gfx.athens.particles;
 
-import afk.gfx.Camera;
+import afk.gfx.AbstractCamera;
 import afk.gfx.athens.Mesh;
 import afk.gfx.athens.Shader;
 import com.hackoeur.jglm.Mat4;
@@ -56,7 +56,7 @@ public class Particle
             alive = false;
     }
     
-    private Mat4 createWorldMatrix(Camera camera)
+    private Mat4 createWorldMatrix(AbstractCamera camera)
     {
         Mat4 world = new Mat4(1f);
 
@@ -92,7 +92,7 @@ public class Particle
         return world;
     }
     
-    protected void draw(GL2 gl, Mesh mesh, Camera camera, Shader shader)
+    protected void draw(GL2 gl, Mesh mesh, AbstractCamera camera, Shader shader)
     {
         
         if (shader != null)

@@ -1,5 +1,6 @@
 package afk.gfx;
 
+import afk.ge.tokyo.ems.components.ImageComponent;
 import afk.ge.tokyo.ems.components.Renderable;
 import java.awt.Component;
 
@@ -82,5 +83,6 @@ public interface GraphicsEngine
     
     public void prime();
     public GfxEntity getGfxEntity(Renderable renderable);
+    public GfxHUD getGfxHUD(ImageComponent image);
     public void post();
 }

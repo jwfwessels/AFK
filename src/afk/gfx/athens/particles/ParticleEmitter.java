@@ -1,6 +1,6 @@
 package afk.gfx.athens.particles;
 
-import afk.gfx.Camera;
+import afk.gfx.AbstractCamera;
 import afk.gfx.Resource;
 import afk.gfx.athens.AthensEntity;
 import static afk.gfx.GfxUtils.*;
@@ -98,7 +98,7 @@ public class ParticleEmitter extends AthensEntity
     }
     
     @Override
-    public void draw(GL2 gl, Camera camera, Vec3 sun)
+    public void draw(GL2 gl, AbstractCamera camera, Vec3 sun)
     {
         if (shader != null)
         {

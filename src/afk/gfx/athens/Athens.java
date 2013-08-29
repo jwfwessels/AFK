@@ -1,8 +1,12 @@
 package afk.gfx.athens;
 
+import afk.ge.tokyo.ems.components.ImageComponent;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.gfx.AbstractCamera;
 import afk.gfx.Camera;
+import afk.gfx.PerspectiveCamera;
 import afk.gfx.GfxEntity;
+import afk.gfx.GfxHUD;
 import afk.gfx.GfxListener;
 import afk.gfx.GraphicsEngine;
 import com.hackoeur.jglm.*;
@@ -23,6 +27,8 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JLabel;
 import static afk.gfx.GfxUtils.*;
+import afk.gfx.HUDCamera;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +44,7 @@ public class Athens implements GraphicsEngine
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
+    protected Map<ImageComponent, AthensHUD> huds = new LinkedHashMap<ImageComponent, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
     private int w_width, w_height;
     private float aspect;
@@ -48,7 +55,8 @@ public class Athens implements GraphicsEngine
     private float time = 0.0f;
     private float lastFPS = 0.0f;
     private float fpsInterval = 1.0f;
-    Camera camera;
+    AbstractCamera camera;
+    HUDCamera hudCamera;
     Mat4 monkeyWorld, skyboxWorld;
     // TODO: move this to a sun/light position
     Vec3 origin_sun = new Vec3(-2.0f, 1.5f, 5.0f);
@@ -222,6 +230,16 @@ public class Athens implements GraphicsEngine
         }
         
         resourceManager.update(gl);
+        /// FIXME: this should go somewhere else
+        for (AthensHUD hud : huds.values())
+        {
+            if (!hud.isLoaded())
+                try { hud.load(gl); }
+                catch (IOException ioe) {}
+            if (hud.isUpdated())
+                hud.setup(gl);
+        }
+        ///
         update(delta);
 
         for (GfxListener l : listeners)
@@ -282,17 +300,31 @@ public class Athens implements GraphicsEngine
     private void render(GL2 gl)
     {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        
+        gl.glEnable(GL.GL_DEPTH_TEST);
 
         renderScene(gl, camera);
+        
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        
+        renderHUD(gl, hudCamera);
 
         gl.glFlush();
     }
 
-    private void renderScene(GL2 gl, Camera cam)
+    private void renderScene(GL2 gl, AbstractCamera camera)
     {
         for (AthensEntity entity : entities.values())
         {
             entity.draw(gl, camera, sun);
+        }
+    }
+    
+    private void renderHUD(GL2 gl, HUDCamera hudCamera)
+    {
+        for (AthensHUD hud : huds.values())
+        {
+            hud.draw(gl, hudCamera);
         }
     }
 
@@ -300,7 +332,6 @@ public class Athens implements GraphicsEngine
     {
         System.out.println("Initialising");
 
-        gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -310,11 +341,13 @@ public class Athens implements GraphicsEngine
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
-        camera = new Camera(
+        camera = new PerspectiveCamera(
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
                 60.0f, 0.1f, 100.0f);
+        
+        hudCamera = new HUDCamera(0, w_height, 0, w_width);
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
@@ -460,6 +493,18 @@ public class Athens implements GraphicsEngine
         }
         entity.used = true;
         return entity;
+    }
+    
+    @Override
+    public GfxHUD getGfxHUD(ImageComponent image)
+    {
+        AthensHUD hud = huds.get(image);
+        if (hud == null)
+        {
+            hud = new AthensHUD(image.getImage());
+            huds.put(image, hud);
+        }
+        return hud;
     }
 
     @Override

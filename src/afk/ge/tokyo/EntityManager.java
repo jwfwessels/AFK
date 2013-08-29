@@ -14,6 +14,7 @@ import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Bullet;
 import afk.ge.tokyo.ems.components.Controller;
+import afk.ge.tokyo.ems.components.ImageComponent;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Motor;
@@ -31,6 +32,9 @@ import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import com.jogamp.graph.geom.AABBox;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -120,6 +124,29 @@ public class EntityManager
         createGraphicWall(new Vec3(0, 0, 25), new Vec3(50, 1, 0.5f));
         createGraphicWall(new Vec3(25, 0, 0), new Vec3(0.5f, 1, 50));
         createGraphicWall(new Vec3(-25, 0, 0), new Vec3(0.5f, 1, 50));
+        
+        /// TESTING HUD
+        testHUD();
+    }
+    
+    public void testHUD()
+    {
+        BufferedImage image = new BufferedImage(100, 100, BufferedImage.OPAQUE);
+        Graphics2D g = image.createGraphics();
+        
+        g.setBackground(Color.BLACK);
+        g.clearRect(0, 0, image.getWidth(), image.getHeight());
+        
+        g.setColor(Color.YELLOW);
+        g.fillRect(20, 20, 20, 20);
+        g.drawOval(60, 60, 20, 20);
+        
+        g.dispose();
+        
+        Entity hud = new Entity();
+        hud.add(new ImageComponent(image));
+        hud.add(new State(new Vec3(200,200,0), null, null));
+        engine.addEntity(hud);
     }
 
     public void createFloor()
