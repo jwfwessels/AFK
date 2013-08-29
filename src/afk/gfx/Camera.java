@@ -34,7 +34,7 @@ public interface Camera
      * Call this when you need the projection matrix updated.
      * @param aspect The aspect ratio of the scene.
      */
-    void updateProjection(float aspect);
+    void updateProjection(float w, float h);
 
     /**
      * Call this when you need the view matrix updated. Also updates the

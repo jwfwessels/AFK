@@ -3,7 +3,6 @@ package afk.gfx.athens;
 import afk.ge.tokyo.ems.components.ImageComponent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.AbstractCamera;
-import afk.gfx.Camera;
 import afk.gfx.PerspectiveCamera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxHUD;
@@ -347,7 +346,8 @@ public class Athens implements GraphicsEngine
                 new Vec3(0f, 1f, 0f),
                 60.0f, 0.1f, 100.0f);
         
-        hudCamera = new HUDCamera(0, w_height, 0, w_width);
+        hudCamera = new HUDCamera(0, w_height, 0, w_width); 
+        hudCamera.updateView();
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
@@ -434,9 +434,8 @@ public class Athens implements GraphicsEngine
 
     private void updateProjection(int width, int height)
     {
-        aspect = (float) width / (float) height;
-
-        camera.updateProjection(aspect);
+        camera.updateProjection(width, height);
+        hudCamera.updateProjection(width, height);
     }
 
     private void updateView()

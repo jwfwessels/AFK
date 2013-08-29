@@ -1,9 +1,7 @@
 package afk.gfx;
 
-import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
-import com.hackoeur.jglm.Vec4;
 
 /**
  * Represents a camera in a 3D scene. Handles all the movement and rotation of
@@ -40,8 +38,9 @@ public class PerspectiveCamera extends AbstractCamera
     }
     
     @Override
-    public void updateProjection(float aspect)
+    public void updateProjection(float w, float h)
     {
+        float aspect = (float) w / (float) h;
         projection = Matrices.perspective(fovY, aspect, near, far);
     }
 }

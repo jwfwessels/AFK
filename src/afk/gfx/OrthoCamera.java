@@ -24,7 +24,7 @@ public class OrthoCamera extends AbstractCamera
     }
 
     @Override
-    public void updateProjection(float aspect)
+    public void updateProjection(float w, float h)
     {
         projection = Matrices.ortho(xleft, xright, ybottom, ytop, znear, zfar);
     }
