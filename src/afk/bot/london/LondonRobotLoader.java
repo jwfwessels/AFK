@@ -1,5 +1,6 @@
 package afk.bot.london;
 
+import afk.bot.Robot;
 import afk.bot.RobotLoader;
 import afk.bot.RobotException;
 import java.io.File;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class LondonRobotLoader extends ClassLoader implements RobotLoader
 {
 
-    private final String ROBOT_CLASS = "afk.bot.london.Robot";
+    private final String ROBOT_CLASS = AbstractRobot.class.getName();
     private byte[] tempByteArray = null;
     private Map<String, Class<?>> robotMap = new HashMap<String, Class<?>>();
     private Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
