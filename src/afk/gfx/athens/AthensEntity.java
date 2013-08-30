@@ -1,7 +1,6 @@
 package afk.gfx.athens;
 
 import afk.gfx.AbstractCamera;
-import afk.gfx.PerspectiveCamera;
 import afk.gfx.GfxEntity;
 import afk.gfx.Resource;
 import com.hackoeur.jglm.Mat4;
@@ -29,7 +28,7 @@ public class AthensEntity extends GfxEntity
     private Collection<AthensEntity> children;
     protected AthensEntity parent = null;
     
-    protected Mat4 worldMatrix;
+    protected Mat4 worldMatrix = Mat4.MAT4_IDENTITY;
     
     protected boolean used = true;
 
@@ -60,6 +59,12 @@ public class AthensEntity extends GfxEntity
         monkeyWorld = scale(monkeyWorld, getWorldScale());
         
         return monkeyWorld;
+    }
+
+    @Override
+    public Mat4 getWorldMatrix()
+    {
+        return worldMatrix;
     }
     
     protected void update(float delta)

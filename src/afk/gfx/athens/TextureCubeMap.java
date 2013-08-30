@@ -31,7 +31,7 @@ public class TextureCubeMap extends Texture
         super.load(gl);
         
         ByteBuffer[] data = new ByteBuffer[6];
-        int[] w_h = new int[2];
+        int[] w_h = new int[3];
         for (int i = 0; i < 6; i++)
         {
             data[i] = imageToBytes(ImageIO.read(new File("./textures/"+name+SUFFIXES[i])), w_h);

@@ -45,6 +45,7 @@ public class Athens implements GraphicsEngine
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
     protected Map<ImageComponent, AthensHUD> huds = new LinkedHashMap<ImageComponent, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
+    protected List<ImageComponent> removedHUD = new ArrayList<ImageComponent>();
     private int w_width, w_height;
     private float aspect;
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
@@ -289,6 +290,9 @@ public class Athens implements GraphicsEngine
         for (Renderable r : removed)
             entities.remove(r);
         removed.clear();
+        for (ImageComponent r : removedHUD)
+            huds.remove(r);
+        removedHUD.clear();
 
         for (AthensEntity entity : entities.values())
             entity.update(delta);
@@ -481,6 +485,10 @@ public class Athens implements GraphicsEngine
         {
             entity.used = false;
         }
+        for (AthensHUD hud : huds.values())
+        {
+            hud.used = false;
+        }
     }
 
     @Override
@@ -505,6 +513,7 @@ public class Athens implements GraphicsEngine
             hud = new AthensHUD(image.getImage());
             huds.put(image, hud);
         }
+        hud.used = true;
         return hud;
     }
 
@@ -515,6 +524,28 @@ public class Athens implements GraphicsEngine
         {
             if (!e.getValue().used) removed.add(e.getKey());
         }
+        for (Map.Entry<ImageComponent, AthensHUD> h : huds.entrySet())
+        {
+            if (!h.getValue().used) removedHUD.add(h.getKey());
+        }
+    }
+
+    @Override
+    public int getWidth()
+    {
+        return w_width;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        return w_height;
+    }
+
+    @Override
+    public AbstractCamera getCamera()
+    {
+        return camera;
     }
     
 }

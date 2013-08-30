@@ -4,11 +4,7 @@
  */
 package afk.ge.tokyo;
 
-import afk.bot.RobotEngine;
 import afk.ge.AbstractEntity;
-import afk.bot.london.London;
-import afk.bot.london.TankRobot;
-import afk.bot.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
@@ -124,29 +120,6 @@ public class EntityManager
         createGraphicWall(new Vec3(0, 0, 25), new Vec3(50, 1, 0.5f));
         createGraphicWall(new Vec3(25, 0, 0), new Vec3(0.5f, 1, 50));
         createGraphicWall(new Vec3(-25, 0, 0), new Vec3(0.5f, 1, 50));
-        
-        /// TESTING HUD
-        testHUD();
-    }
-    
-    public void testHUD()
-    {
-        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TRANSLUCENT);
-        Graphics2D g = image.createGraphics();
-        
-//        g.setBackground(Color.BLACK);
-//        g.clearRect(0, 0, image.getWidth(), image.getHeight());
-        
-        g.setColor(Color.YELLOW);
-        g.fillRect(20, 20, 20, 20);
-        g.drawOval(60, 60, 20, 20);
-        
-        g.dispose();
-        
-        Entity hud = new Entity();
-        hud.add(new ImageComponent(image));
-        hud.add(new State(new Vec3(200,200,0), null, null));
-        engine.addEntity(hud);
     }
 
     public void createFloor()
@@ -182,7 +155,7 @@ public class EntityManager
 
         }
     }
-    
+
     public void createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
@@ -200,8 +173,25 @@ public class EntityManager
         tank.add(new Targetable());
         tank.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
         tank.add(new TankController());
+        tank.add(new ImageComponent(createHUDComponent()));
 
         engine.addEntity(tank);
+    }
+
+    private BufferedImage createHUDComponent()
+    {
+        BufferedImage image = new BufferedImage(50, 20, BufferedImage.TRANSLUCENT);
+        Graphics2D g = image.createGraphics();
+
+//        g.setBackground(Color.BLACK);
+//        g.clearRect(0, 0, image.getWidth(), image.getHeight());
+
+        g.setColor(new Color(0, 0, 0, 0.3f));
+        g.fillRoundRect(0, 0, 50, 20, 5, 5);
+
+        g.dispose();
+
+        return image;
     }
 
 //    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)

@@ -1,5 +1,6 @@
 package afk.gfx;
 
+import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import java.util.Collection;
 
@@ -76,6 +77,12 @@ public abstract class GfxEntity
             return scale.multiply(parent.getWorldScale());
         return scale;
     }
+    
+    /**
+     * Get this entity's world matrix.
+     * @return this entity's world matrix.
+     */
+    public abstract Mat4 getWorldMatrix();
     
     /**
      * Adds the entity as a child entity of this entity. The child entity will

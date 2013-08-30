@@ -25,6 +25,8 @@ public class AthensHUD extends Texture implements GfxHUD
     private Quad quad;
     private Shader shader;
     private int x, y;
+    
+    protected boolean used = false;
 
     public AthensHUD(BufferedImage image)
     {
@@ -60,10 +62,10 @@ public class AthensHUD extends Texture implements GfxHUD
     
     protected void setup(GL2 gl)
     {
-        int[] w_h = new int[2];
+        int[] w_h = new int[3];
         ByteBuffer data = imageToBytes(image, w_h);
         
-        Texture2D.setup(gl, data, w_h[0], w_h[1], GL.GL_RGBA);
+        Texture2D.setup(gl, data, w_h[0], w_h[1], w_h[2] == 3 ? GL.GL_RGB : GL.GL_RGBA);
         updated.set(false);
     }
     

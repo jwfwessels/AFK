@@ -74,6 +74,18 @@ public interface GraphicsEngine
      */
     public float getFPS();
     
+    /**
+     * Gets the graphics engine's viewport width.
+     * @return the width of the engine's viewport;
+     */
+    public int getWidth();
+    
+    /**
+     * Gets the graphics engine's viewport height.
+     * @return the height of the engine's viewport;
+     */
+    public int getHeight();
+    
     
     /**
      * register swing component for frame rate updates.
@@ -85,4 +97,10 @@ public interface GraphicsEngine
     public GfxEntity getGfxEntity(Renderable renderable);
     public GfxHUD getGfxHUD(ImageComponent image);
     public void post();
+
+    /**
+     * Gets the graphics engine's current camera object.
+     * @return the current camera object.
+     */
+    public AbstractCamera getCamera();
 }

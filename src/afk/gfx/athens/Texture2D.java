@@ -22,10 +22,10 @@ public class Texture2D extends Texture
     {
         super.load(gl);
         
-        int[] w_h = new int[2];
+        int[] w_h = new int[3];
         ByteBuffer data = imageToBytes(ImageIO.read(new File("./textures/"+name+".png")), w_h);
         
-        setup(gl, data, w_h[0], w_h[1]);
+        setup(gl, data, w_h[0], w_h[1], w_h[2] == 3 ? GL.GL_RGB : GL.GL_RGBA);
         
         setParameters(gl, Texture.texParamsDefault);
         

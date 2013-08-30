@@ -133,6 +133,7 @@ public abstract class Texture extends AthensResource
         
         w_h[0] = width;
         w_h[1] = height;
+        w_h[2] = bpp;
         
         return data;
     }
