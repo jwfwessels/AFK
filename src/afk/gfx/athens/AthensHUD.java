@@ -90,7 +90,19 @@ public class AthensHUD extends Texture implements GfxHUD
         shader.updateUniform(gl, "view", camera.view);
         shader.updateUniform(gl, "projection", camera.projection);
         
-        quad.draw(gl);
+        gl.glBegin(GL2.GL_QUADS);
+        
+        gl.glColor3f(1, 0, 1);
+        gl.glTexCoord2f(0, 0);
+        gl.glVertex2f(0, 0);
+        gl.glTexCoord2f(1, 0);
+        gl.glVertex2f(1, 0);
+        gl.glTexCoord2f(1, 1);
+        gl.glVertex2f(1, 1);
+        gl.glTexCoord2f(0, 1);
+        gl.glVertex2f(0, 1);
+        
+        gl.glEnd();
     }
     
     @Override

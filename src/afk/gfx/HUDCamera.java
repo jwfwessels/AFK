@@ -31,7 +31,7 @@ public class HUDCamera extends AbstractCamera
     @Override
     public void updateProjection(float w, float h)
     {
-        projection = Matrices.ortho2d(0, w, h, 0);
+        projection = Matrices.ortho(0, w, h, 0, 1, -1);
     }
     
 }

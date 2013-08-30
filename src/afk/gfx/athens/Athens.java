@@ -116,8 +116,6 @@ public class Athens implements GraphicsEngine
             @Override
             public void mousePressed(MouseEvent e)
             {
-
-
                 cx = e.getX();
                 cy = e.getY();
             }
@@ -301,10 +299,12 @@ public class Athens implements GraphicsEngine
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         
         gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_CULL_FACE);
 
         renderScene(gl, camera);
         
         gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL.GL_CULL_FACE);
         
         renderHUD(gl, hudCamera);
 
