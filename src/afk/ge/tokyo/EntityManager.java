@@ -30,6 +30,8 @@ import com.hackoeur.jglm.Vec4;
 import com.jogamp.graph.geom.AABBox;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -180,14 +182,19 @@ public class EntityManager
 
     private BufferedImage createHUDComponent()
     {
-        BufferedImage image = new BufferedImage(50, 20, BufferedImage.TRANSLUCENT);
+        BufferedImage image = new BufferedImage(100, 20, BufferedImage.TRANSLUCENT);
         Graphics2D g = image.createGraphics();
+        
+        String str = "Tank";
 
 //        g.setBackground(Color.BLACK);
 //        g.clearRect(0, 0, image.getWidth(), image.getHeight());
+        int width = g.getFontMetrics().stringWidth(str);
 
         g.setColor(new Color(0, 0, 0, 0.3f));
-        g.fillRoundRect(0, 0, 50, 20, 5, 5);
+        g.fillRoundRect(0, 0, width+10, 20, 5, 5);
+        g.setColor(Color.YELLOW);
+        g.drawString(str, 5, 15);
 
         g.dispose();
 
