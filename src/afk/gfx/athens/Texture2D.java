@@ -32,12 +32,17 @@ public class Texture2D extends Texture
         loaded.set(true);
     }
     
-    protected static void setup(GL2 gl, ByteBuffer data, int width, int height)
+    protected static void setup(GL2 gl, ByteBuffer data, int width, int height, int type)
     {
-        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB,
-                width, height, 0, GL.GL_RGB,
+        gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, type,
+                width, height, 0, type,
                 GL.GL_UNSIGNED_BYTE,
                 data);
+    }
+    
+    protected static void setup(GL2 gl, ByteBuffer data, int width, int height)
+    {
+        setup(gl, data, width, height, GL.GL_RGB);
     }
     
     public void generateMipmap(GL2 gl)

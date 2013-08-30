@@ -300,11 +300,13 @@ public class Athens implements GraphicsEngine
         
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
+        gl.glDisable(GL.GL_BLEND);
 
         renderScene(gl, camera);
         
         gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glDisable(GL.GL_CULL_FACE);
+        gl.glEnable(GL.GL_BLEND);
         
         renderHUD(gl, hudCamera);
 

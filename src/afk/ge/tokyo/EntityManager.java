@@ -131,11 +131,11 @@ public class EntityManager
     
     public void testHUD()
     {
-        BufferedImage image = new BufferedImage(100, 100, BufferedImage.OPAQUE);
+        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TRANSLUCENT);
         Graphics2D g = image.createGraphics();
         
-        g.setBackground(Color.BLACK);
-        g.clearRect(0, 0, image.getWidth(), image.getHeight());
+//        g.setBackground(Color.BLACK);
+//        g.clearRect(0, 0, image.getWidth(), image.getHeight());
         
         g.setColor(Color.YELLOW);
         g.fillRect(20, 20, 20, 20);

@@ -3,6 +3,7 @@ package afk.gfx.athens;
 
 import com.jogamp.common.nio.Buffers;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -109,7 +110,9 @@ public abstract class Texture extends AthensResource
         int width = img.getWidth();
         int height = img.getHeight();
         
-        ByteBuffer data = Buffers.newDirectByteBuffer(width * img.getColorModel().getPixelSize()/8 * height);
+        int bpp = img.getColorModel().getPixelSize()/8;
+        ByteBuffer data = Buffers.newDirectByteBuffer(width * bpp * height);
+        Raster alpha = img.getAlphaRaster();
         
         for (int y = 0; y < height; y++)
         {
@@ -119,6 +122,10 @@ public abstract class Texture extends AthensResource
                 data.put((byte)(RGB >> 16));
                 data.put((byte)((RGB >> 8) & 0xFF));
                 data.put((byte)(RGB & 0xFF));
+                if (bpp == 4)
+                {
+                    data.put((byte)alpha.getPixel(x, y, new int[1])[0]);
+                }
             }
         }
         

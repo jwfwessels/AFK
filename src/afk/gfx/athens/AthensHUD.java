@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 /**
@@ -62,7 +63,7 @@ public class AthensHUD extends Texture implements GfxHUD
         int[] w_h = new int[2];
         ByteBuffer data = imageToBytes(image, w_h);
         
-        Texture2D.setup(gl, data, w_h[0], w_h[1]);
+        Texture2D.setup(gl, data, w_h[0], w_h[1], GL.GL_RGBA);
         updated.set(false);
     }
     
