@@ -1,19 +1,17 @@
 #version 120
 
-//uniform sampler2D tex;
-uniform float opacity;
+uniform sampler2D tex;
 
 void main()
 {
     // making the checkerboard!
-    int u = int(gl_TexCoord[0].x);
-    int v = int(gl_TexCoord[0].y);
+    int u = int(gl_TexCoord[0].x*10);
+    int v = int(gl_TexCoord[0].y*10);
 
     float colour;
-    if (mod(u,2) == mod(v,2)) colour = 0.5;
-    else colour = 0.7;
+    if (mod(u,2) == mod(v,2)) colour = 0.8;
+    else colour = 1.0;
 
-    //gl_FragColor = texture2D(tex, texCoord);
-    gl_FragColor = vec4(vec3(colour),opacity);
+    gl_FragColor = texture2D(tex, gl_TexCoord[0].xy)*colour;
 }
 

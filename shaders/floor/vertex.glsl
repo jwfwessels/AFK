@@ -6,7 +6,7 @@ uniform mat4 view;
 
 void main()
 {
-    gl_TexCoord[0] = gl_MultiTexCoord0*10;
+    gl_TexCoord[0] = gl_MultiTexCoord0;
 
     gl_Position = projection * view * world * gl_Vertex;
 }

@@ -179,7 +179,8 @@ public class TypeFactory
         public AthensEntity create()
         {
             AthensEntity floorGfxEntity = createEntity(GfxEntity.NORMAL);
-            floorGfxEntity.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "quad"));
+            floorGfxEntity.attachResource(resourceManager.getResource(HEIGHTMAP_MESH, "hm1"));
+            floorGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "heightmaps/hm1"));
             floorGfxEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
             
             return floorGfxEntity;

@@ -118,8 +118,7 @@ public class ResourceManager
                 }
             break;
             case HEIGHTMAP_MESH:
-                // TODO:
-            break;
+                return new AthensTerrain(name);
             case TEXTURE_2D:
                 return new Texture2D(name);
             case TEXTURE_CUBE:
