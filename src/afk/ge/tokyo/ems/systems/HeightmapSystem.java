@@ -7,6 +7,7 @@ import afk.ge.tokyo.ems.nodes.MovementNode;
 import java.util.List;
 import static afk.ge.tokyo.HeightmapLoader.*;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.support.FastMath;
 
 /**
  *
@@ -35,8 +36,16 @@ public class HeightmapSystem implements ISystem
             float x = node.state.pos.getX();
             float z = node.state.pos.getZ();
             float y = getHeight(x, z, hnode.heightmap);
-            System.out.println("y: " + y);
             node.state.pos = new Vec3(x, y, z);
+            
+            Vec3 tankNormal = getNormal(x, z, hnode.heightmap).multiply(0.5f);
+            Vec3 tankNX = new Vec3(tankNormal.getX(),tankNormal.getY(),0.0f).getUnitVector();
+            Vec3 tankNZ = new Vec3(0.0f,tankNormal.getY(),tankNormal.getZ()).getUnitVector();
+            
+            float xRot = (float)FastMath.toDegrees(Math.asin(tankNZ.getZ()));
+            float zRot = -(float)FastMath.toDegrees(Math.asin(tankNX.getX()));
+            
+            node.state.rot = new Vec3(xRot, node.state.rot.getY(), zRot);
         }
     }
 

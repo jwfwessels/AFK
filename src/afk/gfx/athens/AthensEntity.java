@@ -50,11 +50,11 @@ public class AthensEntity extends GfxEntity
 
         Vec3 worldRot = getWorldRotation();
         
-        monkeyWorld = rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
-        
         monkeyWorld = rotate(monkeyWorld, worldRot.getX(), X_AXIS);
 
         monkeyWorld = rotate(monkeyWorld, worldRot.getZ(), Z_AXIS);
+        
+        monkeyWorld = rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
 
         monkeyWorld = scale(monkeyWorld, getWorldScale());
         
