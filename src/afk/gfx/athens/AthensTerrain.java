@@ -52,7 +52,7 @@ public class AthensTerrain extends Mesh
     private float h(int i, int j)
     {
         if (heightmap == null) return 0.0f;
-        return samplef((float)i/(float)xGrid,(float)j/(float)yGrid);
+        return samplef((float)i/(float)(xGrid-1),(float)j/(float)(yGrid-1));
     }
     
     /**
@@ -109,8 +109,8 @@ public class AthensTerrain extends Mesh
                 vertices[i][j][2] = (z-0.5f);
                 
                 normals[i][j][0] = normal.getX();
-                normals[i][j][1] = normal.getX();
-                normals[i][j][2] = normal.getX();
+                normals[i][j][1] = normal.getY();
+                normals[i][j][2] = normal.getZ();
             }
         }
         

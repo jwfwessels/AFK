@@ -104,10 +104,10 @@ public class EntityManager
     public void spawnStuff()
     {
         createFloor();
-        createGraphicWall(new Vec3(0, -40, -25), new Vec3(50, 50, 0.5f));
-        createGraphicWall(new Vec3(0, -40, 25), new Vec3(50, 50, 0.5f));
-        createGraphicWall(new Vec3(25, -40, 0), new Vec3(0.5f, 50, 50));
-        createGraphicWall(new Vec3(-25, -40, 0), new Vec3(0.5f, 50, 50));
+        createGraphicWall(new Vec3(0, 0, -Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f));
+        createGraphicWall(new Vec3(0, 0, Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f));
+        createGraphicWall(new Vec3(Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE));
+        createGraphicWall(new Vec3(-Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE));
     }
 
     public void createFloor()

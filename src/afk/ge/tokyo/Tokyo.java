@@ -34,7 +34,7 @@ public class Tokyo implements GameEngine, Runnable
     private Engine engine;
     private GraphicsEngine gfxEngine;
     private boolean running = true;
-    public static final float BOARD_SIZE = 50;
+    public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 60;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;

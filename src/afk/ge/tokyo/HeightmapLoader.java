@@ -99,7 +99,7 @@ public class HeightmapLoader
     
     public static float h(int i, int j, Heightmap hm)
     {
-        return samplef((float)i/(float)hm.xGrid,(float)j/(float)hm.yGrid, hm);
+        return samplef((float)i/(float)(hm.xGrid-1),(float)j/(float)(hm.yGrid-1), hm);
     }
     
     public static float getHeight(float x, float y, Heightmap hm)
