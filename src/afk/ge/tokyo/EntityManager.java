@@ -14,6 +14,7 @@ import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Motor;
 import afk.ge.tokyo.ems.components.ParticleEmitter;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.SnapToTerrain;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TankController;
 import afk.ge.tokyo.ems.components.Targetable;
@@ -167,6 +168,7 @@ public class EntityManager
         tank.add(new Targetable());
         tank.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
         tank.add(new TankController());
+        tank.add(new SnapToTerrain());
 
         engine.addEntity(tank);
     }

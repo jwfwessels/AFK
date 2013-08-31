@@ -6,6 +6,7 @@ import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.MovementNode;
 import java.util.List;
 import static afk.ge.tokyo.HeightmapLoader.*;
+import afk.ge.tokyo.ems.nodes.SnapToTerrainNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
 
@@ -13,7 +14,7 @@ import com.hackoeur.jglm.support.FastMath;
  *
  * @author Daniel
  */
-public class HeightmapSystem implements ISystem
+public class SnapToTerrainSystem implements ISystem
 {
 
     Engine engine;
@@ -28,10 +29,10 @@ public class HeightmapSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        List<MovementNode> nodes = engine.getNodeList(MovementNode.class);
+        List<SnapToTerrainNode> nodes = engine.getNodeList(SnapToTerrainNode.class);
         HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
 
-        for (MovementNode node : nodes)
+        for (SnapToTerrainNode node : nodes)
         {
             float x = node.state.pos.getX();
             float z = node.state.pos.getZ();
