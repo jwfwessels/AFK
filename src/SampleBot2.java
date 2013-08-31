@@ -38,10 +38,10 @@ public class SampleBot2 extends TankRobot
                     turn++;
                 }
                 turns++;
-                float[] visibles = events.getVisibleBots();
+                float[][] visibles = events.getVisibleBots();
 //                if (visibles.length > 0)
 //                {
-//                    turn = visibles[0];
+//                    turn = visibles[0][0];
 //                    float diff = FastMath.abs(turn);
 //
 //                    if (Float.compare(diff, 0.5f) < 0)

@@ -4,7 +4,6 @@
  */
 package afk.ge.tokyo;
 
-import afk.ge.AbstractEntity;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
@@ -32,7 +31,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Queue;
 import java.util.UUID;
 
@@ -61,9 +59,6 @@ public class EntityManager
     public static final int TANK_FOVX = 170;
     int NUMCUBES = 10;
     public static final int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
-    public ArrayList<TankEntity> entities;
-    public ArrayList<TankEntity> obstacles;
-    private ArrayList<AbstractEntity> subEntities;
     private Queue<Entity> particles = new ArrayDeque<Entity>();
     private ParticleEmitter[] emitters;
     Engine engine;
@@ -93,10 +88,6 @@ public class EntityManager
     public EntityManager(Engine engine)
     {
         this.engine = engine;
-        entities = new ArrayList<TankEntity>();
-        obstacles = new ArrayList<TankEntity>();
-        subEntities = new ArrayList<AbstractEntity>();
-        System.out.println("SPAWN_POINTS: " + SPAWNVALUE);
 
         emitters = new ParticleEmitter[2];
         try

@@ -27,10 +27,10 @@ public class ScaredBot extends TankRobot
     @Override
     public void run()
     {
-        float[] visibles = events.getVisibleBots();
+        float[][] visibles = events.getVisibleBots();
         if (visibles.length > 0)
         {
-            thetaAngle = visibles[0];
+            thetaAngle = visibles[0][0];
             float diff = FastMath.abs(thetaAngle);
 
             if (Float.compare(diff, 1) < 0)

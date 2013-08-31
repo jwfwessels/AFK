@@ -30,7 +30,7 @@ public class JarBot extends TankRobot
             manager.setTurning(true);
         }
         
-        float[] visibles = events.getVisibleBots();
+        float[][] visibles = events.getVisibleBots();
         if (visibles.length > 0)
             attack();
         
