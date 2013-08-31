@@ -117,9 +117,9 @@ public class VisionSystem implements ISystem
         // rotate a normal vector along the Z-axis using the entity's rotation
         // to get a normal in the entity's viewing direction
         Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getY(), Y_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getX(), X_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getZ(), Z_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getY(), Y_AXIS);
         Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
 
         // create a viewing frustrum (its view and projection matrices)

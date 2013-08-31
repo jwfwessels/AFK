@@ -210,10 +210,16 @@ public class EntityManager
         State state = new State(current, new Vec3(0, 0.8f, 0));
         state.scale = new Vec3(0.3f, 0.3f, 0.3f);
         projectile.add(state);
-        float angle = -(float) Math.toRadians(state.rot.getY());
-        float sin = (float) Math.sin(angle);
-        float cos = (float) Math.cos(angle);
-        projectile.add(new Velocity(new Vec3(-weapon.speed * sin, 0, weapon.speed * cos), Vec3.VEC3_ZERO));
+        
+        // rotate a normal vector along the Z-axis using the entity's rotation
+        // to get a normal in the entity's viewing direction
+        Mat4 rotationMatrix = new Mat4(1.0f);
+        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getX(), X_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getZ(), Z_AXIS);
+        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getY(), Y_AXIS);
+        Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
+        
+        projectile.add(new Velocity(A4.getXYZ().multiply(weapon.speed), Vec3.VEC3_ZERO));
         projectile.add(new Renderable("projectile", new Vec3(0.5f, 0.5f, 0.5f)));
         projectile.add(new Bullet(weapon.range, weapon.damage, parent));
 

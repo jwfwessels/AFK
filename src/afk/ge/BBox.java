@@ -15,7 +15,8 @@ import static afk.gfx.GfxUtils.*;
  * Ported to java from this article:
  * http://www.3dkingdoms.com/weekly/weekly.php?a=21
  *
- * @author Daniel, original by Jonathan Kreuzer
+ * @author Jonathan Kreuzer
+ * @author Daniel
  */
 public class BBox
 {
@@ -46,9 +47,9 @@ public class BBox
         
         m = translate(m, state.pos.add(new Vec3(0,extents.getY(),0)));
 
-        m = rotate(m, state.rot.getY(), Y_AXIS);
         m = rotate(m, state.rot.getX(), X_AXIS);
         m = rotate(m, state.rot.getZ(), Z_AXIS);
+        m = rotate(m, state.rot.getY(), Y_AXIS);
         
         this.extents = extents;
     }
