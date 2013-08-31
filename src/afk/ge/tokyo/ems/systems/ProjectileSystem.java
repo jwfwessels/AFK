@@ -4,15 +4,15 @@
  */
 package afk.ge.tokyo.ems.systems;
 
-import afk.bot.RobotEngine;
-import afk.ge.AbstractEntity;
 import afk.ge.BBox;
 import afk.ge.tokyo.EntityManager;
+import afk.ge.tokyo.HeightmapLoader;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
+import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
@@ -46,8 +46,23 @@ public class ProjectileSystem implements ISystem
 
         List<ProjectileNode> bullets = engine.getNodeList(ProjectileNode.class);
         List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
+//        HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
+        
+        bulletLoop:
         for (ProjectileNode bullet : bullets)
         {
+            // TODO: get this bloody thing working!!
+//            if (hnode != null)
+//            {
+//                float y = HeightmapLoader.getHeight(bullet.state.pos.getX(),
+//                        bullet.state.pos.getY(), hnode.heightmap);
+//                if (bullet.state.pos.getY() < y)
+//                {
+//                    bang(bullet);
+//                    continue;
+//                }
+//            }
+            
             // collision testing for box
             for (CollisionNode node : nodes)
             {
@@ -62,8 +77,8 @@ public class ProjectileSystem implements ISystem
                     {
                         life.hp -= bullet.bullet.damage;
                     }
-                    manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0);
-                    engine.removeEntity(bullet.entity);
+                    bang(bullet);
+                    continue bulletLoop;
                 }
             }
             
@@ -131,5 +146,11 @@ public class ProjectileSystem implements ISystem
         }
         System.out.println("HIT!");
         return true;
+    }
+
+    private void bang(ProjectileNode bullet)
+    {
+        manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0);
+        engine.removeEntity(bullet.entity);
     }
 }
