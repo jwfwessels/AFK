@@ -76,8 +76,8 @@ public class AthensTerrain extends Mesh
         xGrid = heightmap.getWidth();
         yGrid = heightmap.getHeight();
         
-        final float QUAD_WIDTH = 1.0f/(float)xGrid;
-        final float QUAD_LENGTH = 1.0f/(float)yGrid;
+        final float QUAD_WIDTH = 1.0f/(float)(xGrid-1);
+        final float QUAD_LENGTH = 1.0f/(float)(yGrid-1);
         
         vertices = new float[xGrid][yGrid][3];
         normals = new float[xGrid][yGrid][3];

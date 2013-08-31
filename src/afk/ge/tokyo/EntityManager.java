@@ -4,11 +4,7 @@
  */
 package afk.ge.tokyo;
 
-import afk.bot.RobotEngine;
 import afk.ge.AbstractEntity;
-import afk.bot.london.London;
-import afk.bot.london.TankRobot;
-import afk.bot.RobotException;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.BBoxComponent;
@@ -116,18 +112,25 @@ public class EntityManager
     public void spawnStuff()
     {
         createFloor();
-        createGraphicWall(new Vec3(0, 0, -25), new Vec3(50, 1, 0.5f));
-        createGraphicWall(new Vec3(0, 0, 25), new Vec3(50, 1, 0.5f));
-        createGraphicWall(new Vec3(25, 0, 0), new Vec3(0.5f, 1, 50));
-        createGraphicWall(new Vec3(-25, 0, 0), new Vec3(0.5f, 1, 50));
+        createGraphicWall(new Vec3(0, -40, -25), new Vec3(50, 50, 0.5f));
+        createGraphicWall(new Vec3(0, -40, 25), new Vec3(50, 50, 0.5f));
+        createGraphicWall(new Vec3(25, -40, 0), new Vec3(0.5f, 50, 50));
+        createGraphicWall(new Vec3(-25, -40, 0), new Vec3(0.5f, 50, 50));
     }
 
     public void createFloor()
     {
         Entity floor = new Entity();
         floor.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO,
-                new Vec3(Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE)));
+                new Vec3(Tokyo.BOARD_SIZE)));
         floor.add(new Renderable("floor", new Vec3(1.0f, 1.0f, 1.0f)));
+        try
+        {
+            floor.add(new HeightmapLoader().load("hm1", Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE));
+        } catch (IOException ex)
+        {
+            System.err.println("Error loading up heightmap: " + ex.getMessage());
+        }
 
         engine.addEntity(floor);
     }
@@ -155,7 +158,7 @@ public class EntityManager
 
         }
     }
-    
+
     public void createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
