@@ -9,6 +9,7 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
+import afk.ge.tokyo.ems.systems.DebugSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
@@ -67,6 +68,9 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
+        
+        // TODO: if (DEBUG)  ...
+        engine.addSystem(new DebugSystem());
         ///
     }
 
