@@ -120,21 +120,22 @@ public class VisionSystem implements ISystem
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getX(), X_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getZ(), Z_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getY(), Y_AXIS);
-        Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
+        Vec4 forward = rotationMatrix.multiply(Z_AXIS.toDirection());
+        Vec4 up = rotationMatrix.multiply(Y_AXIS.toDirection());
 
-        // create a viewing frustrum (its view and projection matrices)
-        Mat4 view = Matrices.lookAt(a.pos, a.pos.add(A4.getXYZ()), Y_AXIS);
+        // create a view frustrum
+        Mat4 view = Matrices.lookAt(a.pos, a.pos.add(forward.getXYZ()), up.getXYZ());
         Mat4 proj = Matrices.perspective(fov, 1, 0.01f, viewingDistance);
 
-        // calculate the nominal device coordinates of entity B with respect to
-        // A's viewing frustrum
-        Vec4 ndc = proj.multiply(view .multiply(b.pos.toPoint()));
+        // calculate the normalised device coordinates of entity B with respect
+        // to A's view frustrum
+        Vec4 ndc = proj.multiply(view.multiply(b.pos.toPoint()));
         float x = ndc.getX()/ndc.getW(),
                 y = ndc.getY()/ndc.getW(),
                 z = ndc.getZ()/ndc.getW();
 
         // point lies outside of NDC, reject
-        if (x < -1 || x > 1 || y < -1 || y > 1)
+        if (x < -1 || x > 1 || y < -1 || y > 1 || z < -1 || z > 1)
         {
             return null;
         }
@@ -142,8 +143,8 @@ public class VisionSystem implements ISystem
         float halfFOV = fov * 0.5f;
         return new float[]
         {
-            x * halfFOV,
-            y * halfFOV
+            x,
+            y
         };
     }
 }
