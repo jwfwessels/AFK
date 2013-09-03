@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -47,13 +48,38 @@ public class DebugSystem implements ISystem
     private RenderCanvas canvas;
     private Rectangle2D quad = new Rectangle2D.Float(-0.5f, -0.5f, 1, 1);
     private AtomicReference<Point> mouse = new AtomicReference<Point>(null);
+    private AtomicReference<Point> hover = new AtomicReference<Point>(null);
     private JTree tree = null;
     private List<DefaultMutableTreeNode> leaves;
     private DefaultTreeModel model;
     private Entity selected = null;
+    private Entity hovered = null;
+
+    private Entity mouseThing(Point myMouse, List<RenderNode> nodes)
+    {
+        float closestSq = Float.POSITIVE_INFINITY;
+        Entity newSelected = null;
+        if (myMouse != null)
+        {
+            float mx = (((float) myMouse.x / (float) canvas.getWidth()) - 0.5f) * Tokyo.BOARD_SIZE;
+            float my = (((float) myMouse.y / (float) canvas.getHeight()) - 0.5f) * Tokyo.BOARD_SIZE;
+
+            for (RenderNode node : nodes)
+            {
+                float distSq = node.state.pos.subtract(new Vec3(mx, 0, my)).getLengthSquared();
+                if (distSq < closestSq)
+                {
+                    newSelected = node.entity;
+                    closestSq = distSq;
+                }
+            }
+        }
+        return newSelected;
+    }
 
     class RenderCanvas extends Canvas
     {
+
         public BufferStrategy strategy;
 
         public void init()
@@ -75,8 +101,8 @@ public class DebugSystem implements ISystem
         JPanel panel = new JPanel(new BorderLayout());
         frame.add(panel);
         tree = new JTree(new DefaultMutableTreeNode("----- Nothing selected -----"));
-        tree.addTreeExpansionListener(new TreeExpansionListener() {
-
+        tree.addTreeExpansionListener(new TreeExpansionListener()
+        {
             @Override
             public void treeExpanded(TreeExpansionEvent event)
             {
@@ -104,6 +130,20 @@ public class DebugSystem implements ISystem
             {
                 mouse.set(e.getPoint());
             }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                hover.set(null);
+            }
+        });
+        canvas.addMouseMotionListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseMoved(MouseEvent e)
+            {
+                hover.set(e.getPoint());
+            }
         });
 
         return true;
@@ -113,7 +153,8 @@ public class DebugSystem implements ISystem
     public void update(float t, float dt)
     {
         Point myMouse = mouse.getAndSet(null);
-        
+        Point myHover = hover.get();
+
         Graphics2D g = (Graphics2D) canvas.strategy.getDrawGraphics();
 
         g.setBackground(Color.WHITE);
@@ -126,22 +167,11 @@ public class DebugSystem implements ISystem
 
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
 
-        float mx = myMouse == null ? 0 : (((float) myMouse.x / (float) canvas.getWidth()) - 0.5f) * Tokyo.BOARD_SIZE;
-        float my = myMouse == null ? 0 : (((float) myMouse.y / (float) canvas.getHeight()) - 0.5f) * Tokyo.BOARD_SIZE;
-
-        float closestSq = Float.POSITIVE_INFINITY;
-        if (myMouse != null)
+        Entity newSelected = mouseThing(myMouse, nodes);
+        hovered = mouseThing(myHover, nodes);
+        
+        if (newSelected != null)
         {
-            Entity newSelected = null;
-            for (RenderNode node : nodes)
-            {
-                float distSq = node.state.pos.subtract(new Vec3(mx, 0, my)).getLengthSquared();
-                if (distSq < closestSq)
-                {
-                    newSelected = node.entity;
-                    closestSq = distSq;
-                }
-            }
             if (newSelected != selected)
             {
                 selected = newSelected;
@@ -187,6 +217,15 @@ public class DebugSystem implements ISystem
             if (node.entity == selected)
             {
                 g.setColor(Color.RED);
+                g.setStroke(new BasicStroke(0.1f));
+                g.draw(quad);
+            }
+            
+            if (node.entity == hovered)
+            {
+                g.setColor(new Color(1,1,1,0.5f));
+                g.fill(quad);
+                g.setColor(new Color(0,1,0,0.5f));
                 g.setStroke(new BasicStroke(0.1f));
                 g.draw(quad);
             }
