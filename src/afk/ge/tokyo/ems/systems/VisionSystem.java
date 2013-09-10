@@ -11,7 +11,9 @@ import afk.ge.tokyo.ems.nodes.VisionNode;
 import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
+import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
+import com.hackoeur.jglm.support.FastMath;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,31 +122,44 @@ public class VisionSystem implements ISystem
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getX(), X_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getZ(), Z_AXIS);
         rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getY(), Y_AXIS);
+
+        // now we have a set of axes relative to the tank
         Vec4 forward = rotationMatrix.multiply(Z_AXIS.toDirection());
-        Vec4 up = rotationMatrix.multiply(Y_AXIS.toDirection());
+        float[] me = getAngles(forward.getXYZ());
 
-        // create a view frustrum
-        Mat4 view = Matrices.lookAt(a.pos, a.pos.add(forward.getXYZ()), up.getXYZ());
-        Mat4 proj = Matrices.perspective(fov, 1, 0.01f, viewingDistance);
+        Vec3 d = b.pos.subtract(a.pos);
 
-        // calculate the normalised device coordinates of entity B with respect
-        // to A's view frustrum
-        Vec4 ndc = proj.multiply(view.multiply(b.pos.toPoint()));
-        float x = ndc.getX()/ndc.getW(),
-                y = ndc.getY()/ndc.getW(),
-                z = ndc.getZ()/ndc.getW();
+        float[] them = getAngles(d);
 
-        // point lies outside of NDC, reject
-        if (x < -1 || x > 1 || y < -1 || y > 1 || z < -1 || z > 1)
-        {
-            return null;
-        }
+        float relativeBearing = them[0] - me[0];
+        float relativeElevation = them[1] - me[1];
 
         float halfFOV = fov * 0.5f;
+        if (within(relativeBearing, halfFOV) && within(relativeElevation, halfFOV))
+        {
+            return new float[]
+            {
+                relativeBearing, relativeElevation
+            };
+        }
+
+        // outside of FOV
+        return null;
+    }
+
+    public static float[] getAngles(Vec3 v)
+    {
+        float bearing = (float) FastMath.atan2(v.getZ(), v.getX());
+        float elevation = (float) FastMath.atan2(v.getY(),
+                FastMath.sqrtFast(v.getX() * v.getX() + v.getZ() * v.getZ()));
         return new float[]
         {
-            x,
-            y
+            bearing, elevation
         };
+    }
+
+    public static boolean within(float x, float range)
+    {
+        return x >= -range || x <= range;
     }
 }
