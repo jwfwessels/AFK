@@ -314,7 +314,7 @@ public class Athens implements GraphicsEngine
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
-                60.0f, 0.1f, 100.0f);
+                60.0f, 0.1f, 200.0f);
 
         // initial setup of matrices
         updateProjection(w_width, w_height);
