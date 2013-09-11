@@ -1,9 +1,14 @@
 package afk.ge.tokyo.ems.systems;
 
+import afk.bot.RobotEngine;
+import afk.bot.RobotException;
+import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.Tokyo;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
@@ -14,22 +19,30 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -43,6 +56,7 @@ public class DebugSystem implements ISystem
     public static final int WIDTH = 500;
     public static final int HEIGHT = 500;
     public static final String WINDOW_TITLE_VIEW = "DebugView";
+    public static final DefaultMutableTreeNode NOTHING_SELECTED_NODE = new DefaultMutableTreeNode("----- Nothing selected -----");
     private Engine engine;
     private JFrame frame;
     private RenderCanvas canvas;
@@ -50,10 +64,26 @@ public class DebugSystem implements ISystem
     private AtomicReference<Point> mouse = new AtomicReference<Point>(null);
     private AtomicReference<Point> hover = new AtomicReference<Point>(null);
     private JTree tree = null;
+    private JMenuBar menubar;
+    private JMenu addMenu;
+    private JMenuItem addRobot, addWall, addExplosion, removeItem;
+    private JFileChooser fileChooser;
     private List<DefaultMutableTreeNode> leaves;
     private DefaultTreeModel model;
     private Entity selected = null;
     private Entity hovered = null;
+    private RobotEngine botEngine;
+    private EntityManager manager; // TODO: this should be replaced with factories!!!!!!!
+    private Entity placeEntity = null;
+
+    private Vec3 mouse2world(Point myMouse)
+    {
+        float mx = (((float) myMouse.x / (float) canvas.getWidth()) - 0.5f) * Tokyo.BOARD_SIZE;
+        float my = (((float) myMouse.y / (float) canvas.getHeight()) - 0.5f) * Tokyo.BOARD_SIZE;
+
+        // TODO: read heightmap and use that as Y value
+        return new Vec3(mx, 0, my);
+    }
 
     private Entity mouseThing(Point myMouse, List<RenderNode> nodes)
     {
@@ -61,12 +91,10 @@ public class DebugSystem implements ISystem
         Entity newSelected = null;
         if (myMouse != null)
         {
-            float mx = (((float) myMouse.x / (float) canvas.getWidth()) - 0.5f) * Tokyo.BOARD_SIZE;
-            float my = (((float) myMouse.y / (float) canvas.getHeight()) - 0.5f) * Tokyo.BOARD_SIZE;
 
             for (RenderNode node : nodes)
             {
-                float distSq = node.state.pos.subtract(new Vec3(mx, 0, my)).getLengthSquared();
+                float distSq = node.state.pos.subtract(mouse2world(myMouse)).getLengthSquared();
                 if (distSq < closestSq)
                 {
                     newSelected = node.entity;
@@ -75,6 +103,80 @@ public class DebugSystem implements ISystem
             }
         }
         return newSelected;
+    }
+
+    private void select(Entity newSelected)
+    {
+        if (newSelected != selected)
+        {
+            selected = newSelected;
+        }
+
+        if (selected != null)
+        {
+            tree.setModel(model = createModel(selected));
+        } else
+        {
+            tree.setModel(new DefaultTreeModel(NOTHING_SELECTED_NODE));
+        }
+    }
+
+    private void placeItem(Point myMouse)
+    {
+        State state = placeEntity.get(State.class);
+        if (state != null)
+        {
+            state.prevPos = state.pos = mouse2world(myMouse);
+        }
+
+        engine.addEntity(placeEntity);
+        select(placeEntity);
+        placeEntity = null;
+    }
+
+    public DebugSystem(RobotEngine botEngine, EntityManager manager)
+    {
+        this.botEngine = botEngine;
+        this.manager = manager;
+    }
+
+    private void drawRenderable(Graphics2D g, RenderNode node)
+    {
+        AffineTransform oldT = g.getTransform();
+
+        g.transform(AffineTransform.getTranslateInstance(
+                node.state.pos.getX(), node.state.pos.getZ()));
+        g.transform(AffineTransform.getRotateInstance(FastMath.toRadians(-node.state.rot.getY())));
+        g.transform(AffineTransform.getScaleInstance(node.state.scale.getX(),
+                node.state.scale.getZ()));
+
+        if (node.entity == selected)
+        {
+            g.setColor(Color.WHITE);
+        } else
+        {
+            g.setColor(new Color(node.renderable.colour.getX(),
+                    node.renderable.colour.getY(),
+                    node.renderable.colour.getZ()));
+        }
+        g.fill(quad);
+        if (node.entity == selected)
+        {
+            g.setColor(Color.RED);
+            g.setStroke(new BasicStroke(0.1f));
+            g.draw(quad);
+        }
+
+        if (node.entity == hovered)
+        {
+            g.setColor(new Color(1, 1, 1, 0.5f));
+            g.fill(quad);
+            g.setColor(new Color(0, 1, 0, 0.5f));
+            g.setStroke(new BasicStroke(0.1f));
+            g.draw(quad);
+        }
+
+        g.setTransform(oldT);
     }
 
     class RenderCanvas extends Canvas
@@ -98,9 +200,86 @@ public class DebugSystem implements ISystem
 
         frame = new JFrame(WINDOW_TITLE_VIEW);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        fileChooser = new JFileChooser(".");
+        fileChooser.setDialogTitle("Load Bot");
+        fileChooser.setFileFilter(new FileNameExtensionFilter(".class, .jar", "class", "jar"));
+
+        menubar = new JMenuBar();
+
+        addMenu = new JMenu("Add", true);
+
+        addRobot = new JMenuItem("Robot");
+        addRobot.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                fileChooser.showOpenDialog(frame);
+                File file = fileChooser.getSelectedFile();
+                if (file == null)
+                {
+                    return;
+                }
+                try
+                {
+                    placeEntity = manager.createTankEntityNEU(botEngine.addRobot(file.getAbsolutePath()),
+                            Vec3.VEC3_ZERO,
+                            new Vec3(
+                            (float) Math.random(),
+                            (float) Math.random(),
+                            (float) Math.random()));
+                } catch (RobotException ex)
+                {
+                    JOptionPane.showMessageDialog(frame, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        addMenu.add(addRobot);
+        addWall = new JMenuItem("Wall");
+        addWall.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                float scale = (float) (3.0 + 3.0 * Math.random());
+                placeEntity = manager.createGraphicWall(Vec3.VEC3_ZERO, new Vec3(scale));
+            }
+        });
+        addMenu.add(addWall);
+        addExplosion = new JMenuItem("Explosion");
+        addExplosion.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                placeEntity = manager.makeExplosion(Vec3.VEC3_ZERO, null, 0);
+            }
+        });
+        addMenu.add(addExplosion);
+
+        menubar.add(addMenu);
+
+        removeItem = new JMenuItem("Remove");
+        removeItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (selected != null)
+                {
+                    DebugSystem.this.engine.removeEntity(selected);
+                    select(null);
+                }
+            }
+        });
+        menubar.add(removeItem);
+
+        frame.setJMenuBar(menubar);
+
         JPanel panel = new JPanel(new BorderLayout());
         frame.add(panel);
-        tree = new JTree(new DefaultMutableTreeNode("----- Nothing selected -----"));
+        tree = new JTree(NOTHING_SELECTED_NODE);
         tree.addTreeExpansionListener(new TreeExpansionListener()
         {
             @Override
@@ -112,6 +291,7 @@ public class DebugSystem implements ISystem
             @Override
             public void treeCollapsed(TreeExpansionEvent event)
             {
+                frame.pack();
             }
         });
         JScrollPane treePanel = new JScrollPane(tree);
@@ -167,21 +347,38 @@ public class DebugSystem implements ISystem
 
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
 
-        Entity newSelected = mouseThing(myMouse, nodes);
-        hovered = mouseThing(myHover, nodes);
-        
-        if (newSelected != null)
+        for (RenderNode node : nodes)
         {
-            if (newSelected != selected)
+            drawRenderable(g, node);
+        }
+        
+        if (placeEntity != null)
+        {
+            if (myMouse != null)
             {
-                selected = newSelected;
+                placeItem(myMouse);
+            } else if (myHover != null)
+            {
+                RenderNode node = new RenderNode();
+                node.entity = hovered = placeEntity;
+                node.renderable = placeEntity.get(Renderable.class);
+                if (node.renderable == null)
+                {
+                    node.renderable = new Renderable("cube", EntityManager.MAGENTA);
+                }
+                node.state = placeEntity.get(State.class);
+                node.state.pos = mouse2world(myHover);
+                drawRenderable(g, node);
             }
+        } else
+        {
+            Entity newSelected = mouseThing(myMouse, nodes);
+            hovered = mouseThing(myHover, nodes);
 
-            if (tree == null)
+            if (newSelected != null)
             {
-                tree = new JTree();
+                select(newSelected);
             }
-            tree.setModel(model = createModel(selected));
         }
 
         if (leaves != null)
@@ -191,46 +388,6 @@ public class DebugSystem implements ISystem
                 model.nodeChanged(node);
             }
             tree.repaint();
-        }
-
-        for (RenderNode node : nodes)
-        {
-
-            AffineTransform oldT = g.getTransform();
-
-            g.transform(AffineTransform.getTranslateInstance(
-                    node.state.pos.getX(), node.state.pos.getZ()));
-            g.transform(AffineTransform.getRotateInstance(FastMath.toRadians(-node.state.rot.getY())));
-            g.transform(AffineTransform.getScaleInstance(node.state.scale.getX(),
-                    node.state.scale.getZ()));
-
-            if (node.entity == selected)
-            {
-                g.setColor(Color.WHITE);
-            } else
-            {
-                g.setColor(new Color(node.renderable.colour.getX(),
-                        node.renderable.colour.getY(),
-                        node.renderable.colour.getZ()));
-            }
-            g.fill(quad);
-            if (node.entity == selected)
-            {
-                g.setColor(Color.RED);
-                g.setStroke(new BasicStroke(0.1f));
-                g.draw(quad);
-            }
-            
-            if (node.entity == hovered)
-            {
-                g.setColor(new Color(1,1,1,0.5f));
-                g.fill(quad);
-                g.setColor(new Color(0,1,0,0.5f));
-                g.setStroke(new BasicStroke(0.1f));
-                g.draw(quad);
-            }
-
-            g.setTransform(oldT);
         }
 
         g.setTransform(origT);

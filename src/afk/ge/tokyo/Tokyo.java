@@ -70,7 +70,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new RenderSystem(gfxEngine));
         
         // TODO: if (DEBUG)  ...
-        engine.addSystem(new DebugSystem());
+        engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
     }
 
@@ -78,13 +78,13 @@ public class Tokyo implements GameEngine, Runnable
     public void startGame(UUID[] participants)
     {
         entityManager.spawnStuff();
-        entityManager.createObstacles(new Vec3(5, 5, 5));
+        //entityManager.createObstacles(new Vec3(5, 5, 5));
         for (int i = 0; i < participants.length; i++)
         {
-            entityManager.createTankEntityNEU(
+            engine.addEntity(entityManager.createTankEntityNEU(
                     participants[i],
                     EntityManager.SPAWN_POINTS[i],
-                    EntityManager.BOT_COLOURS[i]);
+                    EntityManager.BOT_COLOURS[i]));
         }
         
         new Thread(this).start();

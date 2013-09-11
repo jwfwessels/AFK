@@ -1,6 +1,5 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.AbstractEntity;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;

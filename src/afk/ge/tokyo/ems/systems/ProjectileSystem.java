@@ -62,7 +62,7 @@ public class ProjectileSystem implements ISystem
                     {
                         life.hp -= bullet.bullet.damage;
                     }
-                    manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0);
+                    engine.addEntity(manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0));
                     engine.removeEntity(bullet.entity);
                 }
             }
