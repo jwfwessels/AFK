@@ -66,7 +66,7 @@ public class DebugSystem implements ISystem
     private JTree tree = null;
     private JMenuBar menubar;
     private JMenu addMenu;
-    private JMenuItem addRobot, addWall, addExplosion, removeItem;
+    private JMenuItem addRobot, addWall, addExplosion, moveItem, removeItem;
     private JFileChooser fileChooser;
     private List<DefaultMutableTreeNode> leaves;
     private DefaultTreeModel model;
@@ -119,6 +119,18 @@ public class DebugSystem implements ISystem
         {
             tree.setModel(new DefaultTreeModel(NOTHING_SELECTED_NODE));
         }
+
+        removeItem.setEnabled(selected != null);
+        moveItem.setEnabled(selected != null);
+    }
+
+    private void startPlaceItem(Entity entity)
+    {
+        placeEntity = entity;
+        if (placeEntity.has(Renderable.class))
+        {
+            engine.addEntity(placeEntity);
+        }
     }
 
     private void placeItem(Point myMouse)
@@ -126,10 +138,14 @@ public class DebugSystem implements ISystem
         State state = placeEntity.get(State.class);
         if (state != null)
         {
-            state.prevPos = state.pos = mouse2world(myMouse);
+            state.prevPos = state.pos;
+            state.pos = mouse2world(myMouse);
         }
 
-        engine.addEntity(placeEntity);
+        if (!placeEntity.has(Renderable.class))
+        {
+            engine.addEntity(placeEntity);
+        }
         select(placeEntity);
         placeEntity = null;
     }
@@ -223,12 +239,12 @@ public class DebugSystem implements ISystem
                 }
                 try
                 {
-                    placeEntity = manager.createTankEntityNEU(botEngine.addRobot(file.getAbsolutePath()),
+                    startPlaceItem(manager.createTankEntityNEU(botEngine.addRobot(file.getAbsolutePath()),
                             Vec3.VEC3_ZERO,
                             new Vec3(
                             (float) Math.random(),
                             (float) Math.random(),
-                            (float) Math.random()));
+                            (float) Math.random())));
                 } catch (RobotException ex)
                 {
                     JOptionPane.showMessageDialog(frame, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -243,7 +259,7 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 float scale = (float) (3.0 + 3.0 * Math.random());
-                placeEntity = manager.createGraphicWall(Vec3.VEC3_ZERO, new Vec3(scale));
+                startPlaceItem(manager.createGraphicWall(Vec3.VEC3_ZERO, new Vec3(scale)));
             }
         });
         addMenu.add(addWall);
@@ -253,12 +269,26 @@ public class DebugSystem implements ISystem
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                placeEntity = manager.makeExplosion(Vec3.VEC3_ZERO, null, 0);
+                startPlaceItem(manager.makeExplosion(Vec3.VEC3_ZERO, null, 0));
             }
         });
         addMenu.add(addExplosion);
 
         menubar.add(addMenu);
+
+        moveItem = new JMenuItem("Move");
+        moveItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (selected != null)
+                {
+                    placeEntity = selected;
+                }
+            }
+        });
+        menubar.add(moveItem);
 
         removeItem = new JMenuItem("Remove");
         removeItem.addActionListener(new ActionListener()
@@ -326,6 +356,8 @@ public class DebugSystem implements ISystem
             }
         });
 
+        select(null);
+
         return true;
     }
 
@@ -351,7 +383,7 @@ public class DebugSystem implements ISystem
         {
             drawRenderable(g, node);
         }
-        
+
         if (placeEntity != null)
         {
             if (myMouse != null)
@@ -359,16 +391,18 @@ public class DebugSystem implements ISystem
                 placeItem(myMouse);
             } else if (myHover != null)
             {
-                RenderNode node = new RenderNode();
-                node.entity = hovered = placeEntity;
-                node.renderable = placeEntity.get(Renderable.class);
-                if (node.renderable == null)
+                hovered = placeEntity;
+                State state = placeEntity.get(State.class);
+                state.prevPos = state.pos;
+                state.pos = mouse2world(myHover);
+                if (!placeEntity.has(Renderable.class))
                 {
+                    RenderNode node = new RenderNode();
+                    node.entity = placeEntity;
                     node.renderable = new Renderable("cube", EntityManager.MAGENTA);
+                    node.state = state;
+                    drawRenderable(g, node);
                 }
-                node.state = placeEntity.get(State.class);
-                node.state.pos = mouse2world(myHover);
-                drawRenderable(g, node);
             }
         } else
         {
