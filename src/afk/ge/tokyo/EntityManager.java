@@ -105,10 +105,10 @@ public class EntityManager
     public void spawnStuff()
     {
         createFloor();
-        engine.addEntity(createGraphicWall(new Vec3(0, 0, -25), new Vec3(50, 1, 0.5f)));
-        engine.addEntity(createGraphicWall(new Vec3(0, 0, 25), new Vec3(50, 1, 0.5f)));
-        engine.addEntity(createGraphicWall(new Vec3(25, 0, 0), new Vec3(0.5f, 1, 50)));
-        engine.addEntity(createGraphicWall(new Vec3(-25, 0, 0), new Vec3(0.5f, 1, 50)));
+        engine.addEntity(createGraphicWall(new Vec3(0, 0, -Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
+        engine.addEntity(createGraphicWall(new Vec3(0, 0, Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
+        engine.addEntity(createGraphicWall(new Vec3(Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
+        engine.addEntity(createGraphicWall(new Vec3(-Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
     }
 
     public void createFloor()
