@@ -10,6 +10,7 @@ import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
+import afk.ge.tokyo.ems.systems.DebugSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
@@ -20,7 +21,6 @@ import afk.ge.tokyo.ems.systems.RobotSystem;
 import afk.ge.tokyo.ems.systems.TankControllerSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
-import com.hackoeur.jglm.Vec3;
 import java.util.UUID;
 
 /**
@@ -69,6 +69,9 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
+        
+        // TODO: if (DEBUG)  ...
+        engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
     }
 
@@ -79,10 +82,10 @@ public class Tokyo implements GameEngine, Runnable
         //entityManager.createObstacles(new Vec3(5, 5, 5));
         for (int i = 0; i < participants.length; i++)
         {
-            entityManager.createTankEntityNEU(
+            engine.addEntity(entityManager.createTankEntityNEU(
                     participants[i],
                     EntityManager.SPAWN_POINTS[i],
-                    EntityManager.BOT_COLOURS[i]);
+                    EntityManager.BOT_COLOURS[i]));
         }
         
         new Thread(this).start();

@@ -58,6 +58,7 @@ public class EntityManager
     public static final int TANK_VDIST = 15;
     public static final int TANK_FOVY = 70;
     public static final int TANK_FOVX = 170;
+    public static final Vec3 MAGENTA = new Vec3(1,0,1);
     int NUMCUBES = 10;
     public static final int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
     private Queue<Entity> particles = new ArrayDeque<Entity>();
@@ -104,10 +105,10 @@ public class EntityManager
     public void spawnStuff()
     {
         createFloor();
-        createGraphicWall(new Vec3(0, 0, -Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f));
-        createGraphicWall(new Vec3(0, 0, Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f));
-        createGraphicWall(new Vec3(Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE));
-        createGraphicWall(new Vec3(-Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE));
+        engine.addEntity(createGraphicWall(new Vec3(0, 0, -25), new Vec3(50, 1, 0.5f)));
+        engine.addEntity(createGraphicWall(new Vec3(0, 0, 25), new Vec3(50, 1, 0.5f)));
+        engine.addEntity(createGraphicWall(new Vec3(25, 0, 0), new Vec3(0.5f, 1, 50)));
+        engine.addEntity(createGraphicWall(new Vec3(-25, 0, 0), new Vec3(0.5f, 1, 50)));
     }
 
     public void createFloor()
@@ -127,14 +128,14 @@ public class EntityManager
         engine.addEntity(floor);
     }
 
-    public void createGraphicWall(Vec3 pos, Vec3 scale)
+    public Entity createGraphicWall(Vec3 pos, Vec3 scale)
     {
         Entity wall = new Entity();
         wall.add(new State(pos, Vec3.VEC3_ZERO, scale));
         wall.add(new BBoxComponent(scale.scale(0.5f)));
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
-        engine.addEntity(wall);
+        return wall;
     }
 
     public void createObstacles(Vec3 scale)
@@ -150,8 +151,8 @@ public class EntityManager
 
         }
     }
-
-    public void createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
+    
+    public Entity createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
 
@@ -170,7 +171,7 @@ public class EntityManager
         tank.add(new TankController());
         tank.add(new SnapToTerrain());
 
-        engine.addEntity(tank);
+        return tank;
     }
 
 //    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
@@ -226,17 +227,17 @@ public class EntityManager
         engine.addEntity(projectile);
     }
 
-    public void makeExplosion(Vec3 where, Entity parent, int type)
+    public Entity makeExplosion(Vec3 where, Entity parent, int type)
     {
         Entity entity = new Entity();
 
         entity.add(new State(where, Vec3.VEC3_ZERO, new Vec3(1, 1, 1)));
 
         ParticleEmitter emitter = new ParticleEmitter(emitters[type]);
-        emitter.colour = parent.get(Renderable.class).colour;
+        emitter.colour = parent == null ? MAGENTA : parent.get(Renderable.class).colour;
         entity.add(emitter);
 
-        engine.addEntity(entity);
+        return entity;
     }
 
     /**

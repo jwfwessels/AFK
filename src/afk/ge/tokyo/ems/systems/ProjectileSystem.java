@@ -6,13 +6,11 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
 import afk.ge.tokyo.EntityManager;
-import afk.ge.tokyo.HeightmapLoader;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
-import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
@@ -27,7 +25,7 @@ public class ProjectileSystem implements ISystem
 
     Engine engine;
     EntityManager manager;
-    
+
     public ProjectileSystem(EntityManager manager)
     {
         this.manager = manager;
@@ -47,7 +45,7 @@ public class ProjectileSystem implements ISystem
         List<ProjectileNode> bullets = engine.getNodeList(ProjectileNode.class);
         List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
 //        HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
-        
+
         bulletLoop:
         for (ProjectileNode bullet : bullets)
         {
@@ -62,13 +60,16 @@ public class ProjectileSystem implements ISystem
 //                    continue;
 //                }
 //            }
-            
+
             // collision testing for box
             for (CollisionNode node : nodes)
             {
                 // to stop shells from exploding inside the tank's barrel:
-                if (node.entity == bullet.bullet.parent) continue;
-                
+                if (node.entity == bullet.bullet.parent)
+                {
+                    continue;
+                }
+
                 BBox bbox = new BBox(node.state, node.bbox.extent);
                 if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
                 {
@@ -77,11 +78,12 @@ public class ProjectileSystem implements ISystem
                     {
                         life.hp -= bullet.bullet.damage;
                     }
+
                     bang(bullet);
                     continue bulletLoop;
                 }
             }
-            
+
             // range testing for box
             float dist = bullet.state.prevPos.subtract(bullet.state.pos).getLength();
             bullet.bullet.rangeLeft -= dist;
@@ -150,7 +152,7 @@ public class ProjectileSystem implements ISystem
 
     private void bang(ProjectileNode bullet)
     {
-        manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0);
+        engine.addEntity(manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0));
         engine.removeEntity(bullet.entity);
     }
 }
