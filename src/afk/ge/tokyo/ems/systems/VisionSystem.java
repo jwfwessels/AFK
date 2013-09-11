@@ -131,8 +131,8 @@ public class VisionSystem implements ISystem
 
         float[] them = getAngles(d);
 
-        float relativeBearing = them[0] - me[0];
-        float relativeElevation = them[1] - me[1];
+        float relativeBearing = (float)Math.toDegrees(them[0] - me[0]);
+        float relativeElevation = (float)Math.toDegrees(them[1] - me[1]);
 
         float halfFOV = fov * 0.5f;
         if (within(relativeBearing, halfFOV) && within(relativeElevation, halfFOV))
@@ -160,6 +160,6 @@ public class VisionSystem implements ISystem
 
     public static boolean within(float x, float range)
     {
-        return x >= -range || x <= range;
+        return x >= -range && x <= range;
     }
 }
