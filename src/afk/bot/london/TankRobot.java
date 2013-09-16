@@ -6,13 +6,17 @@ package afk.bot.london;
 public abstract class TankRobot extends AbstractRobot
 {
 
-    public static final int NUM_ACTIONS = 5;
+    public static final int NUM_ACTIONS = 9;
     //Index mapping of flag array
     public static final int MOVE_FRONT = 0;
     public static final int MOVE_BACK = 1;
     public static final int TURN_CLOCK = 2;
     public static final int TURN_ANTICLOCK = 3;
     public static final int ATTACK_ACTION = 4;
+    public static final int AIM_CLOCK = 5;
+    public static final int AIM_ANTICLOCK = 6;
+    public static final int AIM_UP = 7;
+    public static final int AIM_DOWN = 8;
 
     public TankRobot()
     {
@@ -67,5 +71,29 @@ public abstract class TankRobot extends AbstractRobot
     protected final void attack()
     {
         setFlag(ATTACK_ACTION, true);
+    }
+    
+    protected final void aimClockwise()
+    {
+        setFlag(AIM_CLOCK, true);
+        setFlag(AIM_ANTICLOCK, false);
+    }
+    
+    protected final void aimAntilockwise()
+    {
+        setFlag(AIM_ANTICLOCK, true);
+        setFlag(AIM_CLOCK, false);
+    }
+    
+    protected final void aimUp()
+    {
+        setFlag(AIM_UP, true);
+        setFlag(AIM_DOWN, false);
+    }
+    
+    protected final void aimDown()
+    {
+        setFlag(AIM_DOWN, true);
+        setFlag(AIM_UP, false);
     }
 }

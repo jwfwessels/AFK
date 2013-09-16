@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.ge.tokyo.ems.systems;
 
 import static afk.bot.london.TankRobot.*;
-import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.TankTracksNode;
@@ -20,12 +15,6 @@ public class TankTracksSystem implements ISystem
 {
 
     Engine engine;
-    EntityManager entityManager;
-
-    public TankTracksSystem(EntityManager entityManager)
-    {
-        this.entityManager = entityManager;
-    }
 
     @Override
     public boolean init(Engine engine)
@@ -62,15 +51,6 @@ public class TankTracksSystem implements ISystem
             } else
             {
                 node.velocity.av = Vec3.VEC3_ZERO;
-            }
-            if (engine.getFlag(node.controller.id, ATTACK_ACTION))
-            {
-                node.weapon.timeSinceLastFire += dt;
-                if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)
-                {
-                    node.weapon.timeSinceLastFire = 0;
-                    entityManager.createProjectileNEU(node.entity, node.weapon, node.state);
-                }
             }
         }
     }
