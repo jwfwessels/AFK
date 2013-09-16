@@ -23,7 +23,7 @@ public interface GameCoordinator {
 
     public void playPause();
     
-    public long getGameSpeed();
+    public float getGameSpeed();
 
     public void increaseSpeed();
 

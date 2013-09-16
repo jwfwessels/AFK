@@ -16,7 +16,7 @@ public interface GameEngine {
 
     public void playPause();
 
-    public long getSpeed();
+    public float getSpeed();
 
     public void increaseSpeed();
 

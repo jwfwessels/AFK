@@ -67,7 +67,7 @@ public class AFKGameCoordinator implements GameCoordinator {
     }
 
     @Override
-        public long getGameSpeed(){
+        public float getGameSpeed(){
         return gameEngine.getSpeed();
     }
     

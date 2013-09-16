@@ -39,7 +39,7 @@ public class Tokyo implements GameEngine, Runnable {
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
     public static float speedDelta = DELTA;
-    private long speedMultiplier = 1;
+    private float speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     public final static double TARGET_FPS = 60;
@@ -98,7 +98,7 @@ public class Tokyo implements GameEngine, Runnable {
     }
 
     @Override
-    public long getSpeed() {
+    public float getSpeed() {
         return speedMultiplier;
     }
 
@@ -106,12 +106,14 @@ public class Tokyo implements GameEngine, Runnable {
     public void increaseSpeed() {
         speedMultiplier *= 2;
         speedDelta = 1 / (GAME_SPEED * speedMultiplier);
+        System.out.println("+speedMultiplier: " + speedMultiplier + "     speedDelta: " + speedDelta);
     }
 
     @Override
     public void decreaseSpeed() {
         speedMultiplier /= 2;
         speedDelta = 1.0f / (GAME_SPEED * speedMultiplier);
+        System.out.println("-speedMultiplier: " + speedMultiplier + "     speedDelta: " + speedDelta);
     }
 
     @Override
