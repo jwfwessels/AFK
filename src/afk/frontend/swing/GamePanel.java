@@ -11,26 +11,31 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 /**
  *
  * @author Jw
  */
-public class GamePanel extends JPanel
-{
+public class GamePanel extends JPanel {
 
     RootWindow parent;
     Component glCanvas;
     JLayeredPane hudLayer;
+    JPanel pnlControls;
     JLabel fps;
+    JToggleButton btnPlayPause;
+    GameCoordinator gm;
 
-    public GamePanel(RootWindow parent, GameCoordinator gameCoordinator)
-    {
+    public GamePanel(RootWindow parent, GameCoordinator gameCoordinator) {
         this.parent = parent;
-        glCanvas = gameCoordinator.getAWTComponent();
+        gm = gameCoordinator;
+        glCanvas = gm.getAWTComponent();
         System.out.println("glCanvas" + glCanvas.getName());
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
@@ -38,31 +43,31 @@ public class GamePanel extends JPanel
         //TODO; set layout
     }
 
-    void setup()
-    {
+    void setup() {
         initComponents();
         addComponents();
         styleComponents();
     }
 
-    private void initComponents()
-    {
-        fps = new JLabel("1");
+    private void initComponents() {
+        fps = new JLabel("FPS: x");
         // FIXME: find a new way to show FPS
         //gfxEngine.setFPSComponent(fps);
         hudLayer = new JLayeredPane();
         System.out.println("size2" + hudLayer.getSize().toString());
-//        btnStartMatch = new JButton("Start");
+        pnlControls = new JPanel();
+        btnPlayPause = new JToggleButton("press");
     }
 
-    private void addComponents()
-    {
+    private void addComponents() {
 
         hudLayer.add(glCanvas, new Integer(0));
-        hudLayer.add(fps, new Integer(1));
+        pnlControls.add(fps);
+        pnlControls.add(btnPlayPause);
 //        hudLayer.add(glCanvas, JLayeredPane.DEFAULT_LAYER);
 //        hudLayer.add(fps, JLayeredPane.PALETTE_LAYER);
         add(hudLayer);
+        add(pnlControls);
 //        add(btnStartMatch);
     }
 
@@ -70,15 +75,25 @@ public class GamePanel extends JPanel
 //    {
 //        //TODO;
 //    }
-    private void styleComponents()
-    {
+    private void styleComponents() {
         fps.setOpaque(false);
         fps.setBounds(0, 0, 50, 25);
         hudLayer.setBackground(Color.BLUE);
+
+        btnPlayPause.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (btnPlayPause.isSelected()) {
+                    btnPlayPause.setText("Play");
+                } else {
+                    btnPlayPause.setText("Pause");
+                }
+                gm.playPause();
+            }
+        });
     }
 
-    class GamePanel_Layout implements LayoutManager
-    {
+    class GamePanel_Layout implements LayoutManager {
 
         int panelWidth = 800;
         int panelHeight = 600;
@@ -86,18 +101,15 @@ public class GamePanel extends JPanel
         int h = 0;
 
         @Override
-        public void addLayoutComponent(String name, Component comp)
-        {
+        public void addLayoutComponent(String name, Component comp) {
         }
 
         @Override
-        public void removeLayoutComponent(Component comp)
-        {
+        public void removeLayoutComponent(Component comp) {
         }
 
         @Override
-        public Dimension preferredLayoutSize(Container parent)
-        {
+        public Dimension preferredLayoutSize(Container parent) {
             Dimension dim = new Dimension(0, 0);
 
             Insets insets = parent.getInsets();
@@ -109,33 +121,38 @@ public class GamePanel extends JPanel
         }
 
         @Override
-        public Dimension minimumLayoutSize(Container parent)
-        {
+        public Dimension minimumLayoutSize(Container parent) {
             Dimension dim = new Dimension(0, 0);
             return dim;
         }
 
         @Override
-        public void layoutContainer(Container parent)
-        {
+        public void layoutContainer(Container parent) {
             Insets insets = parent.getInsets();
-            if ((w != parent.getSize().width) || (h != parent.getSize().height))
-            {
+            if ((w != parent.getSize().width) || (h != parent.getSize().height)) {
                 w = parent.getSize().width;
                 h = parent.getSize().height;
 
-            int num1 = 0;
-            Component c;
+                int num1 = 0;
+                int num2 = 0;
+                Component c;
 
-            //HudPanel;
+                //HudPanel;
 
-            c = parent.getComponent(0);
-            if (c.isVisible())
-            {
-                c.setBounds(insets.left + num1, insets.top, (int) w, (int) h);
+                c = parent.getComponent(0);
+                if (c.isVisible()) {
+                    c.setBounds(insets.left + num1, insets.top, (int) w, (int) (h - 50));
 
-                glCanvas.setSize(w, h);
-            }
+                    glCanvas.setSize(w, h);
+                    num2 += c.getSize().height;
+                }
+
+                //pnlControls
+
+                c = parent.getComponent(1);
+                if (c.isVisible()) {
+                    c.setBounds(insets.left, insets.top + num2, (int) w, (int) 50);
+                }
             }
         }
     }

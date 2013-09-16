@@ -20,6 +20,8 @@ public interface GameCoordinator
      */
     public void start() throws RobotException;
     
+    public void playPause();
+    
     /**
      * Registers a game listener to receive game events such as game over and
      * player death.

@@ -27,13 +27,13 @@ import java.util.UUID;
  *
  * @author Jw
  */
-public class Tokyo implements GameEngine, Runnable
-{
+public class Tokyo implements GameEngine, Runnable {
 
     private EntityManager entityManager;
     private Engine engine;
     private GraphicsEngine gfxEngine;
     private boolean running = true;
+    private boolean paused = true;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 60;
     private float t = 0.0f;
@@ -45,8 +45,7 @@ public class Tokyo implements GameEngine, Runnable
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
-    {
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine) {
         engine = new Engine();
 
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
@@ -69,57 +68,59 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
-        
+
         // TODO: if (DEBUG)  ...
         engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
     }
 
     @Override
-    public void startGame(UUID[] participants)
-    {
+    public void startGame(UUID[] participants) {
         entityManager.spawnStuff();
         //entityManager.createObstacles(new Vec3(5, 5, 5));
-        for (int i = 0; i < participants.length; i++)
-        {
+        for (int i = 0; i < participants.length; i++) {
             engine.addEntity(entityManager.createTankEntityNEU(
                     participants[i],
                     EntityManager.SPAWN_POINTS[i],
                     EntityManager.BOT_COLOURS[i]));
         }
-        
+
         new Thread(this).start();
     }
 
     @Override
-    public void run()
-    {
+    public void playPause() {
+        System.out.println("playPause() - " + paused);
+        paused = !paused;
+        System.out.println("paused: " + paused);
+    }
+
+    @Override
+    public void run() {
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
         int i = 0;
-        while (running)
-        {
+        while (running) {
+            while (paused) {
+                double newTime = System.nanoTime();
+                double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
+                if (frameTime > MAX_FRAMETIME) {
+                    frameTime = MAX_FRAMETIME;
+                }
+                currentTime = newTime;
 
-            double newTime = System.nanoTime();
-            double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
-            if (frameTime > MAX_FRAMETIME)
-            {
-                frameTime = MAX_FRAMETIME;
+                accumulator += frameTime;
+
+                int x = 0;
+                while (accumulator >= DELTA) {
+                    engine.update(t, DELTA);
+                    t += DELTA;
+                    accumulator -= DELTA;
+                    x++;
+                }
+                double alpha = accumulator / DELTA;
+                gfxEngine.redisplay();
             }
-            currentTime = newTime;
-
-            accumulator += frameTime;
-
-            int x = 0;
-            while (accumulator >= DELTA)
-            {
-                engine.update(t, DELTA);
-                t += DELTA;
-                accumulator -= DELTA;
-                x++;
-            }
-            double alpha = accumulator / DELTA;
-            gfxEngine.redisplay();
         }
     }
 }

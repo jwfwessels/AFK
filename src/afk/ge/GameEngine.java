@@ -14,5 +14,6 @@ public interface GameEngine
 {
 
     public void startGame(UUID[] participants);
+    public void playPause();
     
 }

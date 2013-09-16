@@ -66,5 +66,10 @@ public class AFKGameCoordinator implements GameCoordinator
     {
         listeners.remove(listener);
     }
+
+    @Override
+    public void playPause() {
+        gameEngine.playPause();
+    }
     
 }
