@@ -106,14 +106,12 @@ public class Tokyo implements GameEngine, Runnable {
     public void increaseSpeed() {
         speedMultiplier *= 2;
         speedDelta = 1 / (GAME_SPEED * speedMultiplier);
-        System.out.println("+speedMultiplier: " + speedMultiplier + "     speedDelta: " + speedDelta);
     }
 
     @Override
     public void decreaseSpeed() {
         speedMultiplier /= 2;
         speedDelta = 1.0f / (GAME_SPEED * speedMultiplier);
-        System.out.println("-speedMultiplier: " + speedMultiplier + "     speedDelta: " + speedDelta);
     }
 
     @Override

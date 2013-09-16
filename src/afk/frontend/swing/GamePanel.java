@@ -33,7 +33,7 @@ public class GamePanel extends JPanel {
     JToggleButton btnPlayPause;
     JButton btnFaster;
     JButton btnSlower;
-    private JLabel LblSpeed;
+    private JLabel lblSpeed;
     GameCoordinator gm;
 
     public GamePanel(RootWindow parent, GameCoordinator gameCoordinator) {
@@ -63,7 +63,7 @@ public class GamePanel extends JPanel {
         btnPlayPause = new JToggleButton("press");
         btnFaster = new JButton(">>");
         btnSlower = new JButton("<<");
-        LblSpeed = new JLabel("speed: " + gm.getGameSpeed());
+        lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
     }
 
     private void addComponents() {
@@ -73,7 +73,7 @@ public class GamePanel extends JPanel {
         pnlControls.add(btnSlower);
         pnlControls.add(btnPlayPause);
         pnlControls.add(btnFaster);
-        pnlControls.add(LblSpeed);
+        pnlControls.add(lblSpeed);
 //        hudLayer.add(glCanvas, JLayeredPane.DEFAULT_LAYER);
 //        hudLayer.add(fps, JLayeredPane.PALETTE_LAYER);
         add(hudLayer);
@@ -89,7 +89,7 @@ public class GamePanel extends JPanel {
         fps.setOpaque(false);
         fps.setBounds(0, 0, 50, 25);
         hudLayer.setBackground(Color.BLUE);
-        LblSpeed.setBackground(Color.LIGHT_GRAY);
+        lblSpeed.setBackground(Color.LIGHT_GRAY);
 
         btnPlayPause.addActionListener(new ActionListener() {
             @Override
@@ -112,7 +112,7 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gm.increaseSpeed();
-                LblSpeed.setText("speed: " + gm.getGameSpeed());
+                setLblSpeed();
             }
         });
 
@@ -120,9 +120,18 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gm.decreaseSpeed();
-                LblSpeed.setText("speed: " + gm.getGameSpeed());
+                setLblSpeed();
             }
         });
+    }
+
+    private void setLblSpeed() {
+        float speed = gm.getGameSpeed();
+        if (speed >= 1) {
+            lblSpeed.setText("speed: " + (int) speed);
+        } else {
+            lblSpeed.setText("speed: " + 1 + "/" + (int) (1 / speed));
+        }
     }
 
     class GamePanel_Layout implements LayoutManager {
