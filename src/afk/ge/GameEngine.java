@@ -10,10 +10,15 @@ import java.util.UUID;
  *
  * @author Jw
  */
-public interface GameEngine
-{
+public interface GameEngine {
 
     public void startGame(UUID[] participants);
+
     public void playPause();
-    
+
+    public long getSpeed();
+
+    public void increaseSpeed();
+
+    public void decreaseSpeed();
 }

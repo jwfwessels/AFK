@@ -35,7 +35,7 @@ public class Tokyo implements GameEngine, Runnable {
     private boolean running = true;
     private boolean paused = true;
     public static final float BOARD_SIZE = 100;
-    public final static float GAME_SPEED = 60;
+    public final static float GAME_SPEED = 30;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
@@ -44,6 +44,7 @@ public class Tokyo implements GameEngine, Runnable {
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
+    private long speedMultiplier = 1;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine) {
         engine = new Engine();
@@ -96,13 +97,28 @@ public class Tokyo implements GameEngine, Runnable {
     }
 
     @Override
+    public long getSpeed() {
+        return speedMultiplier;
+    }
+
+    @Override
+    public void increaseSpeed() {
+        speedMultiplier *= 2;
+    }
+
+    @Override
+    public void decreaseSpeed() {
+        speedMultiplier /= 2;
+    }
+
+    @Override
     public void run() {
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
         int i = 0;
         while (running) {
             while (paused) {
-                double newTime = System.nanoTime();
+                double newTime = System.nanoTime() * speedMultiplier;
                 double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
                 if (frameTime > MAX_FRAMETIME) {
                     frameTime = MAX_FRAMETIME;

@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -30,6 +31,9 @@ public class GamePanel extends JPanel {
     JPanel pnlControls;
     JLabel fps;
     JToggleButton btnPlayPause;
+    JButton btnFaster;
+    JButton btnSlower;
+    private JLabel LblSpeed;
     GameCoordinator gm;
 
     public GamePanel(RootWindow parent, GameCoordinator gameCoordinator) {
@@ -57,13 +61,19 @@ public class GamePanel extends JPanel {
         System.out.println("size2" + hudLayer.getSize().toString());
         pnlControls = new JPanel();
         btnPlayPause = new JToggleButton("press");
+        btnFaster = new JButton(">>");
+        btnSlower = new JButton("<<");
+        LblSpeed = new JLabel("speed: " + gm.getGameSpeed());
     }
 
     private void addComponents() {
 
         hudLayer.add(glCanvas, new Integer(0));
         pnlControls.add(fps);
+        pnlControls.add(btnSlower);
         pnlControls.add(btnPlayPause);
+        pnlControls.add(btnFaster);
+        pnlControls.add(LblSpeed);
 //        hudLayer.add(glCanvas, JLayeredPane.DEFAULT_LAYER);
 //        hudLayer.add(fps, JLayeredPane.PALETTE_LAYER);
         add(hudLayer);
@@ -79,16 +89,37 @@ public class GamePanel extends JPanel {
         fps.setOpaque(false);
         fps.setBounds(0, 0, 50, 25);
         hudLayer.setBackground(Color.BLUE);
+        LblSpeed.setBackground(Color.LIGHT_GRAY);
 
         btnPlayPause.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (btnPlayPause.isSelected()) {
                     btnPlayPause.setText("Play");
+                    btnFaster.enableInputMethods(false);
+                    btnSlower.enableInputMethods(false);
                 } else {
                     btnPlayPause.setText("Pause");
+                    btnFaster.enableInputMethods(true);
+                    btnSlower.enableInputMethods(true);
                 }
                 gm.playPause();
+            }
+        });
+
+        btnFaster.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gm.increaseSpeed();
+                LblSpeed.setText("speed: " + gm.getGameSpeed());
+            }
+        });
+
+        btnSlower.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gm.decreaseSpeed();
+                LblSpeed.setText("speed: " + gm.getGameSpeed());
             }
         });
     }
