@@ -18,7 +18,7 @@ import afk.ge.tokyo.ems.systems.ParticleSystem;
 import afk.ge.tokyo.ems.systems.ProjectileSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.ge.tokyo.ems.systems.RobotSystem;
-import afk.ge.tokyo.ems.systems.TankControllerSystem;
+import afk.ge.tokyo.ems.systems.TankTracksSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
 import java.util.UUID;
@@ -59,7 +59,7 @@ public class Tokyo implements GameEngine, Runnable
 
         ///possible move somewhere else later///
         engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
-        engine.addSystem(new TankControllerSystem(entityManager));
+        engine.addSystem(new TankTracksSystem(entityManager));
         engine.addSystem(new MovementSystem());
         engine.addSystem(new SnapToTerrainSystem());
         engine.addSystem(new ProjectileSystem(entityManager));

@@ -12,7 +12,7 @@ import afk.ge.tokyo.ems.components.Weapon;
  *
  * @author daniel
  */
-public class TankControlNode extends Node
+public class TankTracksNode extends Node
 {
     public Controller controller;
     public TankController tankController;

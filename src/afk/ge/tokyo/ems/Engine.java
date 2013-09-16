@@ -10,14 +10,15 @@ import java.util.Map;
  *
  * @author daniel
  */
-public class Engine implements EntityListener
+public class Engine implements EntityListener, FlagManager
 {
-    Collection<ISystem> systems = new ArrayList<ISystem>();
-    Collection<Entity> entities = new ArrayList<Entity>();
-    Collection<Entity> toAdd = new ArrayList<Entity>();
-    Collection<Entity> toRemove = new ArrayList<Entity>();
-    Map<Class, Collection<Object>> nodeLists = new HashMap<Class, Collection<Object>>();
-    Map<Class, Family> families = new HashMap<Class, Family>();
+    private Collection<ISystem> systems = new ArrayList<ISystem>();
+    private Collection<Entity> entities = new ArrayList<Entity>();
+    private Collection<Entity> toAdd = new ArrayList<Entity>();
+    private Collection<Entity> toRemove = new ArrayList<Entity>();
+    private Map<Class, Collection<Object>> nodeLists = new HashMap<Class, Collection<Object>>();
+    private Map<Class, Family> families = new HashMap<Class, Family>();
+    private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
     
     boolean updating = false;
     
@@ -117,5 +118,60 @@ public class Engine implements EntityListener
             s.destroy();
         
         systems.clear();
+    }
+    
+    class Flag
+    {
+        private Object source;
+        private int symbol;
+
+        public Flag(Object source, int symbol)
+        {
+            this.source = source;
+            this.symbol = symbol;
+        }
+
+        public Object getSource()
+        {
+            return source;
+        }
+
+        public int getSymbol()
+        {
+            return symbol;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj instanceof Flag)
+            {
+                Flag other = (Flag) obj;
+                return other.symbol == symbol
+                        && source == null ? other.source == null : source.equals(other.source);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int hash = 7;
+            hash = 41 * hash + this.symbol;
+            hash = 41 * hash + (this.source != null ? this.source.hashCode() : 0);
+            return hash;
+        }
+    }
+
+    @Override
+    public boolean getFlag(Object source, int symbol)
+    {
+        return flags.get(new Flag(source,symbol)) == Boolean.TRUE;
+    }
+
+    @Override
+    public void setFlag(Object source, int symbol, boolean value)
+    {
+        flags.put(new Flag(source,symbol), value);
     }
 }

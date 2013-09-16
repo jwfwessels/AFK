@@ -4,11 +4,11 @@
  */
 package afk.ge.tokyo.ems.systems;
 
-import afk.bot.london.TankRobot;
+import static afk.bot.london.TankRobot.*;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.TankControlNode;
+import afk.ge.tokyo.ems.nodes.TankTracksNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
 
@@ -16,13 +16,13 @@ import java.util.List;
  *
  * @author Jw
  */
-public class TankControllerSystem implements ISystem
+public class TankTracksSystem implements ISystem
 {
 
     Engine engine;
     EntityManager entityManager;
 
-    public TankControllerSystem(EntityManager entityManager)
+    public TankTracksSystem(EntityManager entityManager)
     {
         this.entityManager = entityManager;
     }
@@ -37,34 +37,33 @@ public class TankControllerSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        List<TankControlNode> nodes = engine.getNodeList(TankControlNode.class);
-        for (TankControlNode node : nodes)
+        List<TankTracksNode> nodes = engine.getNodeList(TankTracksNode.class);
+        for (TankTracksNode node : nodes)
         {
-            boolean[] flags = node.controller.inputFlags;
             float angle = -(float) Math.toRadians(node.state.rot.getY());
             float sin = (float) Math.sin(angle);
             float cos = (float) Math.cos(angle);
-            if (flags[TankRobot.MOVE_FRONT])
+            if (engine.getFlag(node.controller.id, MOVE_FRONT))
             {
                 node.velocity.v = new Vec3(-(node.motor.topSpeed * sin), 0, node.motor.topSpeed * cos);
-            } else if (flags[TankRobot.MOVE_BACK])
+            } else if (engine.getFlag(node.controller.id, MOVE_BACK))
             {
                 node.velocity.v = new Vec3(node.motor.topSpeed * sin, 0, -(node.motor.topSpeed * cos));
             } else
             {
                 node.velocity.v = Vec3.VEC3_ZERO;
             }
-            if (flags[TankRobot.TURN_CLOCK])
+            if (engine.getFlag(node.controller.id, TURN_CLOCK))
             {
                 node.velocity.av = new Vec3(0, -node.motor.angularVelocity, 0);
-            } else if (flags[TankRobot.TURN_ANTICLOCK])
+            } else if (engine.getFlag(node.controller.id, TURN_ANTICLOCK))
             {
                 node.velocity.av = new Vec3(0, node.motor.angularVelocity, 0);
             } else
             {
                 node.velocity.av = Vec3.VEC3_ZERO;
             }
-            if (flags[TankRobot.ATTACK_ACTION])
+            if (engine.getFlag(node.controller.id, ATTACK_ACTION))
             {
                 node.weapon.timeSinceLastFire += dt;
                 if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)
