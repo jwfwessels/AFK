@@ -38,13 +38,14 @@ public class Tokyo implements GameEngine, Runnable {
     public final static float GAME_SPEED = 30;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
+    public static float speedDelta = DELTA;
+    private long speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     public final static double TARGET_FPS = 60;
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
-    private long speedMultiplier = 1;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine) {
         engine = new Engine();
@@ -104,11 +105,13 @@ public class Tokyo implements GameEngine, Runnable {
     @Override
     public void increaseSpeed() {
         speedMultiplier *= 2;
+        speedDelta = 1 / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
     public void decreaseSpeed() {
         speedMultiplier /= 2;
+        speedDelta = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
@@ -118,7 +121,7 @@ public class Tokyo implements GameEngine, Runnable {
         int i = 0;
         while (running) {
             while (paused) {
-                double newTime = System.nanoTime() * speedMultiplier;
+                double newTime = System.nanoTime();
                 double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
                 if (frameTime > MAX_FRAMETIME) {
                     frameTime = MAX_FRAMETIME;
@@ -128,13 +131,13 @@ public class Tokyo implements GameEngine, Runnable {
                 accumulator += frameTime;
 
                 int x = 0;
-                while (accumulator >= DELTA) {
+                while (accumulator >= speedDelta) {
                     engine.update(t, DELTA);
-                    t += DELTA;
-                    accumulator -= DELTA;
+                    t += speedDelta;
+                    accumulator -= speedDelta;
                     x++;
                 }
-                double alpha = accumulator / DELTA;
+                double alpha = accumulator / speedDelta;
                 gfxEngine.redisplay();
             }
         }

@@ -96,12 +96,13 @@ public class GamePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (btnPlayPause.isSelected()) {
                     btnPlayPause.setText("Play");
-                    btnFaster.enableInputMethods(false);
-                    btnSlower.enableInputMethods(false);
+                    btnFaster.setEnabled(false);
+                    btnSlower.setEnabled(false);
                 } else {
                     btnPlayPause.setText("Pause");
-                    btnFaster.enableInputMethods(true);
-                    btnSlower.enableInputMethods(true);
+                    btnFaster.setEnabled(true);
+                    btnSlower.setEnabled(true);
+
                 }
                 gm.playPause();
             }
