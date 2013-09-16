@@ -9,6 +9,7 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
+import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
@@ -20,8 +21,10 @@ import afk.ge.tokyo.ems.systems.ParticleSystem;
 import afk.ge.tokyo.ems.systems.ProjectileSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.ge.tokyo.ems.systems.RobotSystem;
+import afk.ge.tokyo.ems.systems.TankBarrelFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankBarrelSystem;
 import afk.ge.tokyo.ems.systems.TankTracksSystem;
+import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankTurretSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
@@ -67,6 +70,8 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new TankTurretSystem());
         engine.addSystem(new TankBarrelSystem(entityManager));
         engine.addSystem(new MovementSystem());
+        engine.addSystem(new TankTurretFeedbackSystem());
+        engine.addSystem(new TankBarrelFeedbackSystem());
         engine.addSystem(new SnapToTerrainSystem());
         engine.addSystem(new ProjectileSystem(entityManager));
         engine.addSystem(new LifeSystem());
@@ -88,14 +93,17 @@ public class Tokyo implements GameEngine, Runnable
         //entityManager.createObstacles(new Vec3(5, 5, 5));
         for (int i = 0; i < participants.length; i++)
         {
+            Controller controller = new Controller(participants[i]);
             Entity tank = entityManager.createTankEntityNEU(
-                    participants[i],
                     EntityManager.SPAWN_POINTS[i],
                     EntityManager.BOT_COLOURS[i]);
-            Entity turret = entityManager.createLargeTankTurret(participants[i], EntityManager.BOT_COLOURS[i]);
+            tank.add(controller);
+            Entity turret = entityManager.createLargeTankTurret(EntityManager.BOT_COLOURS[i]);
             turret.add(new Parent(tank));
-            Entity barrel = entityManager.createLargeTankBarrel(participants[i], EntityManager.BOT_COLOURS[i]);
+            turret.add(controller);
+            Entity barrel = entityManager.createLargeTankBarrel(EntityManager.BOT_COLOURS[i]);
             barrel.add(new Parent(turret));
+            barrel.add(controller);
             engine.addEntity(tank);
             engine.addEntity(turret);
             engine.addEntity(barrel);

@@ -157,20 +157,19 @@ public class EntityManager
         }
     }
 
-    public Entity createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
+    public Entity createTankEntityNEU(Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
 
         Entity entity = new Entity();
 
         entity.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
-        // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale))); // big tank collision box
-        entity.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale))); // small tank collision box
+        // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale)));
+        entity.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale)));
         entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
         entity.add(new Motor(2f, 20f));
         entity.add(new Life(SMALL_TANK_HP));
         entity.add(new Renderable(LARGE_TANK_TYPE, colour));
-        entity.add(new Controller(id));
         entity.add(new RobotToken());
         entity.add(new Targetable());
         entity.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
@@ -180,11 +179,10 @@ public class EntityManager
         return entity;
     }
 
-    public Entity createLargeTankTurret(UUID id, Vec3 colour)
+    public Entity createLargeTankTurret(Vec3 colour)
     {
         Entity entity = new Entity();
 
-        entity.add(new Controller(id));
         entity.add(new State(new Vec3(0.0f, 0.17623f, -0.15976f), Vec3.VEC3_ZERO, new Vec3(1)));
         entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
         entity.add(new Renderable(LARGE_TANK_TURRET_TYPE, colour));
@@ -193,11 +191,10 @@ public class EntityManager
         return entity;
     }
 
-    public Entity createLargeTankBarrel(UUID id, Vec3 colour)
+    public Entity createLargeTankBarrel(Vec3 colour)
     {
         Entity entity = new Entity();
 
-        entity.add(new Controller(id));
         entity.add(new State(new Vec3(0.0f, 0.03200f, 0.22199f), Vec3.VEC3_ZERO, new Vec3(1)));
         entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
         entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));

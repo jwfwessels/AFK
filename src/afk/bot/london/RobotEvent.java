@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.bot.london;
 
 import java.util.ArrayList;
@@ -16,6 +12,9 @@ public class RobotEvent
     
     /** List of visible bots as angles from where tank is facing. Empty if there are none. */
     public List<float[]> visibleBots;
+    
+    public float turret;
+    public float barrel;
     
     /** True if bot was hit by another. */
     public boolean gotHit; // TODO: change to reflect where hit came from
@@ -32,14 +31,6 @@ public class RobotEvent
         gotHit = false;
         didHit = false;
         hitWall = false;
-    }
-
-    public RobotEvent(List<float[]> visibleBots, boolean gotHit, boolean didHit, boolean hitWall)
-    {
-        this.visibleBots = visibleBots;
-        this.gotHit = gotHit;
-        this.didHit = didHit;
-        this.hitWall = hitWall;
     }
     
     public float[][] getVisibleBots()

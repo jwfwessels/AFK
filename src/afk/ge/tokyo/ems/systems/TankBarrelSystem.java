@@ -5,6 +5,7 @@ import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.TankBarrelNode;
+import com.hackoeur.jglm.Vec3;
 import java.util.List;
 
 /**
@@ -13,6 +14,7 @@ import java.util.List;
  */
 public class TankBarrelSystem implements ISystem
 {
+    public static final int BARREL_AV = 5;
 
     Engine engine;
     EntityManager entityManager;
@@ -37,10 +39,13 @@ public class TankBarrelSystem implements ISystem
         {
             if (engine.getFlag(node.controller.id, AIM_UP))
             {
-                node.state.rot = node.state.rot.add(node.velocity.av);
+                node.velocity.av = new Vec3(0, 0, BARREL_AV);
             } else if (engine.getFlag(node.controller.id, AIM_DOWN))
             {
-                node.state.rot = node.state.rot.add(node.velocity.av.getNegated());
+                node.velocity.av = new Vec3(0, 0, -BARREL_AV);
+            } else
+            {
+                node.velocity.av = Vec3.VEC3_ZERO;
             }
             if (engine.getFlag(node.controller.id, ATTACK_ACTION))
             {

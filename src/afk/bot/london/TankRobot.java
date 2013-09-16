@@ -79,7 +79,7 @@ public abstract class TankRobot extends AbstractRobot
         setFlag(AIM_ANTICLOCK, false);
     }
     
-    protected final void aimAntilockwise()
+    protected final void aimAntiClockwise()
     {
         setFlag(AIM_ANTICLOCK, true);
         setFlag(AIM_CLOCK, false);

@@ -1,19 +1,17 @@
 package afk.ge.tokyo.ems.systems;
 
-import static afk.bot.london.TankRobot.*;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.TankTurretNode;
-import com.hackoeur.jglm.Vec3;
 import java.util.List;
 
 /**
  *
  * @author Jw
  */
-public class TankTurretSystem implements ISystem
+public class TankTurretFeedbackSystem implements ISystem
 {
-    public static final int TURRET_AV = 5;
+    public static final int TURRET_AV = 3;
 
     Engine engine;
 
@@ -30,16 +28,8 @@ public class TankTurretSystem implements ISystem
         List<TankTurretNode> nodes = engine.getNodeList(TankTurretNode.class);
         for (TankTurretNode node : nodes)
         {
-            if (engine.getFlag(node.controller.id, AIM_CLOCK))
-            {
-                node.velocity.av = new Vec3(0,-TURRET_AV,0);
-            } else if (engine.getFlag(node.controller.id, AIM_ANTICLOCK))
-            {
-                node.velocity.av = new Vec3(0, TURRET_AV,0);
-            } else
-            {
-                node.velocity.av = Vec3.VEC3_ZERO;
-            }
+            System.out.println("Y: " + node.state.rot.getY());
+            node.controller.events.turret = node.state.rot.getY();
         }
     }
 
