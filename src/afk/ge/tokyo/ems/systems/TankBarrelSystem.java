@@ -4,9 +4,11 @@ import static afk.bot.london.TankRobot.*;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.TankBarrelNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
+import static afk.ge.tokyo.ems.Utils.*;
 
 /**
  *
@@ -14,8 +16,8 @@ import java.util.List;
  */
 public class TankBarrelSystem implements ISystem
 {
-    public static final int BARREL_AV = 5;
 
+    public static final int BARREL_AV = 5;
     Engine engine;
     EntityManager entityManager;
 
@@ -53,11 +55,18 @@ public class TankBarrelSystem implements ISystem
                 if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)
                 {
                     node.weapon.timeSinceLastFire = 0;
-                    // TODO: spawn projectile at end of barrel?
-                    entityManager.createProjectileNEU(node.entity, node.weapon, node.state);
+                    entityManager.createProjectileNEU(node.controller.id, node.weapon, getProjectileState(node));
                 }
             }
         }
+    }
+
+    public State getProjectileState(TankBarrelNode node)
+    {
+        State state = getWorldState(node.entity);
+        float barrelLength = node.barrel.length * state.scale.getY();
+        Vec3 posShift = getForward(state).multiply(barrelLength);
+        return new State(state, posShift);
     }
 
     @Override

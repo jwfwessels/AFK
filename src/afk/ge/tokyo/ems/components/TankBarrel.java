@@ -6,5 +6,11 @@ package afk.ge.tokyo.ems.components;
  */
 public class TankBarrel
 {
-    // TOKEN CLASS
+    public float length;
+
+    public TankBarrel(float length)
+    {
+        this.length = length;
+    }
+    
 }

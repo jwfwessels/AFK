@@ -8,6 +8,7 @@ import afk.ge.BBox;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
@@ -15,6 +16,7 @@ import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -65,7 +67,8 @@ public class ProjectileSystem implements ISystem
             for (CollisionNode node : nodes)
             {
                 // to stop shells from exploding inside the tank's barrel:
-                if (node.entity == bullet.bullet.parent)
+                Controller controller = node.entity.get(Controller.class);
+                if (controller != null && controller.id == bullet.bullet.parent)
                 {
                     continue;
                 }

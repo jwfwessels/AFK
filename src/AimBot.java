@@ -30,8 +30,9 @@ public class AimBot extends TankRobot
             System.out.printf("bearing: %g, elev: %g\n", bearing, elevation);
             System.out.printf("diff: %g\n", diff);
 
-            if (Float.compare(diff, 1) < 0)
+            if (Float.compare(diff, 0.6f) < 0)
             {
+                attack();
                 return;
             }
             
@@ -52,7 +53,6 @@ public class AimBot extends TankRobot
             {
                 aimUp();
             }
-            return;
         }
     }
 }

@@ -19,5 +19,5 @@ public class TankBarrelNode extends Node
     public State state;
     public Velocity velocity;
     public Weapon weapon;
-    public Parent offset;
+    public Parent parent;
 }

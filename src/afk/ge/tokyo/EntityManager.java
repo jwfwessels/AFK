@@ -12,6 +12,7 @@ import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Motor;
+import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.ParticleEmitter;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.RobotToken;
@@ -157,26 +158,38 @@ public class EntityManager
         }
     }
 
-    public Entity createTankEntityNEU(Vec3 spawnPoint, Vec3 colour)
+    public Entity createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
 
-        Entity entity = new Entity();
+        Entity tank = new Entity();
 
-        entity.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
+        Controller controller = new Controller(id);
+        tank.add(controller);
+        tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
         // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale)));
-        entity.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale)));
-        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
-        entity.add(new Motor(2f, 20f));
-        entity.add(new Life(SMALL_TANK_HP));
-        entity.add(new Renderable(LARGE_TANK_TYPE, colour));
-        entity.add(new RobotToken());
-        entity.add(new Targetable());
-        entity.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
-        entity.add(new TankTracks());
-        entity.add(new SnapToTerrain());
+        tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale)));
+        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+        tank.add(new Motor(2f, 20f));
+        tank.add(new Life(SMALL_TANK_HP));
+        tank.add(new Renderable(LARGE_TANK_TYPE, colour));
+        tank.add(new RobotToken());
+        tank.add(new Targetable());
+        tank.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
+        tank.add(new TankTracks());
+        tank.add(new SnapToTerrain());
+        
+        
+        Entity turret = createLargeTankTurret(colour);
+        turret.add(new Parent(tank));
+        turret.add(controller);
+        tank.addDependent(turret);
+        Entity barrel = createLargeTankBarrel(colour);
+        barrel.add(new Parent(turret));
+        barrel.add(controller);
+        turret.addDependent(barrel);
 
-        return entity;
+        return tank;
     }
 
     public Entity createLargeTankTurret(Vec3 colour)
@@ -199,7 +212,7 @@ public class EntityManager
         entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
         entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
         entity.add(new Renderable(LARGE_TANK_BARREL_TYPE, colour));
-        entity.add(new TankBarrel());
+        entity.add(new TankBarrel(0.545f));
 
         return entity;
     }
@@ -235,11 +248,10 @@ public class EntityManager
 //        tank.name = "tank" + (entities.size() - 1);
 //        tank.setScaleForOBB(oBBEntity.getScale().scale(SCALE));
 //    }
-    public void createProjectileNEU(Entity parent, Weapon weapon, State current)
+    public void createProjectileNEU(UUID parent, Weapon weapon, State current)
     {
         Entity projectile = new Entity();
-        State state = new State(current, new Vec3(0, 0.8f, 0));
-        state.scale = new Vec3(0.3f, 0.3f, 0.3f);
+        State state = new State(current.pos, current.rot, new Vec3(0.3f, 0.3f, -0.3f));
         projectile.add(state);
 
         // rotate a normal vector along the Z-axis using the entity's rotation
@@ -257,14 +269,14 @@ public class EntityManager
         engine.addEntity(projectile);
     }
 
-    public Entity makeExplosion(Vec3 where, Entity parent, int type)
+    public Entity makeExplosion(Vec3 where, UUID parent, int type)
     {
         Entity entity = new Entity();
 
         entity.add(new State(where, Vec3.VEC3_ZERO, new Vec3(1, 1, 1)));
 
         ParticleEmitter emitter = new ParticleEmitter(emitters[type]);
-        emitter.colour = parent == null ? MAGENTA : parent.get(Renderable.class).colour;
+        emitter.colour = MAGENTA; // TODO: get colour from config
         entity.add(emitter);
 
         return entity;

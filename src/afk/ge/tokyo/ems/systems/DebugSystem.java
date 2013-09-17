@@ -7,7 +7,7 @@ import afk.ge.tokyo.Tokyo;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.components.Controller;
+import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.RenderNode;
@@ -95,6 +95,10 @@ public class DebugSystem implements ISystem
 
             for (RenderNode node : nodes)
             {
+                if (node.entity.has(Parent.class))
+                {
+                    continue;
+                }
                 float distSq = node.state.pos.subtract(mouse2world(myMouse)).getLengthSquared();
                 if (distSq < closestSq)
                 {
@@ -159,6 +163,10 @@ public class DebugSystem implements ISystem
 
     private void drawRenderable(Graphics2D g, RenderNode node)
     {
+        if (node.entity.has(Parent.class))
+        {
+            return;
+        }
         AffineTransform oldT = g.getTransform();
 
         g.transform(AffineTransform.getTranslateInstance(
@@ -240,15 +248,13 @@ public class DebugSystem implements ISystem
                 }
                 try
                 {
-                    Controller controller = new Controller(botEngine.addRobot(file.getAbsolutePath()));
                     Entity entity = manager.createTankEntityNEU(
+                            botEngine.addRobot(file.getAbsolutePath()),
                             Vec3.VEC3_ZERO,
                             new Vec3(
                             (float) Math.random(),
                             (float) Math.random(),
                             (float) Math.random()));
-                    entity.add(controller);
-                    // TODO: add guns and stuff
                     startPlaceItem(entity);
                 } catch (RobotException ex)
                 {

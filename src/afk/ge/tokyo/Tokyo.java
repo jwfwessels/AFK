@@ -93,20 +93,11 @@ public class Tokyo implements GameEngine, Runnable
         //entityManager.createObstacles(new Vec3(5, 5, 5));
         for (int i = 0; i < participants.length; i++)
         {
-            Controller controller = new Controller(participants[i]);
             Entity tank = entityManager.createTankEntityNEU(
+                    participants[i],
                     EntityManager.SPAWN_POINTS[i],
                     EntityManager.BOT_COLOURS[i]);
-            tank.add(controller);
-            Entity turret = entityManager.createLargeTankTurret(EntityManager.BOT_COLOURS[i]);
-            turret.add(new Parent(tank));
-            turret.add(controller);
-            Entity barrel = entityManager.createLargeTankBarrel(EntityManager.BOT_COLOURS[i]);
-            barrel.add(new Parent(turret));
-            barrel.add(controller);
             engine.addEntity(tank);
-            engine.addEntity(turret);
-            engine.addEntity(barrel);
         }
         
         new Thread(this).start();

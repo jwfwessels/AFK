@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class Engine implements EntityListener, FlagManager
 {
+
     private Collection<ISystem> systems = new ArrayList<ISystem>();
     private Collection<Entity> entities = new ArrayList<Entity>();
     private Collection<Entity> toAdd = new ArrayList<Entity>();
@@ -19,9 +20,8 @@ public class Engine implements EntityListener, FlagManager
     private Map<Class, Collection<Object>> nodeLists = new HashMap<Class, Collection<Object>>();
     private Map<Class, Family> families = new HashMap<Class, Family>();
     private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
-    
     boolean updating = false;
-    
+
     public void addEntity(Entity entity)
     {
         if (updating)
@@ -32,9 +32,16 @@ public class Engine implements EntityListener, FlagManager
         entities.add(entity);
         entity.addEntityListener(this);
         for (Family family : families.values())
+        {
             family.newEntity(entity);
+        }
+
+        for (Entity dep : entity.dependents)
+        {
+            addEntity(dep);
+        }
     }
-    
+
     public void removeEntity(Entity entity)
     {
         if (updating)
@@ -43,27 +50,38 @@ public class Engine implements EntityListener, FlagManager
             return;
         }
         entity.removeEntityListener(this);
-        
+
         for (Family family : families.values())
+        {
             family.removeEntity(entity);
-        
+        }
+
         entities.remove(entity);
+
+        for (Entity dep : entity.dependents)
+        {
+            removeEntity(dep);
+        }
     }
 
     @Override
     public void componentAdded(Entity entity, Class componentClass)
     {
         for (Family family : families.values())
+        {
             family.componentAddedToEntity(entity, componentClass);
+        }
     }
 
     @Override
     public void componentRemoved(Entity entity, Class componentClass)
     {
         for (Family family : families.values())
+        {
             family.componentRemovedFromEntity(entity, componentClass);
+        }
     }
-    
+
     public <N extends Node> List<N> getNodeList(Class<N> nodeClass)
     {
         Family family = families.get(nodeClass);
@@ -78,7 +96,7 @@ public class Engine implements EntityListener, FlagManager
         }
         return family.getNodeList();
     }
-    
+
     public void addSystem(ISystem system)
     {
         if (system.init(this))
@@ -86,7 +104,7 @@ public class Engine implements EntityListener, FlagManager
             systems.add(system);
         }
     }
-    
+
     public void update(float t, float dt)
     {
         updating = true;
@@ -95,33 +113,43 @@ public class Engine implements EntityListener, FlagManager
             s.update(t, dt);
         }
         updating = false;
-        
+
         for (Entity e : toRemove)
+        {
             removeEntity(e);
+        }
         toRemove.clear();
         for (Entity e : toAdd)
+        {
             addEntity(e);
+        }
         toAdd.clear();
     }
-    
+
     public void removeSystem(ISystem system)
     {
         if (systems.remove(system))
+        {
             system.destroy();
+        }
     }
-    
+
     public void shutDown()
     {
-        while (updating) { /* spin */ }
-        
+        while (updating)
+        { /* spin */ }
+
         for (ISystem s : systems)
+        {
             s.destroy();
-        
+        }
+
         systems.clear();
     }
-    
+
     class Flag
     {
+
         private Object source;
         private int symbol;
 
@@ -166,12 +194,12 @@ public class Engine implements EntityListener, FlagManager
     @Override
     public boolean getFlag(Object source, int symbol)
     {
-        return flags.get(new Flag(source,symbol)) == Boolean.TRUE;
+        return flags.get(new Flag(source, symbol)) == Boolean.TRUE;
     }
 
     @Override
     public void setFlag(Object source, int symbol, boolean value)
     {
-        flags.put(new Flag(source,symbol), value);
+        flags.put(new Flag(source, symbol), value);
     }
 }
