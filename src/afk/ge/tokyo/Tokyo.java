@@ -41,10 +41,13 @@ public class Tokyo implements GameEngine, Runnable
     private Engine engine;
     private GraphicsEngine gfxEngine;
     private boolean running = true;
+    private boolean paused = false;
     public static final float BOARD_SIZE = 100;
-    public final static float GAME_SPEED = 60;
+    public final static float GAME_SPEED = 30;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
+    public static float speedDelta = DELTA;
+    private float speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     public final static double TARGET_FPS = 60;
@@ -80,7 +83,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
-        
+
         // TODO: if (DEBUG)  ...
         engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
@@ -99,8 +102,36 @@ public class Tokyo implements GameEngine, Runnable
                     EntityManager.BOT_COLOURS[i]);
             engine.addEntity(tank);
         }
-        
+
         new Thread(this).start();
+    }
+
+    @Override
+    public void playPause()
+    {
+        System.out.println("playPause() - " + paused);
+        paused = !paused;
+        System.out.println("paused: " + paused);
+    }
+
+    @Override
+    public float getSpeed()
+    {
+        return speedMultiplier;
+    }
+
+    @Override
+    public void increaseSpeed()
+    {
+        speedMultiplier *= 2;
+        speedDelta = 1 / (GAME_SPEED * speedMultiplier);
+    }
+
+    @Override
+    public void decreaseSpeed()
+    {
+        speedMultiplier /= 2;
+        speedDelta = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
@@ -111,7 +142,10 @@ public class Tokyo implements GameEngine, Runnable
         int i = 0;
         while (running)
         {
-
+            while (paused)
+            {
+                gfxEngine.redisplay();
+            }
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
@@ -123,14 +157,14 @@ public class Tokyo implements GameEngine, Runnable
             accumulator += frameTime;
 
             int x = 0;
-            while (accumulator >= DELTA)
+            while (accumulator >= speedDelta)
             {
                 engine.update(t, DELTA);
-                t += DELTA;
-                accumulator -= DELTA;
+                t += speedDelta;
+                accumulator -= speedDelta;
                 x++;
             }
-            double alpha = accumulator / DELTA;
+            double alpha = accumulator / speedDelta;
             gfxEngine.redisplay();
         }
     }

@@ -7,64 +7,29 @@ import afk.bot.london.TankRobot;
  * @author Jessica
  *
  */
-public class SampleBot2 extends TankRobot 
-{
+public class SampleBot2 extends TankRobot {
 
     boolean running = true;
     int move = 0;
-    float turn = 0;
+    float turn = 45;
     int shoot = 0;
     int turns = 0;
 
-    public SampleBot2()
-    {
+    public SampleBot2() {
         super();
     }
 
     @Override
-    public void run()
-    {
-        if (running)
-        {
+    public void run() {
+        if (running) {
             {
-//                if (move < 0)
-//                {
+//                if (move < 600) {
                     moveForward();
-                    move++;
-//                }
-                if (turn < 45)
-                {
-                    turnAntiClockwise();
-                    turn++;
-                }
-                turns++;
-                float[][] visibles = events.getVisibleBots();
-//                if (visibles.length > 0)
-//                {
-//                    turn = visibles[0][0];
-//                    float diff = FastMath.abs(turn);
-//
-//                    if (Float.compare(diff, 0.5f) < 0)
-//                    {
-//                        attack();
-//                    } else
-//                    {
-//                        if (Float.compare(turn, 0) < 0)
-//                        {
-//
-//                            turnClockwise();
-//                            turn++;
-//                        }
-//                        if (Float.compare(turn, 0) > 0)
-//                        {
-//                            turnAntiClockwise();
-//                            turn--;
-//                        }
-//                    }
-//                } else
-//                {
-//                    turnClockwise();
-//                }
+            move++;
+            if (move == 120) {
+                System.out.println("M 120");
+                move = 0;
+            }
             }
 
         }
