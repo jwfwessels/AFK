@@ -41,10 +41,11 @@ public class RandomBot extends TankRobot
         if (visibles.length > 0)
         {
             float bearing = visibles[0][0];
-            float elevation = visibles[0][1];
-            float diff = bearing*elevation;
+            float elevation = visibles[0][1]-events.barrel;
+            float diff = bearing*bearing+elevation*elevation;
+            final float give = 0.6f;
 
-            if (Float.compare(diff, 1) < 0)
+            if (Float.compare(diff, give*give) < 0)
             {
                 attack();
                 return;

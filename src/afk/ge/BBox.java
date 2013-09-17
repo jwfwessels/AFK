@@ -44,7 +44,7 @@ public class BBox
     
     public BBox(State state, Vec3 extents)
     {
-        m = Utils.getMatrix(state);
+        m = Utils.getBBoxMatrix(state);
         
         this.extents = extents;
     }
