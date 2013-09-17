@@ -8,8 +8,7 @@ import com.hackoeur.jglm.support.FastMath;
  * @author Jessica
  *
  */
-public class SampleBot extends TankRobot
-{
+public class SampleBot extends TankRobot {
 
     boolean running = true;
     int move = 0;
@@ -17,58 +16,19 @@ public class SampleBot extends TankRobot
     int shoot = 0;
     int turns = 0;
 
-    public SampleBot()
-    {
+    public SampleBot() {
         super();
     }
 
     @Override
-    public void run()
-    {
-        if (running)
-        {
-            {
-                if (move < 0)
-                {
-                    moveForward();
-                    move++;
-                }
-                                if (shoot < 1)
-                {
-                attack();
-                    shoot++;
-                }
-                turns++;
-                float[][] visibles = events.getVisibleBots();
-                if (visibles.length > 0)
-                {
-                    turn = visibles[0][0];
-                    float diff = FastMath.abs(turn);
-
-                    if (Float.compare(diff, 0.5f) < 0)
-                    {
-                        attack();
-                    } 
-                    else
-                    {
-                        if (Float.compare(turn, 0) < 0)
-                        {
-
-                            turnClockwise();
-                            turn++;
-                        }
-                        if (Float.compare(turn, 0) > 0)
-                        {
-                            turnAntiClockwise();
-                            turn--;
-                        }
-                    }
-                } else
-                {
-                    turnClockwise();
-                }
+    public void run() {
+        if (running) {
+            turnAntiClockwise();
+            turn++;
+            if (turn == 60) {
+                System.out.println("T 60");
+                turn = 0;
             }
-
         }
     }
 }
