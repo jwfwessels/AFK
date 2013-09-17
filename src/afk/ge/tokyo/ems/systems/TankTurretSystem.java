@@ -5,6 +5,7 @@ import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.TankTurretNode;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.List;
 
 /**
@@ -32,13 +33,13 @@ public class TankTurretSystem implements ISystem
         {
             if (engine.getFlag(node.controller.id, AIM_CLOCK))
             {
-                node.velocity.av = new Vec3(0,-TURRET_AV,0);
+                node.velocity.av = new Vec4(0,-TURRET_AV,0,0);
             } else if (engine.getFlag(node.controller.id, AIM_ANTICLOCK))
             {
-                node.velocity.av = new Vec3(0, TURRET_AV,0);
+                node.velocity.av = new Vec4(0, TURRET_AV,0,0);
             } else
             {
-                node.velocity.av = Vec3.VEC3_ZERO;
+                node.velocity.av = Vec4.VEC4_ZERO;
             }
         }
     }

@@ -50,6 +50,8 @@ public class Utils
         monkeyWorld = rotate(monkeyWorld, state.rot.getX(), X_AXIS);
         monkeyWorld = rotate(monkeyWorld, state.rot.getZ(), Z_AXIS);
         monkeyWorld = rotate(monkeyWorld, state.rot.getY(), Y_AXIS);
+        // don't ask...
+        monkeyWorld = rotate(monkeyWorld, state.rot.getW(), X_AXIS);
 
         monkeyWorld = scale(monkeyWorld, state.scale);
 
@@ -63,6 +65,8 @@ public class Utils
         monkeyWorld = rotate(monkeyWorld, state.rot.getX(), X_AXIS);
         monkeyWorld = rotate(monkeyWorld, state.rot.getZ(), Z_AXIS);
         monkeyWorld = rotate(monkeyWorld, state.rot.getY(), Y_AXIS);
+        // don't ask...
+        monkeyWorld = rotate(monkeyWorld, state.rot.getW(), X_AXIS);
 
         return monkeyWorld;
     }

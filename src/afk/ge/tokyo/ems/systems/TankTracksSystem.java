@@ -5,6 +5,7 @@ import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.TankTracksNode;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.List;
 
 /**
@@ -44,13 +45,13 @@ public class TankTracksSystem implements ISystem
             }
             if (engine.getFlag(node.controller.id, TURN_CLOCK))
             {
-                node.velocity.av = new Vec3(0, -node.motor.angularVelocity, 0);
+                node.velocity.av = new Vec4(0, -node.motor.angularVelocity, 0, 0);
             } else if (engine.getFlag(node.controller.id, TURN_ANTICLOCK))
             {
-                node.velocity.av = new Vec3(0, node.motor.angularVelocity, 0);
+                node.velocity.av = new Vec4(0, node.motor.angularVelocity, 0, 0);
             } else
             {
-                node.velocity.av = Vec3.VEC3_ZERO;
+                node.velocity.av = Vec4.VEC4_ZERO;
             }
         }
     }

@@ -9,6 +9,7 @@ import afk.ge.tokyo.ems.nodes.TankBarrelNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
 import static afk.ge.tokyo.ems.Utils.*;
+import com.hackoeur.jglm.Vec4;
 
 /**
  *
@@ -41,13 +42,13 @@ public class TankBarrelSystem implements ISystem
         {
             if (engine.getFlag(node.controller.id, AIM_UP))
             {
-                node.velocity.av = new Vec3(0, 0, BARREL_AV);
+                node.velocity.av = new Vec4(0, 0, 0, -BARREL_AV);
             } else if (engine.getFlag(node.controller.id, AIM_DOWN))
             {
-                node.velocity.av = new Vec3(0, 0, -BARREL_AV);
+                node.velocity.av = new Vec4(0, 0, 0, BARREL_AV);
             } else
             {
-                node.velocity.av = Vec3.VEC3_ZERO;
+                node.velocity.av = Vec4.VEC4_ZERO;
             }
             if (engine.getFlag(node.controller.id, ATTACK_ACTION))
             {
@@ -55,18 +56,19 @@ public class TankBarrelSystem implements ISystem
                 if (node.weapon.timeSinceLastFire >= node.weapon.fireInterval)
                 {
                     node.weapon.timeSinceLastFire = 0;
-                    entityManager.createProjectileNEU(node.controller.id, node.weapon, getProjectileState(node));
+                    fire(node);
                 }
             }
         }
     }
 
-    public State getProjectileState(TankBarrelNode node)
+    public void fire(TankBarrelNode node)
     {
         State state = getWorldState(node.entity);
         float barrelLength = node.barrel.length * state.scale.getZ();
-        Vec3 posShift = getForward(state).multiply(barrelLength);
-        return new State(state, posShift);
+        Vec3 forward = getForward(state);
+        entityManager.createProjectileNEU(node.controller.id, node.weapon,
+                new State(state, forward.multiply(barrelLength)), forward);
     }
 
     @Override

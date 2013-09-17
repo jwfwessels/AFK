@@ -1,17 +1,20 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
-import afk.bot.RobotException;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.Tokyo;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.SnapToTerrain;
 import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.components.Targetable;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -28,7 +31,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -237,32 +238,20 @@ public class DebugSystem implements ISystem
 
         addMenu = new JMenu("Add", true);
 
-        addRobot = new JMenuItem("Robot");
+        addRobot = new JMenuItem("Target");
         addRobot.addActionListener(new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                fileChooser.showOpenDialog(frame);
-                File file = fileChooser.getSelectedFile();
-                if (file == null)
-                {
-                    return;
-                }
-                try
-                {
-                    Entity entity = manager.createTankEntityNEU(
-                            botEngine.addRobot(file.getAbsolutePath()),
-                            Vec3.VEC3_ZERO,
-                            new Vec3(
-                            (float) Math.random(),
-                            (float) Math.random(),
-                            (float) Math.random()));
-                    startPlaceItem(entity);
-                } catch (RobotException ex)
-                {
-                    JOptionPane.showMessageDialog(frame, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-                }
+                Entity entity = new Entity();
+                entity.add(new Renderable("wall", EntityManager.MAGENTA));
+                entity.add(new SnapToTerrain());
+                entity.add(new Targetable());
+                Vec3 scale = new Vec3(0.3f);
+                entity.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, scale));
+                entity.add(new BBoxComponent(scale.scale(0.5f)));
+                startPlaceItem(entity);
             }
         });
         addMenu.add(addRobot);
@@ -421,7 +410,7 @@ public class DebugSystem implements ISystem
                 if (myWheel != 0)
                 {
                     state.prevRot = state.rot;
-                    state.rot = state.rot.add(new Vec3(0,myWheel,0));
+                    state.rot = state.rot.add(new Vec4(0,myWheel,0,0));
                 }
                 if (!placeEntity.has(Renderable.class))
                 {

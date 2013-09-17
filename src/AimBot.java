@@ -24,11 +24,12 @@ public class AimBot extends TankRobot
         {
             System.out.println("elevation: " + visibles[0][1]);
             System.out.println("barrel: " + events.barrel);
-            float bearing = visibles[0][0]-events.turret;
+            float bearing = visibles[0][0];
             float elevation = visibles[0][1]-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
+            final float give = 0.6f;
 
-            if (Float.compare(diff, 0.6f) < 0)
+            if (Float.compare(diff, give*give) < 0)
             {
                 attack();
                 return;

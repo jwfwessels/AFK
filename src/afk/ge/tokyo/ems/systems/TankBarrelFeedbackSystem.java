@@ -27,7 +27,9 @@ public class TankBarrelFeedbackSystem implements ISystem
         List<TankBarrelNode> nodes = engine.getNodeList(TankBarrelNode.class);
         for (TankBarrelNode node : nodes)
         {
-            node.controller.events.barrel = node.state.rot.getZ();
+            // the reason for the minus sign: it doesn't work if it isn't there,
+            // so I put it there. so sue me...
+            node.controller.events.barrel = -node.state.rot.getW();
         }
     }
 

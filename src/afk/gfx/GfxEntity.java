@@ -1,6 +1,7 @@
 package afk.gfx;
 
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.Collection;
 
 /**
@@ -25,7 +26,7 @@ public abstract class GfxEntity
     /** The entity's position. */
     public Vec3 position = Vec3.VEC3_ZERO;
     /** The entity's rotation. */
-    public Vec3 rotation = Vec3.VEC3_ZERO;
+    public Vec4 rotation = Vec4.VEC4_ZERO;
     /** The entity's scale. */
     public Vec3 scale = new Vec3(1,1,1);
     
@@ -58,7 +59,7 @@ public abstract class GfxEntity
      * Gets the entity's world rotation as a Vec3.
      * @return the entity's rotation.
      */
-    public Vec3 getWorldRotation()
+    public Vec4 getWorldRotation()
     {
         GfxEntity parent = getParent();
         if (parent != null)

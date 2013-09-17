@@ -6,6 +6,7 @@ package afk.ge.tokyo;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
+import afk.ge.tokyo.ems.Utils;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Bullet;
 import afk.ge.tokyo.ems.components.Controller;
@@ -120,7 +121,7 @@ public class EntityManager
     public void createFloor()
     {
         Entity floor = new Entity();
-        floor.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO,
+        floor.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO,
                 new Vec3(Tokyo.BOARD_SIZE)));
         floor.add(new Renderable("floor", new Vec3(1.0f, 1.0f, 1.0f)));
         try
@@ -137,7 +138,7 @@ public class EntityManager
     public Entity createGraphicWall(Vec3 pos, Vec3 scale)
     {
         Entity wall = new Entity();
-        wall.add(new State(pos, Vec3.VEC3_ZERO, scale));
+        wall.add(new State(pos, Vec4.VEC4_ZERO, scale));
         wall.add(new BBoxComponent(scale.scale(0.5f)));
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
@@ -166,16 +167,15 @@ public class EntityManager
 
         Controller controller = new Controller(id);
         tank.add(controller);
-        tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
+        tank.add(new State(spawnPoint, Vec4.VEC4_ZERO, scale));
         // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale)));
         tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale)));
-        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         tank.add(new Motor(2f, 20f));
         tank.add(new Life(SMALL_TANK_HP));
         tank.add(new Renderable(LARGE_TANK_TYPE, colour));
         tank.add(new RobotToken());
         tank.add(new Targetable());
-        tank.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
         tank.add(new TankTracks());
         tank.add(new SnapToTerrain());
         
@@ -196,9 +196,10 @@ public class EntityManager
     {
         Entity entity = new Entity();
 
-        entity.add(new State(new Vec3(0.0f, 0.17623f, -0.15976f), Vec3.VEC3_ZERO, new Vec3(1)));
-        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+        entity.add(new State(new Vec3(0.0f, 0.17623f, -0.15976f), Vec4.VEC4_ZERO, new Vec3(1)));
+        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         entity.add(new Renderable(LARGE_TANK_TURRET_TYPE, colour));
+        entity.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
         entity.add(new TankTurret());
 
         return entity;
@@ -208,9 +209,9 @@ public class EntityManager
     {
         Entity entity = new Entity();
 
-        entity.add(new State(new Vec3(0.0f, 0.03200f, 0.22199f), Vec3.VEC3_ZERO, new Vec3(1)));
+        entity.add(new State(new Vec3(0.0f, 0.03200f, 0.22199f), Vec4.VEC4_ZERO, new Vec3(1)));
         entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
-        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         entity.add(new Renderable(LARGE_TANK_BARREL_TYPE, colour));
         entity.add(new TankBarrel(0.545f));
 
@@ -248,21 +249,13 @@ public class EntityManager
 //        tank.name = "tank" + (entities.size() - 1);
 //        tank.setScaleForOBB(oBBEntity.getScale().scale(SCALE));
 //    }
-    public void createProjectileNEU(UUID parent, Weapon weapon, State current)
+    public void createProjectileNEU(UUID parent, Weapon weapon, State current, Vec3 forward)
     {
         Entity projectile = new Entity();
         State state = new State(current.pos, current.rot, new Vec3(0.3f, 0.3f, -0.3f));
         projectile.add(state);
 
-        // rotate a normal vector along the Z-axis using the entity's rotation
-        // to get a normal in the entity's viewing direction
-        Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getX(), X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getZ(), Z_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getY(), Y_AXIS);
-        Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
-
-        projectile.add(new Velocity(A4.getXYZ().multiply(weapon.speed), Vec3.VEC3_ZERO));
+        projectile.add(new Velocity(forward.multiply(weapon.speed), Vec4.VEC4_ZERO));
         projectile.add(new Renderable("projectile", new Vec3(0.5f, 0.5f, 0.5f)));
         projectile.add(new Bullet(weapon.range, weapon.damage, parent));
 
@@ -273,7 +266,7 @@ public class EntityManager
     {
         Entity entity = new Entity();
 
-        entity.add(new State(where, Vec3.VEC3_ZERO, new Vec3(1, 1, 1)));
+        entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1, 1, 1)));
 
         ParticleEmitter emitter = new ParticleEmitter(emitters[type]);
         emitter.colour = MAGENTA; // TODO: get colour from config
@@ -291,9 +284,9 @@ public class EntityManager
         if (pie == null)
         {
             pie = new Entity();
-            pie.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, Vec3.VEC3_ZERO));
             pie.add(new Lifetime(0));
-            pie.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
             pie.add(new Renderable("particle", Vec3.VEC3_ZERO));
         }
 
@@ -303,14 +296,14 @@ public class EntityManager
         Renderable renderable = pie.get(Renderable.class);
 
         Vec3 pos = emitterState.pos;
-        Vec3 rot = emitterState.rot;
+        Vec4 rot = emitterState.rot;
         Vec3 scale = emitterState.scale;
 
         state.reset(new Vec3(
                 jitter(pos.getX(), scale.getX()),
                 jitter(pos.getY(), scale.getY()),
                 jitter(pos.getZ(), scale.getZ())),
-                Vec3.VEC3_ZERO,
+                Vec4.VEC4_ZERO,
                 new Vec3(jitter(emitter.scale, emitter.scaleJitter)));
 
         Vec3 dir;

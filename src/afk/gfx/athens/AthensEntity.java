@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import static afk.gfx.GfxUtils.*;
+import com.hackoeur.jglm.Vec4;
 
 /**
  *
@@ -45,11 +46,13 @@ public class AthensEntity extends GfxEntity
 
         monkeyWorld = translate(monkeyWorld, getWorldPosition());
 
-        Vec3 worldRot = getWorldRotation();
+        Vec4 worldRot = getWorldRotation();
 
         monkeyWorld = rotate(monkeyWorld, worldRot.getX(), X_AXIS);
         monkeyWorld = rotate(monkeyWorld, worldRot.getZ(), Z_AXIS);
         monkeyWorld = rotate(monkeyWorld, worldRot.getY(), Y_AXIS);
+        // don't ask...
+        monkeyWorld = rotate(monkeyWorld, worldRot.getW(), X_AXIS);
 
         monkeyWorld = scale(monkeyWorld, getWorldScale());
 
