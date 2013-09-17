@@ -64,7 +64,7 @@ public class TankBarrelSystem implements ISystem
     public State getProjectileState(TankBarrelNode node)
     {
         State state = getWorldState(node.entity);
-        float barrelLength = node.barrel.length * state.scale.getY();
+        float barrelLength = node.barrel.length * state.scale.getZ();
         Vec3 posShift = getForward(state).multiply(barrelLength);
         return new State(state, posShift);
     }

@@ -56,9 +56,20 @@ public class Utils
         return monkeyWorld;
     }
     
+    public static Mat4 getRotationMatrix(State state)
+    {
+        Mat4 monkeyWorld = new Mat4(1f);
+
+        monkeyWorld = rotate(monkeyWorld, state.rot.getX(), X_AXIS);
+        monkeyWorld = rotate(monkeyWorld, state.rot.getZ(), Z_AXIS);
+        monkeyWorld = rotate(monkeyWorld, state.rot.getY(), Y_AXIS);
+
+        return monkeyWorld;
+    }
+    
     public static Vec3 getForward(State state)
     {
-        return getForward(getMatrix(state));
+        return getForward(getRotationMatrix(state));
     }
     
     public static Vec3 getForward(Mat4 mat)
