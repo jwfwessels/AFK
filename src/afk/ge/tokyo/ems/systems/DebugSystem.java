@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -64,6 +66,7 @@ public class DebugSystem implements ISystem
     private Rectangle2D quad = new Rectangle2D.Float(-0.5f, -0.5f, 1, 1);
     private AtomicReference<Point> mouse = new AtomicReference<Point>(null);
     private AtomicReference<Point> hover = new AtomicReference<Point>(null);
+    private AtomicInteger wheel = new AtomicInteger(0);
     private JTree tree = null;
     private JMenuBar menubar;
     private JMenu addMenu;
@@ -366,6 +369,14 @@ public class DebugSystem implements ISystem
                 hover.set(e.getPoint());
             }
         });
+        canvas.addMouseWheelListener(new MouseAdapter() {
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e)
+            {
+                wheel.set(e.getWheelRotation());
+            }
+        });
 
         select(null);
 
@@ -377,6 +388,7 @@ public class DebugSystem implements ISystem
     {
         Point myMouse = mouse.getAndSet(null);
         Point myHover = hover.get();
+        int myWheel = wheel.getAndSet(0);
 
         Graphics2D g = (Graphics2D) canvas.strategy.getDrawGraphics();
 
@@ -406,6 +418,11 @@ public class DebugSystem implements ISystem
                 State state = placeEntity.get(State.class);
                 state.prevPos = state.pos;
                 state.pos = mouse2world(myHover);
+                if (myWheel != 0)
+                {
+                    state.prevRot = state.rot;
+                    state.rot = state.rot.add(new Vec3(0,myWheel,0));
+                }
                 if (!placeEntity.has(Renderable.class))
                 {
                     RenderNode node = new RenderNode();

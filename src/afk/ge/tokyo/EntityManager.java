@@ -51,8 +51,8 @@ public class EntityManager
     public static final float BULLET_SPEED = 10;
     public static final float FIRE_RATE = 1f;
     public static final int WEAPON_AMMO = 0;
-    public static final float SMALL_TANK_HP = 80;
-    public static final float LARGE_TANK_HP = 100;
+    public static final float SMALL_TANK_HP = Float.POSITIVE_INFINITY;
+    public static final float LARGE_TANK_HP = Float.POSITIVE_INFINITY;
     public static final String SMALL_TANK_TYPE = "smallTank";
     public static final String LARGE_TANK_TYPE = "largeTankBase";
     public static final String LARGE_TANK_TURRET_TYPE = "largeTankTurret";
