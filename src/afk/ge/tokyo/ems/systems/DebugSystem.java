@@ -7,6 +7,7 @@ import afk.ge.tokyo.Tokyo;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.RenderNode;
@@ -239,12 +240,16 @@ public class DebugSystem implements ISystem
                 }
                 try
                 {
-                    startPlaceItem(manager.createTankEntityNEU(botEngine.addRobot(file.getAbsolutePath()),
+                    Controller controller = new Controller(botEngine.addRobot(file.getAbsolutePath()));
+                    Entity entity = manager.createTankEntityNEU(
                             Vec3.VEC3_ZERO,
                             new Vec3(
                             (float) Math.random(),
                             (float) Math.random(),
-                            (float) Math.random())));
+                            (float) Math.random()));
+                    entity.add(controller);
+                    // TODO: add guns and stuff
+                    startPlaceItem(entity);
                 } catch (RobotException ex)
                 {
                     JOptionPane.showMessageDialog(frame, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);

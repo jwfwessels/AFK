@@ -7,11 +7,10 @@ import java.util.List;
 
 /**
  *
- * @author Jw
+ * @author Daniel
  */
 public class TankTurretFeedbackSystem implements ISystem
 {
-    public static final int TURRET_AV = 3;
 
     Engine engine;
 
@@ -29,7 +28,9 @@ public class TankTurretFeedbackSystem implements ISystem
         for (TankTurretNode node : nodes)
         {
             System.out.println("Y: " + node.state.rot.getY());
-            node.controller.events.turret = node.state.rot.getY();
+            // it's negative because of some weird discrepancy between left and right and clock/anticlock
+            // I don't know the details but this shit gives me a headache, so don't ask me about it
+            node.controller.events.turret = -node.state.rot.getY();
         }
     }
 

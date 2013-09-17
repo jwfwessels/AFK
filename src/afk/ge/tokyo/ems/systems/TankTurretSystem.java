@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class TankTurretSystem implements ISystem
 {
-    public static final int TURRET_AV = 5;
+    public static final int TURRET_AV = 10;
 
     Engine engine;
 
