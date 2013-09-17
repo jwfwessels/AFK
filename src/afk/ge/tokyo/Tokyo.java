@@ -27,13 +27,14 @@ import java.util.UUID;
  *
  * @author Jw
  */
-public class Tokyo implements GameEngine, Runnable {
+public class Tokyo implements GameEngine, Runnable
+{
 
     private EntityManager entityManager;
     private Engine engine;
     private GraphicsEngine gfxEngine;
     private boolean running = true;
-    private boolean paused = true;
+    private boolean paused = false;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 30;
     private float t = 0.0f;
@@ -47,7 +48,8 @@ public class Tokyo implements GameEngine, Runnable {
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine) {
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
+    {
         engine = new Engine();
 
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
@@ -77,10 +79,12 @@ public class Tokyo implements GameEngine, Runnable {
     }
 
     @Override
-    public void startGame(UUID[] participants) {
+    public void startGame(UUID[] participants)
+    {
         entityManager.spawnStuff();
         //entityManager.createObstacles(new Vec3(5, 5, 5));
-        for (int i = 0; i < participants.length; i++) {
+        for (int i = 0; i < participants.length; i++)
+        {
             engine.addEntity(entityManager.createTankEntityNEU(
                     participants[i],
                     EntityManager.SPAWN_POINTS[i],
@@ -91,55 +95,65 @@ public class Tokyo implements GameEngine, Runnable {
     }
 
     @Override
-    public void playPause() {
+    public void playPause()
+    {
         System.out.println("playPause() - " + paused);
         paused = !paused;
         System.out.println("paused: " + paused);
     }
 
     @Override
-    public float getSpeed() {
+    public float getSpeed()
+    {
         return speedMultiplier;
     }
 
     @Override
-    public void increaseSpeed() {
+    public void increaseSpeed()
+    {
         speedMultiplier *= 2;
         speedDelta = 1 / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
-    public void decreaseSpeed() {
+    public void decreaseSpeed()
+    {
         speedMultiplier /= 2;
         speedDelta = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
         int i = 0;
-        while (running) {
-            while (paused) {
-                double newTime = System.nanoTime();
-                double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
-                if (frameTime > MAX_FRAMETIME) {
-                    frameTime = MAX_FRAMETIME;
-                }
-                currentTime = newTime;
-
-                accumulator += frameTime;
-
-                int x = 0;
-                while (accumulator >= speedDelta) {
-                    engine.update(t, DELTA);
-                    t += speedDelta;
-                    accumulator -= speedDelta;
-                    x++;
-                }
-                double alpha = accumulator / speedDelta;
+        while (running)
+        {
+            while (paused)
+            {
                 gfxEngine.redisplay();
             }
+            double newTime = System.nanoTime();
+            double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
+            if (frameTime > MAX_FRAMETIME)
+            {
+                frameTime = MAX_FRAMETIME;
+            }
+            currentTime = newTime;
+
+            accumulator += frameTime;
+
+            int x = 0;
+            while (accumulator >= speedDelta)
+            {
+                engine.update(t, DELTA);
+                t += speedDelta;
+                accumulator -= speedDelta;
+                x++;
+            }
+            double alpha = accumulator / speedDelta;
+            gfxEngine.redisplay();
         }
     }
 }
