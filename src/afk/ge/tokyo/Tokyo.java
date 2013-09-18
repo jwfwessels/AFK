@@ -11,6 +11,7 @@ import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Parent;
+import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
 import afk.ge.tokyo.ems.systems.DebugSystem;
@@ -73,6 +74,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new TankTurretSystem());
         engine.addSystem(new TankBarrelSystem(entityManager));
         engine.addSystem(new MovementSystem());
+        engine.addSystem(new AngleConstraintSystem());
         engine.addSystem(new TankTurretFeedbackSystem());
         engine.addSystem(new TankBarrelFeedbackSystem());
         engine.addSystem(new SnapToTerrainSystem());

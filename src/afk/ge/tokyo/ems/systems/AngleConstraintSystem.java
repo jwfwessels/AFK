@@ -36,7 +36,7 @@ public class AngleConstraintSystem implements ISystem
                 float max = node.constraint.max.get(i);
                 if (v < min)
                     newVec[i] = min;
-                else if (v > min)
+                else if (v > max)
                     newVec[i] = max;
                 else
                     newVec[i] = v;

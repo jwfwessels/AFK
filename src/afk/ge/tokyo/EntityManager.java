@@ -195,7 +195,7 @@ public class EntityManager
         entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
         entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         entity.add(new Renderable(LARGE_TANK_BARREL_TYPE, colour));
-        entity.add(new AngleConstraint(new Vec4(0,0,0,-10),new Vec4(0,0,0,45)));
+        entity.add(new AngleConstraint(new Vec4(0,0,0,-45),new Vec4(0,0,0,10)));
         entity.add(new TankBarrel(0.545f));
 
         return entity;
