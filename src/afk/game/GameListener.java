@@ -17,5 +17,5 @@ public interface GameListener
      * end-of-game, or in some unique cases where there may include half-time,
      * etc.
      */
-    public void gameStateChange();
+    public void gameStateChange(String[] state);
 }

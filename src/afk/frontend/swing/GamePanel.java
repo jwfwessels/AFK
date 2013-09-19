@@ -23,7 +23,8 @@ import javax.swing.JToggleButton;
  *
  * @author Jw
  */
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel
+{
 
     RootWindow parent;
     Component glCanvas;
@@ -36,7 +37,8 @@ public class GamePanel extends JPanel {
     private JLabel lblSpeed;
     GameCoordinator gm;
 
-    public GamePanel(RootWindow parent, GameCoordinator gameCoordinator) {
+    public GamePanel(RootWindow parent, GameCoordinator gameCoordinator)
+    {
         this.parent = parent;
         gm = gameCoordinator;
         glCanvas = gm.getAWTComponent();
@@ -47,13 +49,15 @@ public class GamePanel extends JPanel {
         //TODO; set layout
     }
 
-    void setup() {
+    void setup()
+    {
         initComponents();
         addComponents();
         styleComponents();
     }
 
-    private void initComponents() {
+    private void initComponents()
+    {
         fps = new JLabel("FPS: x");
         // FIXME: find a new way to show FPS
         //gfxEngine.setFPSComponent(fps);
@@ -66,7 +70,8 @@ public class GamePanel extends JPanel {
         lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
     }
 
-    private void addComponents() {
+    private void addComponents()
+    {
 
         hudLayer.add(glCanvas, new Integer(0));
         pnlControls.add(fps);
@@ -85,56 +90,75 @@ public class GamePanel extends JPanel {
 //    {
 //        //TODO;
 //    }
-    private void styleComponents() {
+    private void styleComponents()
+    {
         fps.setOpaque(false);
         fps.setBounds(0, 0, 50, 25);
         hudLayer.setBackground(Color.BLUE);
         lblSpeed.setBackground(Color.LIGHT_GRAY);
 
-        btnPlayPause.addActionListener(new ActionListener() {
+        btnPlayPause.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                if (btnPlayPause.isSelected()) {
+            public void actionPerformed(ActionEvent e)
+            {
+                if (btnPlayPause.isSelected())
+                {
                     btnPlayPause.setText("Play");
-//                    btnFaster.setEnabled(false);
-//                    btnSlower.setEnabled(false);
-                } else {
+                    gm.gameStateChange(new String[]
+                    {
+                        "PLAY_PAUSE",
+                        "Puase"
+                    });
+                } else
+                {
                     btnPlayPause.setText("Pause");
-//                    btnFaster.setEnabled(true);
-//                    btnSlower.setEnabled(true);
+                    gm.gameStateChange(new String[]
+                    {
+                        "PLAY_PAUSE",
+                        "Play"
+                    });
 
                 }
-                gm.playPause();
+
             }
         });
 
-        btnFaster.addActionListener(new ActionListener() {
+        btnFaster.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 gm.increaseSpeed();
                 setLblSpeed();
             }
         });
 
-        btnSlower.addActionListener(new ActionListener() {
+        btnSlower.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 gm.decreaseSpeed();
                 setLblSpeed();
             }
         });
     }
 
-    private void setLblSpeed() {
+    private void setLblSpeed()
+    {
         float speed = gm.getGameSpeed();
-        if (speed >= 1) {
+        if (speed >= 1)
+        {
             lblSpeed.setText("speed: " + (int) speed);
-        } else {
+        } else
+        {
             lblSpeed.setText("speed: " + 1 + "/" + (int) (1 / speed));
         }
     }
 
-    class GamePanel_Layout implements LayoutManager {
+    class GamePanel_Layout implements LayoutManager
+    {
 
         int panelWidth = 800;
         int panelHeight = 600;
@@ -142,15 +166,18 @@ public class GamePanel extends JPanel {
         int h = 0;
 
         @Override
-        public void addLayoutComponent(String name, Component comp) {
+        public void addLayoutComponent(String name, Component comp)
+        {
         }
 
         @Override
-        public void removeLayoutComponent(Component comp) {
+        public void removeLayoutComponent(Component comp)
+        {
         }
 
         @Override
-        public Dimension preferredLayoutSize(Container parent) {
+        public Dimension preferredLayoutSize(Container parent)
+        {
             Dimension dim = new Dimension(0, 0);
 
             Insets insets = parent.getInsets();
@@ -162,15 +189,18 @@ public class GamePanel extends JPanel {
         }
 
         @Override
-        public Dimension minimumLayoutSize(Container parent) {
+        public Dimension minimumLayoutSize(Container parent)
+        {
             Dimension dim = new Dimension(0, 0);
             return dim;
         }
 
         @Override
-        public void layoutContainer(Container parent) {
+        public void layoutContainer(Container parent)
+        {
             Insets insets = parent.getInsets();
-            if ((w != parent.getSize().width) || (h != parent.getSize().height)) {
+            if ((w != parent.getSize().width) || (h != parent.getSize().height))
+            {
                 w = parent.getSize().width;
                 h = parent.getSize().height;
 
@@ -181,7 +211,8 @@ public class GamePanel extends JPanel {
                 //HudPanel;
 
                 c = parent.getComponent(0);
-                if (c.isVisible()) {
+                if (c.isVisible())
+                {
                     c.setBounds(insets.left + num1, insets.top, (int) w, (int) (h - 50));
 
                     glCanvas.setSize(w, h);
@@ -191,7 +222,8 @@ public class GamePanel extends JPanel {
                 //pnlControls
 
                 c = parent.getComponent(1);
-                if (c.isVisible()) {
+                if (c.isVisible())
+                {
                     c.setBounds(insets.left, insets.top + num2, (int) w, (int) 50);
                 }
             }

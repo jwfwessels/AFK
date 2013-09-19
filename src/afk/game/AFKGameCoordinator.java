@@ -18,7 +18,8 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public class AFKGameCoordinator implements GameCoordinator {
+public class AFKGameCoordinator implements GameCoordinator
+{
 
     private GameEngine gameEngine;
     private GraphicsEngine gfxEngine;
@@ -26,24 +27,28 @@ public class AFKGameCoordinator implements GameCoordinator {
     private List<String> participants;
     private Collection<GameListener> listeners = new ArrayList<GameListener>();
 
-    public AFKGameCoordinator(RobotLoader botLoader, List<String> participants) {
+    public AFKGameCoordinator(RobotLoader botLoader, List<String> participants)
+    {
         this.participants = participants;
         botEngine = new London(botLoader);
         gfxEngine = new Athens(false);
-        gameEngine = new Tokyo(gfxEngine, botEngine);
+        gameEngine = new Tokyo(gfxEngine, botEngine, this);
     }
 
     @Override
-    public Component getAWTComponent() {
+    public Component getAWTComponent()
+    {
         return gfxEngine.getAWTComponent();
     }
 
     @Override
-    public void start() throws RobotException {
+    public void start() throws RobotException
+    {
         UUID[] ids = new UUID[participants.size()];
 
         int i = 0;
-        for (String participant : participants) {
+        for (String participant : participants)
+        {
             ids[i] = botEngine.addRobot(participant);
             ++i;
         }
@@ -52,32 +57,60 @@ public class AFKGameCoordinator implements GameCoordinator {
     }
 
     @Override
-    public void addGameListener(GameListener listener) {
+    public void addGameListener(GameListener listener)
+    {
         listeners.add(listener);
     }
 
     @Override
-    public void removeGameListener(GameListener listener) {
+    public void removeGameListener(GameListener listener)
+    {
         listeners.remove(listener);
     }
 
+//    @Override
+//    public void playPause()
+//    {
+//        gameEngine.playPause();
+//    }
+
     @Override
-    public void playPause() {
-        gameEngine.playPause();
+    public float getGameSpeed()
+    {
+        return gameEngine.getSpeed();
     }
 
     @Override
-        public float getGameSpeed(){
-        return gameEngine.getSpeed();
-    }
-    
-    @Override
-    public void increaseSpeed(){
+    public void increaseSpeed()
+    {
         gameEngine.increaseSpeed();
     }
 
     @Override
-    public void decreaseSpeed(){
+    public void decreaseSpeed()
+    {
         gameEngine.decreaseSpeed();
+    }
+
+    @Override
+    public void gameEvent()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void gameStateChange(String[] state)
+    {
+        if (state[0].equals("DRAW"))
+        {
+            gameEngine.setState(0, "");
+        } else if (state[0].equals("WINNER"))
+        {
+            gameEngine.setState(1, state[1]);
+
+        } else if (state[0].equals("PLAY_PAUSE"))
+        {
+            gameEngine.setState(2, state[1]);
+        }
     }
 }

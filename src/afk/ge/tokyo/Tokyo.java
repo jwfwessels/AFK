@@ -5,16 +5,17 @@
 package afk.ge.tokyo;
 
 import afk.bot.RobotEngine;
+import afk.game.GameCoordinator;
+import afk.game.GameListener;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.components.Controller;
-import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
 import afk.ge.tokyo.ems.systems.DebugSystem;
+import afk.ge.tokyo.ems.systems.GameStateSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
@@ -56,7 +57,7 @@ public class Tokyo implements GameEngine, Runnable
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameCoordinator gm)
     {
         engine = new Engine();
 
@@ -85,6 +86,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
+        engine.addSystem(new GameStateSystem(gm));
 
         // TODO: if (DEBUG)  ...
         engine.addSystem(new DebugSystem(botEngine, entityManager));
@@ -109,12 +111,32 @@ public class Tokyo implements GameEngine, Runnable
     }
 
     @Override
-    public void playPause()
+    public void setState(int i, String msg)
     {
-        System.out.println("playPause() - " + paused);
-        paused = !paused;
-        System.out.println("paused: " + paused);
+        switch (i)
+        {
+            case 0:
+                paused = true;
+                System.out.println("DRAW");
+                break;
+            case 1:
+                paused = true;
+                System.out.println("WINNER " + msg);
+                break;
+            case 2:
+                paused = !paused;
+                System.out.println("state: " + msg);
+                break;
+        }
     }
+
+//    @Override
+//    public void playPause()
+//    {
+//        System.out.println("playPause() - " + paused);
+//        paused = !paused;
+//        System.out.println("paused: " + paused);
+//    }
 
     @Override
     public float getSpeed()
