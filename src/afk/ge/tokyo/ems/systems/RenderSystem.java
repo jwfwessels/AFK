@@ -2,8 +2,9 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.HUDNode;
+import afk.ge.tokyo.ems.components.Parent;
+import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.AbstractCamera;
 import afk.gfx.GfxEntity;
@@ -43,6 +44,23 @@ public class RenderSystem implements ISystem
         for (RenderNode node : nodes)
         {
             GfxEntity gfx = gfxEngine.getGfxEntity(node.renderable);
+
+            Parent parent = node.entity.get(Parent.class);
+            if (parent != null && parent.entity.has(Renderable.class))
+            {
+                GfxEntity parentGfx = gfxEngine.getGfxEntity(parent.entity.get(Renderable.class));
+                if (parentGfx != gfx.getParent())
+                {
+                    parentGfx.addChild(gfx);
+                }
+            } else
+            {
+                GfxEntity parentGfx = gfx.getParent();
+                if (parentGfx != null)
+                {
+                    parentGfx.removeChild(gfx);
+                }
+            }
 
             gfx.position = node.state.pos;
             gfx.rotation = node.state.rot;
@@ -92,6 +110,7 @@ public class RenderSystem implements ISystem
         }
 
         gfxEngine.post();
+        gfxEngine.redisplay();
     }
 
     @Override

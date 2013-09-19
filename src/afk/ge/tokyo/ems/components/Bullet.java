@@ -1,6 +1,6 @@
 package afk.ge.tokyo.ems.components;
 
-import afk.ge.tokyo.ems.Entity;
+import java.util.UUID;
 
 /**
  *
@@ -10,9 +10,9 @@ public class Bullet
 {
     public float rangeLeft;
     public float damage;
-    public Entity parent;
+    public UUID parent;
 
-    public Bullet(float rangeLeft, float damage, Entity parent)
+    public Bullet(float rangeLeft, float damage, UUID parent)
     {
         this.rangeLeft = rangeLeft;
         this.damage = damage;

@@ -51,7 +51,12 @@ public class RobotSystem implements ISystem
         // get input flags from each robot
 	for (ControllerNode node : nodes)
 	{
-            node.controller.inputFlags = botEngine.getFlags(node.controller.id);
+            Object source = node.controller.id;
+            boolean[] flags = botEngine.getFlags(node.controller.id);
+            for (int i = 0; i < flags.length; i++)
+            {
+                engine.setFlag(source, i, flags[i]);
+            }
 	}
     }
 

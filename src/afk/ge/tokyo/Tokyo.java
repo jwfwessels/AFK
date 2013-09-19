@@ -8,7 +8,11 @@ import afk.bot.RobotEngine;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.Entity;
+import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
+import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
+import afk.ge.tokyo.ems.systems.DebugSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
@@ -16,10 +20,13 @@ import afk.ge.tokyo.ems.systems.ParticleSystem;
 import afk.ge.tokyo.ems.systems.ProjectileSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.ge.tokyo.ems.systems.RobotSystem;
-import afk.ge.tokyo.ems.systems.TankControllerSystem;
+import afk.ge.tokyo.ems.systems.TankBarrelFeedbackSystem;
+import afk.ge.tokyo.ems.systems.TankBarrelSystem;
+import afk.ge.tokyo.ems.systems.TankTracksSystem;
+import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
+import afk.ge.tokyo.ems.systems.TankTurretSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
-import com.hackoeur.jglm.Vec3;
 import java.util.UUID;
 
 /**
@@ -33,16 +40,25 @@ public class Tokyo implements GameEngine, Runnable
     private Engine engine;
     private GraphicsEngine gfxEngine;
     private boolean running = true;
-    public static final float BOARD_SIZE = 50;
-    public final static float GAME_SPEED = 60;
+    private boolean paused = false;
+    public static final float BOARD_SIZE = 100;
+    public final static float GAME_SPEED = 30;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
+    public static float LOGIC_DELTA = DELTA;
+    private float speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
     public final static double TARGET_FPS = 60;
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
+//test()
+    private long lastUpdate;
+    private float time = 0.0f;
+    private float lastFPS = 0.0f;
+    private float fps = 0.0f;
+//
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
     {
@@ -57,16 +73,26 @@ public class Tokyo implements GameEngine, Runnable
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
-        engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
-        engine.addSystem(new TankControllerSystem(entityManager));
-        engine.addSystem(new MovementSystem());
-        engine.addSystem(new ProjectileSystem(entityManager));
-        engine.addSystem(new LifeSystem());
-        engine.addSystem(new CollisionSystem());
-        engine.addSystem(new ParticleSystem(entityManager));
-        engine.addSystem(new LifetimeSystem(entityManager));
-        engine.addSystem(new VisionSystem());
+        engine.addLogicSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
+        engine.addLogicSystem(new TankTracksSystem());
+        engine.addLogicSystem(new TankTurretSystem());
+        engine.addLogicSystem(new TankBarrelSystem(entityManager));
+        engine.addLogicSystem(new MovementSystem());
+        engine.addLogicSystem(new SnapToTerrainSystem());
+        engine.addLogicSystem(new AngleConstraintSystem());
+        engine.addLogicSystem(new TankTurretFeedbackSystem());
+        engine.addLogicSystem(new TankBarrelFeedbackSystem());
+        engine.addLogicSystem(new ProjectileSystem(entityManager));
+        engine.addLogicSystem(new LifeSystem());
+        engine.addLogicSystem(new CollisionSystem());
+        engine.addLogicSystem(new ParticleSystem(entityManager));
+        engine.addLogicSystem(new LifetimeSystem(entityManager));
+        engine.addLogicSystem(new VisionSystem());
+        
         engine.addSystem(new RenderSystem(gfxEngine));
+
+        // TODO: if (DEBUG)  ...
+        engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
     }
 
@@ -74,27 +100,56 @@ public class Tokyo implements GameEngine, Runnable
     public void startGame(UUID[] participants)
     {
         entityManager.spawnStuff();
-        entityManager.createObstacles(new Vec3(5, 5, 5));
+        //entityManager.createObstacles(new Vec3(5, 5, 5));
         for (int i = 0; i < participants.length; i++)
         {
-            entityManager.createTankEntityNEU(
+            Entity tank = entityManager.createTankEntityNEU(
                     participants[i],
                     EntityManager.SPAWN_POINTS[i],
                     EntityManager.BOT_COLOURS[i]);
+            engine.addEntity(tank);
         }
-        
+
         new Thread(this).start();
+    }
+
+    @Override
+    public void playPause()
+    {
+        System.out.println("playPause() - " + paused);
+        paused = !paused;
+        System.out.println("paused: " + paused);
+    }
+
+    @Override
+    public float getSpeed()
+    {
+        return speedMultiplier;
+    }
+
+    @Override
+    public void increaseSpeed()
+    {
+        speedMultiplier *= 2;
+        LOGIC_DELTA = 1 / (GAME_SPEED * speedMultiplier);
+    }
+
+    @Override
+    public void decreaseSpeed()
+    {
+        speedMultiplier /= 2;
+        LOGIC_DELTA = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
     public void run()
     {
         double currentTime = System.nanoTime();
+        lastUpdate = System.nanoTime();
         double accumulator = 0.0f;
-        int i = 0;
+        double logicAccumulator = 0.0f;
         while (running)
         {
-
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
@@ -103,18 +158,26 @@ public class Tokyo implements GameEngine, Runnable
             }
             currentTime = newTime;
 
+            logicAccumulator += frameTime;
             accumulator += frameTime;
 
-            int x = 0;
+            //any function called in this block should run at the fixed DELTA rate
             while (accumulator >= DELTA)
             {
                 engine.update(t, DELTA);
-                t += DELTA;
                 accumulator -= DELTA;
-                x++;
             }
-            double alpha = accumulator / DELTA;
-            gfxEngine.redisplay();
+
+            //any function called in this block run at the current speedMultiplier speed
+            while (logicAccumulator >= LOGIC_DELTA)
+            {
+                if (!paused)
+                {
+                    engine.updateLogic(t, DELTA);
+                }
+                t += DELTA;
+                logicAccumulator -= LOGIC_DELTA;
+            }
         }
     }
 }

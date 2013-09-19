@@ -11,7 +11,7 @@ public class Renderable {
     public String type;
     public Vec3 colour;
 
-    public Renderable(String type, Vec3 colour)
+    public Renderable(String type, Vec3 colour )
     {
         this.type = type;
         this.colour = colour;

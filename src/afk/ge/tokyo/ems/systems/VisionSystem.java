@@ -1,9 +1,10 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.AbstractEntity;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.Utils;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public class VisionSystem implements ISystem
 {
+
     Engine engine;
 
     @Override
@@ -39,54 +41,62 @@ public class VisionSystem implements ISystem
         List<VisionNode> vnodes = engine.getNodeList(VisionNode.class);
         List<TargetableNode> tnodes = engine.getNodeList(TargetableNode.class);
         List<CollisionNode> cnodes = engine.getNodeList(CollisionNode.class);
-        
+
         for (VisionNode vnode : vnodes)
         {
-            List<Float> thetas = new ArrayList<Float>();
+            List<float[]> thetas = new ArrayList<float[]>();
             targetloop:
             for (TargetableNode tnode : tnodes)
             {
-                if (tnode.entity == vnode.entity)
+                if (sameBot(vnode, tnode.entity))
+                {
                     continue;
+                }
                 
-                float theta = isVisible(
-                        vnode.state,
+                State state = Utils.getWorldState(vnode.entity);
+
+                float[] theta = isVisible(
+                        state,
                         tnode.state,
                         vnode.vision.fovx,
-                        vnode.vision.dist
-                    );
-                
-                if (!Float.isNaN(theta))
+                        vnode.vision.dist);
+
+                if (theta != null)
                 {
                     // stop tanks from targeting innocent walls
                     for (CollisionNode cnode : cnodes)
                     {
                         // to stop tanks from blocking their own vision
-                        if (cnode.entity == vnode.entity || cnode.entity == tnode.entity) continue;
+                        if (sameBot(vnode, cnode.entity) || cnode.entity == tnode.entity)
+                        {
+                            continue;
+                        }
 
                         BBox bbox = new BBox(cnode.state, cnode.bbox.extent);
-                        if (bbox.isLineInBox(vnode.state.pos, tnode.state.pos))
+                        if (bbox.isLineInBox(state.pos, tnode.state.pos))
                         {
                             continue targetloop;
                         }
                     }
-                    
+
                     thetas.add(theta);
                 }
             }
-            Controller controller = vnode.entity.get(Controller.class);
-            if (controller != null)
-            {
-                controller.events.visibleBots = thetas;
-            }
+            vnode.controller.events.visibleBots = thetas;
         }
+    }
+    
+    public boolean sameBot(VisionNode a, Entity b)
+    {
+        Controller controller = b.get(Controller.class);
+        return (controller != null && controller.id == a.controller.id);
     }
 
     @Override
     public void destroy()
     {
     }
-    
+
     /**
      * This function determines whether entity A can see entity B. there are two
      * checks.
@@ -99,68 +109,54 @@ public class VisionSystem implements ISystem
      *
      * @param a
      * @param b
-     * @param halfFOV
-     * @param viewingDistanceSqr
+     * @param fov
+     * @param viewingDistance
      * @return
      */
-    protected float isVisible(State a, State b, float fov, float viewingDistance)
+    protected float[] isVisible(State a, State b, float fov, float viewingDistance)
     {
+        // point lies outside of viewing distance, reject
+        if (Float.compare(b.pos.subtract(a.pos).getLengthSquared(),
+                viewingDistance * viewingDistance) > 0)
+        {
+            return null;
+        }
+
+        float[] me = getAngles(Utils.getForward(a));
+
+        Vec3 d = b.pos.subtract(a.pos);
+
+        float[] them = getAngles(d);
+
+        float relativeBearing = (float)Math.toDegrees(them[0] - me[0]);
+        float relativeElevation = (float)Math.toDegrees(them[1] - me[1]);
+
         float halfFOV = fov * 0.5f;
-        float viewingDistanceSqr = viewingDistance*viewingDistance;
-        
-        float yRot = a.rot.getY();
-        float xRot = a.rot.getX();
-        float zRot = a.rot.getZ();
-        Vec3 aToB = b.pos.subtract(a.pos);
-        float adistB = aToB.getLengthSquared();
-        if (Float.compare(adistB, viewingDistanceSqr) > 0)
+        if (within(relativeBearing, halfFOV) && within(relativeElevation, halfFOV))
         {
-            return Float.NaN;
+            return new float[]
+            {
+                relativeBearing, relativeElevation
+            };
         }
-        Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, xRot, X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, yRot, Y_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, zRot, Z_AXIS);
-        Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
-        Vec3 A = new Vec3(A4.getX(), A4.getY(), A4.getZ());
 
-        float theta = A.getUnitVector().dot(aToB.getUnitVector());
-        theta = (float) FastMath.toDegrees(FastMath.acos(theta));
-        //for testing
-//        System.out.println(a.name + "    " + getSign(theta, A, aToB));
-        float absTheta = Math.abs(theta);
-        if (Float.compare(absTheta, halfFOV) > 0)
-        {
-            return Float.NaN;
-        }
-        theta = getSign(theta, A, aToB);
-        return theta;
+        // outside of FOV
+        return null;
     }
 
-    /**
-     * this function determines whether a Entity B is to the right or left of
-     * Entity A's current orientation. This is accomplished by means of a
-     * reference Vector which is constructed to be 90° to the right of A's
-     * orientation. Then by means of a dot (B · RightRef) we can determine
-     * whether B is Obtuse to RightRef (-) or Acute (+).
-     *
-     * @param theta
-     * @param A
-     * @param B
-     * @return
-     */
-    private float getSign(float theta, Vec3 A, Vec3 B)
+    public static float[] getAngles(Vec3 v)
     {
-        Vec3 Aup = A.add(new Vec3(0, 1, 0));
-        Vec3 ARightref = A.cross(Aup);
-        float sign = B.dot(ARightref);
-        if (Float.compare(sign, 0) < 0)
+        float bearing = (float) FastMath.atan2(v.getZ(), v.getX());
+        float elevation = (float) FastMath.atan2(v.getY(),
+                FastMath.sqrtFast(v.getX() * v.getX() + v.getZ() * v.getZ()));
+        return new float[]
         {
-            return -theta;
-        } else
-        {
-            return theta;
-        }
+            bearing, elevation
+        };
     }
-    
+
+    public static boolean within(float x, float range)
+    {
+        return x >= -range && x <= range;
+    }
 }

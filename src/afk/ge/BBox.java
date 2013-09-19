@@ -1,5 +1,6 @@
 package afk.ge;
 
+import afk.ge.tokyo.ems.Utils;
 import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
@@ -15,7 +16,8 @@ import static afk.gfx.GfxUtils.*;
  * Ported to java from this article:
  * http://www.3dkingdoms.com/weekly/weekly.php?a=21
  *
- * @author Daniel, original by Jonathan Kreuzer
+ * @author Jonathan Kreuzer
+ * @author Daniel
  */
 public class BBox
 {
@@ -42,13 +44,7 @@ public class BBox
     
     public BBox(State state, Vec3 extents)
     {
-        m = new Mat4(1);
-        
-        m = translate(m, state.pos.add(new Vec3(0,extents.getY(),0)));
-
-        m = rotate(m, state.rot.getY(), Y_AXIS);
-        m = rotate(m, state.rot.getX(), X_AXIS);
-        m = rotate(m, state.rot.getZ(), Z_AXIS);
+        m = Utils.getBBoxMatrix(state);
         
         this.extents = extents;
     }

@@ -3,13 +3,22 @@ package afk.gfx.athens;
 import com.hackoeur.jglm.Vec3;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL2;
 
-// TODO: make this "Resource friendly".
-public class Terrain extends Mesh
+/**
+ * Athens implementation of the terrain interface.
+ * @author Daniel
+ */
+public class AthensTerrain extends Mesh
 {
     private BufferedImage heightmap;
     private int xGrid, yGrid;
+    
+    float[][][] vertices;
+    float[][][] normals;
     
     private float samplei(int u, int v)
     {
@@ -43,28 +52,36 @@ public class Terrain extends Mesh
     private float h(int i, int j)
     {
         if (heightmap == null) return 0.0f;
-        return samplef((float)i/(float)xGrid,(float)j/(float)yGrid);
+        return samplef((float)i/(float)(xGrid-1),(float)j/(float)(yGrid-1));
     }
     
-    public Terrain(GL2 gl, float width, float length, float height,
-            int xGrid, int yGrid, BufferedImage heightmap)
+    /**
+     * Constructs an Athens Terrain object.
+     * @param name the name of the heightmap.
+     */
+    public AthensTerrain(String name)
     {
-        super(0,null);
+        super(HEIGHTMAP_MESH,name);
+    }
+    
+    @Override
+    public void load(GL2 gl)
+            throws IOException
+    {
+        super.load(gl);
         
-        this.xGrid = xGrid;
-        this.yGrid = yGrid;
-        this.heightmap = heightmap;
+        this.heightmap = ImageIO.read(
+                new File("textures/heightmaps/"+name+".png"));
         
-        final float QUAD_WIDTH = width/xGrid;
-        final float QUAD_LENGTH = length/yGrid;
+        xGrid = heightmap.getWidth();
+        yGrid = heightmap.getHeight();
         
-        final int NUM_QUADS = (xGrid-1)*(yGrid-1);
-        final int NUM_VERTICES = xGrid*yGrid;
+        final float QUAD_WIDTH = 1.0f/(float)(xGrid-1);
+        final float QUAD_LENGTH = 1.0f/(float)(yGrid-1);
         
-        float[][][] vertices = new float[xGrid][yGrid][3];
-        float[][][] normals = new float[xGrid][yGrid][3];
+        vertices = new float[xGrid][yGrid][3];
+        normals = new float[xGrid][yGrid][3];
         
-        int k = 0;
         float x, y, z;
         Vec3 normal;
         for (int i = 0; i < xGrid; i++)
@@ -72,7 +89,7 @@ public class Terrain extends Mesh
             for (int j = 0; j < yGrid; j++)
             {
                 x = i*QUAD_WIDTH;
-                y = height * h(i,j);
+                y = h(i,j);
                 z = j*QUAD_LENGTH;
                 
                 float Hx = h(i<xGrid-1 ? i+1 : i, j) - h(i>0 ? i-1 : i, j);
@@ -85,15 +102,15 @@ public class Terrain extends Mesh
                     Hz *= 2;
                 Hz /= QUAD_LENGTH;
 
-                normal = new Vec3(-Hx*height, 1.0f, -Hz*height).getUnitVector();
+                normal = new Vec3(-Hx, 1.0f, -Hz).getUnitVector();
                 
-                vertices[i][j][0] = (x-width/2);
-                vertices[i][j][1] = (y-height/2);
-                vertices[i][j][2] = (z-length/2);
+                vertices[i][j][0] = (x-0.5f);
+                vertices[i][j][1] = (y-0.5f);
+                vertices[i][j][2] = (z-0.5f);
                 
                 normals[i][j][0] = normal.getX();
-                normals[i][j][1] = normal.getX();
-                normals[i][j][2] = normal.getX();
+                normals[i][j][1] = normal.getY();
+                normals[i][j][2] = normal.getZ();
             }
         }
         
@@ -106,15 +123,19 @@ public class Terrain extends Mesh
                     gl.glBegin(GL2.GL_QUADS);
                     {
                         gl.glNormal3f(normals[i][j][0], normals[i][j][1], normals[i][j][2]);
+                        gl.glTexCoord2f((float)i/(float)(xGrid-1), (float)j/(float)(yGrid-1));
                         gl.glVertex3f(vertices[i][j][0], vertices[i][j][1], vertices[i][j][2]);
                         
                         gl.glNormal3f(normals[i][j+1][0], normals[i][j+1][1], normals[i][j+1][2]);
+                        gl.glTexCoord2f((float)i/(float)(xGrid-1), (float)(j+1)/(float)(yGrid-1));
                         gl.glVertex3f(vertices[i][j+1][0], vertices[i][j+1][1], vertices[i][j+1][2]);
                         
                         gl.glNormal3f(normals[i+1][j+1][0], normals[i+1][j+1][1], normals[i+1][j+1][2]);
+                        gl.glTexCoord2f((float)(i+1)/(float)(xGrid-1), (float)(j+1)/(float)(yGrid-1));
                         gl.glVertex3f(vertices[i+1][j+1][0], vertices[i+1][j+1][1], vertices[i+1][j+1][2]);
                         
                         gl.glNormal3f(normals[i+1][j][0], normals[i+1][j][1], normals[i+1][j][2]);
+                        gl.glTexCoord2f((float)(i+1)/(float)(xGrid-1), (float)j/(float)(yGrid-1));
                         gl.glVertex3f(vertices[i+1][j][0], vertices[i+1][j][1], vertices[i+1][j][2]);
                     }
                     gl.glEnd();
@@ -122,5 +143,7 @@ public class Terrain extends Mesh
             }
         }
         gl.glEndList();
+        
+        loaded.set(true);
     }
 }

@@ -11,8 +11,9 @@ import java.util.Map;
  */
 public class Entity
 {
-    Collection<EntityListener> listeners = new ArrayList<EntityListener>();
-    Map<Class, Object> components = new HashMap<Class, Object>();
+    private Collection<EntityListener> listeners = new ArrayList<EntityListener>();
+    protected Collection<Entity> dependents = new ArrayList<Entity>();
+    private Map<Class, Object> components = new HashMap<Class, Object>();
     
     public void addEntityListener(EntityListener l)
     {
@@ -41,6 +42,16 @@ public class Entity
             l.componentRemoved(this, componentClass);
     }
     
+    public void addDependent(Entity entity)
+    {
+        dependents.add(entity);
+    }
+    
+    public void removeDependent(Entity entity)
+    {
+        dependents.remove(entity);
+    }
+    
     public <T> T get(Class<T> componentClass)
     {
         return (T)components.get(componentClass);
@@ -49,5 +60,10 @@ public class Entity
     public boolean has(Class componentClass)
     {
         return components.containsKey(componentClass);
+    }
+    
+    public Object[] getAll()
+    {
+        return components.values().toArray();
     }
 }

@@ -26,7 +26,9 @@ public class TypeFactory
         this.resourceManager = resourceManager;
         
         factories.put("smallTank", new SmallTankFactory());
-        factories.put("largeTank", new LargeTankFactory());
+        factories.put("largeTankBase", new LargeTankBaseFactory());
+        factories.put("largeTankTurret", new LargeTankTurretFactory());
+        factories.put("largeTankBarrel", new LargeTankBarrelFactory());
         factories.put("projectile", new ProjectileFactory());
         factories.put("wall", new WallFactory());
         factories.put("floor", new FloorFactory());
@@ -89,33 +91,20 @@ public class TypeFactory
         }
         
     }
-    private class LargeTankFactory implements TypeFactoryThing
+    private class LargeTankBaseFactory implements TypeFactoryThing
     {
 
         @Override
         public AthensEntity create()
         {
             AthensEntity rootGfxEntity = createEntity(NORMAL);
-            AthensEntity tankBarrelEntity = createEntity(NORMAL);
             AthensEntity tankTracksEntity = createEntity(NORMAL);
-            AthensEntity tankTurretEntity = createEntity(NORMAL);
             AthensEntity tankWheelsEntity = createEntity(NORMAL);
             AthensEntity tankShadowEntity = createEntity(NORMAL);
 
             rootGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_body"));
             rootGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_body"));
             rootGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-
-            tankTurretEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_turret"));
-            tankTurretEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_turret"));
-            tankTurretEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankTurretEntity.position = new Vec3(0.0f, 0.17623f, -0.15976f);
-
-            tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_barrel"));
-            tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_barrel"));
-            tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankBarrelEntity.position = new Vec3(0.0f, 0.03200f, 0.22199f);
-            tankTurretEntity.addChild(tankBarrelEntity);
 
             tankTracksEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_tracks"));
             tankTracksEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_tracks"));
@@ -134,7 +123,6 @@ public class TypeFactory
             tankShadowEntity.position = new Vec3(0,0.01f,0);
             tankShadowEntity.scale = new Vec3(1.5f, 0, 1.5f);
             
-            rootGfxEntity.addChild(tankTurretEntity);
             rootGfxEntity.addChild(tankWheelsEntity);
             rootGfxEntity.addChild(tankTracksEntity);
             rootGfxEntity.addChild(tankShadowEntity);
@@ -142,6 +130,34 @@ public class TypeFactory
             return rootGfxEntity;
         }
         
+    }
+    private class LargeTankTurretFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity tankTurretEntity = createEntity(NORMAL);
+            tankTurretEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_turret"));
+            tankTurretEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_turret"));
+            tankTurretEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            //tankTurretEntity.position = new Vec3(0.0f, 0.17623f, -0.15976f);
+            return tankTurretEntity;
+        }
+    }
+    private class LargeTankBarrelFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity tankBarrelEntity = createEntity(NORMAL);
+            tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_barrel"));
+            tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_barrel"));
+            tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            //tankBarrelEntity.position = new Vec3(0.0f, 0.03200f, 0.22199f);
+            return tankBarrelEntity;
+        }
     }
     private class ProjectileFactory implements TypeFactoryThing
     {
@@ -179,7 +195,8 @@ public class TypeFactory
         public AthensEntity create()
         {
             AthensEntity floorGfxEntity = createEntity(GfxEntity.NORMAL);
-            floorGfxEntity.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "quad"));
+            floorGfxEntity.attachResource(resourceManager.getResource(HEIGHTMAP_MESH, "hm2"));
+            floorGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "heightmaps/hm2"));
             floorGfxEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
             
             return floorGfxEntity;
