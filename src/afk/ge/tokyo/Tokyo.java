@@ -39,7 +39,7 @@ public class Tokyo implements GameEngine, Runnable
     public final static float GAME_SPEED = 30;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
-    public static float speedDelta = DELTA;
+    public static float LOGIC_DELTA = DELTA;
     private float speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
@@ -47,6 +47,12 @@ public class Tokyo implements GameEngine, Runnable
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
+//test()
+    private long lastUpdate;
+    private float time = 0.0f;
+    private float lastFPS = 0.0f;
+    private float fps = 0.0f;
+//
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
     {
@@ -72,7 +78,6 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new LifetimeSystem(entityManager));
         engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
-
         // TODO: if (DEBUG)  ...
         engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
@@ -112,20 +117,22 @@ public class Tokyo implements GameEngine, Runnable
     public void increaseSpeed()
     {
         speedMultiplier *= 2;
-        speedDelta = 1 / (GAME_SPEED * speedMultiplier);
+        LOGIC_DELTA = 1 / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
     public void decreaseSpeed()
     {
         speedMultiplier /= 2;
-        speedDelta = 1.0f / (GAME_SPEED * speedMultiplier);
+        LOGIC_DELTA = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
     public void run()
     {
         double currentTime = System.nanoTime();
+        lastUpdate = System.nanoTime();//
+        double counter = 0.0f;//
         double accumulator = 0.0f;
         int i = 0;
         while (running)
@@ -134,8 +141,10 @@ public class Tokyo implements GameEngine, Runnable
             {
                 gfxEngine.redisplay();
             }
+//            System.out.println(speedMultiplier+"    "+ LOGIC_DELTA + "   " + DELTA);
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
+//                    System.out.println("frameTime: "+ frameTime);
             if (frameTime > MAX_FRAMETIME)
             {
                 frameTime = MAX_FRAMETIME;
@@ -144,16 +153,56 @@ public class Tokyo implements GameEngine, Runnable
 
             accumulator += frameTime;
 
-            int x = 0;
-            while (accumulator >= speedDelta)
+            if (speedMultiplier < 1)
             {
-                engine.update(t, DELTA);
-                t += speedDelta;
-                accumulator -= speedDelta;
-                x++;
+                while (accumulator >= DELTA)
+                {
+                    engine.update(t, DELTA);
+                    t += DELTA;
+                    accumulator -= DELTA;
+                    counter += DELTA;
+                    while (counter >= LOGIC_DELTA)
+                    {
+                        //any function called in this block should run at the fixed DELTA rate
+                        test();
+                        counter -= LOGIC_DELTA;
+                    }
+                }
+            } else
+            {
+                while (accumulator >= LOGIC_DELTA)
+                {
+                    engine.update(t, DELTA);
+                    t += LOGIC_DELTA;
+                    accumulator -= LOGIC_DELTA;
+                    counter += LOGIC_DELTA;
+                    while (counter >= DELTA)
+                    {
+                        //any function called in this block should run at the fixed DELTA rate
+                        test();
+                        counter -= DELTA;
+                    }
+                }
             }
-            double alpha = accumulator / speedDelta;
+            double alpha = accumulator / LOGIC_DELTA;
             gfxEngine.redisplay();
+        }
+    }
+
+    private void test()
+    {
+        long nTime = System.nanoTime();
+        long nanos = nTime - lastUpdate;
+        lastUpdate = nTime;
+        float delta = nanos / (float) NANOS_PER_SECOND;
+        //time += delta;
+        lastFPS += delta;
+
+        if (lastFPS >= 1.0f)
+        {
+            fps = (1.0f / delta);
+            System.out.println(String.format(delta + "   DELTA timing: %.0f", fps));
+            lastFPS = 0;
         }
     }
 }
