@@ -6,7 +6,6 @@ package afk.ge.tokyo;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.Utils;
 import afk.ge.tokyo.ems.components.*;
 import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
@@ -41,7 +40,9 @@ public class EntityManager
     public static final String LARGE_TANK_TURRET_TYPE = "largeTankTurret";
     public static final String LARGE_TANK_BARREL_TYPE = "largeTankBarrel";
     public static final Vec3 SMALL_TANK_EXTENTS = new Vec3(0.4385f, 0.2505f, 0.5f);
+    public static final Vec3 SMALL_TANK_BBOX_OFFSET = new Vec3(0, SMALL_TANK_EXTENTS.getY(), 0);
     public static final Vec3 LARGE_TANK_EXTENTS = new Vec3(0.311f, 0.1355f, 0.5f);
+    public static final Vec3 LARGE_TANK_BBOX_OFFSET = new Vec3(0, LARGE_TANK_EXTENTS.getY(), 0);
     public static final float SMALL_TANK_SCALE = 2;
     public static final float LARGE_TANK_SCALE = 3.5f;
     public static final int TANK_VDIST = 15;
@@ -121,7 +122,7 @@ public class EntityManager
     {
         Entity wall = new Entity();
         wall.add(new State(pos, Vec4.VEC4_ZERO, scale));
-        wall.add(new BBoxComponent(scale.scale(0.5f)));
+        wall.add(new BBoxComponent(scale.scale(0.5f),new Vec3(0,scale.getY()*0.5f,0)));
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
         return wall;
@@ -151,7 +152,7 @@ public class EntityManager
         tank.add(controller);
         tank.add(new State(spawnPoint, Vec4.VEC4_ZERO, scale));
         // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale)));
-        tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale)));
+        tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale), LARGE_TANK_BBOX_OFFSET.multiply(scale)));
         tank.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         tank.add(new Motor(2f, 20f));
         tank.add(new Life(SMALL_TANK_HP));

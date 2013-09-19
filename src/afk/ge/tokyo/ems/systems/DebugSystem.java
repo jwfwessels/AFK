@@ -250,7 +250,7 @@ public class DebugSystem implements ISystem
                 entity.add(new Targetable());
                 Vec3 scale = new Vec3(0.3f);
                 entity.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, scale));
-                entity.add(new BBoxComponent(scale.scale(0.5f)));
+                entity.add(new BBoxComponent(scale.scale(0.5f), new Vec3(0,scale.getY()*0.5f,0)));
                 startPlaceItem(entity);
             }
         });

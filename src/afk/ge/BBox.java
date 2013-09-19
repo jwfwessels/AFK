@@ -1,6 +1,7 @@
 package afk.ge;
 
 import afk.ge.tokyo.ems.Utils;
+import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
@@ -42,11 +43,11 @@ public class BBox
         set(m, bl, bh);
     }
     
-    public BBox(State state, Vec3 extents)
+    public BBox(State state, BBoxComponent bBoxComponent)
     {
-        m = Utils.getBBoxMatrix(state);
+        m = Utils.getBBoxMatrix(state, bBoxComponent.offset);
         
-        this.extents = extents;
+        this.extents = bBoxComponent.extent;
     }
 
     public final void set(final Mat4 m, final Vec3 extents)

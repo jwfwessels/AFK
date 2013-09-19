@@ -43,7 +43,7 @@ public class DebugRenderSystem implements ISystem
         {
             GfxEntity gfx = gfxEngine.getDebugEntity(node.bbox);
 
-            gfx.position = node.state.pos;
+            gfx.position = node.state.pos.add(node.bbox.offset);
             gfx.rotation = node.state.rot;
             gfx.scale = new Vec3(1);
             gfx.colour = EntityManager.MAGENTA;

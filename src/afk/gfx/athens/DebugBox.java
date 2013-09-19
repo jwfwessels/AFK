@@ -42,7 +42,7 @@ public class DebugBox extends AthensEntity
 
         if (shader != null)
         {
-            shader.use(gl);
+            shader.use(gl); 
             shader.updateUniform(gl, "world", worldMatrix);
             shader.updateUniform(gl, "view", camera.view);
             shader.updateUniform(gl, "projection", camera.projection);

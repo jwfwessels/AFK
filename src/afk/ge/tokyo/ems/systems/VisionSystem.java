@@ -10,11 +10,7 @@ import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.TargetableNode;
 import afk.ge.tokyo.ems.nodes.VisionNode;
-import static afk.gfx.GfxUtils.*;
-import com.hackoeur.jglm.Mat4;
-import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
-import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +68,7 @@ public class VisionSystem implements ISystem
                             continue;
                         }
 
-                        BBox bbox = new BBox(cnode.state, cnode.bbox.extent);
+                        BBox bbox = new BBox(cnode.state, cnode.bbox);
                         if (bbox.isLineInBox(state.pos, tnode.state.pos))
                         {
                             continue targetloop;
