@@ -9,8 +9,6 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.components.Controller;
-import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
@@ -80,11 +78,17 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new TankTurretSystem());
         engine.addLogicSystem(new TankBarrelSystem(entityManager));
         engine.addLogicSystem(new MovementSystem());
+        engine.addLogicSystem(new SnapToTerrainSystem());
         engine.addLogicSystem(new AngleConstraintSystem());
         engine.addLogicSystem(new TankTurretFeedbackSystem());
         engine.addLogicSystem(new TankBarrelFeedbackSystem());
+        engine.addLogicSystem(new ProjectileSystem(entityManager));
+        engine.addLogicSystem(new LifeSystem());
+        engine.addLogicSystem(new CollisionSystem());
+        engine.addLogicSystem(new ParticleSystem(entityManager));
+        engine.addLogicSystem(new LifetimeSystem(entityManager));
+        engine.addLogicSystem(new VisionSystem());
         
-        engine.addSystem(new SnapToTerrainSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
@@ -141,15 +145,13 @@ public class Tokyo implements GameEngine, Runnable
     public void run()
     {
         double currentTime = System.nanoTime();
-        lastUpdate = System.nanoTime();//
-        double accumulator = 0.0f;//
+        lastUpdate = System.nanoTime();
+        double accumulator = 0.0f;
         double logicAccumulator = 0.0f;
-        int i = 0;
         while (running)
         {
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
-//                    System.out.println("frameTime: "+ frameTime);
             if (frameTime > MAX_FRAMETIME)
             {
                 frameTime = MAX_FRAMETIME;
@@ -176,8 +178,6 @@ public class Tokyo implements GameEngine, Runnable
                 t += DELTA;
                 logicAccumulator -= LOGIC_DELTA;
             }
-
-            double alpha = logicAccumulator / LOGIC_DELTA;
         }
     }
 
