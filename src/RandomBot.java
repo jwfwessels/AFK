@@ -41,33 +41,34 @@ public class RandomBot extends TankRobot
         if (visibles.length > 0)
         {
             float bearing = visibles[0][0];
-            float elevation = visibles[0][1];
-            float diff = FastMath.abs(bearing);
+            float elevation = visibles[0][1]-events.barrel;
+            float diff = bearing*bearing+elevation*elevation;
+            final float give = 0.6f;
 
-            if (Float.compare(FastMath.abs(elevation), 1) < 0)
+            if (Float.compare(diff, give*give) < 0)
             {
-                if (Float.compare(diff, 1) < 0)
-                {
-                    attack();
-                    return;
-                }
-                {
-                    if (Float.compare(bearing, 0) < 0)
-                    {
-                        turnAntiClockwise();
-                        bearing++;
-                    }
-                    if (Float.compare(bearing, 0) > 0)
-                    {
-                        turnClockwise();
-                        bearing--;
-                    }
-                    // TODO: move barrel when we can
-                }
-            } else if (retaliating == 0 && !turning)
-            {
-                move();
+                attack();
+                return;
             }
+            
+            if (Float.compare(bearing, 0) < 0)
+            {
+                aimAntiClockwise();
+            }
+            if (Float.compare(bearing, 0) > 0)
+            {
+                aimClockwise();
+            }
+
+            if (Float.compare(elevation, 0) < 0)
+            {
+                aimDown();
+            }
+            if (Float.compare(elevation, 0) > 0)
+            {
+                aimUp();
+            }
+            return;
         }
         if (retaliating != 0)
         {

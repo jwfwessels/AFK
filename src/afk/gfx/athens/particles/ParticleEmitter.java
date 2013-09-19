@@ -144,7 +144,7 @@ public class ParticleEmitter extends AthensEntity
     private void spawn(float delta)
     {
         Vec3 move = getWorldPosition();
-        Vec3 rot = getWorldRotation();
+        Vec4 rot = getWorldRotation();
         Vec3 scale = getWorldScale();
         
         Particle p = available.poll();

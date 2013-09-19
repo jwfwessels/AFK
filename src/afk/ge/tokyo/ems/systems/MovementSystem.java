@@ -6,6 +6,7 @@ import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.nodes.MovementNode;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import static java.lang.Math.*;
 import java.util.List;
 
@@ -51,8 +52,8 @@ public class MovementSystem implements ISystem
         Vec3 dv = Vec3.VEC3_ZERO;
         
         // angular
-        Vec3 dax = Vec3.VEC3_ZERO;
-        Vec3 dav = Vec3.VEC3_ZERO;
+        Vec4 dax = Vec4.VEC4_ZERO;
+        Vec4 dav = Vec4.VEC4_ZERO;
     }
     
     /**
@@ -103,13 +104,13 @@ public class MovementSystem implements ISystem
     {
         //Vec3 pos = state.pos.add(derivative.dx.multiply(dt));
         Vec3 v = velocity.v.add(derivative.dv.multiply(dt));
-        Vec3 av = velocity.av.add(derivative.dav.multiply(dt));
+        Vec4 av = velocity.av.add(derivative.dav.multiply(dt));
         
         Derivative output = new Derivative();
         output.dx = v;
         output.dv = Vec3.VEC3_ZERO; //acceleration(velocity,dt);
         output.dax = av;
-        output.dav = Vec3.VEC3_ZERO; //angularAcceleration(velocity,dt);
+        output.dav = Vec4.VEC4_ZERO; //angularAcceleration(velocity,dt);
         
         return output;
     }
@@ -121,7 +122,7 @@ public class MovementSystem implements ISystem
         return velocity.v.getNegated().scale((float)pow(c, dt)).add(velocity.a);
     }
     
-    public static Vec3 angularAcceleration(final Velocity velocity, final float dt)
+    public static Vec4 angularAcceleration(final Velocity velocity, final float dt)
     {
         final float c = 0f;
         

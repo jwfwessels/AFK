@@ -2,7 +2,9 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.Utils;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
@@ -46,13 +48,15 @@ public class VisionSystem implements ISystem
             targetloop:
             for (TargetableNode tnode : tnodes)
             {
-                if (tnode.entity == vnode.entity)
+                if (sameBot(vnode, tnode.entity))
                 {
                     continue;
                 }
+                
+                State state = Utils.getWorldState(vnode.entity);
 
                 float[] theta = isVisible(
-                        vnode.state,
+                        state,
                         tnode.state,
                         vnode.vision.fovx,
                         vnode.vision.dist);
@@ -63,13 +67,13 @@ public class VisionSystem implements ISystem
                     for (CollisionNode cnode : cnodes)
                     {
                         // to stop tanks from blocking their own vision
-                        if (cnode.entity == vnode.entity || cnode.entity == tnode.entity)
+                        if (sameBot(vnode, cnode.entity) || cnode.entity == tnode.entity)
                         {
                             continue;
                         }
 
                         BBox bbox = new BBox(cnode.state, cnode.bbox.extent);
-                        if (bbox.isLineInBox(vnode.state.pos, tnode.state.pos))
+                        if (bbox.isLineInBox(state.pos, tnode.state.pos))
                         {
                             continue targetloop;
                         }
@@ -78,12 +82,14 @@ public class VisionSystem implements ISystem
                     thetas.add(theta);
                 }
             }
-            Controller controller = vnode.entity.get(Controller.class);
-            if (controller != null)
-            {
-                controller.events.visibleBots = thetas;
-            }
+            vnode.controller.events.visibleBots = thetas;
         }
+    }
+    
+    public boolean sameBot(VisionNode a, Entity b)
+    {
+        Controller controller = b.get(Controller.class);
+        return (controller != null && controller.id == a.controller.id);
     }
 
     @Override
@@ -116,16 +122,7 @@ public class VisionSystem implements ISystem
             return null;
         }
 
-        // rotate a normal vector along the Z-axis using the entity's rotation
-        // to get a normal in the entity's viewing direction
-        Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getX(), X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getZ(), Z_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, a.rot.getY(), Y_AXIS);
-
-        // now we have a set of axes relative to the tank
-        Vec4 forward = rotationMatrix.multiply(Z_AXIS.toDirection());
-        float[] me = getAngles(forward.getXYZ());
+        float[] me = getAngles(Utils.getForward(a));
 
         Vec3 d = b.pos.subtract(a.pos);
 

@@ -2,6 +2,8 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Parent;
+import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
@@ -13,6 +15,7 @@ import java.util.List;
  */
 public class RenderSystem implements ISystem
 {
+
     Engine engine;
     GraphicsEngine gfxEngine;
 
@@ -36,26 +39,30 @@ public class RenderSystem implements ISystem
         for (RenderNode node : nodes)
         {
             GfxEntity gfx = gfxEngine.getGfxEntity(node.renderable);
-            
+
+            Parent parent = node.entity.get(Parent.class);
+            if (parent != null && parent.entity.has(Renderable.class))
+            {
+                GfxEntity parentGfx = gfxEngine.getGfxEntity(parent.entity.get(Renderable.class));
+                if (parentGfx != gfx.getParent())
+                {
+                    parentGfx.addChild(gfx);
+                }
+            } else
+            {
+                GfxEntity parentGfx = gfx.getParent();
+                if (parentGfx != null)
+                {
+                    parentGfx.removeChild(gfx);
+                }
+            }
+
             gfx.position = node.state.pos;
             gfx.rotation = node.state.rot;
             gfx.scale = node.state.scale;
             gfx.colour = node.renderable.colour;
         }
-        
-        // TODO: make this happen
-//        List<WeaponRenderableNode> weapNodes = ...
-//        for (WRNode node : nodes)
-//        {
-//            GfxEntity gfx = node.renderable.gfx;
-//
-//            GfxEntity turret = gfx.getSubEntity(node.weapRend.turret);
-//            turret.rotY = node.weapon.turretAngle;
-//
-//            GfxEntity barrel = turret.getSubEntity(node.weapRend.barrel);
-//            barrel.rotZ = node.weapon.barrelAngle;
-//        }
-        
+
         gfxEngine.post();
         gfxEngine.redisplay();
     }
@@ -64,5 +71,4 @@ public class RenderSystem implements ISystem
     public void destroy()
     {
     }
-    
 }

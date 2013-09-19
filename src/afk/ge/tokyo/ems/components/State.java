@@ -1,6 +1,7 @@
 package afk.ge.tokyo.ems.components;
 
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 
 /**
  *
@@ -11,11 +12,11 @@ public class State
 
     /// PREVIOUS STATE ///
     public Vec3 prevPos;
-    public Vec3 prevRot;
+    public Vec4 prevRot;
     public Vec3 prevScale;
     /// CURRENT STATE ///
     public Vec3 pos;
-    public Vec3 rot;
+    public Vec4 rot;
     public Vec3 scale;
 
     public State(State original, Vec3 posShift)
@@ -28,7 +29,7 @@ public class State
         this.scale = original.scale;
     }
 
-    public State(Vec3 pos, Vec3 rot, Vec3 scale)
+    public State(Vec3 pos, Vec4 rot, Vec3 scale)
     {
         this.prevPos = pos;
         this.prevRot = rot;
@@ -38,21 +39,21 @@ public class State
         this.scale = scale;
     }
 
-    public void setPrev(Vec3 prevPos, Vec3 prevRot, Vec3 prevScale)
+    public void setPrev(Vec3 prevPos, Vec4 prevRot, Vec3 prevScale)
     {
         this.prevPos = prevPos;
         this.prevRot = prevRot;
         this.prevScale = prevScale;
     }
     
-    public void set(Vec3 pos, Vec3 rot, Vec3 scale)
+    public void set(Vec3 pos, Vec4 rot, Vec3 scale)
     {
         this.pos = pos;
         this.rot = rot;
         this.scale = scale;
     }
     
-    public void reset(Vec3 pos, Vec3 rot, Vec3 scale)
+    public void reset(Vec3 pos, Vec4 rot, Vec3 scale)
     {
         this.pos = pos;
         this.rot = rot;

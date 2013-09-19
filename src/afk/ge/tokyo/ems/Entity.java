@@ -3,7 +3,6 @@ package afk.ge.tokyo.ems;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +12,7 @@ import java.util.Map;
 public class Entity
 {
     private Collection<EntityListener> listeners = new ArrayList<EntityListener>();
+    protected Collection<Entity> dependents = new ArrayList<Entity>();
     private Map<Class, Object> components = new HashMap<Class, Object>();
     
     public void addEntityListener(EntityListener l)
@@ -40,6 +40,16 @@ public class Entity
         
         for (EntityListener l : listeners)
             l.componentRemoved(this, componentClass);
+    }
+    
+    public void addDependent(Entity entity)
+    {
+        dependents.add(entity);
+    }
+    
+    public void removeDependent(Entity entity)
+    {
+        dependents.remove(entity);
     }
     
     public <T> T get(Class<T> componentClass)

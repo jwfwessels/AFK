@@ -6,21 +6,8 @@ package afk.ge.tokyo;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.components.BBoxComponent;
-import afk.ge.tokyo.ems.components.Bullet;
-import afk.ge.tokyo.ems.components.Controller;
-import afk.ge.tokyo.ems.components.Life;
-import afk.ge.tokyo.ems.components.Lifetime;
-import afk.ge.tokyo.ems.components.Motor;
-import afk.ge.tokyo.ems.components.ParticleEmitter;
-import afk.ge.tokyo.ems.components.Renderable;
-import afk.ge.tokyo.ems.components.SnapToTerrain;
-import afk.ge.tokyo.ems.components.State;
-import afk.ge.tokyo.ems.components.TankController;
-import afk.ge.tokyo.ems.components.Targetable;
-import afk.ge.tokyo.ems.components.Velocity;
-import afk.ge.tokyo.ems.components.Vision;
-import afk.ge.tokyo.ems.components.Weapon;
+import afk.ge.tokyo.ems.Utils;
+import afk.ge.tokyo.ems.components.*;
 import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
@@ -50,7 +37,9 @@ public class EntityManager
     public static final float SMALL_TANK_HP = 80;
     public static final float LARGE_TANK_HP = 100;
     public static final String SMALL_TANK_TYPE = "smallTank";
-    public static final String LARGE_TANK_TYPE = "largeTank";
+    public static final String LARGE_TANK_TYPE = "largeTankBase";
+    public static final String LARGE_TANK_TURRET_TYPE = "largeTankTurret";
+    public static final String LARGE_TANK_BARREL_TYPE = "largeTankBarrel";
     public static final Vec3 SMALL_TANK_EXTENTS = new Vec3(0.4385f, 0.2505f, 0.5f);
     public static final Vec3 LARGE_TANK_EXTENTS = new Vec3(0.311f, 0.1355f, 0.5f);
     public static final float SMALL_TANK_SCALE = 2;
@@ -58,7 +47,7 @@ public class EntityManager
     public static final int TANK_VDIST = 15;
     public static final int TANK_FOVY = 70;
     public static final int TANK_FOVX = 170;
-    public static final Vec3 MAGENTA = new Vec3(1,0,1);
+    public static final Vec3 MAGENTA = new Vec3(1, 0, 1);
     int NUMCUBES = 10;
     public static final int SPAWNVALUE = (int) (Tokyo.BOARD_SIZE * 0.45);
     private Queue<Entity> particles = new ArrayDeque<Entity>();
@@ -105,16 +94,16 @@ public class EntityManager
     public void spawnStuff()
     {
         createFloor();
-        engine.addEntity(createGraphicWall(new Vec3(0, 0, -Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
-        engine.addEntity(createGraphicWall(new Vec3(0, 0, Tokyo.BOARD_SIZE/2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
-        engine.addEntity(createGraphicWall(new Vec3(Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
-        engine.addEntity(createGraphicWall(new Vec3(-Tokyo.BOARD_SIZE/2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
+        engine.addEntity(createGraphicWall(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
+        engine.addEntity(createGraphicWall(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
+        engine.addEntity(createGraphicWall(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
+        engine.addEntity(createGraphicWall(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
     }
 
     public void createFloor()
     {
         Entity floor = new Entity();
-        floor.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO,
+        floor.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO,
                 new Vec3(Tokyo.BOARD_SIZE)));
         floor.add(new Renderable("floor", new Vec3(1.0f, 1.0f, 1.0f)));
         try
@@ -131,7 +120,7 @@ public class EntityManager
     public Entity createGraphicWall(Vec3 pos, Vec3 scale)
     {
         Entity wall = new Entity();
-        wall.add(new State(pos, Vec3.VEC3_ZERO, scale));
+        wall.add(new State(pos, Vec4.VEC4_ZERO, scale));
         wall.add(new BBoxComponent(scale.scale(0.5f)));
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
@@ -151,27 +140,65 @@ public class EntityManager
 
         }
     }
-    
+
     public Entity createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
     {
         Vec3 scale = new Vec3(LARGE_TANK_SCALE);
 
         Entity tank = new Entity();
-        tank.add(new State(spawnPoint, Vec3.VEC3_ZERO, scale));
-        // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale))); // big tank collision box
-        tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale))); // small tank collision box
-        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
-        tank.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
+
+        Controller controller = new Controller(id);
+        tank.add(controller);
+        tank.add(new State(spawnPoint, Vec4.VEC4_ZERO, scale));
+        // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale)));
+        tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale)));
+        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         tank.add(new Motor(2f, 20f));
         tank.add(new Life(SMALL_TANK_HP));
         tank.add(new Renderable(LARGE_TANK_TYPE, colour));
-        tank.add(new Controller(id));
+        tank.add(new RobotToken());
         tank.add(new Targetable());
-        tank.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
-        tank.add(new TankController());
+        tank.add(new TankTracks());
         tank.add(new SnapToTerrain());
+        
+        
+        Entity turret = createLargeTankTurret(colour);
+        turret.add(new Parent(tank));
+        turret.add(controller);
+        tank.addDependent(turret);
+        Entity barrel = createLargeTankBarrel(colour);
+        barrel.add(new Parent(turret));
+        barrel.add(controller);
+        turret.addDependent(barrel);
 
         return tank;
+    }
+
+    public Entity createLargeTankTurret(Vec3 colour)
+    {
+        Entity entity = new Entity();
+
+        entity.add(new State(new Vec3(0.0f, 0.17623f, -0.15976f), Vec4.VEC4_ZERO, new Vec3(1)));
+        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
+        entity.add(new Renderable(LARGE_TANK_TURRET_TYPE, colour));
+        entity.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
+        entity.add(new TankTurret());
+
+        return entity;
+    }
+
+    public Entity createLargeTankBarrel(Vec3 colour)
+    {
+        Entity entity = new Entity();
+
+        entity.add(new State(new Vec3(0.0f, 0.03200f, 0.22199f), Vec4.VEC4_ZERO, new Vec3(1)));
+        entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
+        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
+        entity.add(new Renderable(LARGE_TANK_BARREL_TYPE, colour));
+        entity.add(new AngleConstraint(new Vec4(0,0,0,-45),new Vec4(0,0,0,10)));
+        entity.add(new TankBarrel(0.545f));
+
+        return entity;
     }
 
 //    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
@@ -205,36 +232,27 @@ public class EntityManager
 //        tank.name = "tank" + (entities.size() - 1);
 //        tank.setScaleForOBB(oBBEntity.getScale().scale(SCALE));
 //    }
-    public void createProjectileNEU(Entity parent, Weapon weapon, State current)
+    public void createProjectileNEU(UUID parent, Weapon weapon, State current, Vec3 forward)
     {
         Entity projectile = new Entity();
-        State state = new State(current, new Vec3(0, 0.8f, 0));
-        state.scale = new Vec3(0.3f, 0.3f, 0.3f);
+        State state = new State(current.pos, current.rot, new Vec3(0.3f, 0.3f, -0.3f));
         projectile.add(state);
-        
-        // rotate a normal vector along the Z-axis using the entity's rotation
-        // to get a normal in the entity's viewing direction
-        Mat4 rotationMatrix = new Mat4(1.0f);
-        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getX(), X_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getZ(), Z_AXIS);
-        rotationMatrix = Matrices.rotate(rotationMatrix, current.rot.getY(), Y_AXIS);
-        Vec4 A4 = rotationMatrix.multiply(new Vec4(0, 0, 1, 0));
-        
-        projectile.add(new Velocity(A4.getXYZ().multiply(weapon.speed), Vec3.VEC3_ZERO));
+
+        projectile.add(new Velocity(forward.multiply(weapon.speed), Vec4.VEC4_ZERO));
         projectile.add(new Renderable("projectile", new Vec3(0.5f, 0.5f, 0.5f)));
         projectile.add(new Bullet(weapon.range, weapon.damage, parent));
 
         engine.addEntity(projectile);
     }
 
-    public Entity makeExplosion(Vec3 where, Entity parent, int type)
+    public Entity makeExplosion(Vec3 where, UUID parent, int type)
     {
         Entity entity = new Entity();
 
-        entity.add(new State(where, Vec3.VEC3_ZERO, new Vec3(1, 1, 1)));
+        entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1, 1, 1)));
 
         ParticleEmitter emitter = new ParticleEmitter(emitters[type]);
-        emitter.colour = parent == null ? MAGENTA : parent.get(Renderable.class).colour;
+        emitter.colour = MAGENTA; // TODO: get colour from config
         entity.add(emitter);
 
         return entity;
@@ -249,9 +267,9 @@ public class EntityManager
         if (pie == null)
         {
             pie = new Entity();
-            pie.add(new State(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, Vec3.VEC3_ZERO));
             pie.add(new Lifetime(0));
-            pie.add(new Velocity(Vec3.VEC3_ZERO, Vec3.VEC3_ZERO));
+            pie.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
             pie.add(new Renderable("particle", Vec3.VEC3_ZERO));
         }
 
@@ -261,14 +279,14 @@ public class EntityManager
         Renderable renderable = pie.get(Renderable.class);
 
         Vec3 pos = emitterState.pos;
-        Vec3 rot = emitterState.rot;
+        Vec4 rot = emitterState.rot;
         Vec3 scale = emitterState.scale;
 
         state.reset(new Vec3(
                 jitter(pos.getX(), scale.getX()),
                 jitter(pos.getY(), scale.getY()),
                 jitter(pos.getZ(), scale.getZ())),
-                Vec3.VEC3_ZERO,
+                Vec4.VEC4_ZERO,
                 new Vec3(jitter(emitter.scale, emitter.scaleJitter)));
 
         Vec3 dir;

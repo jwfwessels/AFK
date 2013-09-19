@@ -8,6 +8,7 @@ import java.util.List;
 import static afk.ge.tokyo.HeightmapLoader.*;
 import afk.ge.tokyo.ems.nodes.SnapToTerrainNode;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -46,7 +47,7 @@ public class SnapToTerrainSystem implements ISystem
             float xRot = (float)FastMath.toDegrees(Math.asin(tankNZ.getZ()));
             float zRot = -(float)FastMath.toDegrees(Math.asin(tankNX.getX()));
             
-            node.state.rot = new Vec3(xRot, node.state.rot.getY(), zRot);
+            node.state.rot = new Vec4(xRot, node.state.rot.getY(), zRot, 0);
         }
     }
 
