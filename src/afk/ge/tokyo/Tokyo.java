@@ -180,26 +180,4 @@ public class Tokyo implements GameEngine, Runnable
             }
         }
     }
-
-    /**
-     * used to test how many times per second a function is being called,
-     * roughly
-     *
-     */
-    private void test()
-    {
-        long nTime = System.nanoTime();
-        long nanos = nTime - lastUpdate;
-        lastUpdate = nTime;
-        float delta = nanos / (float) NANOS_PER_SECOND;
-        //time += delta;
-        lastFPS += delta;
-
-        if (lastFPS >= 1.0f)
-        {
-            fps = (1.0f / delta);
-            System.out.println(String.format(delta + "   DELTA timing: %.0f", fps));
-            lastFPS = 0;
-        }
-    }
 }
