@@ -25,6 +25,7 @@ import afk.ge.tokyo.ems.systems.TankBarrelSystem;
 import afk.ge.tokyo.ems.systems.TankTracksSystem;
 import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankTurretSystem;
+import afk.ge.tokyo.ems.systems.TextLabelSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
 import java.util.UUID;
@@ -89,6 +90,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new LifetimeSystem(entityManager));
         engine.addLogicSystem(new VisionSystem());
         
+        engine.addSystem(new TextLabelSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
@@ -106,7 +108,8 @@ public class Tokyo implements GameEngine, Runnable
             Entity tank = entityManager.createTankEntityNEU(
                     participants[i],
                     EntityManager.SPAWN_POINTS[i],
-                    EntityManager.BOT_COLOURS[i]);
+                    EntityManager.BOT_COLOURS[i],
+                    EntityManager.BOT_NAMES[i]);
             engine.addEntity(tank);
         }
 

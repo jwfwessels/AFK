@@ -12,6 +12,7 @@ import afk.gfx.GfxHUD;
 import afk.gfx.GraphicsEngine;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -71,6 +72,13 @@ public class RenderSystem implements ISystem
         List<HUDNode> hnodes = engine.getNodeList(HUDNode.class);
         for (HUDNode hnode : hnodes)
         {
+            BufferedImage img = hnode.image.getImage();
+
+            if (img == null)
+            {
+                continue;
+            }
+
             GfxHUD hud = gfxEngine.getGfxHUD(hnode.image);
 
             Renderable r = hnode.entity.get(Renderable.class);
@@ -81,30 +89,30 @@ public class RenderSystem implements ISystem
             } else
             {
                 GfxEntity gfx = gfxEngine.getGfxEntity(r);
-                
+
                 AbstractCamera camera = gfxEngine.getCamera();
                 Vec4 p = camera.projection.multiply(
                         camera.view.multiply(
                         gfx.getWorldMatrix().multiply(
                         Vec3.VEC3_ZERO.toPoint())));
-                
-                float depth = p.getZ()/p.getW();
+
+                float depth = p.getZ() / p.getW();
                 if (depth < -1 || depth > 1)
                 {
                     // FIXME: need some interface for aborting rendering of objects
-                    hud.setPosition(-9999,-9999);
+                    hud.setPosition(-9999, -9999);
                     continue;
                 }
-                
-                int x = (int) ((p.getX()/p.getW()+1.0f)*0.5f*gfxEngine.getWidth());
-                int y = (int) ((1.0f-(p.getY()/p.getW()+1.0f)*0.5f)*gfxEngine.getHeight());
-                
-                hud.setPosition(x,y);
+
+                int x = (int) ((p.getX() / p.getW() + 1.0f) * 0.5f * gfxEngine.getWidth());
+                int y = (int) ((1.0f - (p.getY() / p.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight());
+
+                hud.setPosition(x, y);
             }
 
             if (hnode.image.isUpdated())
             {
-                hud.setImage(hnode.image.getImage());
+                hud.setImage(img);
                 hnode.image.setUpdated(false);
             }
         }
