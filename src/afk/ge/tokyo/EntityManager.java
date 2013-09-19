@@ -108,7 +108,7 @@ public class EntityManager
         floor.add(new Renderable("floor", new Vec3(1.0f, 1.0f, 1.0f)));
         try
         {
-            floor.add(new HeightmapLoader().load("hm1", Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE));
+            floor.add(new HeightmapLoader().load("hm2", Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE));
         } catch (IOException ex)
         {
             System.err.println("Error loading up heightmap: " + ex.getMessage());
