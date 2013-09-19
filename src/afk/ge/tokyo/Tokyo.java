@@ -132,8 +132,8 @@ public class Tokyo implements GameEngine, Runnable
     {
         double currentTime = System.nanoTime();
         lastUpdate = System.nanoTime();//
-        double counter = 0.0f;//
-        double accumulator = 0.0f;
+        double accumulator = 0.0f;//
+        double logicAccumulator = 0.0f;
         int i = 0;
         while (running)
         {
@@ -141,7 +141,6 @@ public class Tokyo implements GameEngine, Runnable
             {
                 gfxEngine.redisplay();
             }
-//            System.out.println(speedMultiplier+"    "+ LOGIC_DELTA + "   " + DELTA);
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
 //                    System.out.println("frameTime: "+ frameTime);
@@ -151,44 +150,33 @@ public class Tokyo implements GameEngine, Runnable
             }
             currentTime = newTime;
 
+            logicAccumulator += frameTime;
             accumulator += frameTime;
 
-            if (speedMultiplier < 1)
+            //any function called in this block should run at the fixed DELTA rate
+            while (accumulator >= DELTA)
             {
-                while (accumulator >= DELTA)
-                {
-                    engine.update(t, DELTA);
-                    t += DELTA;
-                    accumulator -= DELTA;
-                    counter += DELTA;
-                    while (counter >= LOGIC_DELTA)
-                    {
-                        //any function called in this block should run at the fixed DELTA rate
-                        test();
-                        counter -= LOGIC_DELTA;
-                    }
-                }
-            } else
-            {
-                while (accumulator >= LOGIC_DELTA)
-                {
-                    engine.update(t, DELTA);
-                    t += LOGIC_DELTA;
-                    accumulator -= LOGIC_DELTA;
-                    counter += LOGIC_DELTA;
-                    while (counter >= DELTA)
-                    {
-                        //any function called in this block should run at the fixed DELTA rate
-                        test();
-                        counter -= DELTA;
-                    }
-                }
+                test();
+                accumulator -= DELTA;
             }
-            double alpha = accumulator / LOGIC_DELTA;
+
+            //any function called in this block run at the current speedMultiplier speed
+            while (logicAccumulator >= LOGIC_DELTA)
+            {
+                engine.update(t, DELTA);
+                t += DELTA;
+                logicAccumulator -= LOGIC_DELTA;
+            }
+
+            double alpha = logicAccumulator / LOGIC_DELTA;
             gfxEngine.redisplay();
         }
     }
 
+    /**
+     * used to test how many times per second a function is being called, roughly
+     *
+     */
     private void test()
     {
         long nTime = System.nanoTime();
