@@ -67,17 +67,19 @@ public class Tokyo implements GameEngine, Runnable
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
-        engine.addSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
-        engine.addSystem(new TankControllerSystem(entityManager));
-        engine.addSystem(new MovementSystem());
+        engine.addLogicSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
+        engine.addLogicSystem(new TankControllerSystem(entityManager));
+        engine.addLogicSystem(new MovementSystem());
+        engine.addLogicSystem(new ProjectileSystem(entityManager));
+        engine.addLogicSystem(new LifeSystem());
+        engine.addLogicSystem(new CollisionSystem());
+        engine.addLogicSystem(new ParticleSystem(entityManager));
+        engine.addLogicSystem(new LifetimeSystem(entityManager));
+        engine.addLogicSystem(new VisionSystem());
+
         engine.addSystem(new SnapToTerrainSystem());
-        engine.addSystem(new ProjectileSystem(entityManager));
-        engine.addSystem(new LifeSystem());
-        engine.addSystem(new CollisionSystem());
-        engine.addSystem(new ParticleSystem(entityManager));
-        engine.addSystem(new LifetimeSystem(entityManager));
-        engine.addSystem(new VisionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
+
         // TODO: if (DEBUG)  ...
         engine.addSystem(new DebugSystem(botEngine, entityManager));
         ///
@@ -137,10 +139,6 @@ public class Tokyo implements GameEngine, Runnable
         int i = 0;
         while (running)
         {
-            while (paused)
-            {
-                gfxEngine.redisplay();
-            }
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
 //                    System.out.println("frameTime: "+ frameTime);
@@ -156,25 +154,28 @@ public class Tokyo implements GameEngine, Runnable
             //any function called in this block should run at the fixed DELTA rate
             while (accumulator >= DELTA)
             {
-                test();
+                engine.update(t, DELTA);
                 accumulator -= DELTA;
             }
 
             //any function called in this block run at the current speedMultiplier speed
             while (logicAccumulator >= LOGIC_DELTA)
             {
-                engine.update(t, DELTA);
+                if (!paused)
+                {
+                    engine.updateLogic(t, DELTA);
+                }
                 t += DELTA;
                 logicAccumulator -= LOGIC_DELTA;
             }
 
             double alpha = logicAccumulator / LOGIC_DELTA;
-            gfxEngine.redisplay();
         }
     }
 
     /**
-     * used to test how many times per second a function is being called, roughly
+     * used to test how many times per second a function is being called,
+     * roughly
      *
      */
     private void test()
