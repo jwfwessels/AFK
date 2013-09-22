@@ -100,36 +100,33 @@ public class GamePanel extends JPanel
         fps.setBounds(0, 0, 50, 25);
         hudLayer.setBackground(Color.BLUE);
         lblSpeed.setBackground(Color.LIGHT_GRAY);
-
+        btnPlayPause.setSelected(true);
+        btnPlayPause.setText("Pause");
 
         ActionListener playPauseAction = new ActionListener()
-
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String state;
                 if (btnPlayPause.isSelected())
                 {
                     btnPlayPause.setText("Play");
-                    gm.gameStateChange(new String[]
-                    {
-                        "PLAY_PAUSE",
-                        "Puase"
-                    });
+                    state = "Puased";
+
                 } else
                 {
                     btnPlayPause.setText("Pause");
-                    gm.gameStateChange(new String[]
-                    {
-                        "PLAY_PAUSE",
-                        "Play"
-                    });
-
+                    state = "Playing";
                 }
-
+                gm.gameStateChange(new String[]
+                {
+                    "PLAY_PAUSE",
+                    state
+                });
             }
         };
-        
+
         btnPlayPause.addActionListener(playPauseAction);
         btnPlayPause.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "playPause");
         btnPlayPause.getActionMap().put("playPause", new AbstractAction()
@@ -137,21 +134,27 @@ public class GamePanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                String state;
                 if (btnPlayPause.isSelected())
                 {
                     btnPlayPause.setText("Play");
+                    state = "Puased";
                 } else
                 {
                     btnPlayPause.setText("Pause");
+                    state = "Playing";
                 }
                 btnPlayPause.setSelected(!btnPlayPause.isSelected());
-                gm.playPause();
+                gm.gameStateChange(new String[]
+                {
+                    "PLAY_PAUSE",
+                    state
+                });
             }
         });
 
 
         AbstractAction increaseSpeed = new AbstractAction()
-
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -167,7 +170,6 @@ public class GamePanel extends JPanel
 
 
         AbstractAction decreaseSpeed = new AbstractAction()
-
         {
             @Override
             public void actionPerformed(ActionEvent e)
