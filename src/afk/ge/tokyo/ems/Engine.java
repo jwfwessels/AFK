@@ -18,6 +18,7 @@ public class Engine implements EntityListener, FlagManager
     private Collection<Entity> entities = new ArrayList<Entity>();
     private Collection<Entity> toAdd = new ArrayList<Entity>();
     private Collection<Entity> toRemove = new ArrayList<Entity>();
+    private Collection<ISystem> systemsToRemove = new ArrayList<ISystem>();
     private Map<Class, Collection<Object>> nodeLists = new HashMap<Class, Collection<Object>>();
     private Map<Class, Family> families = new HashMap<Class, Family>();
     private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
@@ -150,17 +151,29 @@ public class Engine implements EntityListener, FlagManager
             addEntity(e);
         }
         toAdd.clear();
+        for (ISystem s : systemsToRemove)
+        {
+            removeSystem(s);
+        }
+        systemsToRemove.clear();
     }
 
     public void removeSystem(ISystem system)
     {
-        if (logicSystems.remove(system))
+        if (updating)
         {
-            system.destroy();
+            systemsToRemove.add(system);
         }
-        else if (systems.remove(system))
+        else
         {
-            system.destroy();
+            if (logicSystems.remove(system))
+            {
+                system.destroy();
+            }
+            else if (systems.remove(system))
+            {
+                system.destroy();
+            }
         }
     }
 

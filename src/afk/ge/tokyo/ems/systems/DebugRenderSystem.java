@@ -55,5 +55,7 @@ public class DebugRenderSystem implements ISystem
     @Override
     public void destroy()
     {
+        gfxEngine.primeDebug();
+        gfxEngine.postDebug();
     }
 }

@@ -93,8 +93,9 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
-        engine.addSystem(new DebugRenderSystem(gfxEngine));
-        engine.addSystem(new DebugSystem(botEngine, entityManager));
+        DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
+        //engine.addSystem(wireFramer);
+        engine.addSystem(new DebugSystem(botEngine, entityManager, wireFramer));
         ///
     }
 
