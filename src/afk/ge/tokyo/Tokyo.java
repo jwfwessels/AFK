@@ -44,6 +44,7 @@ public class Tokyo implements GameEngine, Runnable
     private GraphicsEngine gfxEngine;
     private boolean running = true;
     private boolean paused = false;
+    private boolean gameOver = false;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 30;
     private float t = 0.0f;
@@ -91,9 +92,9 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new ParticleSystem(entityManager));
         engine.addLogicSystem(new LifetimeSystem(entityManager));
         engine.addLogicSystem(new VisionSystem());
+        engine.addLogicSystem(new GameStateSystem(gm));
         
         engine.addSystem(new RenderSystem(gfxEngine));
-        engine.addSystem(new GameStateSystem(gm));
 
         // TODO: if (DEBUG)  ...
         engine.addSystem(new DebugSystem(botEngine, entityManager));
@@ -123,11 +124,11 @@ public class Tokyo implements GameEngine, Runnable
         switch (i)
         {
             case 0:
-                paused = true;
+                gameOver = true;
                 System.out.println("DRAW");
                 break;
             case 1:
-                paused = true;
+                gameOver = true;
                 System.out.println("WINNER " + msg);
                 break;
             case 2:
@@ -195,7 +196,7 @@ public class Tokyo implements GameEngine, Runnable
             //any function called in this block run at the current speedMultiplier speed
             while (logicAccumulator >= LOGIC_DELTA)
             {
-                if (!paused)
+                if (!paused && !gameOver)
                 {
                     engine.updateLogic(t, DELTA);
                 }
