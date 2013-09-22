@@ -16,7 +16,6 @@ import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *
@@ -73,7 +72,7 @@ public class ProjectileSystem implements ISystem
                     continue;
                 }
 
-                BBox bbox = new BBox(node.state, node.bbox.extent);
+                BBox bbox = new BBox(node.state, node.bbox);
                 if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
                 {
                     Life life = node.entity.get(Life.class);

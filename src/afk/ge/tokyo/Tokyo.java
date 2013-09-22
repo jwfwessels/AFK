@@ -13,6 +13,7 @@ import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
+import afk.ge.tokyo.ems.systems.DebugRenderSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
 import afk.ge.tokyo.ems.systems.DebugSystem;
 import afk.ge.tokyo.ems.systems.GameStateSystem;
@@ -97,7 +98,8 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
-        engine.addSystem(new DebugSystem(botEngine, entityManager));
+        DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
+        engine.addSystem(new DebugSystem(botEngine, entityManager, wireFramer));
         ///
     }
 

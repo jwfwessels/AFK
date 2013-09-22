@@ -1,5 +1,6 @@
 package afk.gfx.athens;
 
+import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.Camera;
 import afk.gfx.GfxEntity;
@@ -23,6 +24,7 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JLabel;
 import static afk.gfx.GfxUtils.*;
+import afk.gfx.Resource;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +36,14 @@ import java.util.Map;
  */
 public class Athens implements GraphicsEngine
 {
+
     protected Collection<GfxListener> listeners = new ArrayList<GfxListener>();
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
+    protected Map<BBoxComponent, DebugBox> entitiesDebug = new LinkedHashMap<BBoxComponent, DebugBox>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
+    protected List<BBoxComponent> removedDebug = new ArrayList<BBoxComponent>();
     private int w_width, w_height;
     private float aspect;
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
@@ -69,7 +74,7 @@ public class Athens implements GraphicsEngine
     {
         resourceManager = new ResourceManager();
         typeFactory = new TypeFactory(resourceManager);
-        
+
         glProfile = GLProfile.getDefault();
 
         glCaps = new GLCapabilities(glProfile);
@@ -187,13 +192,13 @@ public class Athens implements GraphicsEngine
     {
         glCanvas.display();
     }
-    
+
     @Override
     public void addGfxEventListener(GfxListener listener)
     {
         listeners.add(listener);
     }
-    
+
     @Override
     public void removeGfxEventListener(GfxListener listener)
     {
@@ -220,7 +225,7 @@ public class Athens implements GraphicsEngine
             fpsComp.setText(String.format("FPS: %.0f", fps));
             lastFPS = 0;
         }
-        
+
         resourceManager.update(gl);
         update(delta);
 
@@ -270,13 +275,22 @@ public class Athens implements GraphicsEngine
         }
 
         updateView();
-        
-        for (Renderable r : removed)
-            entities.remove(r);
+
+        for (Renderable o : removed)
+        {
+            entities.remove(o);
+        }
         removed.clear();
+        for (BBoxComponent o : removedDebug)
+        {
+            entitiesDebug.remove(o);
+        }
+        removedDebug.clear();
 
         for (AthensEntity entity : entities.values())
+        {
             entity.update(delta);
+        }
     }
 
     private void render(GL2 gl)
@@ -294,6 +308,10 @@ public class Athens implements GraphicsEngine
         {
             entity.draw(gl, camera, sun);
         }
+        for (DebugBox entity : entitiesDebug.values())
+        {
+            entity.draw(gl, camera, sun);
+        }
     }
 
     private void init(GL2 gl)
@@ -306,7 +324,7 @@ public class Athens implements GraphicsEngine
 
         // set background colour to white
         // TODO: allow this to be set through an interface
-        gl.glClearColor(87.0f/256.0f, 220.0f/256.0f, 225.0f/256.0f, 0.0f);
+        gl.glClearColor(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f, 0.0f);
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
@@ -467,8 +485,47 @@ public class Athens implements GraphicsEngine
     {
         for (Map.Entry<Renderable, AthensEntity> e : entities.entrySet())
         {
-            if (!e.getValue().used) removed.add(e.getKey());
+            if (!e.getValue().used)
+            {
+                removed.add(e.getKey());
+            }
         }
     }
     
+
+    @Override
+    public void primeDebug()
+    {
+        for (DebugBox entity : entitiesDebug.values())
+        {
+            entity.used = false;
+        }
+    }
+    
+    @Override
+    public GfxEntity getDebugEntity(BBoxComponent bbox)
+    {
+        DebugBox entity = entitiesDebug.get(bbox);
+        if (entity == null)
+        {
+            entity = new DebugBox();
+            entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
+            entitiesDebug.put(bbox, entity);
+        }
+        entity.setV(bbox.extent);
+        entity.used = true;
+        return entity;
+    }
+
+    @Override
+    public void postDebug()
+    {
+        for (Map.Entry<BBoxComponent, DebugBox> e : entitiesDebug.entrySet())
+        {
+            if (!e.getValue().used)
+            {
+                removedDebug.add(e.getKey());
+            }
+        }
+    }
 }
