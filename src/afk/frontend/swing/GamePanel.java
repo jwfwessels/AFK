@@ -101,7 +101,9 @@ public class GamePanel extends JPanel
         hudLayer.setBackground(Color.BLUE);
         lblSpeed.setBackground(Color.LIGHT_GRAY);
 
+
         ActionListener playPauseAction = new ActionListener()
+
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -109,11 +111,22 @@ public class GamePanel extends JPanel
                 if (btnPlayPause.isSelected())
                 {
                     btnPlayPause.setText("Play");
+                    gm.gameStateChange(new String[]
+                    {
+                        "PLAY_PAUSE",
+                        "Puase"
+                    });
                 } else
                 {
                     btnPlayPause.setText("Pause");
+                    gm.gameStateChange(new String[]
+                    {
+                        "PLAY_PAUSE",
+                        "Play"
+                    });
+
                 }
-                gm.playPause();
+
             }
         };
         
@@ -136,7 +149,9 @@ public class GamePanel extends JPanel
             }
         });
 
+
         AbstractAction increaseSpeed = new AbstractAction()
+
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -150,7 +165,9 @@ public class GamePanel extends JPanel
         btnFaster.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "increaseSpeed");
         btnFaster.getActionMap().put("increaseSpeed", increaseSpeed);
 
+
         AbstractAction decreaseSpeed = new AbstractAction()
+
         {
             @Override
             public void actionPerformed(ActionEvent e)

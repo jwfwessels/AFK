@@ -5,6 +5,8 @@
 package afk.ge.tokyo;
 
 import afk.bot.RobotEngine;
+import afk.game.GameCoordinator;
+import afk.game.GameListener;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.tokyo.ems.Engine;
@@ -13,6 +15,7 @@ import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
 import afk.ge.tokyo.ems.systems.DebugSystem;
+import afk.ge.tokyo.ems.systems.GameStateSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
@@ -41,6 +44,7 @@ public class Tokyo implements GameEngine, Runnable
     private GraphicsEngine gfxEngine;
     private boolean running = true;
     private boolean paused = false;
+    private boolean gameOver = false;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 30;
     private float t = 0.0f;
@@ -60,7 +64,7 @@ public class Tokyo implements GameEngine, Runnable
     private float fps = 0.0f;
 //
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameCoordinator gm)
     {
         engine = new Engine();
 
@@ -88,6 +92,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new ParticleSystem(entityManager));
         engine.addLogicSystem(new LifetimeSystem(entityManager));
         engine.addLogicSystem(new VisionSystem());
+        engine.addLogicSystem(new GameStateSystem(gm));
         
         engine.addSystem(new RenderSystem(gfxEngine));
 
@@ -114,12 +119,32 @@ public class Tokyo implements GameEngine, Runnable
     }
 
     @Override
-    public void playPause()
+    public void setState(int i, String msg)
     {
-        System.out.println("playPause() - " + paused);
-        paused = !paused;
-        System.out.println("paused: " + paused);
+        switch (i)
+        {
+            case 0:
+                gameOver = true;
+                System.out.println("DRAW");
+                break;
+            case 1:
+                gameOver = true;
+                System.out.println("WINNER " + msg);
+                break;
+            case 2:
+                paused = !paused;
+                System.out.println("state: " + msg);
+                break;
+        }
     }
+
+//    @Override
+//    public void playPause()
+//    {
+//        System.out.println("playPause() - " + paused);
+//        paused = !paused;
+//        System.out.println("paused: " + paused);
+//    }
 
     @Override
     public float getSpeed()
@@ -171,7 +196,7 @@ public class Tokyo implements GameEngine, Runnable
             //any function called in this block run at the current speedMultiplier speed
             while (logicAccumulator >= LOGIC_DELTA)
             {
-                if (!paused)
+                if (!paused && !gameOver)
                 {
                     engine.updateLogic(t, DELTA);
                 }
