@@ -130,6 +130,7 @@ public class Engine implements EntityListener, FlagManager
     {
         if (systems.remove(system))
         {
+            systems.remove(system);
             system.destroy();
         }
     }

@@ -22,9 +22,12 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.PopupMenu;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -36,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -63,6 +67,7 @@ public class DebugSystem implements ISystem
     public static final DefaultMutableTreeNode NOTHING_SELECTED_NODE = new DefaultMutableTreeNode("----- Nothing selected -----");
     private Engine engine;
     private JFrame frame;
+    private DebugRenderSystem wireFramer;
     private RenderCanvas canvas;
     private Rectangle2D quad = new Rectangle2D.Float(-0.5f, -0.5f, 1, 1);
     private AtomicReference<Point> mouse = new AtomicReference<Point>(null);
@@ -71,6 +76,8 @@ public class DebugSystem implements ISystem
     private JTree tree = null;
     private JMenuBar menubar;
     private JMenu addMenu;
+    private JMenu utilities;
+    private JCheckBoxMenuItem cbMenuItem;
     private JMenuItem addRobot, addWall, addExplosion, moveItem, removeItem;
     private JFileChooser fileChooser;
     private List<DefaultMutableTreeNode> leaves;
@@ -159,10 +166,11 @@ public class DebugSystem implements ISystem
         placeEntity = null;
     }
 
-    public DebugSystem(RobotEngine botEngine, EntityManager manager)
+    public DebugSystem(RobotEngine botEngine, EntityManager manager, DebugRenderSystem wireFramer)
     {
         this.botEngine = botEngine;
         this.manager = manager;
+        this.wireFramer = wireFramer;
     }
 
     private void drawRenderable(Graphics2D g, RenderNode node)
@@ -250,7 +258,7 @@ public class DebugSystem implements ISystem
                 entity.add(new Targetable());
                 Vec3 scale = new Vec3(0.3f);
                 entity.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, scale));
-                entity.add(new BBoxComponent(scale.scale(0.5f), new Vec3(0,scale.getY()*0.5f,0)));
+                entity.add(new BBoxComponent(scale.scale(0.5f), new Vec3(0, scale.getY() * 0.5f, 0)));
                 startPlaceItem(entity);
             }
         });
@@ -278,6 +286,20 @@ public class DebugSystem implements ISystem
         addMenu.add(addExplosion);
 
         menubar.add(addMenu);
+        utilities = new JMenu("Utils", true);
+        //a group of check box menu items
+        utilities.addSeparator();
+        cbMenuItem = new JCheckBoxMenuItem("Wireframe Mode");
+        cbMenuItem.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                    toggleWireFrame(cbMenuItem.getState());
+            }
+        });
+        utilities.add(cbMenuItem);
+        menubar.add(utilities);
 
         moveItem = new JMenuItem("Move");
         moveItem.addActionListener(new ActionListener()
@@ -292,6 +314,7 @@ public class DebugSystem implements ISystem
             }
         });
         menubar.add(moveItem);
+
 
         removeItem = new JMenuItem("Remove");
         removeItem.addActionListener(new ActionListener()
@@ -358,8 +381,8 @@ public class DebugSystem implements ISystem
                 hover.set(e.getPoint());
             }
         });
-        canvas.addMouseWheelListener(new MouseAdapter() {
-
+        canvas.addMouseWheelListener(new MouseAdapter()
+        {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e)
             {
@@ -410,7 +433,7 @@ public class DebugSystem implements ISystem
                 if (myWheel != 0)
                 {
                     state.prevRot = state.rot;
-                    state.rot = state.rot.add(new Vec4(0,myWheel,0,0));
+                    state.rot = state.rot.add(new Vec4(0, myWheel, 0, 0));
                 }
                 if (!placeEntity.has(Renderable.class))
                 {
@@ -501,6 +524,17 @@ public class DebugSystem implements ISystem
             {
                 return "ERROR";
             }
+        }
+    }
+
+    private void toggleWireFrame(boolean state)
+    {
+        if (state)
+        {
+            engine.addSystem(wireFramer);
+        } else
+        {
+            engine.removeSystem(wireFramer);
         }
     }
 
