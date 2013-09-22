@@ -64,6 +64,7 @@ public class RenderSystem implements ISystem
         }
 
         gfxEngine.post();
+        gfxEngine.redisplay();
     }
 
     @Override

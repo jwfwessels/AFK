@@ -2,6 +2,8 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
 import afk.ge.tokyo.EntityManager;
+import static afk.ge.tokyo.HeightmapLoader.getHeight;
+import static afk.ge.tokyo.HeightmapLoader.getNormal;
 import afk.ge.tokyo.Tokyo;
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.Entity;
@@ -12,7 +14,9 @@ import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.SnapToTerrain;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Targetable;
+import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
+import afk.ge.tokyo.ems.nodes.SnapToTerrainNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
@@ -86,8 +90,9 @@ public class DebugSystem implements ISystem
         float mx = (((float) myMouse.x / (float) canvas.getWidth()) - 0.5f) * Tokyo.BOARD_SIZE;
         float my = (((float) myMouse.y / (float) canvas.getHeight()) - 0.5f) * Tokyo.BOARD_SIZE;
 
-        // TODO: read heightmap and use that as Y value
-        return new Vec3(mx, 0, my);
+        HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
+        
+        return new Vec3(mx, getHeight(mx, my, hnode.heightmap), my);
     }
 
     private Entity mouseThing(Point myMouse, List<RenderNode> nodes)

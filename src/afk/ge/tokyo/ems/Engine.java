@@ -13,6 +13,7 @@ import java.util.Map;
 public class Engine implements EntityListener, FlagManager
 {
 
+    private Collection<ISystem> logicSystems = new ArrayList<ISystem>();
     private Collection<ISystem> systems = new ArrayList<ISystem>();
     private Collection<Entity> entities = new ArrayList<Entity>();
     private Collection<Entity> toAdd = new ArrayList<Entity>();
@@ -97,12 +98,32 @@ public class Engine implements EntityListener, FlagManager
         return family.getNodeList();
     }
 
+    public void addLogicSystem(ISystem system)
+    {
+        if (system.init(this))
+        {
+            logicSystems.add(system);
+        }
+    }
+
     public void addSystem(ISystem system)
     {
         if (system.init(this))
         {
             systems.add(system);
         }
+    }
+
+    public void updateLogic(float t, float dt)
+    {
+        updating = true;
+        for (ISystem s : logicSystems)
+        {
+            s.update(t, dt);
+        }
+        updating = false;
+
+        postUpdate();
     }
 
     public void update(float t, float dt)
@@ -114,6 +135,11 @@ public class Engine implements EntityListener, FlagManager
         }
         updating = false;
 
+        postUpdate();
+    }
+
+    private void postUpdate()
+    {
         for (Entity e : toRemove)
         {
             removeEntity(e);
@@ -128,7 +154,11 @@ public class Engine implements EntityListener, FlagManager
 
     public void removeSystem(ISystem system)
     {
-        if (systems.remove(system))
+        if (logicSystems.remove(system))
+        {
+            system.destroy();
+        }
+        else if (systems.remove(system))
         {
             system.destroy();
         }
@@ -139,11 +169,16 @@ public class Engine implements EntityListener, FlagManager
         while (updating)
         { /* spin */ }
 
+        for (ISystem s : logicSystems)
+        {
+            s.destroy();
+        }
         for (ISystem s : systems)
         {
             s.destroy();
         }
 
+        logicSystems.clear();
         systems.clear();
     }
 
