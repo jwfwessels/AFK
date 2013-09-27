@@ -2,6 +2,7 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.nodes.MovementNode;
@@ -34,6 +35,13 @@ public class MovementSystem implements ISystem
         {
             node.state.setPrev(node.state.pos, node.state.rot, node.state.scale);
             integrate(node.state, node.velocity, t, dt);
+            
+            Controller controller = node.entity.get(Controller.class);
+            if (controller != null)
+            {
+            	controller.events.pos = new Vec3(node.state.pos);
+            	controller.events.rot = new Vec4(node.state.rot);
+            }
         }
     }
 

@@ -81,6 +81,11 @@ public class ProjectileSystem implements ISystem
                         life.hp -= bullet.bullet.damage;
                     }
 
+                    if (controller != null)
+                    {
+                        controller.events.gotHit.add(bullet.bullet.parent);
+                    }
+                    
                     bang(bullet);
                     continue bulletLoop;
                 }

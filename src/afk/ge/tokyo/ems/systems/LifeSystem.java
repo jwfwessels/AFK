@@ -2,6 +2,7 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.tokyo.ems.Engine;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.LifeNode;
 import java.util.List;
@@ -41,6 +42,11 @@ public class LifeSystem implements ISystem
                 engine.removeEntity(node.entity);
             }
             
+            Controller controller = node.entity.get(Controller.class);
+            if (controller != null)
+            {
+                controller.events.hp = node.life.hp;
+            }
         }
     }
 

@@ -98,6 +98,31 @@ public class Engine implements EntityListener, FlagManager
         }
         return family.getNodeList();
     }
+    
+    public List<Entity> getEntity(Class clazz, String field, Object testValue) {
+    	List<Entity> result = new ArrayList<Entity>();
+    	for (Entity entity: entities) {
+			for (Object component: entity.getAll()) {
+				if (component.getClass().equals(clazz)) {
+					try {
+						Object theFieldValue = component.getClass().getField(field).get(component);
+						if (theFieldValue != null && testValue == null) {
+							result.add(entity);
+						}
+						else if (theFieldValue != null && theFieldValue.equals(testValue)) {
+							result.add(entity);
+						}
+					} catch (IllegalArgumentException e) {
+					} catch (IllegalAccessException e) {
+					} catch (NoSuchFieldException e) {
+					} catch (SecurityException e) {
+					}
+				}
+			}
+		}
+    	
+    	return result;
+    }
 
     public void addLogicSystem(ISystem system)
     {

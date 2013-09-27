@@ -120,15 +120,20 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader
             System.out.println(tempByteArray.toString());
             Class loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
             classMap.put(loadedClass.getName(), loadedClass);
-            if (loadedClass.getSuperclass() != null && loadedClass.getSuperclass().getSuperclass() != null)
+            Class parent = loadedClass.getSuperclass();
+            boolean notAtTop = (parent != null);
+            while (notAtTop) 
             {
-                if (loadedClass.getSuperclass().getSuperclass().getName().equals(ROBOT_CLASS))
+                if (parent.getName().equals(ROBOT_CLASS)) 
                 {
                     System.out.println("It is a bot");
                     robotExists = true;
                     robotMap.put(name, loadedClass);
                     System.out.println("loaded class: " + loadedClass.getName());
                 }
+                
+                parent = parent.getSuperclass();
+                notAtTop = (parent != null);
             }
         }
     }

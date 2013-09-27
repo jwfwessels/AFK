@@ -2,6 +2,10 @@ package afk.bot.london;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 
 /**
  *
@@ -9,30 +13,59 @@ import java.util.List;
  */
 public class RobotEvent
 {
-    
-    /** List of visible bots as angles from where tank is facing. Empty if there are none. */
-    public List<float[]> visibleBots;
-    
-    public float turret;
-    public float barrel;
-    
-    /** True if bot was hit by another. */
-    public boolean gotHit; // TODO: change to reflect where hit came from
-    
-    /** True if bot successfully hit another. */
-    public boolean didHit;
-    
-    /** true if bot drove into a wall. */
+	/**
+	 * @see CollisionSystem
+	 */
     public boolean hitWall;
 
+	/**
+	 * @see LifeSystem
+	 */
+    public float hp;
+    
+	/**
+	 * @see MovementSystem
+	 */
+    public Vec3 pos;
+    public Vec4 rot;
+
+    /**
+     * @see ProjectileSystem
+     */
+    public List<UUID> gotHit;
+    @Deprecated
+    public List<UUID> didHit; //Don't use this until it is actually implemented correctly
+    
+    /**
+     * @see TankBarrelFeedbackSystem
+     */
+    public float barrel; // TODO: this is just a duplication of the rotation vector W property
+
+    /**
+     * @see TankTurretFeedbackSystem
+     */
+    public float turret; // TODO this is just a duplication of the rotation vector Y property
+    
+    /**
+     * List of visible bots as angles from where tank is facing. Empty if there are none.
+     * @see VisionSystem
+     */
+    public List<float[]> visibleBots;
+    
     public RobotEvent()
     {
-        visibleBots = new ArrayList<float[]>();
-        gotHit = false;
-        didHit = false;
         hitWall = false;
+        hp = 0;
+        pos = new Vec3();
+        rot = new Vec4();
+        gotHit = new ArrayList<UUID>();
+        didHit = new ArrayList<UUID>();
+        barrel = 0;
+        turret = 0;
+        visibleBots = new ArrayList<float[]>();
     }
     
+    @Deprecated
     public float[][] getVisibleBots()
     {
         float[][] v = new float[visibleBots.size()][];
@@ -41,16 +74,19 @@ public class RobotEvent
         return v;
     }
 
+    @Deprecated
     public boolean gotHit()
     {
-        return gotHit;
+        return gotHit.size() > 0;
     }
 
+    @Deprecated
     public boolean didHit()
     {
-        return didHit;
+        return didHit.size() > 0;
     }
 
+    @Deprecated
     public boolean hitWall()
     {
         return hitWall;
