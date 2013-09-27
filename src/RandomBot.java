@@ -1,5 +1,8 @@
 
+import java.util.List;
+
 import afk.bot.london.TankRobot;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -24,7 +27,7 @@ public class RandomBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
+        final List<TargetingInfo> visibles = events.getVisibleBots();
         if (events.hitWall())
         {
             turning = false;
@@ -38,10 +41,10 @@ public class RandomBot extends TankRobot
                 retaliating = -1;
             }
         }
-        if (visibles.length > 0)
+        if (visibles.size() > 0)
         {
-            float bearing = visibles[0][0];
-            float elevation = visibles[0][1]-events.barrel;
+            float bearing = visibles.get(0).bearing;
+            float elevation = visibles.get(0).elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
             final float give = 0.6f;
 

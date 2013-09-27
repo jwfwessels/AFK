@@ -1,5 +1,8 @@
 
+import java.util.List;
+
 import afk.bot.london.TankRobot;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -27,10 +30,10 @@ public class ScaredBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        final List<TargetingInfo> visibles = events.getVisibleBots();
+        if (visibles.size() > 0)
         {
-            thetaAngle = visibles[0][0];
+            thetaAngle = visibles.get(0).bearing;
             float diff = FastMath.abs(thetaAngle);
 
             if (Float.compare(diff, 1) < 0)

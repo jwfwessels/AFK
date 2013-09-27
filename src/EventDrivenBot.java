@@ -8,6 +8,7 @@ import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 
 import afk.bot.london.TankRobot;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 
 /**
  * This is a base class for a bot which processes events from it's environment
@@ -97,7 +98,7 @@ public abstract class EventDrivenBot extends TankRobot {
 			}
 		}
 
-		List<float[]> visibleBots = events.visibleBots;
+		List<TargetingInfo> visibleBots = events.visibleBots;
 		if (visibleBots != null && visibleBots.size() > 0) {
 			for (int i = 0; i < visibleBots.size(); i ++) {
 				try {
@@ -154,13 +155,13 @@ public abstract class EventDrivenBot extends TankRobot {
 	
 	public void visibleBot(VisibleBotEvent e) { }
 	public class VisibleBotEvent extends BotEvent {
-		private float[] angles;
-		public VisibleBotEvent(long tick, float[] angles) {
+		private TargetingInfo info;
+		public VisibleBotEvent(long tick, TargetingInfo info) {
 			super(tick);
-			this.angles = angles;
+			this.info = info;
 		}
-		public float[] getAngles() {
-			return angles;
+		public TargetingInfo getTargetingInfo() {
+			return info;
 		}
 	}
 	

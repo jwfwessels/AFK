@@ -7,6 +7,7 @@ import afk.ge.tokyo.ems.ISystem;
 import afk.ge.tokyo.ems.Utils;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.TargetableNode;
 import afk.ge.tokyo.ems.nodes.VisionNode;
@@ -40,7 +41,7 @@ public class VisionSystem implements ISystem
 
         for (VisionNode vnode : vnodes)
         {
-            List<float[]> thetas = new ArrayList<float[]>();
+            List<TargetingInfo> thetas = new ArrayList<TargetingInfo>();
             targetloop:
             for (TargetableNode tnode : tnodes)
             {
@@ -51,13 +52,14 @@ public class VisionSystem implements ISystem
                 
                 State state = Utils.getWorldState(vnode.entity);
 
-                float[] theta = isVisible(
+                TargetingInfo info = isVisible(
                         state,
                         tnode.state,
                         vnode.vision.fovx,
-                        vnode.vision.dist);
+                        vnode.vision.dist,
+                        tnode.entity);
 
-                if (theta != null)
+                if (info != null)
                 {
                     // stop tanks from targeting innocent walls
                     for (CollisionNode cnode : cnodes)
@@ -75,7 +77,7 @@ public class VisionSystem implements ISystem
                         }
                     }
 
-                    thetas.add(theta);
+                    thetas.add(info);
                 }
             }
             vnode.controller.events.visibleBots = thetas;
@@ -109,7 +111,7 @@ public class VisionSystem implements ISystem
      * @param viewingDistance
      * @return
      */
-    protected float[] isVisible(State a, State b, float fov, float viewingDistance)
+    protected TargetingInfo isVisible(State a, State b, float fov, float viewingDistance, Entity targetBot)
     {
         // point lies outside of viewing distance, reject
         if (Float.compare(b.pos.subtract(a.pos).getLengthSquared(),
@@ -130,10 +132,8 @@ public class VisionSystem implements ISystem
         float halfFOV = fov * 0.5f;
         if (within(relativeBearing, halfFOV) && within(relativeElevation, halfFOV))
         {
-            return new float[]
-            {
-                relativeBearing, relativeElevation
-            };
+            final Controller controller = targetBot.get(Controller.class);
+            return new TargetingInfo(b.pos, relativeBearing, relativeElevation, controller != null ? controller.id : null);
         }
 
         // outside of FOV

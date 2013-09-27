@@ -1,5 +1,8 @@
 
+import java.util.List;
+
 import afk.bot.london.TankRobot;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 
 
 /**
@@ -30,8 +33,8 @@ public class JarBot extends TankRobot
             manager.setTurning(true);
         }
         
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        final List<TargetingInfo> visibles = events.getVisibleBots();
+        if (visibles.size() > 0)
             attack();
         
         if (manager.getTurning())

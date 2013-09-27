@@ -1,5 +1,7 @@
+import java.util.List;
 
 import afk.bot.london.TankRobot;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 
 /**
  * Sample class of what coded bot will look like
@@ -19,13 +21,13 @@ public class AimBot extends TankRobot
     public void run()
     {
         
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        final List<TargetingInfo> visibles = events.getVisibleBots();
+        if (visibles.size() > 0)
         {
-            System.out.println("elevation: " + visibles[0][1]);
+            System.out.println("elevation: " + visibles.get(0).elevation);
             System.out.println("barrel: " + events.barrel);
-            float bearing = visibles[0][0];
-            float elevation = visibles[0][1]-events.barrel;
+            float bearing = visibles.get(0).bearing;
+            float elevation = visibles.get(0).elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
             final float give = 0.6f;
 

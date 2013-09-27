@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import afk.ge.tokyo.ems.components.TargetingInfo;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 
@@ -50,7 +51,7 @@ public class RobotEvent
      * List of visible bots as angles from where tank is facing. Empty if there are none.
      * @see VisionSystem
      */
-    public List<float[]> visibleBots;
+    public List<TargetingInfo> visibleBots;
     
     public RobotEvent()
     {
@@ -62,16 +63,13 @@ public class RobotEvent
         didHit = new ArrayList<UUID>();
         barrel = 0;
         turret = 0;
-        visibleBots = new ArrayList<float[]>();
+        visibleBots = new ArrayList<TargetingInfo>();
     }
     
     @Deprecated
-    public float[][] getVisibleBots()
+    public List<TargetingInfo> getVisibleBots()
     {
-        float[][] v = new float[visibleBots.size()][];
-        for (int i = 0; i < v.length; i++)
-            v[i] = visibleBots.get(i);
-        return v;
+        return new ArrayList<TargetingInfo>(visibleBots);
     }
 
     @Deprecated

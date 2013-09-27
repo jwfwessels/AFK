@@ -1,5 +1,8 @@
 
+import java.util.List;
+
 import afk.bot.london.TankRobot;
+import afk.ge.tokyo.ems.components.TargetingInfo;
 
 /**
  * Sample class of what coded bot will look like
@@ -19,10 +22,10 @@ public class DebugBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-	if (visibles.length > 0 && different(visibles[0][0], theta))
+        final List<TargetingInfo> visibles = events.getVisibleBots();
+	if (visibles.size() > 0 && different(visibles.get(0).bearing, theta))
         {
-            System.out.println(getId() + " -> " + (theta = visibles[0][0]));
+            System.out.println(getId() + " -> " + (theta = visibles.get(0).bearing));
         }
     }
     
