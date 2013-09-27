@@ -30,6 +30,7 @@ public class EntityManager
 
     public static final float WEAPON_RANGE = 50;
     public static final float WEAPON_DAMAGE = 20;
+    public static final float WEAPON_HEALTH_PENALTY = 3;
     public static final float BULLET_SPEED = 10;
     public static final float FIRE_RATE = 1f;
     public static final int WEAPON_AMMO = 0;
@@ -193,7 +194,7 @@ public class EntityManager
         Entity entity = new Entity();
 
         entity.add(new State(new Vec3(0.0f, 0.03200f, 0.22199f), Vec4.VEC4_ZERO, new Vec3(1)));
-        entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
+        entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO, WEAPON_HEALTH_PENALTY));
         entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
         entity.add(new Renderable(LARGE_TANK_BARREL_TYPE, colour));
         entity.add(new AngleConstraint(new Vec4(0,0,0,-45),new Vec4(0,0,0,10)));

@@ -3,7 +3,10 @@ package afk.ge.tokyo.ems.systems;
 import static afk.bot.london.TankRobot.*;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.tokyo.ems.Engine;
+import afk.ge.tokyo.ems.Entity;
 import afk.ge.tokyo.ems.ISystem;
+import afk.ge.tokyo.ems.components.Life;
+import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.TankBarrelNode;
 import com.hackoeur.jglm.Vec3;
@@ -69,6 +72,13 @@ public class TankBarrelSystem implements ISystem
         Vec3 forward = getForward(state);
         entityManager.createProjectileNEU(node.controller.id, node.weapon,
                 new State(state, forward.multiply(barrelLength)), forward);
+        
+        Entity turret = node.entity.get(Parent.class).entity;
+        if (turret != null) {
+        	Entity tank = turret.get(Parent.class).entity;
+        	Life life = tank.get(Life.class);
+            life.hp -= node.weapon.healthPenalty;
+        }
     }
 
     @Override

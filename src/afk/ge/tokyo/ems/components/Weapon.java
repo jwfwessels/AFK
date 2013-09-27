@@ -7,10 +7,10 @@ package afk.ge.tokyo.ems.components;
 public class Weapon {
     
     public float range, damage, speed;
-    public float fireInterval, timeSinceLastFire;
+    public float fireInterval, timeSinceLastFire, healthPenalty;
     public int ammo;
 
-    public Weapon(float range, float damage, float speed, float fireInterval, int ammo)
+    public Weapon(float range, float damage, float speed, float fireInterval, int ammo, float healthPenalty)
     {
         this.range = range;
         this.damage = damage;
@@ -18,6 +18,7 @@ public class Weapon {
         this.fireInterval = fireInterval;
         this.timeSinceLastFire = fireInterval;
         this.ammo = ammo;
+        this.healthPenalty = healthPenalty;
     }
     
     
