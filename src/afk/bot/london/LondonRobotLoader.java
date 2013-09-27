@@ -68,7 +68,12 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader
         {
             throw new RobotException("Could not fine file " + path);
         }
-        loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
+        try {
+        	loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
+        } 
+        catch (RuntimeException re) {
+        	throw new RobotException("Could not load class " + re.getMessage());
+        }
     }
 
     private void loadJar(String path) throws RobotException

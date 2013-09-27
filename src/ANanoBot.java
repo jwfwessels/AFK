@@ -1,4 +1,4 @@
-public class ANanoBot extends EventDrivenBot {
+public class ANanoBot extends EventDrivenRobot {
 
 	@Override
 	public void beforeFirstStep() {

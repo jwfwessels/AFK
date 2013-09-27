@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import afk.ge.tokyo.ems.components.TargetingInfo;
 
-public class GravityBot extends EventDrivenBot {
+public class GravityBot extends EventDrivenRobot {
 
   private final List<GravPoint> gravPoints = new Vector<GravPoint>();
   private double midpointstrength = 0; // The strength of the gravity point in the middle of the field

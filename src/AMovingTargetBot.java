@@ -1,4 +1,4 @@
-public class AMovingTargetBot extends EventDrivenBot {
+public class AMovingTargetBot extends EventDrivenRobot {
 
 	private Direction direction = Direction.FORWARD;
 	

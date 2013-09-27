@@ -16,7 +16,7 @@ import afk.ge.tokyo.ems.components.TargetingInfo;
  * 
  * @author jheyns
  */
-public abstract class EventDrivenBot extends TankRobot {
+public abstract class EventDrivenRobot extends TankRobot {
 	
 	public static long IMMEDIATELY = 0;
 	public static long INDEFINITELY = 999999999;
@@ -24,7 +24,7 @@ public abstract class EventDrivenBot extends TankRobot {
 	private long tick;
 	private ArrayList<Command> commands;
 	
-	public EventDrivenBot() {
+	public EventDrivenRobot() {
 		tick = 0;
 		commands = new ArrayList<Command>();
 	}

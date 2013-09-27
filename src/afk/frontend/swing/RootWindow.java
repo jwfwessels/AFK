@@ -79,6 +79,7 @@ public class RootWindow extends JFrame implements Frontend
             menuPanel = new MenuPanel(this);
             configPanel = new RobotConfigPanel(this);
             menuPanel.setup();
+            menuPanel.loadBots();
   
         } 
         catch (Exception e)

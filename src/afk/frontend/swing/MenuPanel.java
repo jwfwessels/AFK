@@ -21,6 +21,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
@@ -125,6 +135,56 @@ public class MenuPanel extends JPanel
         
         configMenu = new JPopupMenu();
         configMenuItem = new JMenuItem("Configure");
+    }
+    
+    public void loadBots() {
+    	try {
+    		Path path = FileSystems.getDefault().getPath("build");
+    		path = path.toAbsolutePath();
+    		System.out.println("Laoding bots from " + path);
+    		Files.walkFileTree(path, new FileVisitor<Path>() {
+
+				@Override
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+			        try
+			        {
+			        	String filename = (file.getName(file.getNameCount() - 1)).toString();
+			        	if (filename.endsWith("Bot.class")) {
+		                    String botPath = (file.toAbsolutePath().toString());
+		                    String botName = filename.split("\\.")[0];
+	                        coordinator.loadRobot(botPath);
+	                        botMap.put(botName, botPath);
+	                        lsAvailableModel.addElement(botName);
+			        		System.out.println("Loaded " + botPath);
+			        	}
+			        } 
+			        catch (Exception ex) { 
+			        	// This is best effort, the button is still there if you want feedback
+			        }
+
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+
+			});
+		} 
+    	catch (Exception e) {
+			e.printStackTrace();
+		} 
     }
 
     private void addComponents()

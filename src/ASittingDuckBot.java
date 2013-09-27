@@ -1,4 +1,4 @@
-public class ASittingDuckBot extends EventDrivenBot {
+public class ASittingDuckBot extends EventDrivenRobot {
 	
 	@Override
 	public void beforeProcessEvents() {

@@ -1,5 +1,5 @@
 
-public class Botiax extends EventDrivenBot {
+public class Botiax extends EventDrivenRobot {
 
     private Direction turnDirection = Direction.CLOCKWISE;
     private Direction aimDirection = Direction.CLOCKWISE;
