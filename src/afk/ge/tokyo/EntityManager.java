@@ -316,6 +316,7 @@ public class EntityManager
         float speed = jitter(emitter.speed, emitter.speedJitter);
 
         velocity.v = dir.scale(speed);
+        velocity.a = emitter.acceleration;
 
         lifetime.life = jitter(emitter.maxLife, emitter.lifeJitter);
         lifetime.maxLife = lifetime.life;
