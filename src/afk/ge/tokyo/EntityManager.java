@@ -253,7 +253,9 @@ public class EntityManager
         entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1, 1, 1)));
 
         ParticleEmitter emitter = new ParticleEmitter(emitters[type]);
-        emitter.colour = MAGENTA; // TODO: get colour from config
+        
+        // this is a nice colour, I picked it from a photo of a bomb going off
+        emitter.colour = new Vec3(1,0.734375f,0); // TODO: get colour from config
         entity.add(emitter);
 
         return entity;
@@ -316,6 +318,7 @@ public class EntityManager
         velocity.v = dir.scale(speed);
 
         lifetime.life = jitter(emitter.maxLife, emitter.lifeJitter);
+        lifetime.maxLife = lifetime.life;
 
         renderable.colour = emitter.colour;
 

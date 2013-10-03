@@ -86,6 +86,8 @@ public class BillboardEntity extends AthensEntity
 
             shader.updateUniform(gl, "sun", sun);
             shader.updateUniform(gl, "eye", camera.eye);
+            
+            shader.updateUniform(gl, "life", life);
 
             if (colour != null)
                 shader.updateUniform(gl, "colour", colour);

@@ -1,7 +1,6 @@
 package afk.gfx.athens;
 
 import afk.gfx.GfxEntity;
-import afk.gfx.athens.particles.ParticleEmitter;
 import com.hackoeur.jglm.Vec3;
 import java.util.HashMap;
 import java.util.Map;
@@ -235,9 +234,6 @@ public class TypeFactory
                 break;
             case BILLBOARD_CYLINDRICAL:
                 entity = new BillboardEntity(false);
-                break;
-            case PARTICLE_EMITTER:
-                entity = new ParticleEmitter();
                 break;
             default:
                 // TODO: throw new InvalidEntityBehaviourException();
