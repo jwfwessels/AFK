@@ -20,9 +20,15 @@ public class GenericFactoryRequest implements FactoryRequest
 {
 
     public static final String COMPONENT_PACKAGE = "afk.ge.tokyo.ems.components.";
-    Map<Class, Map<String, String>> components = new HashMap<Class, Map<String, String>>();
-    Collection<GenericFactoryRequest> dependents = new ArrayList<GenericFactoryRequest>();
+    protected String name;
+    protected Map<Class, Map<String, String>> components = new HashMap<Class, Map<String, String>>();
+    protected Collection<GenericFactoryRequest> dependents = new ArrayList<GenericFactoryRequest>();
 
+    public GenericFactoryRequest(String name)
+    {
+        this.name = name;
+    }
+    
     /**
      * Parses an AFK configuration file and generates a GenericFactoryRequest
      * from it.
@@ -33,7 +39,7 @@ public class GenericFactoryRequest implements FactoryRequest
      */
     public static GenericFactoryRequest load(String name) throws IOException
     {
-        GenericFactoryRequest request = new GenericFactoryRequest();
+        GenericFactoryRequest request = new GenericFactoryRequest(name);
         BufferedReader in = new BufferedReader(new FileReader("config/" + name + ".afk"));
         try
         {

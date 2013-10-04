@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class Entity
 {
+    // keeps track of how many entities there are, for debug purposes
     private static int count = 0;
     
     private String name; // for debug purposes
@@ -21,13 +22,12 @@ public class Entity
 
     public Entity()
     {
-        this("Entity" + count++);
+        this("entity");
     }
 
     public Entity(String name)
     {
-        this.name = name;
-        count++;
+        this.name = name+"_"+(count++);
     }
     
     public void addEntityListener(EntityListener l)
