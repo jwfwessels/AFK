@@ -1,9 +1,9 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.tokyo.EntityManager;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.ParticleEmitterNode;
 import java.util.ArrayDeque;
 import java.util.List;

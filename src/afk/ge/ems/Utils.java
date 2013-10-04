@@ -1,4 +1,4 @@
-package afk.ge.tokyo.ems;
+package afk.ge.ems;
 
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.State;

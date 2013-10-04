@@ -1,4 +1,4 @@
-package afk.ge.tokyo.ems;
+package afk.ge.ems;
 
 /**
  *

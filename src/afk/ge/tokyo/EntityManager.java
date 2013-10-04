@@ -4,8 +4,8 @@
  */
 package afk.ge.tokyo;
 
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.Entity;
+import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
 import afk.ge.tokyo.ems.components.*;
 import static afk.gfx.GfxUtils.*;
 import com.hackoeur.jglm.Mat4;

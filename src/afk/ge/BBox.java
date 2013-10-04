@@ -1,6 +1,6 @@
 package afk.ge;
 
-import afk.ge.tokyo.ems.Utils;
+import afk.ge.ems.Utils;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Mat4;

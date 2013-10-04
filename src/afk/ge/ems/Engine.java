@@ -1,4 +1,4 @@
-package afk.ge.tokyo.ems;
+package afk.ge.ems;
 
 import java.util.ArrayList;
 import java.util.Collection;

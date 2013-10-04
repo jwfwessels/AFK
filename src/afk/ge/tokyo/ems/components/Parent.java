@@ -1,6 +1,6 @@
 package afk.ge.tokyo.ems.components;
 
-import afk.ge.tokyo.ems.Entity;
+import afk.ge.ems.Entity;
 
 /**
  *

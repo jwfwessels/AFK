@@ -5,8 +5,8 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.game.GameListener;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.ControllerNode;
 import java.util.List;
 

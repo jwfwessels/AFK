@@ -1,10 +1,10 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.Utils;
+import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
+import afk.ge.ems.ISystem;
+import afk.ge.ems.Utils;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
