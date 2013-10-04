@@ -15,6 +15,8 @@ import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Targetable;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
+import afk.ge.tokyo.ems.factories.ObstacleFactory;
+import afk.ge.tokyo.ems.factories.ObstacleFactoryRequest;
 import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import com.hackoeur.jglm.Vec3;
@@ -274,7 +276,8 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 float scale = (float) (3.0 + 3.0 * Math.random());
-                startPlaceItem(manager.createGraphicWall(Vec3.VEC3_ZERO, new Vec3(scale)));
+                
+                startPlaceItem(new ObstacleFactory().create(new ObstacleFactoryRequest(Vec3.VEC3_ZERO, new Vec3(scale),"wall")));
             }
         });
         addMenu.add(addWall);

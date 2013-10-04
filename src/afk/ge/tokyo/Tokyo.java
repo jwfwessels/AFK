@@ -19,6 +19,10 @@ import afk.ge.tokyo.ems.components.Spawn;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
+import afk.ge.tokyo.ems.factories.HeightmapFactory;
+import afk.ge.tokyo.ems.factories.HeightmapFactoryRequest;
+import afk.ge.tokyo.ems.factories.ObstacleFactory;
+import afk.ge.tokyo.ems.factories.ObstacleFactoryRequest;
 import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.DebugRenderSystem;
@@ -41,6 +45,7 @@ import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankTurretSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
+import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import java.io.IOException;
 import java.util.UUID;
@@ -120,7 +125,7 @@ public class Tokyo implements GameEngine, Runnable
     @Override
     public void startGame(UUID[] participants)
     {
-        entityManager.spawnStuff();
+        spawnStuff();
         GenericFactory factory = new GenericFactory();
         try
         {
@@ -147,6 +152,18 @@ public class Tokyo implements GameEngine, Runnable
             // FIXME: this needs to propagate somewhere else!
             ex.printStackTrace(System.err);
         }
+    }
+    
+    // TODO: this should be put in a map file
+    private void spawnStuff()
+    {
+        engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
+        ObstacleFactory factory = new ObstacleFactory();
+
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE), "wall")));
     }
 
     @Override

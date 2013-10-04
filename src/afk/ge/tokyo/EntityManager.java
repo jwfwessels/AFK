@@ -3,9 +3,12 @@ package afk.ge.tokyo;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.tokyo.ems.components.*;
+import afk.ge.tokyo.ems.factories.HeightmapFactory;
+import afk.ge.tokyo.ems.factories.HeightmapFactoryRequest;
+import afk.ge.tokyo.ems.factories.ObstacleFactory;
+import afk.ge.tokyo.ems.factories.ObstacleFactoryRequest;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.UUID;
@@ -71,55 +74,7 @@ public class EntityManager
         this.engine = engine;
     }
 
-    public void spawnStuff()
-    {
-        createFloor();
-        engine.addEntity(createGraphicWall(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
-        engine.addEntity(createGraphicWall(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f)));
-        engine.addEntity(createGraphicWall(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
-        engine.addEntity(createGraphicWall(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE)));
-    }
-
-    public void createFloor()
-    {
-        Entity floor = new Entity();
-        floor.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO,
-                new Vec3(Tokyo.BOARD_SIZE)));
-        floor.add(new Renderable("floor", new Vec3(1.0f, 1.0f, 1.0f)));
-        try
-        {
-            floor.add(new HeightmapLoader().load("hm2", Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE, Tokyo.BOARD_SIZE));
-        } catch (IOException ex)
-        {
-            System.err.println("Error loading up heightmap: " + ex.getMessage());
-        }
-
-        engine.addEntity(floor);
-    }
-
-    public Entity createGraphicWall(Vec3 pos, Vec3 scale)
-    {
-        Entity wall = new Entity();
-        wall.add(new State(pos, Vec4.VEC4_ZERO, scale));
-        wall.add(new BBoxComponent(new Vec3(0.5f),new Vec3(0,0.5f,0)));
-        wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
-
-        return wall;
-    }
-
-    public void createObstacles(Vec3 scale)
-    {
-        int min = -18;
-        int max = 18;
-        for (int i = 0; i < NUMCUBES; i++)
-        {
-
-            Vec3 pos = new Vec3(min + (int) (Math.random() * ((max - min) + 1)), 0, min + (int) (Math.random() * ((max - min) + 1)));
-
-            createGraphicWall(pos, scale);
-
-        }
-    }
+    
 
 //    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)
 //    {
