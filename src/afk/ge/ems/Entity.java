@@ -11,9 +11,24 @@ import java.util.Map;
  */
 public class Entity
 {
+    private static int count = 0;
+    
+    private String name; // for debug purposes
+    
     private Collection<EntityListener> listeners = new ArrayList<EntityListener>();
     protected Collection<Entity> dependents = new ArrayList<Entity>();
     private Map<Class, Object> components = new HashMap<Class, Object>();
+
+    public Entity()
+    {
+        this("Entity" + count++);
+    }
+
+    public Entity(String name)
+    {
+        this.name = name;
+        count++;
+    }
     
     public void addEntityListener(EntityListener l)
     {
@@ -65,6 +80,11 @@ public class Entity
         dependents.add(entity);
     }
     
+    public Collection<Entity> getDependents()
+    {
+        return dependents;
+    }
+    
     public void removeDependent(Entity entity)
     {
         dependents.remove(entity);
@@ -83,5 +103,11 @@ public class Entity
     public Object[] getAll()
     {
         return components.values().toArray();
+    }
+
+    @Override
+    public String toString()
+    {
+        return name;
     }
 }

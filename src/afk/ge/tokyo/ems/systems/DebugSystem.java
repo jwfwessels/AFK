@@ -132,7 +132,7 @@ public class DebugSystem implements ISystem
 
         if (selected != null)
         {
-            tree.setModel(model = createModel(selected));
+            tree.setModel(model = new DefaultTreeModel(createTree(selected)));
         } else
         {
             tree.setModel(new DefaultTreeModel(NOTHING_SELECTED_NODE));
@@ -475,10 +475,10 @@ public class DebugSystem implements ISystem
         Toolkit.getDefaultToolkit().sync();
 
     }
-
-    public DefaultTreeModel createModel(Entity entity)
+    
+    public DefaultMutableTreeNode createTree(Entity entity)
     {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Entity");
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(entity.toString());
 
         for (Object obj : entity.getAll())
         {
@@ -501,8 +501,13 @@ public class DebugSystem implements ISystem
                 fieldNode.add(valueNode);
             }
         }
-
-        return new DefaultTreeModel(root);
+        
+        for (Entity dep : entity.getDependents())
+        {
+            root.add(createTree(dep));
+        }
+        
+        return root;
     }
 
     private class FieldValueNode extends DefaultMutableTreeNode

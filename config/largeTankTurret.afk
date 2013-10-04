@@ -1,6 +1,7 @@
 TankTurret
 State
 	pos = 0 0.17623 -0.15976
+Velocity
 Renderable
 	type = largeTankTurret
 	colour = 1 1 1
