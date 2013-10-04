@@ -13,7 +13,9 @@ import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Controller;
+import afk.ge.tokyo.ems.components.Paint;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.Spawn;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
@@ -26,10 +28,12 @@ import afk.ge.tokyo.ems.systems.GameStateSystem;
 import afk.ge.tokyo.ems.systems.LifeSystem;
 import afk.ge.tokyo.ems.systems.LifetimeSystem;
 import afk.ge.tokyo.ems.systems.MovementSystem;
+import afk.ge.tokyo.ems.systems.PaintSystem;
 import afk.ge.tokyo.ems.systems.ParticleSystem;
 import afk.ge.tokyo.ems.systems.ProjectileSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.ge.tokyo.ems.systems.RobotSystem;
+import afk.ge.tokyo.ems.systems.SpawnSystem;
 import afk.ge.tokyo.ems.systems.TankBarrelFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankBarrelSystem;
 import afk.ge.tokyo.ems.systems.TankTracksSystem;
@@ -37,6 +41,7 @@ import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankTurretSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
+import com.hackoeur.jglm.Vec4;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -85,6 +90,8 @@ public class Tokyo implements GameEngine, Runnable
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
+        engine.addLogicSystem(new SpawnSystem());
+        engine.addLogicSystem(new PaintSystem());
         engine.addLogicSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
         engine.addLogicSystem(new TankTracksSystem());
         engine.addLogicSystem(new TankTurretSystem());
@@ -121,13 +128,11 @@ public class Tokyo implements GameEngine, Runnable
             //entityManager.createObstacles(new Vec3(5, 5, 5));
             for (int i = 0; i < participants.length; i++)
             {
-                Entity tank = factory.create(request);
-                State state = tank.get(State.class);
-                state.pos = state.prevPos = EntityManager.SPAWN_POINTS[i];
-                Renderable renderable = tank.get(Renderable.class);
-                renderable.colour = EntityManager.BOT_COLOURS[i];
-                tank.addToDependents(new Controller(participants[i]));
-                engine.addEntity(tank);
+                Entity entity = factory.create(request);
+                entity.add(new Spawn(EntityManager.SPAWN_POINTS[i], Vec4.VEC4_ZERO));
+                entity.addToDependents(new Paint(EntityManager.BOT_COLOURS[i]));
+                entity.addToDependents(new Controller(participants[i]));
+                engine.addEntity(entity);
             }
 
             new Thread(this).start();

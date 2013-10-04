@@ -19,10 +19,24 @@ public class Engine implements EntityListener, FlagManager
     private Collection<Entity> toAdd = new ArrayList<Entity>();
     private Collection<Entity> toRemove = new ArrayList<Entity>();
     private Collection<ISystem> systemsToRemove = new ArrayList<ISystem>();
-    private Map<Class, Collection<Object>> nodeLists = new HashMap<Class, Collection<Object>>();
+    private Collection<EntityComponent> componentsAdded = new ArrayList<EntityComponent>();
+    private Collection<EntityComponent> componentsRemoved = new ArrayList<EntityComponent>();
     private Map<Class, Family> families = new HashMap<Class, Family>();
     private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
     boolean updating = false;
+
+    private class EntityComponent
+    {
+
+        Entity entity;
+        Class component;
+
+        public EntityComponent(Entity entity, Class component)
+        {
+            this.entity = entity;
+            this.component = component;
+        }
+    }
 
     public void addEntity(Entity entity)
     {
@@ -70,18 +84,30 @@ public class Engine implements EntityListener, FlagManager
     @Override
     public void componentAdded(Entity entity, Class componentClass)
     {
-        for (Family family : families.values())
+        if (updating)
         {
-            family.componentAddedToEntity(entity, componentClass);
+            componentsAdded.add(new EntityComponent(entity, componentClass));
+        } else
+        {
+            for (Family family : families.values())
+            {
+                family.componentAddedToEntity(entity, componentClass);
+            }
         }
     }
 
     @Override
     public void componentRemoved(Entity entity, Class componentClass)
     {
-        for (Family family : families.values())
+        if (updating)
         {
-            family.componentRemovedFromEntity(entity, componentClass);
+            componentsRemoved.add(new EntityComponent(entity, componentClass));
+        } else
+        {
+            for (Family family : families.values())
+            {
+                family.componentRemovedFromEntity(entity, componentClass);
+            }
         }
     }
 
@@ -157,6 +183,18 @@ public class Engine implements EntityListener, FlagManager
             removeSystem(s);
         }
         systemsToRemove.clear();
+
+        for (EntityComponent ec : componentsAdded)
+        {
+            componentAdded(ec.entity, ec.component);
+        }
+        componentsAdded.clear();
+
+        for (EntityComponent ec : componentsRemoved)
+        {
+            componentRemoved(ec.entity, ec.component);
+        }
+        componentsRemoved.clear();
     }
 
     public void removeSystem(ISystem system)
@@ -164,14 +202,12 @@ public class Engine implements EntityListener, FlagManager
         if (updating)
         {
             systemsToRemove.add(system);
-        }
-        else
+        } else
         {
             if (logicSystems.remove(system))
             {
                 system.destroy();
-            }
-            else if (systems.remove(system))
+            } else if (systems.remove(system))
             {
                 system.destroy();
             }

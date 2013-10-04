@@ -88,12 +88,12 @@ public class Entity
             l.componentRemoved(this, componentClass);
     }
     
-    public void removeFromDeprendents(Class componentClass)
+    public void removeFromDependents(Class componentClass)
     {
         remove(componentClass);
         for (Entity dep : dependents)
         {
-            dep.removeFromDeprendents(componentClass);
+            dep.removeFromDependents(componentClass);
         }
     }
     
