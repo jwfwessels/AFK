@@ -13,7 +13,6 @@ Life
 	maxHp = 100
 Renderable
 	type = largeTankBase
-	colour = 1 1 1
 RobotToken
 Targetable
 SnapToTerrain
