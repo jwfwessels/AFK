@@ -12,7 +12,6 @@ Weapon
     ammo = 0
 Renderable
 	type = largeTankBarrel
-	colour = 1 1 1
 AngleConstraint
 	min = 0 0 0 -45
 	max = 0 0 0 10
