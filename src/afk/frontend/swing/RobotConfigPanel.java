@@ -4,8 +4,11 @@
  */
 package afk.frontend.swing;
 
+import afk.ge.tokyo.ems.components.Renderable;
+import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
+import com.hackoeur.jglm.Vec3;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -79,6 +82,15 @@ public class RobotConfigPanel extends JPanel
         cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");          
+    }
+    
+    //TODO: needs parameter(s) I think
+    /**
+     * called when the config is opened.
+     */
+    public void loadConfig()
+    {
+        gfxEngine.getGfxEntity(new Renderable("largeTankBase", new Vec3(1,0,1)));
     }
     
     public void addComponents()
