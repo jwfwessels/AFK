@@ -4,6 +4,8 @@
  */
 package afk.frontend.swing;
 
+import afk.gfx.GraphicsEngine;
+import afk.gfx.athens.Athens;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -34,7 +36,7 @@ public class RobotConfigPanel extends JPanel
     JLabel lblRConfig;
     
     JPanel pnlModel;
-    JPanel pnlCanvas;
+    Component pnlCanvas;
     Component glCanvas;
     JButton btnPrev;
     JButton btnNext;
@@ -48,6 +50,8 @@ public class RobotConfigPanel extends JPanel
     JButton btnBack;
     JButton btnSave;
     
+    GraphicsEngine gfxEngine;
+    
     public RobotConfigPanel(RootWindow _root)
     {
         root = _root;   
@@ -60,8 +64,10 @@ public class RobotConfigPanel extends JPanel
         lblRConfig = new JLabel("Robot Configuration");
     
         pnlModel = new JPanel();
-        pnlCanvas = new JPanel();
-        //glCanvas
+        
+        gfxEngine = new Athens(true);
+        
+        pnlCanvas = gfxEngine.getAWTComponent();
         btnPrev = new JButton("<");
         btnNext = new JButton(">");
         btnBrowse = new JButton("Browse");
@@ -100,7 +106,6 @@ public class RobotConfigPanel extends JPanel
     public void styleComponents()
     {
         pnlModel.setBorder(new LineBorder(Color.yellow));
-        pnlCanvas.setBorder(new LineBorder(Color.red));
         pnlSettings.setBorder(new LineBorder(Color.blue));
         this.setLayout(new RobotConfigPanel_Layout());
         
