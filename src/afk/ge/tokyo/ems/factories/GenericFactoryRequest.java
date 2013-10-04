@@ -23,12 +23,13 @@ public class GenericFactoryRequest implements FactoryRequest
     protected String name;
     protected Map<Class, Map<String, String>> components = new HashMap<Class, Map<String, String>>();
     protected Collection<GenericFactoryRequest> dependents = new ArrayList<GenericFactoryRequest>();
+    private static Map<String, GenericFactoryRequest> cache = new HashMap<String, GenericFactoryRequest>();
 
     public GenericFactoryRequest(String name)
     {
         this.name = name;
     }
-    
+
     /**
      * Parses an AFK configuration file and generates a GenericFactoryRequest
      * from it.
@@ -39,7 +40,12 @@ public class GenericFactoryRequest implements FactoryRequest
      */
     public static GenericFactoryRequest load(String name) throws IOException
     {
-        GenericFactoryRequest request = new GenericFactoryRequest(name);
+        GenericFactoryRequest request = cache.get(name);
+        if (request != null)
+        {
+            return request;
+        }
+        request = new GenericFactoryRequest(name);
         BufferedReader in = new BufferedReader(new FileReader("config/" + name + ".afk"));
         try
         {
@@ -87,6 +93,7 @@ public class GenericFactoryRequest implements FactoryRequest
         {
             in.close();
         }
+        cache.put(name, request);
         return request;
     }
 }

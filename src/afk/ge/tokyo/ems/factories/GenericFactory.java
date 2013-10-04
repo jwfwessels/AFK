@@ -19,7 +19,7 @@ public class GenericFactory implements Factory<GenericFactoryRequest>
 {
 
     @Override
-    public Entity create(GenericFactoryRequest request) throws FactoryException
+    public Entity create(GenericFactoryRequest request)
     {
         Entity entity = new Entity(request.name);
         for (Map.Entry<Class, Map<String, String>> e : request.components.entrySet())

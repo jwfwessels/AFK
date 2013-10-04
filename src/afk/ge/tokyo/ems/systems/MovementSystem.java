@@ -108,9 +108,9 @@ public class MovementSystem implements ISystem
         
         Derivative output = new Derivative();
         output.dx = v;
-        output.dv = Vec3.VEC3_ZERO; //acceleration(velocity,dt);
+        output.dv = acceleration(velocity,dt);
         output.dax = av;
-        output.dav = Vec4.VEC4_ZERO; //angularAcceleration(velocity,dt);
+        output.dav = angularAcceleration(velocity,dt);
         
         return output;
     }

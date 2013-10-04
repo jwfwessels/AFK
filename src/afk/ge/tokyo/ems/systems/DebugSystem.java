@@ -13,6 +13,8 @@ import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.SnapToTerrain;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Targetable;
+import afk.ge.tokyo.ems.factories.GenericFactory;
+import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
 import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import com.hackoeur.jglm.Vec3;
@@ -282,7 +284,16 @@ public class DebugSystem implements ISystem
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                startPlaceItem(manager.makeExplosion(Vec3.VEC3_ZERO, null, 0));
+                try
+                {
+                    Entity entity = new GenericFactory().create(GenericFactoryRequest.load("explosionTank"));
+                    entity.add(new State());
+                    startPlaceItem(entity);
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace(System.err);
+                }
             }
         });
         addMenu.add(addExplosion);

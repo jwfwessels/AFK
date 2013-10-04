@@ -13,21 +13,43 @@ public class Entity
 {
     // keeps track of how many entities there are, for debug purposes
     private static int count = 0;
+    public static final String DEFAULT_NAME = "entity";
     
     private String name; // for debug purposes
     
     private Collection<EntityListener> listeners = new ArrayList<EntityListener>();
     protected Collection<Entity> dependents = new ArrayList<Entity>();
     private Map<Class, Object> components = new HashMap<Class, Object>();
+    
+    private Pool source;
 
     public Entity()
     {
-        this("entity");
+        this(DEFAULT_NAME, null);
     }
 
+    public Entity(Pool source)
+    {
+        this(DEFAULT_NAME, source);
+    }
+    
     public Entity(String name)
     {
+        this(name, null);
+    }
+    
+    public Entity(String name, Pool source)
+    {
+        this.source = source;
         this.name = name+"_"+(count++);
+    }
+    
+    protected void returnToSource()
+    {
+        if (source != null)
+        {
+            source.returnEntity(this);
+        }
     }
     
     public void addEntityListener(EntityListener l)

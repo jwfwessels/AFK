@@ -13,5 +13,5 @@ public interface Factory<R extends FactoryRequest>
      * @return the created entity
      * @throws FactoryException if there was any exception with creating the entity
      */
-    public Entity create(R request) throws FactoryException;
+    public Entity create(R request);
 }

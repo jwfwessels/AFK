@@ -4,7 +4,7 @@ package afk.ge.ems;
  *
  * @author Daniel
  */
-public class FactoryException extends Exception
+public class FactoryException extends RuntimeException
 {
 
     /**

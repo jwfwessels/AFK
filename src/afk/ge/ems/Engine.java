@@ -59,6 +59,7 @@ public class Engine implements EntityListener, FlagManager
         }
 
         entities.remove(entity);
+        entity.returnToSource();
 
         for (Entity dep : entity.dependents)
         {
