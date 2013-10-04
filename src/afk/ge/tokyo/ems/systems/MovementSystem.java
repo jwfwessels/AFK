@@ -117,16 +117,12 @@ public class MovementSystem implements ISystem
     
     public static Vec3 acceleration(final Velocity velocity, final float dt)
     {
-        final float c = 0f;
-        
-        return velocity.v.getNegated().scale((float)pow(c, dt)).add(velocity.a);
+        return velocity.a;
     }
     
     public static Vec4 angularAcceleration(final Velocity velocity, final float dt)
     {
-        final float c = 0f;
-        
-        return velocity.av.getNegated().scale((float)pow(c, dt)).add(velocity.aa);
+        return velocity.aa;
     }
     
 }

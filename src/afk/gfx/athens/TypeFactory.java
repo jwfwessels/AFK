@@ -25,6 +25,8 @@ public class TypeFactory
         this.resourceManager = resourceManager;
         
         factories.put("smallTank", new SmallTankFactory());
+        factories.put("heli", new HeliFactory());
+        factories.put("heliBlades", new RotorFactory());
         factories.put("largeTankBase", new LargeTankBaseFactory());
         factories.put("largeTankTurret", new LargeTankTurretFactory());
         factories.put("largeTankBarrel", new LargeTankBarrelFactory());
@@ -199,6 +201,35 @@ public class TypeFactory
             floorGfxEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
             
             return floorGfxEntity;
+        }
+        
+    }
+    private class HeliFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity heliGfxEntity = createEntity(GfxEntity.NORMAL);
+            heliGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "heli_base"));
+            heliGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            heliGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/heli_base"));
+            
+            return heliGfxEntity;
+        }
+        
+    }
+    private class RotorFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity heliGfxEntity = createEntity(GfxEntity.NORMAL);
+            heliGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "heli_blades"));
+            heliGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            
+            return heliGfxEntity;
         }
         
     }

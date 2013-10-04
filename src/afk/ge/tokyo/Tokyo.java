@@ -152,7 +152,7 @@ public class Tokyo implements GameEngine, Runnable
         GenericFactory factory = new GenericFactory();
         try
         {
-            GenericFactoryRequest request = GenericFactoryRequest.load("largeTank");
+            GenericFactoryRequest request = GenericFactoryRequest.load("heli");
             //entityManager.createObstacles(new Vec3(5, 5, 5));
             for (int i = 0; i < participants.length; i++)
             {
