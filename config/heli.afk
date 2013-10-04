@@ -1,4 +1,4 @@
-TankTracks
+Helicopter
 State
 	scale = 3.5 3.5 3.5
 BBoxComponent
@@ -15,6 +15,7 @@ Renderable
 	type = heli
 RobotToken
 Targetable
-SnapToTerrain
+TerrainDisplacement
+	height = 10
 
 -> heliBlades

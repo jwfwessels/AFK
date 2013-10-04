@@ -6,7 +6,6 @@ package afk.ge.tokyo;
 
 import afk.bot.RobotEngine;
 import afk.game.GameCoordinator;
-import afk.game.GameListener;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
@@ -14,36 +13,9 @@ import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Paint;
-import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.Spawn;
-import afk.ge.tokyo.ems.components.State;
-import afk.ge.tokyo.ems.factories.GenericFactory;
-import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
-import afk.ge.tokyo.ems.factories.HeightmapFactory;
-import afk.ge.tokyo.ems.factories.HeightmapFactoryRequest;
-import afk.ge.tokyo.ems.factories.ObstacleFactory;
-import afk.ge.tokyo.ems.factories.ObstacleFactoryRequest;
-import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
-import afk.ge.tokyo.ems.systems.CollisionSystem;
-import afk.ge.tokyo.ems.systems.DebugRenderSystem;
-import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
-import afk.ge.tokyo.ems.systems.DebugSystem;
-import afk.ge.tokyo.ems.systems.GameStateSystem;
-import afk.ge.tokyo.ems.systems.LifeSystem;
-import afk.ge.tokyo.ems.systems.LifetimeSystem;
-import afk.ge.tokyo.ems.systems.MovementSystem;
-import afk.ge.tokyo.ems.systems.PaintSystem;
-import afk.ge.tokyo.ems.systems.ParticleSystem;
-import afk.ge.tokyo.ems.systems.ProjectileSystem;
-import afk.ge.tokyo.ems.systems.RenderSystem;
-import afk.ge.tokyo.ems.systems.RobotSystem;
-import afk.ge.tokyo.ems.systems.SpawnSystem;
-import afk.ge.tokyo.ems.systems.TankBarrelFeedbackSystem;
-import afk.ge.tokyo.ems.systems.TankBarrelSystem;
-import afk.ge.tokyo.ems.systems.TankTracksSystem;
-import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
-import afk.ge.tokyo.ems.systems.TankTurretSystem;
-import afk.ge.tokyo.ems.systems.VisionSystem;
+import afk.ge.tokyo.ems.factories.*;
+import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
@@ -99,7 +71,9 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new TankTracksSystem());
         engine.addLogicSystem(new TankTurretSystem());
         engine.addLogicSystem(new TankBarrelSystem());
+        engine.addLogicSystem(new HelicopterSystem());
         engine.addLogicSystem(new MovementSystem());
+        engine.addLogicSystem(new TerrainDisplacementSystem());
         engine.addLogicSystem(new SnapToTerrainSystem());
         engine.addLogicSystem(new AngleConstraintSystem());
         engine.addLogicSystem(new TankTurretFeedbackSystem());
@@ -181,10 +155,10 @@ public class Tokyo implements GameEngine, Runnable
         engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
         ObstacleFactory factory = new ObstacleFactory();
 
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f), "wall")));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 5, 0.5f), "wall")));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE), "wall")));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 5, Tokyo.BOARD_SIZE), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall")));
     }
 
     @Override
