@@ -9,10 +9,13 @@ import java.util.UUID;
  */
 public class Controller
 {
+    public UUID id = null;
+    public boolean[] inputFlags = null;
+    public RobotEvent events = null;
 
-    public UUID id;
-    public boolean[] inputFlags;
-    public RobotEvent events;
+    public Controller()
+    {
+    }
 
     public Controller(UUID id)
     {

@@ -6,8 +6,12 @@ package afk.ge.tokyo.ems.components;
  */
 public class Life
 {
-    public float hp;
-    public float maxHp;
+    public float hp = 0;
+    public float maxHp = 0;
+
+    public Life()
+    {
+    }
 
     public Life(float maxHp)
     {

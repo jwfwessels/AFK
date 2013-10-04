@@ -1,5 +1,6 @@
 package afk.ge.tokyo.ems.systems;
 
+import afk.ge.BBox;
 import afk.ge.tokyo.EntityManager;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
@@ -41,9 +42,11 @@ public class DebugRenderSystem implements ISystem
         List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
         for (CollisionNode node : nodes)
         {
-            GfxEntity gfx = gfxEngine.getDebugEntity(node.bbox);
+            BBox bbox = new BBox(node.state, node.bbox);
+            
+            GfxEntity gfx = gfxEngine.getDebugEntity(bbox);
 
-            gfx.position = node.state.pos.add(node.bbox.offset);
+            gfx.position = bbox.getCenterPoint();
             gfx.rotation = node.state.rot;
             gfx.scale = new Vec3(1);
             gfx.colour = EntityManager.MAGENTA;

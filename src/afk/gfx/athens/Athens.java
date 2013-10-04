@@ -1,5 +1,6 @@
 package afk.gfx.athens;
 
+import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.Camera;
@@ -41,9 +42,9 @@ public class Athens implements GraphicsEngine
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
-    protected Map<BBoxComponent, DebugBox> entitiesDebug = new LinkedHashMap<BBoxComponent, DebugBox>();
+    protected Map<BBox, DebugBox> entitiesDebug = new LinkedHashMap<BBox, DebugBox>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
-    protected List<BBoxComponent> removedDebug = new ArrayList<BBoxComponent>();
+    protected List<BBox> removedDebug = new ArrayList<BBox>();
     private int w_width, w_height;
     private float aspect;
     // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
@@ -281,7 +282,7 @@ public class Athens implements GraphicsEngine
             entities.remove(o);
         }
         removed.clear();
-        for (BBoxComponent o : removedDebug)
+        for (BBox o : removedDebug)
         {
             entitiesDebug.remove(o);
         }
@@ -503,7 +504,7 @@ public class Athens implements GraphicsEngine
     }
     
     @Override
-    public GfxEntity getDebugEntity(BBoxComponent bbox)
+    public GfxEntity getDebugEntity(BBox bbox)
     {
         DebugBox entity = entitiesDebug.get(bbox);
         if (entity == null)
@@ -512,7 +513,7 @@ public class Athens implements GraphicsEngine
             entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
             entitiesDebug.put(bbox, entity);
         }
-        entity.setV(bbox.extent);
+        entity.setV(bbox.getSize());
         entity.used = true;
         return entity;
     }
@@ -520,7 +521,7 @@ public class Athens implements GraphicsEngine
     @Override
     public void postDebug()
     {
-        for (Map.Entry<BBoxComponent, DebugBox> e : entitiesDebug.entrySet())
+        for (Map.Entry<BBox, DebugBox> e : entitiesDebug.entrySet())
         {
             if (!e.getValue().used)
             {

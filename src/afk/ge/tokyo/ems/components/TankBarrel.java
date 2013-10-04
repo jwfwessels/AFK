@@ -6,7 +6,11 @@ package afk.ge.tokyo.ems.components;
  */
 public class TankBarrel
 {
-    public float length;
+    public float length = 0;
+
+    public TankBarrel()
+    {
+    }
 
     public TankBarrel(float length)
     {

@@ -34,12 +34,30 @@ public class Entity
             l.componentAdded(this, componentClass);
     }
     
+    public void addToDependents(Object component)
+    {
+        add(component);
+        for (Entity dep : dependents)
+        {
+            dep.addToDependents(component);
+        }
+    }
+    
     public void remove(Class componentClass)
     {
         components.remove(componentClass);
         
         for (EntityListener l : listeners)
             l.componentRemoved(this, componentClass);
+    }
+    
+    public void removeFromDeprendents(Class componentClass)
+    {
+        remove(componentClass);
+        for (Entity dep : dependents)
+        {
+            dep.removeFromDeprendents(componentClass);
+        }
     }
     
     public void addDependent(Entity entity)

@@ -11,13 +11,17 @@ public class State
 {
 
     /// PREVIOUS STATE ///
-    public Vec3 prevPos;
-    public Vec4 prevRot;
-    public Vec3 prevScale;
+    public Vec3 prevPos = Vec3.VEC3_ZERO;
+    public Vec4 prevRot = Vec4.VEC4_ZERO;
+    public Vec3 prevScale = new Vec3(1,1,1);
     /// CURRENT STATE ///
-    public Vec3 pos;
-    public Vec4 rot;
-    public Vec3 scale;
+    public Vec3 pos = Vec3.VEC3_ZERO;
+    public Vec4 rot = Vec4.VEC4_ZERO;
+    public Vec3 scale = new Vec3(1,1,1);
+
+    public State()
+    {
+    }
 
     public State(State original, Vec3 posShift)
     {

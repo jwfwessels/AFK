@@ -45,9 +45,9 @@ public class BBox
     
     public BBox(State state, BBoxComponent bBoxComponent)
     {
-        m = Utils.getBBoxMatrix(state, bBoxComponent.offset);
+        m = Utils.getBBoxMatrix(state, bBoxComponent.offset.multiply(state.scale));
         
-        this.extents = bBoxComponent.extent;
+        this.extents = bBoxComponent.extent.multiply(state.scale);
     }
 
     public final void set(final Mat4 m, final Vec3 extents)

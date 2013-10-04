@@ -122,7 +122,7 @@ public class EntityManager
     {
         Entity wall = new Entity();
         wall.add(new State(pos, Vec4.VEC4_ZERO, scale));
-        wall.add(new BBoxComponent(scale.scale(0.5f),new Vec3(0,scale.getY()*0.5f,0)));
+        wall.add(new BBoxComponent(new Vec3(0.5f),new Vec3(0,0.5f,0)));
         wall.add(new Renderable("wall", new Vec3(0.75f, 0.75f, 0.75f)));
 
         return wall;
@@ -140,66 +140,6 @@ public class EntityManager
             createGraphicWall(pos, scale);
 
         }
-    }
-
-    public Entity createTankEntityNEU(UUID id, Vec3 spawnPoint, Vec3 colour)
-    {
-        Vec3 scale = new Vec3(LARGE_TANK_SCALE);
-
-        Entity tank = new Entity();
-
-        Controller controller = new Controller(id);
-        tank.add(controller);
-        tank.add(new State(spawnPoint, Vec4.VEC4_ZERO, scale));
-        // tank.add(new BBoxComponent(new Vec3(1.0f,0.127f,0.622f).multiply(scale)));
-        tank.add(new BBoxComponent(LARGE_TANK_EXTENTS.multiply(scale), LARGE_TANK_BBOX_OFFSET.multiply(scale)));
-        tank.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
-        tank.add(new Motor(2f, 20f));
-        tank.add(new Life(SMALL_TANK_HP));
-        tank.add(new Renderable(LARGE_TANK_TYPE, colour));
-        tank.add(new RobotToken());
-        tank.add(new Targetable());
-        tank.add(new TankTracks());
-        tank.add(new SnapToTerrain());
-        
-        
-        Entity turret = createLargeTankTurret(colour);
-        turret.add(new Parent(tank));
-        turret.add(controller);
-        tank.addDependent(turret);
-        Entity barrel = createLargeTankBarrel(colour);
-        barrel.add(new Parent(turret));
-        barrel.add(controller);
-        turret.addDependent(barrel);
-
-        return tank;
-    }
-
-    public Entity createLargeTankTurret(Vec3 colour)
-    {
-        Entity entity = new Entity();
-
-        entity.add(new State(new Vec3(0.0f, 0.17623f, -0.15976f), Vec4.VEC4_ZERO, new Vec3(1)));
-        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
-        entity.add(new Renderable(LARGE_TANK_TURRET_TYPE, colour));
-        entity.add(new Vision(TANK_VDIST, TANK_FOVY, TANK_FOVX));
-        entity.add(new TankTurret());
-
-        return entity;
-    }
-
-    public Entity createLargeTankBarrel(Vec3 colour)
-    {
-        Entity entity = new Entity();
-
-        entity.add(new State(new Vec3(0.0f, 0.03200f, 0.22199f), Vec4.VEC4_ZERO, new Vec3(1)));
-        entity.add(new Weapon(WEAPON_RANGE, WEAPON_DAMAGE, BULLET_SPEED, 1.0f / FIRE_RATE, WEAPON_AMMO));
-        entity.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
-        entity.add(new Renderable(LARGE_TANK_BARREL_TYPE, colour));
-        entity.add(new AngleConstraint(new Vec4(0,0,0,-45),new Vec4(0,0,0,10)));
-        entity.add(new TankBarrel(0.545f));
-
-        return entity;
     }
 
 //    public TankEntity createSmallTank(Robot botController, Vec3 spawnPoint, Vec3 colour)

@@ -1,5 +1,6 @@
 package afk.gfx;
 
+import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Renderable;
 import java.awt.Component;
@@ -86,6 +87,6 @@ public interface GraphicsEngine
     public void post();
     
     public void primeDebug();
-    public GfxEntity getDebugEntity(BBoxComponent bbox);
+    public GfxEntity getDebugEntity(BBox bbox);
     public void postDebug();
 }

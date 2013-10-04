@@ -11,6 +11,12 @@ import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
+import afk.ge.ems.FactoryException;
+import afk.ge.tokyo.ems.components.Controller;
+import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.factories.GenericFactory;
+import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
 import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
 import afk.ge.tokyo.ems.systems.CollisionSystem;
 import afk.ge.tokyo.ems.systems.DebugRenderSystem;
@@ -31,6 +37,7 @@ import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
 import afk.ge.tokyo.ems.systems.TankTurretSystem;
 import afk.ge.tokyo.ems.systems.VisionSystem;
 import afk.gfx.GfxUtils;
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -107,17 +114,34 @@ public class Tokyo implements GameEngine, Runnable
     public void startGame(UUID[] participants)
     {
         entityManager.spawnStuff();
-        //entityManager.createObstacles(new Vec3(5, 5, 5));
-        for (int i = 0; i < participants.length; i++)
+        GenericFactory factory = new GenericFactory();
+        try
         {
-            Entity tank = entityManager.createTankEntityNEU(
-                    participants[i],
-                    EntityManager.SPAWN_POINTS[i],
-                    EntityManager.BOT_COLOURS[i]);
-            engine.addEntity(tank);
-        }
+            GenericFactoryRequest request = GenericFactoryRequest.load("largeTank");
+            //entityManager.createObstacles(new Vec3(5, 5, 5));
+            for (int i = 0; i < participants.length; i++)
+            {
+                Entity tank = factory.create(request);
+                State state = tank.get(State.class);
+                state.pos = state.prevPos = EntityManager.SPAWN_POINTS[i];
+                Renderable renderable = tank.get(Renderable.class);
+                renderable.colour = EntityManager.BOT_COLOURS[i];
+                tank.addToDependents(new Controller(participants[i]));
+                engine.addEntity(tank);
+            }
 
-        new Thread(this).start();
+            new Thread(this).start();
+        }
+        catch (IOException ex)
+        {
+            // FIXME: this needs to propagate somewhere else!
+            ex.printStackTrace(System.err);
+        }
+        catch (FactoryException ex)
+        {
+            // FIXME: this needs to propagate somewhere else!
+            ex.printStackTrace(System.err);
+        }
     }
 
     @Override

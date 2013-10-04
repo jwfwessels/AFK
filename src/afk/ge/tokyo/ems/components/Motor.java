@@ -9,10 +9,14 @@ public class Motor
     // TODO:
 //    public float fuelLeft;
 //    public float rateOfConsumption;
-    public float topSpeed;
+    public float topSpeed = 0;
     
     // specific to tanks perhaps?
-    public float angularVelocity;
+    public float angularVelocity = 0;
+
+    public Motor()
+    {
+    }
 
     public Motor(float topSpeed, float angularVelocity)
     {

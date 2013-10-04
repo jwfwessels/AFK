@@ -8,9 +8,13 @@ import java.util.UUID;
  */
 public class Bullet
 {
-    public float rangeLeft;
-    public float damage;
-    public UUID parent;
+    public float rangeLeft = 0;
+    public float damage = 0;
+    public UUID parent = null;
+
+    public Bullet()
+    {
+    }
 
     public Bullet(float rangeLeft, float damage, UUID parent)
     {

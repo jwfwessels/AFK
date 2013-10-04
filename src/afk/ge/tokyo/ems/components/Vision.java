@@ -6,9 +6,13 @@ package afk.ge.tokyo.ems.components;
  */
 public class Vision {
     
-    public float dist;
-    public float fovy;
-    public float fovx;
+    public float dist = 0;
+    public float fovy = 0;
+    public float fovx = 0;
+
+    public Vision()
+    {
+    }
 
     public Vision(float dist, float fovy, float fovx)
     {
