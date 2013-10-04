@@ -1,13 +1,9 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
-import afk.ge.tokyo.EntityManager;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
-import afk.ge.tokyo.ems.components.Parent;
-import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
-import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import com.hackoeur.jglm.Vec3;
@@ -49,7 +45,7 @@ public class DebugRenderSystem implements ISystem
             gfx.position = bbox.getCenterPoint();
             gfx.rotation = node.state.rot;
             gfx.scale = new Vec3(1);
-            gfx.colour = EntityManager.MAGENTA;
+            gfx.colour = GfxEntity.MAGENTA;
         }
 
         gfxEngine.postDebug();

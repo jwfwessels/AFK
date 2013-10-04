@@ -18,6 +18,7 @@ import java.util.Collection;
  */
 public abstract class GfxEntity
 {
+    public static final Vec3 MAGENTA = new Vec3(1, 0, 1);
     
     /** Graphics Entity behaviours. */
     public static final int NORMAL = 0, BILLBOARD_SPHERICAL = 1,

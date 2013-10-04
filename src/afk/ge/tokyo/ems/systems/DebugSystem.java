@@ -1,7 +1,6 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
-import afk.ge.tokyo.EntityManager;
 import static afk.ge.tokyo.HeightmapLoader.getHeight;
 import afk.ge.tokyo.Tokyo;
 import afk.ge.ems.Engine;
@@ -19,6 +18,7 @@ import afk.ge.tokyo.ems.factories.ObstacleFactory;
 import afk.ge.tokyo.ems.factories.ObstacleFactoryRequest;
 import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
+import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
@@ -90,7 +90,6 @@ public class DebugSystem implements ISystem
     private Entity selected = null;
     private Entity hovered = null;
     private RobotEngine botEngine;
-    private EntityManager manager; // TODO: this should be replaced with factories!!!!!!!
     private Entity placeEntity = null;
 
     private Vec3 mouse2world(Point myMouse)
@@ -172,10 +171,9 @@ public class DebugSystem implements ISystem
         placeEntity = null;
     }
 
-    public DebugSystem(RobotEngine botEngine, EntityManager manager, DebugRenderSystem wireFramer)
+    public DebugSystem(RobotEngine botEngine, DebugRenderSystem wireFramer)
     {
         this.botEngine = botEngine;
-        this.manager = manager;
         this.wireFramer = wireFramer;
     }
 
@@ -259,7 +257,7 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 Entity entity = new Entity();
-                entity.add(new Renderable("wall", EntityManager.MAGENTA));
+                entity.add(new Renderable("wall", GfxEntity.MAGENTA));
                 entity.add(new SnapToTerrain());
                 entity.add(new Targetable());
                 Vec3 scale = new Vec3(0.3f);
@@ -455,7 +453,7 @@ public class DebugSystem implements ISystem
                 {
                     RenderNode node = new RenderNode();
                     node.entity = placeEntity;
-                    node.renderable = new Renderable("cube", EntityManager.MAGENTA);
+                    node.renderable = new Renderable("cube", GfxEntity.MAGENTA);
                     node.state = state;
                     drawRenderable(g, node);
                 }

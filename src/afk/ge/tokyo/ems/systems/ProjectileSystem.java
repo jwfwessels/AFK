@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
-import afk.ge.tokyo.EntityManager;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
@@ -29,12 +24,6 @@ public class ProjectileSystem implements ISystem
 {
 
     Engine engine;
-    EntityManager manager;
-
-    public ProjectileSystem(EntityManager manager)
-    {
-        this.manager = manager;
-    }
 
     @Override
     public boolean init(Engine engine)

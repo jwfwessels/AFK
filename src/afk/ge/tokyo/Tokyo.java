@@ -57,7 +57,6 @@ import java.util.UUID;
 public class Tokyo implements GameEngine, Runnable
 {
 
-    private EntityManager entityManager;
     private Engine engine;
     private GraphicsEngine gfxEngine;
     private boolean running = true;
@@ -91,7 +90,6 @@ public class Tokyo implements GameEngine, Runnable
 
         this.gfxEngine = gfxEngine;
 
-        entityManager = new EntityManager(engine);
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
@@ -100,27 +98,52 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
         engine.addLogicSystem(new TankTracksSystem());
         engine.addLogicSystem(new TankTurretSystem());
-        engine.addLogicSystem(new TankBarrelSystem(entityManager));
+        engine.addLogicSystem(new TankBarrelSystem());
         engine.addLogicSystem(new MovementSystem());
         engine.addLogicSystem(new SnapToTerrainSystem());
         engine.addLogicSystem(new AngleConstraintSystem());
         engine.addLogicSystem(new TankTurretFeedbackSystem());
         engine.addLogicSystem(new TankBarrelFeedbackSystem());
-        engine.addLogicSystem(new ProjectileSystem(entityManager));
+        engine.addLogicSystem(new ProjectileSystem());
         engine.addLogicSystem(new LifeSystem());
         engine.addLogicSystem(new CollisionSystem());
-        engine.addLogicSystem(new ParticleSystem(entityManager));
-        engine.addLogicSystem(new LifetimeSystem(entityManager));
+        engine.addLogicSystem(new ParticleSystem());
+        engine.addLogicSystem(new LifetimeSystem());
         engine.addLogicSystem(new VisionSystem());
         engine.addLogicSystem(new GameStateSystem(gm));
-        
+
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
         DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
-        engine.addSystem(new DebugSystem(botEngine, entityManager, wireFramer));
+        engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
     }
+    
+    // TODO: make these customisable/generic/not hard-coded/just somewhere else!
+    public static final int SPAWNVALUE = (int) (BOARD_SIZE * 0.45);
+    public static final Vec3[] BOT_COLOURS =
+    {
+        new Vec3(1, 0, 0),
+        new Vec3(0, 0, 1),
+        new Vec3(0, 1, 0),
+        new Vec3(1, 1, 0),
+        new Vec3(1, 0, 1),
+        new Vec3(0, 1, 1),
+        new Vec3(0.95f, 0.95f, 0.95f),
+        new Vec3(0.2f, 0.2f, 0.2f)
+    };
+    public static final Vec3[] SPAWN_POINTS =
+    {
+        new Vec3(-SPAWNVALUE, 0, -SPAWNVALUE),
+        new Vec3(SPAWNVALUE, 0, SPAWNVALUE),
+        new Vec3(-SPAWNVALUE, 0, SPAWNVALUE),
+        new Vec3(SPAWNVALUE, 0, -SPAWNVALUE),
+        new Vec3(0, 0, -SPAWNVALUE),
+        new Vec3(0, 0, SPAWNVALUE),
+        new Vec3(-SPAWNVALUE, 0, 0),
+        new Vec3(SPAWNVALUE, 0, 0)
+    };
 
     @Override
     public void startGame(UUID[] participants)
@@ -134,26 +157,24 @@ public class Tokyo implements GameEngine, Runnable
             for (int i = 0; i < participants.length; i++)
             {
                 Entity entity = factory.create(request);
-                entity.add(new Spawn(EntityManager.SPAWN_POINTS[i], Vec4.VEC4_ZERO));
-                entity.addToDependents(new Paint(EntityManager.BOT_COLOURS[i]));
+                entity.add(new Spawn(SPAWN_POINTS[i], Vec4.VEC4_ZERO));
+                entity.addToDependents(new Paint(BOT_COLOURS[i]));
                 entity.addToDependents(new Controller(participants[i]));
                 engine.addEntity(entity);
             }
 
             new Thread(this).start();
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             // FIXME: this needs to propagate somewhere else!
             ex.printStackTrace(System.err);
-        }
-        catch (FactoryException ex)
+        } catch (FactoryException ex)
         {
             // FIXME: this needs to propagate somewhere else!
             ex.printStackTrace(System.err);
         }
     }
-    
+
     // TODO: this should be put in a map file
     private void spawnStuff()
     {
@@ -193,7 +214,6 @@ public class Tokyo implements GameEngine, Runnable
 //        paused = !paused;
 //        System.out.println("paused: " + paused);
 //    }
-
     @Override
     public float getSpeed()
     {

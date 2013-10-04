@@ -1,6 +1,5 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.tokyo.EntityManager;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.LifetimeNode;
@@ -12,13 +11,7 @@ import java.util.List;
  */
 public class LifetimeSystem implements ISystem
 {
-    Engine engine;
-    EntityManager manager;
-    
-    public LifetimeSystem(EntityManager manager)
-    {
-        this.manager = manager;
-    }
+    private Engine engine;
 
     @Override
     public boolean init(Engine engine)

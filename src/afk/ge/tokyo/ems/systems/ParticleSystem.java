@@ -1,15 +1,11 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.tokyo.EntityManager;
 import afk.ge.ems.Engine;
-import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.factories.ParticleFactory;
 import afk.ge.tokyo.ems.factories.ParticleFactoryRequest;
 import afk.ge.tokyo.ems.nodes.ParticleEmitterNode;
-import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Queue;
 
 /**
  *
@@ -18,14 +14,8 @@ import java.util.Queue;
 public class ParticleSystem implements ISystem
 {
 
-    private EntityManager manager;
     private Engine engine;
     private ParticleFactory factory = new ParticleFactory();
-
-    public ParticleSystem(EntityManager manager)
-    {
-        this.manager = manager;
-    }
 
     @Override
     public boolean init(Engine engine)

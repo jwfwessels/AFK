@@ -1,7 +1,6 @@
 package afk.ge.tokyo.ems.systems;
 
 import static afk.bot.london.TankRobot.*;
-import afk.ge.tokyo.EntityManager;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.State;
@@ -9,6 +8,8 @@ import afk.ge.tokyo.ems.nodes.TankBarrelNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
 import static afk.ge.ems.Utils.*;
+import afk.ge.tokyo.ems.factories.ProjectileFactory;
+import afk.ge.tokyo.ems.factories.ProjectileFactoryRequest;
 import com.hackoeur.jglm.Vec4;
 
 /**
@@ -19,13 +20,8 @@ public class TankBarrelSystem implements ISystem
 {
 
     public static final int BARREL_AV = 5;
-    Engine engine;
-    EntityManager entityManager;
-
-    public TankBarrelSystem(EntityManager entityManager)
-    {
-        this.entityManager = entityManager;
-    }
+    private Engine engine;
+    private ProjectileFactory factory = new ProjectileFactory();
 
     @Override
     public boolean init(Engine engine)
@@ -67,8 +63,12 @@ public class TankBarrelSystem implements ISystem
         State state = getWorldState(node.entity);
         float barrelLength = node.barrel.length * state.scale.getZ();
         Vec3 forward = getForward(state);
-        entityManager.createProjectileNEU(node.controller.id, node.weapon,
-                new State(state, forward.multiply(barrelLength)), forward);
+        engine.addEntity(factory.create(new ProjectileFactoryRequest(
+                state.pos.add(forward.multiply(barrelLength)),
+                state.rot,
+                new Vec3(0.3f, 0.3f, -0.3f),
+                forward, "projectile", new Vec3(0.5f,0.5f,0.5f),
+                node.weapon, node.controller.id)));
     }
 
     @Override
