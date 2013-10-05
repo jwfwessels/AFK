@@ -33,8 +33,8 @@ public class SmallRandomBot extends TankRobot
         if (events.hitWall())
         {
             turning = false;
-            movement = 100;
-            rotation = 45;
+            movement = 50;
+            rotation = 23;
             if (retaliating != 0)
             {
                 retaliating = -retaliating;
@@ -96,7 +96,7 @@ public class SmallRandomBot extends TankRobot
             rotation--;
         } else
         {
-            rotation = (int) (Math.random() * 360);
+            rotation = (int) (Math.random() * 180);
             turning = false;
         }
     }
@@ -109,7 +109,7 @@ public class SmallRandomBot extends TankRobot
             movement--;
         } else
         {
-            movement = (int) (Math.random() * 800);
+            movement = (int) (Math.random() * 400);
             turning = true;
         }
     }

@@ -13,5 +13,5 @@ Weapon
 Renderable
 	type = smallTankBarrel
 AngleConstraint
-	min = 0 0 0 -45
-	max = 0 0 0 10
+	min = 0 0 0 -60
+	max = 0 0 0 30
