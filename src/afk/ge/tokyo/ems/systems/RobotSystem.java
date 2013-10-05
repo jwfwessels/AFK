@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class RobotSystem implements ISystem
 {
-    Engine engine;
-    RobotEngine botEngine;
+    private Engine engine;
+    private RobotEngine botEngine;
 
     public RobotSystem(RobotEngine botEngine)
     {

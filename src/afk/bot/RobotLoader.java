@@ -1,12 +1,10 @@
 package afk.bot;
 
-import afk.bot.london.TankRobot;
-
 /**
  *
  * @author Daniel
  */
-public interface RobotLoader
+public interface RobotLoader<R extends Robot>
 {
 
     /**
@@ -27,6 +25,6 @@ public interface RobotLoader
      * @return
      * @throws RobotException
      */
-    public TankRobot getRobotInstance(String name) throws RobotException;
+    public R getRobotInstance(String name) throws RobotException;
     
 }

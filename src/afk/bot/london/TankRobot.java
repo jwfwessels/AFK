@@ -23,6 +23,12 @@ public abstract class TankRobot extends AbstractRobot
         super(NUM_ACTIONS);
     }
 
+    @Override
+    public void init()
+    {
+        setType("largeTank");
+    }
+
     // to make the super constructor hidden from subclasses
     private TankRobot(int numActions)
     {

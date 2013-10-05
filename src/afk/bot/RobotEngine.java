@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.bot;
 
 import afk.bot.london.RobotEvent;
@@ -13,16 +9,41 @@ import java.util.UUID;
  */
 public interface RobotEngine
 {
-
+    /**
+     * Adds an instance of a robot to this robot engine.
+     * @param path
+     * @return
+     * @throws RobotException 
+     */
     public UUID addRobot(String path) throws RobotException;
 
-    //public void loadRobot(String path) throws RobotException; // refactored to separate RobotLoader interface
+    /**
+     * Initialises all the currently added robots.
+     */
+    public void init();
     
-    /// refactor
+    /**
+     * Executes a single logic tick of each robot.
+     */
     public void execute();
 
-    // FIXME: remove once db system is up and running ???
+    /**
+     * Get the action flags from the specified robot since the last execution.
+     * @param id
+     * @return 
+     */
     public boolean[] getFlags(UUID id);
 
+    /**
+     * Sets the events of the specified robot for the next execution.
+     * @param id
+     * @param events 
+     */
     public void setEvents(UUID id, RobotEvent events);
+    
+    /**
+     * Get the configuration manager for this robot engine.
+     * @return 
+     */
+    public RobotConfigManager getConfigManager();
 }

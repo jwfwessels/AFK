@@ -16,6 +16,6 @@ Renderable
 RobotToken
 Targetable
 TerrainDisplacement
-	height = 10
+	height = 6
 
 -> heliBlades

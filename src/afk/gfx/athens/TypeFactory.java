@@ -24,12 +24,14 @@ public class TypeFactory
     {
         this.resourceManager = resourceManager;
         
-        factories.put("smallTank", new SmallTankFactory());
         factories.put("heli", new HeliFactory());
         factories.put("heliBlades", new RotorFactory());
         factories.put("largeTankBase", new LargeTankBaseFactory());
         factories.put("largeTankTurret", new LargeTankTurretFactory());
         factories.put("largeTankBarrel", new LargeTankBarrelFactory());
+        factories.put("smallTankBase", new SmallTankBaseFactory());
+        factories.put("smallTankTurret", new SmallTankTurretFactory());
+        factories.put("smallTankBarrel", new SmallTankBarrelFactory());
         factories.put("projectile", new ProjectileFactory());
         factories.put("wall", new WallFactory());
         factories.put("floor", new FloorFactory());
@@ -44,53 +46,6 @@ public class TypeFactory
     private interface TypeFactoryThing
     {
         public AthensEntity create();
-    }
-    private class SmallTankFactory implements TypeFactoryThing
-    {
-
-        @Override
-        public AthensEntity create()
-        {
-            AthensEntity rootGfxEntity = createEntity(NORMAL);
-            AthensEntity tankBarrelEntity = createEntity(NORMAL);
-            AthensEntity tankTracksEntity = createEntity(NORMAL);
-            AthensEntity tankWheelsEntity = createEntity(NORMAL);
-            AthensEntity tankShadowEntity = createEntity(NORMAL);
-
-            rootGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_body"));
-            rootGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_body"));
-            rootGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-
-            tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_barrel"));
-            tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_barrel"));
-            tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankBarrelEntity.position = new Vec3(0.0f, 0.41522f, 0.28351f);
-
-            tankTracksEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_tracks"));
-            tankTracksEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_tracks"));
-            tankTracksEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-            tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
-
-            tankWheelsEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_wheels"));
-            tankWheelsEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_wheels"));
-            tankWheelsEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
-
-            tankShadowEntity.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "quad"));
-            tankShadowEntity.attachResource(resourceManager.getResource(SHADER, "simpleshadow"));
-            tankShadowEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_shadow"));
-            tankShadowEntity.colour = Vec3.VEC3_ZERO;
-            tankShadowEntity.opacity = 0.99f;
-            tankShadowEntity.position = new Vec3(0,0.01f,0);
-            tankShadowEntity.scale = new Vec3(1.5f, 0, 1.5f);
-            
-            rootGfxEntity.addChild(tankBarrelEntity);
-            rootGfxEntity.addChild(tankTracksEntity);
-            rootGfxEntity.addChild(tankWheelsEntity);
-            rootGfxEntity.addChild(tankShadowEntity);
-            
-            return rootGfxEntity;
-        }
-        
     }
     private class LargeTankBaseFactory implements TypeFactoryThing
     {
@@ -155,6 +110,74 @@ public class TypeFactory
             AthensEntity tankBarrelEntity = createEntity(NORMAL);
             tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "large_tank_barrel"));
             tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/large_tank_barrel"));
+            tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            //tankBarrelEntity.position = new Vec3(0.0f, 0.03200f, 0.22199f);
+            return tankBarrelEntity;
+        }
+    }
+    private class SmallTankBaseFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity rootGfxEntity = createEntity(NORMAL);
+            AthensEntity tankTracksEntity = createEntity(NORMAL);
+            AthensEntity tankWheelsEntity = createEntity(NORMAL);
+            AthensEntity tankShadowEntity = createEntity(NORMAL);
+
+            rootGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_body"));
+            rootGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_body"));
+            rootGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+
+            tankTracksEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_tracks"));
+            tankTracksEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_tracks"));
+            tankTracksEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            tankTracksEntity.colour = new Vec3(0.4f, 0.4f, 0.4f);
+
+            tankWheelsEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_wheels"));
+            tankWheelsEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_wheels"));
+            tankWheelsEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+
+            tankShadowEntity.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "quad"));
+            tankShadowEntity.attachResource(resourceManager.getResource(SHADER, "simpleshadow"));
+            tankShadowEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_shadow"));
+            tankShadowEntity.colour = Vec3.VEC3_ZERO;
+            tankShadowEntity.opacity = 0.99f;
+            tankShadowEntity.position = new Vec3(0,0.01f,0);
+            tankShadowEntity.scale = new Vec3(1.5f, 0, 1.5f);
+            
+            rootGfxEntity.addChild(tankWheelsEntity);
+            rootGfxEntity.addChild(tankTracksEntity);
+            rootGfxEntity.addChild(tankShadowEntity);
+            
+            return rootGfxEntity;
+        }
+        
+    }
+    private class SmallTankTurretFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity tankTurretEntity = createEntity(NORMAL);
+            tankTurretEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_turret"));
+            tankTurretEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_turret"));
+            tankTurretEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            //tankTurretEntity.position = new Vec3(0.0f, 0.17623f, -0.15976f);
+            return tankTurretEntity;
+        }
+    }
+    private class SmallTankBarrelFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity tankBarrelEntity = createEntity(NORMAL);
+            tankBarrelEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "small_tank_barrel"));
+            tankBarrelEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/small_tank_barrel"));
             tankBarrelEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
             //tankBarrelEntity.position = new Vec3(0.0f, 0.03200f, 0.22199f);
             return tankBarrelEntity;

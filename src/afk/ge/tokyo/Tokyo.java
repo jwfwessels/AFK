@@ -30,7 +30,6 @@ public class Tokyo implements GameEngine, Runnable
 {
 
     private Engine engine;
-    private GraphicsEngine gfxEngine;
     private boolean running = true;
     private boolean paused = false;
     private boolean gameOver = false;
@@ -46,28 +45,25 @@ public class Tokyo implements GameEngine, Runnable
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
-//test()
-    private long lastUpdate;
-    private float time = 0.0f;
-    private float lastFPS = 0.0f;
-    private float fps = 0.0f;
-//
+    private RobotFactory robotFactory;
+    private GenericFactory genericFactory;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameCoordinator gm)
     {
         engine = new Engine();
 
+        genericFactory = new GenericFactory();
+        robotFactory = new RobotFactory(botEngine.getConfigManager(), genericFactory);
+
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
-
-        this.gfxEngine = gfxEngine;
 
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
         engine.addLogicSystem(new SpawnSystem());
         engine.addLogicSystem(new PaintSystem());
-        engine.addLogicSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
+        engine.addLogicSystem(new RobotSystem(botEngine));
         engine.addLogicSystem(new TankTracksSystem());
         engine.addLogicSystem(new TankTurretSystem());
         engine.addLogicSystem(new TankBarrelSystem());
@@ -93,7 +89,6 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
     }
-    
     // TODO: make these customisable/generic/not hard-coded/just somewhere else!
     public static final int SPAWNVALUE = (int) (BOARD_SIZE * 0.45);
     public static final Vec3[] BOT_COLOURS =
@@ -123,25 +118,15 @@ public class Tokyo implements GameEngine, Runnable
     public void startGame(UUID[] participants)
     {
         spawnStuff();
-        GenericFactory factory = new GenericFactory();
         try
         {
-            GenericFactoryRequest request = GenericFactoryRequest.load("heli");
-            //entityManager.createObstacles(new Vec3(5, 5, 5));
             for (int i = 0; i < participants.length; i++)
             {
-                Entity entity = factory.create(request);
-                entity.add(new Spawn(SPAWN_POINTS[i], Vec4.VEC4_ZERO));
-                entity.addToDependents(new Paint(BOT_COLOURS[i]));
-                entity.addToDependents(new Controller(participants[i]));
-                engine.addEntity(entity);
+                engine.addEntity(robotFactory.create(
+                        new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i])));
             }
-
             new Thread(this).start();
-        } catch (IOException ex)
-        {
-            // FIXME: this needs to propagate somewhere else!
-            ex.printStackTrace(System.err);
+
         } catch (FactoryException ex)
         {
             // FIXME: this needs to propagate somewhere else!
@@ -212,7 +197,6 @@ public class Tokyo implements GameEngine, Runnable
     public void run()
     {
         double currentTime = System.nanoTime();
-        lastUpdate = System.nanoTime();
         double accumulator = 0.0f;
         double logicAccumulator = 0.0f;
         while (running)

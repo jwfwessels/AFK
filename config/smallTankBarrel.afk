@@ -1,0 +1,17 @@
+TankBarrel
+	length = 0.105
+State
+	pos = 0 0.09351 0.16116
+Velocity
+Weapon
+	range = 50
+	damage = 10
+	speed = 10
+    fireInterval = 0.5
+    timeSinceLastFire = 0.5
+    ammo = 0
+Renderable
+	type = smallTankBarrel
+AngleConstraint
+	min = 0 0 0 -45
+	max = 0 0 0 10

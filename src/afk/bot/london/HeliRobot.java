@@ -34,6 +34,12 @@ public abstract class HeliRobot extends AbstractRobot
         super(numActions);
     }
 
+    @Override
+    public void init()
+    {
+        setType("heli");
+    }
+
     /**
      * Moves the helicopter forward this game tick.
      */

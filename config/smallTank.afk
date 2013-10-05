@@ -1,0 +1,20 @@
+TankTracks
+State
+	scale = 2 2 2
+BBoxComponent
+	extent = 0.4385 0.2505 0.5
+	offset = 0 0.2505 0
+Velocity
+Motor
+	topSpeed = 4
+	angularVelocity = 40
+Life
+	hp = 80
+	maxHp = 80
+Renderable
+	type = smallTankBase
+RobotToken
+Targetable
+SnapToTerrain
+
+-> smallTankTurret

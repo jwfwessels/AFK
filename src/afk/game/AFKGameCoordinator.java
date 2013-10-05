@@ -52,6 +52,8 @@ public class AFKGameCoordinator implements GameCoordinator
             ids[i] = botEngine.addRobot(participant);
             ++i;
         }
+        
+        botEngine.init();
 
         gameEngine.startGame(ids);
     }
