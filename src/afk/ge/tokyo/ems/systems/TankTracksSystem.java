@@ -1,8 +1,8 @@
 package afk.ge.tokyo.ems.systems;
 
 import static afk.bot.london.TankRobot.*;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.TankTracksNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;

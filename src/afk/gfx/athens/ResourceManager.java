@@ -2,7 +2,6 @@ package afk.gfx.athens;
 
 import afk.gfx.Resource;
 import static afk.gfx.Resource.*;
-import afk.gfx.athens.particles.ParticleParameters;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -128,8 +127,6 @@ public class ResourceManager
             break;
             case SHADER:
                 return new Shader(name);
-            case PARTICLE_PARAMETERS:
-                return new ParticleParameters(name);
             default:
                 // TODO: throw something
             break;

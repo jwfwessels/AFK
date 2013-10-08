@@ -8,11 +8,17 @@ import com.hackoeur.jglm.Vec3;
  */
 public class BBoxComponent {
     
-    public Vec3 extent;
+    public Vec3 extent = Vec3.VEC3_ZERO;
+    public Vec3 offset = Vec3.VEC3_ZERO;
 
-    public BBoxComponent(Vec3 extent)
+    public BBoxComponent()
+    {
+    }
+
+    public BBoxComponent(Vec3 extent, Vec3 offset)
     {
         this.extent = extent;
+        this.offset = offset;
     }
     
 }

@@ -6,7 +6,11 @@ package afk.ge.tokyo.ems.components;
  */
 public class Radar {
     
-    public float radius;
-    public float scanInterval, timeSinceLastScan;
+    public float radius = 0;
+    public float scanInterval = 0, timeSinceLastScan = 0;
+
+    public Radar()
+    {
+    }
     
 }

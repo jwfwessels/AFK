@@ -7,7 +7,7 @@ import java.awt.Component;
  *
  * @author Daniel
  */
-public interface GameCoordinator {
+public interface GameCoordinator extends GameListener{
 
     /**
      * Gets the AWT Component for this game.
@@ -21,7 +21,7 @@ public interface GameCoordinator {
      */
     public void start() throws RobotException;
 
-    public void playPause();
+//    public void playPause();
     
     public float getGameSpeed();
 

@@ -72,7 +72,7 @@ public class RobotConfigPanel extends JPanel
         lblRColour = new JLabel("Robot Colour");
         cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
-        btnSave = new JButton("Save");          
+        btnSave = new JButton("Save");
     }
     
     public void addComponents()

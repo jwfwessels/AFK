@@ -1,6 +1,7 @@
 package afk.gfx;
 
 import afk.ge.tokyo.ems.components.ImageComponent;
+import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
 import java.awt.Component;
 
@@ -103,4 +104,8 @@ public interface GraphicsEngine
      * @return the current camera object.
      */
     public AbstractCamera getCamera();
+    
+    public void primeDebug();
+    public GfxEntity getDebugEntity(BBox bbox);
+    public void postDebug();
 }

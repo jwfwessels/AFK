@@ -6,8 +6,8 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
 import afk.bot.london.RobotEvent;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.ControllerNode;
 import java.util.List;
 
@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class RobotSystem implements ISystem
 {
-    Engine engine;
-    RobotEngine botEngine;
+    private Engine engine;
+    private RobotEngine botEngine;
 
     public RobotSystem(RobotEngine botEngine)
     {

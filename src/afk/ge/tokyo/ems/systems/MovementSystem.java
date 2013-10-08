@@ -1,7 +1,7 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.nodes.MovementNode;
@@ -108,25 +108,21 @@ public class MovementSystem implements ISystem
         
         Derivative output = new Derivative();
         output.dx = v;
-        output.dv = Vec3.VEC3_ZERO; //acceleration(velocity,dt);
+        output.dv = acceleration(velocity,dt);
         output.dax = av;
-        output.dav = Vec4.VEC4_ZERO; //angularAcceleration(velocity,dt);
+        output.dav = angularAcceleration(velocity,dt);
         
         return output;
     }
     
     public static Vec3 acceleration(final Velocity velocity, final float dt)
     {
-        final float c = 0f;
-        
-        return velocity.v.getNegated().scale((float)pow(c, dt)).add(velocity.a);
+        return velocity.a;
     }
     
     public static Vec4 angularAcceleration(final Velocity velocity, final float dt)
     {
-        final float c = 0f;
-        
-        return velocity.av.getNegated().scale((float)pow(c, dt)).add(velocity.aa);
+        return velocity.aa;
     }
     
 }

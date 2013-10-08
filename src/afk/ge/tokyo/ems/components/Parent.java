@@ -1,6 +1,6 @@
 package afk.ge.tokyo.ems.components;
 
-import afk.ge.tokyo.ems.Entity;
+import afk.ge.ems.Entity;
 
 /**
  *
@@ -8,7 +8,11 @@ import afk.ge.tokyo.ems.Entity;
  */
 public class Parent
 {
-    public Entity entity;
+    public Entity entity = null;
+
+    public Parent()
+    {
+    }
 
     public Parent(Entity parent)
     {

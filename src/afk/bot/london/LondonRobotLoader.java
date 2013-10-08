@@ -17,7 +17,7 @@ import java.util.Map;
  *
  * @author Jessica
  */
-public class LondonRobotLoader extends ClassLoader implements RobotLoader
+public class LondonRobotLoader extends ClassLoader implements RobotLoader<AbstractRobot>
 {
 
     private final String ROBOT_CLASS = AbstractRobot.class.getName();
@@ -135,7 +135,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader
 
     //Returns instances of robots that are in robotClasses - to be used when game is started
     @Override
-    public TankRobot getRobotInstance(String name) throws RobotException
+    public AbstractRobot getRobotInstance(String name) throws RobotException
     {
         Class tempClass = robotMap.get(name);
 
@@ -150,7 +150,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader
             throw new RobotException("Failed to create instance of " + name);
         }
 
-        return (TankRobot) obj;
+        return (AbstractRobot) obj;
     }
 
     @Override

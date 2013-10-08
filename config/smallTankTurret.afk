@@ -1,0 +1,12 @@
+TankTurret
+State
+	pos = 0 0.33976 0.03995
+Velocity
+Renderable
+	type = smallTankTurret
+Vision
+	dist = 15
+	fovy = 70
+	fovx = 170
+
+-> smallTankBarrel

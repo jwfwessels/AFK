@@ -4,6 +4,7 @@
  */
 package afk.bot.london;
 
+import afk.bot.RobotConfigManager;
 import afk.bot.RobotException;
 import afk.bot.RobotEngine;
 import afk.bot.RobotLoader;
@@ -15,24 +16,39 @@ import java.util.UUID;
  *
  * @author Jessica
  */
-public class London implements RobotEngine
+public class London implements RobotEngine, RobotConfigManager
 {
-    
-    private Map<UUID, TankRobot> robots = new HashMap<UUID, TankRobot>();
-    private RobotLoader robotLoader;
+
+    private Map<UUID, AbstractRobot> robots = new HashMap<UUID, AbstractRobot>();
+    private Map<UUID, Map<String, String>> config = new HashMap<UUID, Map<String, String>>();
+    private LondonRobotLoader robotLoader;
+    // flag that states if bots are still in initialisation phase
+    private boolean init = true;
 
     public London(RobotLoader robotLoader)
     {
-        this.robotLoader = robotLoader;
+        this.robotLoader = (LondonRobotLoader) robotLoader;
     }
 
     @Override
     public UUID addRobot(String path) throws RobotException
     {
-        TankRobot r = robotLoader.getRobotInstance(path);
+        AbstractRobot r = robotLoader.getRobotInstance(path);
+        r.setConfigManager(this);
         UUID id = r.getId();
         robots.put(id, r);
+        config.put(id, new HashMap<String, String>());
         return id;
+    }
+
+    @Override
+    public void init()
+    {
+        for (AbstractRobot robot: robots.values())
+        {
+            robot.init();
+        }
+        init = false;
     }
 
     /// this is where bot execution actually happens
@@ -40,17 +56,17 @@ public class London implements RobotEngine
     @Override
     public void execute()
     {
-        for (TankRobot robot : robots.values())
+        if (init)
+        {
+            throw new RuntimeException("Executing before finishing init phase!");
+        }
+        for (AbstractRobot robot : robots.values())
         {
             robot.clearFlags();
             robot.run();
-
-            // FIXME: uncomment once the data system is set up
-            //db.getController(robot.id).flags = robot.getActionFlags();
         }
     }
 
-    // FIXME: db thing...
     @Override
     public boolean[] getFlags(UUID id)
     {
@@ -62,4 +78,27 @@ public class London implements RobotEngine
     {
         robots.get(id).events = events;
     }
+
+    @Override
+    public String getProperty(UUID id, String name)
+    {
+        return config.get(id).get(name);
+    }
+
+    @Override
+    public void setProperty(UUID id, String name, String value)
+    {
+        if (!init)
+        {
+            throw new RuntimeException("Property set outside of init phase");
+        }
+        config.get(id).put(name, value);
+    }
+
+    @Override
+    public RobotConfigManager getConfigManager()
+    {
+        return this;
+    }
+    
 }

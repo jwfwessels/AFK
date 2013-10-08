@@ -8,12 +8,16 @@ import java.awt.image.BufferedImage;
  */
 public class Heightmap
 {
-    public BufferedImage heightmap;
+    public BufferedImage heightmap = null;
     
-    public float width, length, height;
-    public int xGrid, yGrid;
+    public float width = 0, length = 0, height = 0;
+    public int xGrid = 0, yGrid = 0;
     
-    public float[][][] vertices;
-    public float[][][] normals;
+    public float[][][] vertices = null;
+    public float[][][] normals = null;
+
+    public Heightmap()
+    {
+    }
     
 }

@@ -19,10 +19,11 @@ import java.util.Collection;
  */
 public abstract class GfxEntity
 {
+    public static final Vec3 MAGENTA = new Vec3(1, 0, 1);
     
     /** Graphics Entity behaviours. */
     public static final int NORMAL = 0, BILLBOARD_SPHERICAL = 1,
-            BILLBOARD_CYLINDRICAL = 2, PARTICLE_EMITTER = 3;
+            BILLBOARD_CYLINDRICAL = 2;
     
     /** The entity's position. */
     public Vec3 position = Vec3.VEC3_ZERO;
@@ -36,6 +37,9 @@ public abstract class GfxEntity
     
     /** The entity's level of opacity. */
     public float opacity = 1.0f;
+    
+    /** The entity's lifetime */
+    public float life;
     
     /**
      * By default, this boolean dictates whether or not the entity is visible.

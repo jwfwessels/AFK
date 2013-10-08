@@ -1,22 +1,24 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.bot.RobotEngine;
-import afk.ge.tokyo.EntityManager;
 import static afk.ge.tokyo.HeightmapLoader.getHeight;
-import static afk.ge.tokyo.HeightmapLoader.getNormal;
 import afk.ge.tokyo.Tokyo;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.SnapToTerrain;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Targetable;
+import afk.ge.tokyo.ems.factories.GenericFactory;
+import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
+import afk.ge.tokyo.ems.factories.ObstacleFactory;
+import afk.ge.tokyo.ems.factories.ObstacleFactoryRequest;
 import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
-import afk.ge.tokyo.ems.nodes.SnapToTerrainNode;
+import afk.gfx.GfxEntity;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
@@ -29,6 +31,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -40,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -65,6 +70,7 @@ public class DebugSystem implements ISystem
     public static final int HEIGHT = 500;
     public static final String WINDOW_TITLE_VIEW = "DebugView";
     public static final DefaultMutableTreeNode NOTHING_SELECTED_NODE = new DefaultMutableTreeNode("----- Nothing selected -----");
+    private DebugRenderSystem wireFramer;
     private Engine engine;
     private JFrame frame;
     private RenderCanvas canvas;
@@ -75,6 +81,8 @@ public class DebugSystem implements ISystem
     private JTree tree = null;
     private JMenuBar menubar;
     private JMenu addMenu;
+    private JMenu utilities;
+    private JCheckBoxMenuItem cbMenuItem;
     private JMenuItem addRobot, addWall, addExplosion, moveItem, removeItem;
     private JFileChooser fileChooser;
     private List<DefaultMutableTreeNode> leaves;
@@ -82,7 +90,6 @@ public class DebugSystem implements ISystem
     private Entity selected = null;
     private Entity hovered = null;
     private RobotEngine botEngine;
-    private EntityManager manager; // TODO: this should be replaced with factories!!!!!!!
     private Entity placeEntity = null;
 
     private Vec3 mouse2world(Point myMouse)
@@ -128,7 +135,7 @@ public class DebugSystem implements ISystem
 
         if (selected != null)
         {
-            tree.setModel(model = createModel(selected));
+            tree.setModel(model = new DefaultTreeModel(createTree(selected)));
         } else
         {
             tree.setModel(new DefaultTreeModel(NOTHING_SELECTED_NODE));
@@ -164,10 +171,10 @@ public class DebugSystem implements ISystem
         placeEntity = null;
     }
 
-    public DebugSystem(RobotEngine botEngine, EntityManager manager)
+    public DebugSystem(RobotEngine botEngine, DebugRenderSystem wireFramer)
     {
         this.botEngine = botEngine;
-        this.manager = manager;
+        this.wireFramer = wireFramer;
     }
 
     private void drawRenderable(Graphics2D g, RenderNode node)
@@ -250,12 +257,12 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 Entity entity = new Entity();
-                entity.add(new Renderable("wall", EntityManager.MAGENTA));
+                entity.add(new Renderable("wall", GfxEntity.MAGENTA));
                 entity.add(new SnapToTerrain());
                 entity.add(new Targetable());
                 Vec3 scale = new Vec3(0.3f);
                 entity.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, scale));
-                entity.add(new BBoxComponent(scale.scale(0.5f)));
+                entity.add(new BBoxComponent(scale.scale(0.5f), new Vec3(0,scale.getY()*0.5f,0)));
                 startPlaceItem(entity);
             }
         });
@@ -267,7 +274,8 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 float scale = (float) (3.0 + 3.0 * Math.random());
-                startPlaceItem(manager.createGraphicWall(Vec3.VEC3_ZERO, new Vec3(scale)));
+                
+                startPlaceItem(new ObstacleFactory().create(new ObstacleFactoryRequest(Vec3.VEC3_ZERO, new Vec3(scale),"wall")));
             }
         });
         addMenu.add(addWall);
@@ -277,12 +285,36 @@ public class DebugSystem implements ISystem
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                startPlaceItem(manager.makeExplosion(Vec3.VEC3_ZERO, null, 0));
+                try
+                {
+                    Entity entity = new GenericFactory().create(GenericFactoryRequest.load("explosionTank"));
+                    entity.add(new State());
+                    startPlaceItem(entity);
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace(System.err);
+                }
             }
         });
         addMenu.add(addExplosion);
 
         menubar.add(addMenu);
+        
+        utilities = new JMenu("Utils", true);
+        //a group of check box menu items
+        utilities.addSeparator();
+        cbMenuItem = new JCheckBoxMenuItem("Wireframe Mode");
+        cbMenuItem.addItemListener(new ItemListener()
+        {
+            @Override
+            public void itemStateChanged(ItemEvent e)
+            {
+                    toggleWireFrame(cbMenuItem.getState());
+            }
+        });
+        utilities.add(cbMenuItem);
+        menubar.add(utilities);
 
         moveItem = new JMenuItem("Move");
         moveItem.addActionListener(new ActionListener()
@@ -421,7 +453,7 @@ public class DebugSystem implements ISystem
                 {
                     RenderNode node = new RenderNode();
                     node.entity = placeEntity;
-                    node.renderable = new Renderable("cube", EntityManager.MAGENTA);
+                    node.renderable = new Renderable("cube", GfxEntity.MAGENTA);
                     node.state = state;
                     drawRenderable(g, node);
                 }
@@ -455,10 +487,10 @@ public class DebugSystem implements ISystem
         Toolkit.getDefaultToolkit().sync();
 
     }
-
-    public DefaultTreeModel createModel(Entity entity)
+    
+    public DefaultMutableTreeNode createTree(Entity entity)
     {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Entity");
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(entity.toString());
 
         for (Object obj : entity.getAll())
         {
@@ -481,8 +513,13 @@ public class DebugSystem implements ISystem
                 fieldNode.add(valueNode);
             }
         }
-
-        return new DefaultTreeModel(root);
+        
+        for (Entity dep : entity.getDependents())
+        {
+            root.add(createTree(dep));
+        }
+        
+        return root;
     }
 
     private class FieldValueNode extends DefaultMutableTreeNode
@@ -506,6 +543,17 @@ public class DebugSystem implements ISystem
             {
                 return "ERROR";
             }
+        }
+    }
+    
+    private void toggleWireFrame(boolean state)
+    {
+        if (state)
+        {
+            engine.addSystem(wireFramer);
+        } else
+        {
+            engine.removeSystem(wireFramer);
         }
     }
 

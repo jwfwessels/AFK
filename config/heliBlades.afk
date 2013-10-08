@@ -1,0 +1,6 @@
+State
+	pos = 0 0.26874 -0.13938
+Velocity
+	av = 0 100 0 0
+Renderable
+	type = heliBlades

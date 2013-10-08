@@ -1,10 +1,11 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.HUDNode;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
+import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.nodes.HUDNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.AbstractCamera;
 import afk.gfx.GfxEntity;
@@ -67,6 +68,14 @@ public class RenderSystem implements ISystem
             gfx.rotation = node.state.rot;
             gfx.scale = node.state.scale;
             gfx.colour = node.renderable.colour;
+            Lifetime lifetime = node.entity.get(Lifetime.class);
+            if (lifetime != null)
+            {
+                gfx.life = 1.0f-(lifetime.life/lifetime.maxLife);
+            } else
+            {
+                gfx.life = 0.0f;
+            }
         }
 
         List<HUDNode> hnodes = engine.getNodeList(HUDNode.class);

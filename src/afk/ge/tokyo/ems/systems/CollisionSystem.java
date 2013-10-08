@@ -1,12 +1,11 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
-import com.hackoeur.jglm.Vec3;
 import java.util.List;
 
 /**
@@ -34,12 +33,12 @@ public class CollisionSystem implements ISystem
             // stop collision detection between static objects
             if (!nodeA.entity.has(Velocity.class)) continue;
             
-            BBox boxA = new BBox(nodeA.state, nodeA.bbox.extent);
+            BBox boxA = new BBox(nodeA.state, nodeA.bbox);
             for (CollisionNode nodeB : nodes)
             {
                 if (nodeA == nodeB) continue;
                 
-                BBox boxB = new BBox(nodeB.state, nodeB.bbox.extent);
+                BBox boxB = new BBox(nodeB.state, nodeB.bbox);
                 
                 // FIXME: bots check against each other twice
                 if (boxA.isBoxInBox(boxB))

@@ -40,9 +40,17 @@ public interface Robot
      */
     public UUID getId();
 
-    /*
-     * Method that will be implemented by user.
+    /**
+     * Main execution method of the robot implemented by the user. This is
+     * called once every game tick to calculate the actions to take for that
+     * game tick.
      */
     public void run();
+    
+    /**
+     * Initialisation code is implemented by the user here. This is where any
+     * robot configuration properties may be set.
+     */
+    public void init();
     
 }

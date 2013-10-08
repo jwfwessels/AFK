@@ -5,29 +5,16 @@
 package afk.ge.tokyo;
 
 import afk.bot.RobotEngine;
+import afk.game.GameCoordinator;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.systems.AngleConstraintSystem;
-import afk.ge.tokyo.ems.systems.CollisionSystem;
-import afk.ge.tokyo.ems.systems.SnapToTerrainSystem;
-import afk.ge.tokyo.ems.systems.DebugSystem;
-import afk.ge.tokyo.ems.systems.LifeSystem;
-import afk.ge.tokyo.ems.systems.LifetimeSystem;
-import afk.ge.tokyo.ems.systems.MovementSystem;
-import afk.ge.tokyo.ems.systems.ParticleSystem;
-import afk.ge.tokyo.ems.systems.ProjectileSystem;
-import afk.ge.tokyo.ems.systems.RenderSystem;
-import afk.ge.tokyo.ems.systems.RobotSystem;
-import afk.ge.tokyo.ems.systems.TankBarrelFeedbackSystem;
-import afk.ge.tokyo.ems.systems.TankBarrelSystem;
-import afk.ge.tokyo.ems.systems.TankTracksSystem;
-import afk.ge.tokyo.ems.systems.TankTurretFeedbackSystem;
-import afk.ge.tokyo.ems.systems.TankTurretSystem;
-import afk.ge.tokyo.ems.systems.TextLabelSystem;
-import afk.ge.tokyo.ems.systems.VisionSystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
+import afk.ge.ems.FactoryException;
+import afk.ge.tokyo.ems.factories.*;
+import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
+import com.hackoeur.jglm.Vec3;
 import java.util.UUID;
 
 /**
@@ -37,11 +24,10 @@ import java.util.UUID;
 public class Tokyo implements GameEngine, Runnable
 {
 
-    private EntityManager entityManager;
     private Engine engine;
-    private GraphicsEngine gfxEngine;
     private boolean running = true;
     private boolean paused = false;
+    private boolean gameOver = false;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 30;
     private float t = 0.0f;
@@ -54,76 +40,134 @@ public class Tokyo implements GameEngine, Runnable
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
-//test()
-    private long lastUpdate;
-    private float time = 0.0f;
-    private float lastFPS = 0.0f;
-    private float fps = 0.0f;
-//
+    private RobotFactory robotFactory;
+    private GenericFactory genericFactory;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameCoordinator gm)
     {
         engine = new Engine();
+
+        genericFactory = new GenericFactory();
+        robotFactory = new RobotFactory(botEngine.getConfigManager(), genericFactory);
 
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
 
-        this.gfxEngine = gfxEngine;
-
-        entityManager = new EntityManager(engine);
         System.out.println("gfx" + gfxEngine.getFPS());
 
         ///possible move somewhere else later///
-        engine.addLogicSystem(new RobotSystem(botEngine)); // FIXME: remove passing of bot engine once db is done
+        engine.addLogicSystem(new SpawnSystem());
+        engine.addLogicSystem(new PaintSystem());
+        engine.addLogicSystem(new RobotSystem(botEngine));
         engine.addLogicSystem(new TankTracksSystem());
         engine.addLogicSystem(new TankTurretSystem());
-        engine.addLogicSystem(new TankBarrelSystem(entityManager));
+        engine.addLogicSystem(new TankBarrelSystem());
+        engine.addLogicSystem(new HelicopterSystem());
         engine.addLogicSystem(new MovementSystem());
+        engine.addLogicSystem(new TerrainDisplacementSystem());
         engine.addLogicSystem(new SnapToTerrainSystem());
         engine.addLogicSystem(new AngleConstraintSystem());
         engine.addLogicSystem(new TankTurretFeedbackSystem());
         engine.addLogicSystem(new TankBarrelFeedbackSystem());
-        engine.addLogicSystem(new ProjectileSystem(entityManager));
+        engine.addLogicSystem(new ProjectileSystem());
         engine.addLogicSystem(new LifeSystem());
         engine.addLogicSystem(new CollisionSystem());
-        engine.addLogicSystem(new ParticleSystem(entityManager));
-        engine.addLogicSystem(new LifetimeSystem(entityManager));
+        engine.addLogicSystem(new ParticleSystem());
+        engine.addLogicSystem(new LifetimeSystem());
         engine.addLogicSystem(new VisionSystem());
-        
-        engine.addSystem(new TextLabelSystem());
+        engine.addLogicSystem(new TextLabelSystem());
+        engine.addLogicSystem(new GameStateSystem(gm));
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
-        engine.addSystem(new DebugSystem(botEngine, entityManager));
+        DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
+        engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
     }
+    // TODO: make these customisable/generic/not hard-coded/just somewhere else!
+    public static final int SPAWNVALUE = (int) (BOARD_SIZE * 0.45);
+    public static final Vec3[] BOT_COLOURS =
+    {
+        new Vec3(1, 0, 0),
+        new Vec3(0, 0, 1),
+        new Vec3(0, 1, 0),
+        new Vec3(1, 1, 0),
+        new Vec3(1, 0, 1),
+        new Vec3(0, 1, 1),
+        new Vec3(0.95f, 0.95f, 0.95f),
+        new Vec3(0.2f, 0.2f, 0.2f)
+    };
+    public static final Vec3[] SPAWN_POINTS =
+    {
+        new Vec3(-SPAWNVALUE, 0, -SPAWNVALUE),
+        new Vec3(SPAWNVALUE, 0, SPAWNVALUE),
+        new Vec3(-SPAWNVALUE, 0, SPAWNVALUE),
+        new Vec3(SPAWNVALUE, 0, -SPAWNVALUE),
+        new Vec3(0, 0, -SPAWNVALUE),
+        new Vec3(0, 0, SPAWNVALUE),
+        new Vec3(-SPAWNVALUE, 0, 0),
+        new Vec3(SPAWNVALUE, 0, 0)
+    };
 
     @Override
     public void startGame(UUID[] participants)
     {
-        entityManager.spawnStuff();
-        //entityManager.createObstacles(new Vec3(5, 5, 5));
-        for (int i = 0; i < participants.length; i++)
+        spawnStuff();
+        try
         {
-            Entity tank = entityManager.createTankEntityNEU(
-                    participants[i],
-                    EntityManager.SPAWN_POINTS[i],
-                    EntityManager.BOT_COLOURS[i],
-                    EntityManager.BOT_NAMES[i]);
-            engine.addEntity(tank);
-        }
+            for (int i = 0; i < participants.length; i++)
+            {
+                engine.addEntity(robotFactory.create(
+                        new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i])));
+            }
+            new Thread(this).start();
 
-        new Thread(this).start();
+        } catch (FactoryException ex)
+        {
+            // FIXME: this needs to propagate somewhere else!
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    // TODO: this should be put in a map file
+    private void spawnStuff()
+    {
+        engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
+        ObstacleFactory factory = new ObstacleFactory();
+
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall")));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall")));
     }
 
     @Override
-    public void playPause()
+    public void setState(int i, String msg)
     {
-        System.out.println("playPause() - " + paused);
-        paused = !paused;
-        System.out.println("paused: " + paused);
+        switch (i)
+        {
+            case 0:
+                gameOver = true;
+                System.out.println("DRAW");
+                break;
+            case 1:
+                gameOver = true;
+                System.out.println("WINNER " + msg);
+                break;
+            case 2:
+                paused = !paused;
+                System.out.println("state: " + msg);
+                break;
+        }
     }
 
+//    @Override
+//    public void playPause()
+//    {
+//        System.out.println("playPause() - " + paused);
+//        paused = !paused;
+//        System.out.println("paused: " + paused);
+//    }
     @Override
     public float getSpeed()
     {
@@ -148,7 +192,6 @@ public class Tokyo implements GameEngine, Runnable
     public void run()
     {
         double currentTime = System.nanoTime();
-        lastUpdate = System.nanoTime();
         double accumulator = 0.0f;
         double logicAccumulator = 0.0f;
         while (running)
@@ -174,7 +217,7 @@ public class Tokyo implements GameEngine, Runnable
             //any function called in this block run at the current speedMultiplier speed
             while (logicAccumulator >= LOGIC_DELTA)
             {
-                if (!paused)
+                if (!paused && !gameOver)
                 {
                     engine.updateLogic(t, DELTA);
                 }

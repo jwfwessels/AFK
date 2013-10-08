@@ -1,12 +1,8 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.ge.tokyo.EntityManager;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.Entity;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.nodes.LifetimeNode;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,13 +11,7 @@ import java.util.List;
  */
 public class LifetimeSystem implements ISystem
 {
-    Engine engine;
-    EntityManager manager;
-    
-    public LifetimeSystem(EntityManager manager)
-    {
-        this.manager = manager;
-    }
+    private Engine engine;
 
     @Override
     public boolean init(Engine engine)
@@ -41,9 +31,6 @@ public class LifetimeSystem implements ISystem
             if (node.lifetime.life <= 0)
             {
                 engine.removeEntity(node.entity);
-                
-                // FIXME: this must go somewhere else
-                manager.recyclePie(node.entity);
             }
         }
     }

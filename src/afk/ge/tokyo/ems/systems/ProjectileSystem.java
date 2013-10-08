@@ -1,22 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.BBox;
-import afk.ge.tokyo.EntityManager;
-import afk.ge.tokyo.ems.Engine;
-import afk.ge.tokyo.ems.ISystem;
+import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
+import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.factories.GenericFactory;
+import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *
@@ -26,12 +24,6 @@ public class ProjectileSystem implements ISystem
 {
 
     Engine engine;
-    EntityManager manager;
-
-    public ProjectileSystem(EntityManager manager)
-    {
-        this.manager = manager;
-    }
 
     @Override
     public boolean init(Engine engine)
@@ -73,7 +65,7 @@ public class ProjectileSystem implements ISystem
                     continue;
                 }
 
-                BBox bbox = new BBox(node.state, node.bbox.extent);
+                BBox bbox = new BBox(node.state, node.bbox);
                 if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
                 {
                     Life life = node.entity.get(Life.class);
@@ -155,7 +147,16 @@ public class ProjectileSystem implements ISystem
 
     private void bang(ProjectileNode bullet)
     {
-        engine.addEntity(manager.makeExplosion(bullet.state.pos, bullet.bullet.parent, 0));
+        try
+        {
+            Entity entity = new GenericFactory().create(GenericFactoryRequest.load("explosionProjectile"));
+            entity.add(new State(bullet.state.pos, Vec4.VEC4_ZERO, new Vec3(1)));
+            engine.addEntity(entity);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace(System.err);
+        }
         engine.removeEntity(bullet.entity);
     }
 }

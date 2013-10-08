@@ -1,6 +1,7 @@
 package afk.bot.london;
 
 import afk.bot.Robot;
+import afk.bot.RobotConfigManager;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -13,6 +14,9 @@ public abstract class AbstractRobot implements Robot
     private boolean[] actionFlags;
     protected RobotEvent events;
     private UUID id;
+    private RobotConfigManager config;
+    
+    private boolean init = false;
 
     public AbstractRobot(int numActions)
     {
@@ -22,6 +26,28 @@ public abstract class AbstractRobot implements Robot
         id = UUID.randomUUID();
     }
     
+    protected final void setConfigManager(RobotConfigManager config)
+    {
+        this.config = config;
+    }
+    
+    public boolean isInitialised()
+    {
+        return init;
+    }
+    
+    /**
+     * Set the type of this robot. e.g. small tank, large helicopter, etc.
+     * @param type 
+     */
+    protected final void setType(String type)
+    {
+        if (config == null)
+        {
+            throw new RuntimeException("Error: No config manager!");
+        }
+        config.setProperty(id, "type", type);
+    }
 
     @Override
     public final UUID getId()
