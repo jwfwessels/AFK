@@ -9,17 +9,11 @@ import afk.game.GameCoordinator;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
-import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
-import afk.ge.tokyo.ems.components.Controller;
-import afk.ge.tokyo.ems.components.Paint;
-import afk.ge.tokyo.ems.components.Spawn;
 import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
-import com.hackoeur.jglm.Vec4;
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -193,6 +187,7 @@ public class Tokyo implements GameEngine, Runnable
         LOGIC_DELTA = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
+    // TODO: put this code into a separate timer class
     @Override
     public void run()
     {

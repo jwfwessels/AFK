@@ -4,6 +4,7 @@
  */
 package afk.frontend.swing;
 
+import afk.frontend.swing.config.RobotConfigPanel;
 import afk.game.GameCoordinator;
 import afk.bot.RobotException;
 import afk.frontend.Frontend;
