@@ -1,5 +1,6 @@
 package afk.game;
 
+import afk.bot.Robot;
 import afk.bot.RobotEngine;
 import afk.bot.RobotException;
 import afk.bot.RobotLoader;
@@ -11,25 +12,22 @@ import afk.gfx.athens.Athens;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
  *
  * @author Daniel
  */
-public class AFKGameCoordinator implements GameCoordinator
+public class AFKGame implements Game
 {
 
     private GameEngine gameEngine;
     private GraphicsEngine gfxEngine;
     private RobotEngine botEngine;
-    private List<String> participants;
     private Collection<GameListener> listeners = new ArrayList<GameListener>();
 
-    public AFKGameCoordinator(RobotLoader botLoader, List<String> participants)
+    public AFKGame(RobotLoader botLoader)
     {
-        this.participants = participants;
         botEngine = new London(botLoader);
         gfxEngine = new Athens(false);
         gameEngine = new Tokyo(gfxEngine, botEngine, this);
@@ -42,20 +40,34 @@ public class AFKGameCoordinator implements GameCoordinator
     }
 
     @Override
+    public Robot addRobotInstance(String robot) throws RobotException
+    {
+        return botEngine.addRobot(robot);
+    }
+
+    @Override
+    public void removeAllRobotInstances()
+    {
+        botEngine.removeAllRobots();
+    }
+
+    @Override
+    public void removeRobotInstance(UUID id)
+    {
+        botEngine.removeRobot(id);
+    }
+
+    @Override
+    public void removeRobotInstance(Robot robot)
+    {
+        botEngine.removeRobot(robot.getId());
+    }
+
+    @Override
     public void start() throws RobotException
     {
-        UUID[] ids = new UUID[participants.size()];
-
-        int i = 0;
-        for (String participant : participants)
-        {
-            ids[i] = botEngine.addRobot(participant);
-            ++i;
-        }
-        
-        botEngine.init();
-
-        gameEngine.startGame(ids);
+        botEngine.initComplete();
+        gameEngine.startGame();
     }
 
     @Override

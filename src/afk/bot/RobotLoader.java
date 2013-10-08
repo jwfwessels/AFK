@@ -12,7 +12,7 @@ public interface RobotLoader<R extends Robot>
      * @param path
      * @throws RobotException
      */
-    public void addRobot(String path) throws RobotException;
+    public void loadRobot(String path) throws RobotException;
 
     /**
      *

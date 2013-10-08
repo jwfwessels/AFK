@@ -15,8 +15,6 @@ public abstract class AbstractRobot implements Robot
     protected RobotEvent events;
     private UUID id;
     private RobotConfigManager config;
-    
-    private boolean init = false;
 
     public AbstractRobot(int numActions)
     {
@@ -31,22 +29,31 @@ public abstract class AbstractRobot implements Robot
         this.config = config;
     }
     
-    public boolean isInitialised()
-    {
-        return init;
-    }
-    
     /**
      * Set the type of this robot. e.g. small tank, large helicopter, etc.
      * @param type 
      */
     protected final void setType(String type)
     {
+        setProperty("type", type);
+    }
+    
+    /**
+     * Set the name of this robot. e.g. "The Karl Device" or "Mega J"
+     * @param name 
+     */
+    protected final void setName(String name)
+    {
+        setProperty("name", name);
+    }
+    
+    private void setProperty(String key, String value)
+    {
         if (config == null)
         {
             throw new RuntimeException("Error: No config manager!");
         }
-        config.setProperty(id, "type", type);
+        config.setProperty(id, key, value);
     }
 
     @Override
@@ -85,4 +92,21 @@ public abstract class AbstractRobot implements Robot
         this.events = event;
     }
     
+    private String primitiveToString()
+    {
+        return getClass().getSimpleName();
+    }
+    
+    private String complexToString()
+    {
+        String name = config.getProperty(getId(), "name");
+        if (name == null || name.trim().isEmpty()) name = primitiveToString();
+        return name;
+    }
+
+    @Override
+    public final String toString()
+    {
+        return config == null ? primitiveToString() : complexToString();
+    }
 }

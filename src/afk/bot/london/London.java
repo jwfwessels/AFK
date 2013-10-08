@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.bot.london;
 
+import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
 import afk.bot.RobotException;
 import afk.bot.RobotEngine;
@@ -31,23 +28,40 @@ public class London implements RobotEngine, RobotConfigManager
     }
 
     @Override
-    public UUID addRobot(String path) throws RobotException
+    public Robot addRobot(String path) throws RobotException
     {
         AbstractRobot r = robotLoader.getRobotInstance(path);
         r.setConfigManager(this);
         UUID id = r.getId();
         robots.put(id, r);
         config.put(id, new HashMap<String, String>());
-        return id;
+        r.init();
+        return r;
     }
 
     @Override
-    public void init()
+    public void removeRobot(Robot robot)
     {
-        for (AbstractRobot robot: robots.values())
-        {
-            robot.init();
-        }
+        removeRobot(robot.getId());
+    }
+
+    @Override
+    public void removeRobot(UUID id)
+    {
+        robots.remove(id);
+        config.remove(id);
+    }
+
+    @Override
+    public void removeAllRobots()
+    {
+        robots.clear();
+        config.clear();
+    }
+
+    @Override
+    public void initComplete()
+    {
         init = false;
     }
 
@@ -65,6 +79,12 @@ public class London implements RobotEngine, RobotConfigManager
             robot.clearFlags();
             robot.run();
         }
+    }
+
+    @Override
+    public Robot[] getParticipants()
+    {
+        return robots.values().toArray(new Robot[0]);
     }
 
     @Override

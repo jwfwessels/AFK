@@ -10,15 +10,20 @@ package afk.bot;
  */
 public class RobotException extends Exception
 {
-    private String message = "";
-    public RobotException(String _message)
+
+    public RobotException(String message)
     {
-        message = _message;
+        super(message);
+    }
+
+    public RobotException(Throwable cause)
+    {
+        super(cause);
     }
     
-    @Override
-    public String getMessage()
+    
+    public RobotException(String message, Throwable cause)
     {
-        return message;
+        super(message, cause);
     }
 }

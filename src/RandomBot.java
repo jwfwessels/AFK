@@ -22,6 +22,13 @@ public class RandomBot extends TankRobot
     }
 
     @Override
+    public void init()
+    {
+        super.init();
+        setName("~RaNdOm bOt~");
+    }
+
+    @Override
     public void run()
     {
         float[][] visibles = events.getVisibleBots();
