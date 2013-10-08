@@ -6,9 +6,13 @@ package afk.ge.tokyo.ems.components;
  */
 public class TextLabel
 {
-    private String text;
+    private String text = "";
     private boolean updated = true;
 
+    public TextLabel()
+    {
+    }
+    
     public TextLabel(String text)
     {
         this.text = text;

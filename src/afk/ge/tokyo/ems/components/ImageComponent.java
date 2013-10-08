@@ -8,8 +8,12 @@ import java.awt.image.BufferedImage;
  */
 public class ImageComponent
 {
-    private BufferedImage image;
-    private boolean updated;
+    private BufferedImage image = null;
+    private boolean updated = true;
+
+    public ImageComponent()
+    {
+    }
 
     public ImageComponent(BufferedImage image)
     {
