@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -23,7 +24,7 @@ public class Engine implements EntityListener, FlagManager
     private Collection<EntityComponent> componentsRemoved = new ArrayList<EntityComponent>();
     private Map<Class, Family> families = new HashMap<Class, Family>();
     private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
-    boolean updating = false;
+    private AtomicBoolean updating = new AtomicBoolean(false);
 
     private class EntityComponent
     {
@@ -40,7 +41,7 @@ public class Engine implements EntityListener, FlagManager
 
     public void addEntity(Entity entity)
     {
-        if (updating)
+        if (updating.get())
         {
             toAdd.add(entity);
             return;
@@ -60,7 +61,7 @@ public class Engine implements EntityListener, FlagManager
 
     public void removeEntity(Entity entity)
     {
-        if (updating)
+        if (updating.get())
         {
             toRemove.add(entity);
             return;
@@ -84,7 +85,7 @@ public class Engine implements EntityListener, FlagManager
     @Override
     public void componentAdded(Entity entity, Class componentClass)
     {
-        if (updating)
+        if (updating.get())
         {
             componentsAdded.add(new EntityComponent(entity, componentClass));
         } else
@@ -99,7 +100,7 @@ public class Engine implements EntityListener, FlagManager
     @Override
     public void componentRemoved(Entity entity, Class componentClass)
     {
-        if (updating)
+        if (updating.get())
         {
             componentsRemoved.add(new EntityComponent(entity, componentClass));
         } else
@@ -144,24 +145,24 @@ public class Engine implements EntityListener, FlagManager
 
     public void updateLogic(float t, float dt)
     {
-        updating = true;
+        updating.set(true);
         for (ISystem s : logicSystems)
         {
             s.update(t, dt);
         }
-        updating = false;
+        updating.set(false);
 
         postUpdate();
     }
 
     public void update(float t, float dt)
     {
-        updating = true;
+        updating.set(true);
         for (ISystem s : systems)
         {
             s.update(t, dt);
         }
-        updating = false;
+        updating.set(false);
 
         postUpdate();
     }
@@ -199,7 +200,7 @@ public class Engine implements EntityListener, FlagManager
 
     public void removeSystem(ISystem system)
     {
-        if (updating)
+        if (updating.get())
         {
             systemsToRemove.add(system);
         } else
@@ -216,7 +217,7 @@ public class Engine implements EntityListener, FlagManager
 
     public void shutDown()
     {
-        while (updating)
+        while (updating.get())
         { /* spin */ }
 
         for (ISystem s : logicSystems)
