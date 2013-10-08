@@ -5,13 +5,10 @@
 package afk.frontend.swing.config;
 
 import afk.bot.Robot;
-import afk.bot.RobotEngine;
+import afk.bot.RobotConfigManager;
 import afk.frontend.swing.RootWindow;
-import afk.ge.ems.Entity;
-import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
-import com.hackoeur.jglm.Vec3;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -20,6 +17,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -55,7 +53,7 @@ public class RobotConfigPanel extends JPanel
     private GraphicsEngine gfxEngine;
     private ConfigEngine configEngine = null;
     
-    private Entity currentEntity = null;
+    private Robot robot = null;
     
     public RobotConfigPanel(RootWindow _root)
     {
@@ -86,15 +84,20 @@ public class RobotConfigPanel extends JPanel
         btnSave = new JButton("Save");
     }
     
-    //TODO: needs parameter(s) I think
     /**
      * called when the config is opened.
      */
     public void loadConfig(Robot robot)
     {
+        this.robot = robot;
+        RobotConfigManager config = robot.getConfigManager();
+        UUID id = robot.getId();
+        
+        txtName.setText(robot.toString());
+        
         if (configEngine == null)
         {
-            configEngine = new ConfigEngine(gfxEngine, robot.getConfigManager());
+            configEngine = new ConfigEngine(gfxEngine, config);
             configEngine.start();
         }
         
@@ -135,10 +138,36 @@ public class RobotConfigPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("BACK!!!!!");
-                root.recallMenuPanel();
+                back();
             }
         });
+        
+        btnSave.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                saveSettings();
+                
+                back();
+            }
+        });
+    }
+    
+    private void saveSettings()
+    {
+        RobotConfigManager config = robot.getConfigManager();
+        UUID id = robot.getId();
+        
+        config.setProperty(id, "name", txtName.getText());
+        
+        // TODO: other stuff...
+    }
+    
+    private void back()
+    {
+        robot = null;
+        root.recallMenuPanel();
     }
 
     private void setup()

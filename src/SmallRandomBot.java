@@ -24,6 +24,7 @@ public class SmallRandomBot extends TankRobot
     public void init()
     {
         setType("smallTank");
+        setName("Annoying Brat");
     }
 
     @Override
