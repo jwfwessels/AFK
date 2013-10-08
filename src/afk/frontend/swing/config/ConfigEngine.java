@@ -1,16 +1,21 @@
 package afk.frontend.swing.config;
 
-import afk.bot.RobotEngine;
+import afk.bot.Robot;
+import afk.bot.RobotConfigManager;
 import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
 import static afk.ge.tokyo.Tokyo.DELTA;
 import static afk.ge.tokyo.Tokyo.LOGIC_DELTA;
 import static afk.ge.tokyo.Tokyo.MAX_FRAMETIME;
 import static afk.ge.tokyo.Tokyo.NANOS_PER_SECOND;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.RobotFactory;
+import afk.ge.tokyo.ems.factories.RobotFactoryRequest;
 import afk.ge.tokyo.ems.systems.PaintSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.gfx.GraphicsEngine;
+import com.hackoeur.jglm.Vec3;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -18,21 +23,52 @@ import afk.gfx.GraphicsEngine;
  */
 public class ConfigEngine implements Runnable
 {
+
     private Engine engine;
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
     private boolean running;
     private float t = 0.0f;
-    
-    public ConfigEngine(GraphicsEngine gfxEngine, RobotEngine botEngine)
+    private Entity oldEntity = null;
+    private Entity currentEntity = null;
+    private AtomicBoolean changed = new AtomicBoolean(false);
+
+    public ConfigEngine(GraphicsEngine gfxEngine, RobotConfigManager configManager)
     {
         engine = new Engine();
         genericFactory = new GenericFactory();
-        robotFactory = new RobotFactory(botEngine.getConfigManager(), genericFactory);
+        robotFactory = new RobotFactory(configManager, genericFactory);
 
         engine.addLogicSystem(new PaintSystem());
 
         engine.addSystem(new RenderSystem(gfxEngine));
+    }
+
+    public void setDisplayedRobot(Robot robot)
+    {
+        // wait until any previous change has been dealt with
+        // this shouldn't happen under the given curcumstances
+        // put this here "just in case"
+        while (changed.get())
+        {
+            System.out.println("spinlock!");
+        }
+
+        oldEntity = currentEntity;
+        currentEntity = robotFactory.create(new RobotFactoryRequest(robot, Vec3.VEC3_ZERO, new Vec3(1)));
+
+        changed.set(true);
+    }
+
+    public void start()
+    {
+        running = true;
+        new Thread(this).start();
+    }
+
+    public void stop()
+    {
+        running = false;
     }
 
     @Override
@@ -43,6 +79,15 @@ public class ConfigEngine implements Runnable
         double logicAccumulator = 0.0f;
         while (running)
         {
+            if (changed.getAndSet(false))
+            {
+                if (oldEntity != null)
+                {
+                    engine.removeEntity(oldEntity);
+                }
+                engine.addEntity(currentEntity);
+            }
+
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
@@ -70,6 +115,4 @@ public class ConfigEngine implements Runnable
             }
         }
     }
-    
-    
 }

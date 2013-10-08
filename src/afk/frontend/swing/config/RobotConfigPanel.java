@@ -4,7 +4,10 @@
  */
 package afk.frontend.swing.config;
 
+import afk.bot.Robot;
+import afk.bot.RobotEngine;
 import afk.frontend.swing.RootWindow;
+import afk.ge.ems.Entity;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
@@ -30,30 +33,33 @@ import javax.swing.border.LineBorder;
  */
 public class RobotConfigPanel extends JPanel
 {
-    RootWindow root;
+    private RootWindow root;
     
-    JLabel lblRConfig;
+    private JLabel lblRConfig;
     
-    JPanel pnlModel;
-    Component pnlCanvas;
-    Component glCanvas;
-    JButton btnPrev;
-    JButton btnNext;
-    JButton btnBrowse;
+    private JPanel pnlModel;
+    private Component pnlCanvas;
+    private Component glCanvas;
+    private JButton btnPrev;
+    private JButton btnNext;
+    private JButton btnBrowse;
     
-    JPanel pnlSettings;
-    JLabel lblRName;
-    JTextField txtName;
-    JLabel lblRColour;
-    JComboBox cmbColour; // Change to colour picker
-    JButton btnBack;
-    JButton btnSave;
+    private JPanel pnlSettings;
+    private JLabel lblRName;
+    private JTextField txtName;
+    private JLabel lblRColour;
+    private JComboBox cmbColour; // Change to colour picker
+    private JButton btnBack;
+    private JButton btnSave;
     
-    GraphicsEngine gfxEngine;
+    private GraphicsEngine gfxEngine;
+    private ConfigEngine configEngine = null;
+    
+    private Entity currentEntity = null;
     
     public RobotConfigPanel(RootWindow _root)
     {
-        root = _root;   
+        root = _root;
         setup();
         this.setBounds(0,0, 800, 600);
     }
@@ -84,9 +90,15 @@ public class RobotConfigPanel extends JPanel
     /**
      * called when the config is opened.
      */
-    public void loadConfig()
+    public void loadConfig(Robot robot)
     {
-        gfxEngine.getGfxEntity(new Renderable("largeTankBase", new Vec3(1,0,1)));
+        if (configEngine == null)
+        {
+            configEngine = new ConfigEngine(gfxEngine, robot.getConfigManager());
+            configEngine.start();
+        }
+        
+        configEngine.setDisplayedRobot(robot);
     }
     
     public void addComponents()

@@ -28,6 +28,13 @@ public abstract class AbstractRobot implements Robot
     {
         this.config = config;
     }
+
+    @Override
+    public final RobotConfigManager getConfigManager()
+    {
+        return config;
+    }
+    
     
     /**
      * Set the type of this robot. e.g. small tank, large helicopter, etc.

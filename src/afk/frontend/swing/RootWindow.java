@@ -4,6 +4,7 @@
  */
 package afk.frontend.swing;
 
+import afk.bot.Robot;
 import afk.frontend.swing.config.RobotConfigPanel;
 import afk.game.Game;
 import afk.bot.RobotException;
@@ -144,7 +145,7 @@ public class RootWindow extends JFrame implements Frontend
         contentPane.validate();
     }
     
-    public void showConfigPanel()
+    public void showConfigPanel(Robot robot)
     {        
         CardLayout cl = (CardLayout)contentPane.getLayout();
         cl.show(contentPane, "config");
@@ -154,7 +155,7 @@ public class RootWindow extends JFrame implements Frontend
         contentPane.invalidate();
         contentPane.validate();
         
-        configPanel.loadConfig();
+        configPanel.loadConfig(robot);
     }
     
     public void recallMenuPanel()
