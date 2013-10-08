@@ -11,6 +11,7 @@ import static afk.ge.tokyo.Tokyo.NANOS_PER_SECOND;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.RobotFactory;
 import afk.ge.tokyo.ems.factories.RobotFactoryRequest;
+import afk.ge.tokyo.ems.systems.MovementSystem;
 import afk.ge.tokyo.ems.systems.PaintSystem;
 import afk.ge.tokyo.ems.systems.RenderSystem;
 import afk.gfx.GraphicsEngine;
@@ -39,8 +40,8 @@ public class ConfigEngine implements Runnable
         genericFactory = new GenericFactory();
         robotFactory = new RobotFactory(configManager, genericFactory);
 
-        engine.addLogicSystem(new PaintSystem());
-
+        engine.addSystem(new PaintSystem());
+        engine.addSystem(new MovementSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
     }
 
@@ -51,7 +52,7 @@ public class ConfigEngine implements Runnable
         // put this here "just in case"
         while (changed.get())
         {
-            System.out.println("spinlock!");
+            /* spin */
         }
 
         oldEntity = currentEntity;
@@ -76,7 +77,6 @@ public class ConfigEngine implements Runnable
     {
         double currentTime = System.nanoTime();
         double accumulator = 0.0f;
-        double logicAccumulator = 0.0f;
         while (running)
         {
             if (changed.getAndSet(false))
@@ -96,7 +96,6 @@ public class ConfigEngine implements Runnable
             }
             currentTime = newTime;
 
-            logicAccumulator += frameTime;
             accumulator += frameTime;
 
             //any function called in this block should run at the fixed DELTA rate
@@ -104,14 +103,6 @@ public class ConfigEngine implements Runnable
             {
                 engine.update(t, DELTA);
                 accumulator -= DELTA;
-            }
-
-            //any function called in this block run at the current speedMultiplier speed
-            while (logicAccumulator >= LOGIC_DELTA)
-            {
-                engine.updateLogic(t, DELTA);
-                t += DELTA;
-                logicAccumulator -= LOGIC_DELTA;
             }
         }
     }
