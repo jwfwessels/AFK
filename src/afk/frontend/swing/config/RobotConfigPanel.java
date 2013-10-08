@@ -5,20 +5,20 @@
 package afk.frontend.swing.config;
 
 import afk.frontend.swing.RootWindow;
-import java.awt.BorderLayout;
+import afk.ge.tokyo.ems.components.Renderable;
+import afk.gfx.GraphicsEngine;
+import afk.gfx.athens.Athens;
+import com.hackoeur.jglm.Vec3;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -35,7 +35,7 @@ public class RobotConfigPanel extends JPanel
     JLabel lblRConfig;
     
     JPanel pnlModel;
-    JPanel pnlCanvas;
+    Component pnlCanvas;
     Component glCanvas;
     JButton btnPrev;
     JButton btnNext;
@@ -49,6 +49,8 @@ public class RobotConfigPanel extends JPanel
     JButton btnBack;
     JButton btnSave;
     
+    GraphicsEngine gfxEngine;
+    
     public RobotConfigPanel(RootWindow _root)
     {
         root = _root;   
@@ -61,8 +63,10 @@ public class RobotConfigPanel extends JPanel
         lblRConfig = new JLabel("Robot Configuration");
     
         pnlModel = new JPanel();
-        pnlCanvas = new JPanel();
-        //glCanvas
+        
+        gfxEngine = new Athens(true);
+        
+        pnlCanvas = gfxEngine.getAWTComponent();
         btnPrev = new JButton("<");
         btnNext = new JButton(">");
         btnBrowse = new JButton("Browse");
@@ -74,6 +78,15 @@ public class RobotConfigPanel extends JPanel
         cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");
+    }
+    
+    //TODO: needs parameter(s) I think
+    /**
+     * called when the config is opened.
+     */
+    public void loadConfig()
+    {
+        gfxEngine.getGfxEntity(new Renderable("largeTankBase", new Vec3(1,0,1)));
     }
     
     public void addComponents()
@@ -101,7 +114,6 @@ public class RobotConfigPanel extends JPanel
     public void styleComponents()
     {
         pnlModel.setBorder(new LineBorder(Color.yellow));
-        pnlCanvas.setBorder(new LineBorder(Color.red));
         pnlSettings.setBorder(new LineBorder(Color.blue));
         this.setLayout(new RobotConfigPanel_Layout());
         

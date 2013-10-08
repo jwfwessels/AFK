@@ -153,6 +153,8 @@ public class RootWindow extends JFrame implements Frontend
         
         contentPane.invalidate();
         contentPane.validate();
+        
+        configPanel.loadConfig();
     }
     
     public void recallMenuPanel()
