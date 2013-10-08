@@ -2,22 +2,24 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package afk.frontend.swing;
+package afk.frontend.swing.config;
 
-import java.awt.BorderLayout;
+import afk.bot.Robot;
+import afk.bot.RobotConfigManager;
+import afk.frontend.swing.RootWindow;
+import afk.gfx.GraphicsEngine;
+import afk.gfx.athens.Athens;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
+import java.util.UUID;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -29,28 +31,33 @@ import javax.swing.border.LineBorder;
  */
 public class RobotConfigPanel extends JPanel
 {
-    RootWindow root;
+    private RootWindow root;
     
-    JLabel lblRConfig;
+    private JLabel lblRConfig;
     
-    JPanel pnlModel;
-    JPanel pnlCanvas;
-    Component glCanvas;
-    JButton btnPrev;
-    JButton btnNext;
-    JButton btnBrowse;
+    private JPanel pnlModel;
+    private Component pnlCanvas;
+    private Component glCanvas;
+    private JButton btnPrev;
+    private JButton btnNext;
+    private JButton btnBrowse;
     
-    JPanel pnlSettings;
-    JLabel lblRName;
-    JTextField txtName;
-    JLabel lblRColour;
-    JComboBox cmbColour; // Change to colour picker
-    JButton btnBack;
-    JButton btnSave;
+    private JPanel pnlSettings;
+    private JLabel lblRName;
+    private JTextField txtName;
+    private JLabel lblRColour;
+    private JComboBox cmbColour; // Change to colour picker
+    private JButton btnBack;
+    private JButton btnSave;
+    
+    private GraphicsEngine gfxEngine;
+    private ConfigEngine configEngine = null;
+    
+    private Robot robot = null;
     
     public RobotConfigPanel(RootWindow _root)
     {
-        root = _root;   
+        root = _root;
         setup();
         this.setBounds(0,0, 800, 600);
     }
@@ -60,8 +67,10 @@ public class RobotConfigPanel extends JPanel
         lblRConfig = new JLabel("Robot Configuration");
     
         pnlModel = new JPanel();
-        pnlCanvas = new JPanel();
-        //glCanvas
+        
+        gfxEngine = new Athens(true);
+        
+        pnlCanvas = gfxEngine.getAWTComponent();
         btnPrev = new JButton("<");
         btnNext = new JButton(">");
         btnBrowse = new JButton("Browse");
@@ -73,6 +82,26 @@ public class RobotConfigPanel extends JPanel
         cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");
+    }
+    
+    /**
+     * called when the config is opened.
+     */
+    public void loadConfig(Robot robot)
+    {
+        this.robot = robot;
+        RobotConfigManager config = robot.getConfigManager();
+        UUID id = robot.getId();
+        
+        txtName.setText(robot.toString());
+        
+        if (configEngine == null)
+        {
+            configEngine = new ConfigEngine(gfxEngine, config);
+            configEngine.start();
+        }
+        
+        configEngine.setDisplayedRobot(robot);
     }
     
     public void addComponents()
@@ -100,7 +129,6 @@ public class RobotConfigPanel extends JPanel
     public void styleComponents()
     {
         pnlModel.setBorder(new LineBorder(Color.yellow));
-        pnlCanvas.setBorder(new LineBorder(Color.red));
         pnlSettings.setBorder(new LineBorder(Color.blue));
         this.setLayout(new RobotConfigPanel_Layout());
         
@@ -110,10 +138,36 @@ public class RobotConfigPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("BACK!!!!!");
-                root.recallMenuPanel();
+                back();
             }
         });
+        
+        btnSave.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                saveSettings();
+                
+                back();
+            }
+        });
+    }
+    
+    private void saveSettings()
+    {
+        RobotConfigManager config = robot.getConfigManager();
+        UUID id = robot.getId();
+        
+        config.setProperty(id, "name", txtName.getText());
+        
+        // TODO: other stuff...
+    }
+    
+    private void back()
+    {
+        robot = null;
+        root.recallMenuPanel();
     }
 
     private void setup()

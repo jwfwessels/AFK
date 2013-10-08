@@ -4,12 +4,12 @@
  */
 package afk.ge.tokyo;
 
+import afk.bot.Robot;
 import afk.bot.RobotEngine;
-import afk.game.GameCoordinator;
+import afk.game.Game;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
-import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
@@ -40,11 +40,13 @@ public class Tokyo implements GameEngine, Runnable
     public final static double MIN_FPS = 25;
     public final static double MIN_FRAMETIME = 1.0f / TARGET_FPS;
     public final static double MAX_FRAMETIME = 1.0f / MIN_FPS;
+    private RobotEngine botEngine;
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameCoordinator gm)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, Game game)
     {
+        this.botEngine = botEngine;
         engine = new Engine();
 
         genericFactory = new GenericFactory();
@@ -76,7 +78,8 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new LifetimeSystem());
         engine.addLogicSystem(new VisionSystem());
         engine.addLogicSystem(new TextLabelSystem());
-        engine.addLogicSystem(new GameStateSystem(gm));
+        engine.addLogicSystem(new GameStateSystem(game));
+        
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
@@ -110,11 +113,13 @@ public class Tokyo implements GameEngine, Runnable
     };
 
     @Override
-    public void startGame(UUID[] participants)
+    public void startGame()
     {
         spawnStuff();
+        Robot[] participants = botEngine.getParticipants();
         try
         {
+            
             for (int i = 0; i < participants.length; i++)
             {
                 engine.addEntity(robotFactory.create(
@@ -188,6 +193,7 @@ public class Tokyo implements GameEngine, Runnable
         LOGIC_DELTA = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
+    // TODO: put this code into a separate timer class
     @Override
     public void run()
     {

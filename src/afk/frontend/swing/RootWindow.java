@@ -4,7 +4,9 @@
  */
 package afk.frontend.swing;
 
-import afk.game.GameCoordinator;
+import afk.bot.Robot;
+import afk.frontend.swing.config.RobotConfigPanel;
+import afk.game.Game;
 import afk.bot.RobotException;
 import afk.frontend.Frontend;
 import java.awt.CardLayout;
@@ -127,9 +129,9 @@ public class RootWindow extends JFrame implements Frontend
 
 
     @Override
-    public void showGame(GameCoordinator gameCoordinator)
+    public void showGame(Game game)
     {
-        gamePanel = new GamePanel(this, gameCoordinator);
+        gamePanel = new GamePanel(this, game);
 
         gamePanel.setup();
         contentPane.add(gamePanel, "game");
@@ -143,7 +145,7 @@ public class RootWindow extends JFrame implements Frontend
         contentPane.validate();
     }
     
-    public void showConfigPanel()
+    public void showConfigPanel(Robot robot)
     {        
         CardLayout cl = (CardLayout)contentPane.getLayout();
         cl.show(contentPane, "config");
@@ -152,6 +154,8 @@ public class RootWindow extends JFrame implements Frontend
         
         contentPane.invalidate();
         contentPane.validate();
+        
+        configPanel.loadConfig(robot);
     }
     
     public void recallMenuPanel()
@@ -163,29 +167,5 @@ public class RootWindow extends JFrame implements Frontend
         
         contentPane.invalidate();
         contentPane.validate();
-    }
-
-    @Override
-    public void showError(String message)
-    {
-        menuPanel.showError(message);
-    }
-
-    @Override
-    public void showWarning(String message)
-    {
-        menuPanel.showError(message);
-    }
-
-    @Override
-    public void showMessage(String message)
-    {
-        menuPanel.showError(message);
-    }
-
-    @Override
-    public void showAlert(String message)
-    {
-        JOptionPane.showMessageDialog(rootPane, message, "Alert!", JOptionPane.ERROR_MESSAGE);
     }
 }

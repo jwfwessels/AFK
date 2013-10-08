@@ -28,7 +28,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
 
     //Loads all necessary classes needed for the robot specified by path
     @Override
-    public void addRobot(String path) throws RobotException
+    public void loadRobot(String path) throws RobotException
     {
         if (path.endsWith(".class"))
         {
@@ -147,7 +147,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
         } 
         catch (Exception e)
         {
-            throw new RobotException("Failed to create instance of " + name);
+            throw new RobotException("Failed to create instance of " + name, e);
         }
 
         return (AbstractRobot) obj;

@@ -53,4 +53,10 @@ public interface Robot
      */
     public void init();
     
+    /**
+     * Gets the RobotConfigManager associated with this robot.
+     * @return the RobotConfigManager associated with this robot.
+     */
+    public RobotConfigManager getConfigManager();
+    
 }

@@ -4,15 +4,13 @@
  */
 package afk.ge;
 
-import java.util.UUID;
-
 /**
  *
  * @author Jw
  */
 public interface GameEngine {
 
-    public void startGame(UUID[] participants);
+    public void startGame();
 
 //    public void playPause();
 

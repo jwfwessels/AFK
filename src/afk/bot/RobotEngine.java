@@ -10,17 +10,40 @@ import java.util.UUID;
 public interface RobotEngine
 {
     /**
-     * Adds an instance of a robot to this robot engine.
+     * Adds an instance of a robot to this robot engine and initialises it.
      * @param path
      * @return
      * @throws RobotException 
      */
-    public UUID addRobot(String path) throws RobotException;
+    public Robot addRobot(String path) throws RobotException;
+    
+    /**
+     * Removes an instance of a robot from this robot engine.
+     * @param id the id of the robot to remove.
+     */
+    public void removeRobot(UUID id);
+    
+    /**
+     * Removes an instance of a robot from this robot engine.
+     * @param robot the robot to remove.
+     */
+    public void removeRobot(Robot robot);
+    
+    /**
+     * Removes all robots from this robot engine.
+     */
+    public void removeAllRobots();
 
     /**
-     * Initialises all the currently added robots.
+     * Retrieve a list of all the currently added robot instances.
+     * @return a list of the UUIDs of the current robot instances. 
      */
-    public void init();
+    public Robot[] getParticipants();
+    
+    /**
+     * Indicates that the initialisation phase is over and the game has started,
+     */
+    public void initComplete();
     
     /**
      * Executes a single logic tick of each robot.

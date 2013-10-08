@@ -1,13 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.frontend.swing;
 
-import afk.game.AFKCoordinator;
-import afk.game.Coordinator;
-import afk.game.GameCoordinator;
+import afk.bot.Robot;
+import afk.game.Game;
 import afk.bot.RobotException;
+import afk.bot.RobotLoader;
+import afk.bot.london.LondonRobotLoader;
+import afk.game.AFKGame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -55,19 +53,18 @@ public class MenuPanel extends JPanel
     JButton btnRemoveAllBots;
     JButton btnStartMatch;
     JButton btnLoadBot;
-    
     JPopupMenu configMenu;
     JMenuItem configMenuItem;
-    
     JTextArea txtErrorConsole;
     private HashMap<String, String> botMap;
     private JFileChooser fileChooser;
     private JList<String> lstAvailableBots;
-    private JList<String> lstSelectedBots;
+    private JList<Robot> lstSelectedBots;
     private DefaultListModel<String> lsAvailableModel;
-    private DefaultListModel<String> lsSelectedModel;
+    private DefaultListModel<Robot> lsSelectedModel;
     private Point p;
-    private Coordinator coordinator;
+    private Game game;
+    private RobotLoader botLoader;
 
     public MenuPanel(RootWindow parent)
     {
@@ -75,8 +72,9 @@ public class MenuPanel extends JPanel
 
         LayoutManager layout = new MenuPanel_Layout();
         this.setLayout(layout);
-        
-        coordinator = new AFKCoordinator();
+
+        botLoader = new LondonRobotLoader();
+        game = new AFKGame(botLoader);
     }
 
     void setup()
@@ -122,7 +120,7 @@ public class MenuPanel extends JPanel
         txtErrorConsole.setEditable(false);
         txtErrorConsole.setForeground(Color.red);
         pnlRobotError.setLayout(new BorderLayout());
-        
+
         configMenu = new JPopupMenu();
         configMenuItem = new JMenuItem("Configure");
     }
@@ -157,10 +155,10 @@ public class MenuPanel extends JPanel
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
 
         pnlRobotError.add(txtErrorConsole);
-        
+
         configMenu.add(configMenuItem);
         configMenuItem.setHorizontalTextPosition(JMenuItem.RIGHT);
-        
+
     }
 
 //    private void removeComponents()
@@ -189,7 +187,13 @@ public class MenuPanel extends JPanel
                 System.out.println("selectedBot: " + selectedBot);
                 if (selectedBot != null)
                 {
-                    lsSelectedModel.addElement(selectedBot);
+                    try
+                    {
+                        lsSelectedModel.addElement(game.addRobotInstance(selectedBot));
+                    } catch (RobotException ex)
+                    {
+                        showError(ex);
+                    }
                 }
             }
         });
@@ -201,7 +205,13 @@ public class MenuPanel extends JPanel
             {
                 for (int i = 0; i < lsAvailableModel.size(); i++)
                 {
-                    lsSelectedModel.addElement(lsAvailableModel.getElementAt(i));
+                    try
+                    {
+                        lsSelectedModel.addElement(game.addRobotInstance(lsAvailableModel.getElementAt(i)));
+                    } catch (RobotException ex)
+                    {
+                        showError(ex);
+                    }
                 }
             }
         });
@@ -211,8 +221,13 @@ public class MenuPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String selectedBot = lstSelectedBots.getSelectedValue();
+                Robot selectedBot = lstSelectedBots.getSelectedValue();
+                if (selectedBot == null)
+                {
+                    return;
+                }
                 lsSelectedModel.removeElement(selectedBot);
+                game.removeRobotInstance(selectedBot);
             }
         });
 
@@ -225,6 +240,7 @@ public class MenuPanel extends JPanel
                 {
                     lsSelectedModel.removeElementAt(0);
                 }
+                game.removeAllRobotInstances();
             }
         });
 
@@ -240,12 +256,12 @@ public class MenuPanel extends JPanel
                     String botName = (fileChooser.getSelectedFile().getName()).split("\\.")[0];
                     try
                     {
-                        coordinator.loadRobot(botPath);
+                        botLoader.loadRobot(botPath);
                         botMap.put(botName, botPath);
                         lsAvailableModel.addElement(botName);
                     } catch (RobotException ex)
                     {
-                        showError(ex.getMessage());
+                        showError(ex);
                     }
                 }
             }
@@ -256,42 +272,38 @@ public class MenuPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                for (int i = 0; i < lsSelectedModel.size(); i++)
-                {
-                    coordinator.addRobot(lsSelectedModel.getElementAt(i));
-                }
                 lsSelectedModel.clear();
-                GameCoordinator gameCoordinator = coordinator.newGame();
-                parent.showGame(gameCoordinator);
+                parent.showGame(game);
                 try
                 {
-                    gameCoordinator.start();
+                    game.start();
                 } catch (RobotException ex)
                 {
-                    parent.showError(ex.getMessage());
+                    showError(ex);
                 }
             }
         });
-        
-        configMenuItem.addActionListener(new ActionListener() 
+
+        configMenuItem.addActionListener(new ActionListener()
         {
             @Override
-            public void actionPerformed(ActionEvent event) 
+            public void actionPerformed(ActionEvent event)
             {
                 System.out.println("Menu option clicked");
                 int item = lstSelectedBots.locationToIndex(p);
                 System.out.println(item + ": " + lsSelectedModel.get(item));
-                parent.showConfigPanel();
-                
+                parent.showConfigPanel(lsSelectedModel.get(item));
+
             }
         });
-        
+
         lstSelectedBots.addMouseListener(new MousePopupListener());
     }
 
-    public void showError(String message)
+    public void showError(Exception ex)
     {
-        txtErrorConsole.setText("Error: " + message);
+        ex.printStackTrace(System.err);
+        txtErrorConsole.setText("Error: " + ex.getMessage());
     }
 
     class MenuPanel_Layout implements LayoutManager
@@ -303,13 +315,11 @@ public class MenuPanel extends JPanel
         @Override
         public void addLayoutComponent(String name, Component comp)
         {
-            
         }
 
         @Override
         public void removeLayoutComponent(Component comp)
         {
-            
         }
 
         @Override
@@ -343,7 +353,7 @@ public class MenuPanel extends JPanel
             int num1 = 0;
             int num2 = 0;
             Component c;
-            
+
             //pnlAvailable;
 
             c = parent.getComponent(0);
@@ -356,7 +366,7 @@ public class MenuPanel extends JPanel
                 c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num1 += c.getSize().width;
             }
-            
+
             //pnlBotSelButtons
 
             c = parent.getComponent(1);
@@ -380,7 +390,7 @@ public class MenuPanel extends JPanel
                 c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num2 += c.getSize().height;
             }
-           
+
             //pnlError
 
             c = parent.getComponent(3);
@@ -392,35 +402,36 @@ public class MenuPanel extends JPanel
             }
         }
     }
-    
+
     class MousePopupListener extends MouseAdapter
     {
+
         @Override
-        public void mousePressed(MouseEvent e) 
+        public void mousePressed(MouseEvent e)
         {
             checkPopup(e);
         }
 
         @Override
-        public void mouseClicked(MouseEvent e) 
+        public void mouseClicked(MouseEvent e)
         {
             checkPopup(e);
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) 
+        public void mouseReleased(MouseEvent e)
         {
             checkPopup(e);
         }
 
-        private void checkPopup(MouseEvent e) 
+        private void checkPopup(MouseEvent e)
         {
-            if (e.isPopupTrigger()) 
+            if (e.isPopupTrigger())
             {
                 p = new Point(e.getX(), e.getY());
                 System.out.println("lsSelected size: " + lsSelectedModel.getSize());
                 System.out.println("Point pos: " + lstSelectedBots.locationToIndex(p));
-                if(lstSelectedBots.locationToIndex(p) >= 0 && p.getY() <= lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size() - 1).getY() + lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size()).getHeight())
+                if (lstSelectedBots.locationToIndex(p) >= 0 && p.getY() <= lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size() - 1).getY() + lstSelectedBots.getCellBounds(lsSelectedModel.size() - 1, lsSelectedModel.size()).getHeight())
                 {
                     configMenu.show(lstSelectedBots, e.getX(), e.getY());
                 }

@@ -1,6 +1,5 @@
 
 import afk.bot.london.TankRobot;
-import com.hackoeur.jglm.support.FastMath;
 
 /**
  * Sample class of what coded bot will look like
@@ -19,6 +18,13 @@ public class RandomBot extends TankRobot
     public RandomBot()
     {
         super();
+    }
+
+    @Override
+    public void init()
+    {
+        super.init();
+        setName("Die Snaakste Pampoen");
     }
 
     @Override

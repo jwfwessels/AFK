@@ -4,7 +4,7 @@
  */
 package afk.frontend.swing;
 
-import afk.game.GameCoordinator;
+import afk.game.Game;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -39,12 +39,12 @@ public class GamePanel extends JPanel
     JButton btnFaster;
     JButton btnSlower;
     private JLabel lblSpeed;
-    GameCoordinator gm;
+    Game gm;
 
-    public GamePanel(RootWindow parent, GameCoordinator gameCoordinator)
+    public GamePanel(RootWindow parent, Game game)
     {
         this.parent = parent;
-        gm = gameCoordinator;
+        gm = game;
         glCanvas = gm.getAWTComponent();
         System.out.println("glCanvas" + glCanvas.getName());
         LayoutManager layout = new GamePanel_Layout();

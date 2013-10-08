@@ -21,6 +21,13 @@ public class RandomHeliBot extends HeliRobot
     }
 
     @Override
+    public void init()
+    {
+        super.init();
+        setName("Whirlybird");
+    }
+
+    @Override
     public void run()
     {
         float[][] visibles = events.getVisibleBots();
