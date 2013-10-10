@@ -4,7 +4,7 @@ import afk.ge.ems.Node;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.State;
-import afk.ge.tokyo.ems.components.TankBarrel;
+import afk.ge.tokyo.ems.components.Barrel;
 import afk.ge.tokyo.ems.components.Velocity;
 import afk.ge.tokyo.ems.components.Weapon;
 
@@ -15,7 +15,7 @@ import afk.ge.tokyo.ems.components.Weapon;
 public class TankBarrelNode extends Node
 {
     public Controller controller;
-    public TankBarrel barrel;
+    public Barrel barrel;
     public State state;
     public Velocity velocity;
     public Weapon weapon;

@@ -4,15 +4,15 @@ package afk.ge.tokyo.ems.components;
  *
  * @author Daniel
  */
-public class TankBarrel
+public class Barrel
 {
     public float length = 0;
 
-    public TankBarrel()
+    public Barrel()
     {
     }
 
-    public TankBarrel(float length)
+    public Barrel(float length)
     {
         this.length = length;
     }

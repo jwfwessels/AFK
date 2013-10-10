@@ -1,4 +1,4 @@
-TankBarrel
+Barrel
 	length = 0.105
 State
 	pos = 0 0.09351 0.16116

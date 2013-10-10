@@ -4,7 +4,7 @@ package afk.ge.tokyo.ems.components;
  *
  * @author daniel
  */
-public class TankTracks
+public class Tracks
 {
     // TOKEN CLASS
 }

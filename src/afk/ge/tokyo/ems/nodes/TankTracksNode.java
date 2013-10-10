@@ -4,7 +4,7 @@ import afk.ge.ems.Node;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Motor;
 import afk.ge.tokyo.ems.components.State;
-import afk.ge.tokyo.ems.components.TankTracks;
+import afk.ge.tokyo.ems.components.Tracks;
 import afk.ge.tokyo.ems.components.Velocity;
 
 /**
@@ -14,7 +14,7 @@ import afk.ge.tokyo.ems.components.Velocity;
 public class TankTracksNode extends Node
 {
     public Controller controller;
-    public TankTracks tankTracks;
+    public Tracks tankTracks;
     public State state;
     public Velocity velocity;
     public Motor motor;
