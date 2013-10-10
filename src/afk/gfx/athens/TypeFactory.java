@@ -26,6 +26,8 @@ public class TypeFactory
         
         factories.put("heli", new HeliFactory());
         factories.put("heliBlades", new RotorFactory());
+        factories.put("heliTurret", new HeliTurretFactory());
+        factories.put("heliBarrel", new HeliBarrelFactory());
         factories.put("largeTankBase", new LargeTankBaseFactory());
         factories.put("largeTankTurret", new LargeTankTurretFactory());
         factories.put("largeTankBarrel", new LargeTankBarrelFactory());
@@ -250,6 +252,36 @@ public class TypeFactory
         {
             AthensEntity heliGfxEntity = createEntity(GfxEntity.NORMAL);
             heliGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "heli_blades"));
+            heliGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            
+            return heliGfxEntity;
+        }
+        
+    }
+    private class  HeliTurretFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity heliGfxEntity = createEntity(GfxEntity.NORMAL);
+            heliGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "heli_turret"));
+            heliGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/heli_turret"));
+            heliGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
+            
+            return heliGfxEntity;
+        }
+        
+    }
+    private class  HeliBarrelFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity heliGfxEntity = createEntity(GfxEntity.NORMAL);
+            heliGfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "heli_barrel"));
+            heliGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "lightmaps/heli_barrel"));
             heliGfxEntity.attachResource(resourceManager.getResource(SHADER, "monkey"));
             
             return heliGfxEntity;
