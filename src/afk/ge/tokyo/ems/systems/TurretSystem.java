@@ -3,8 +3,7 @@ package afk.ge.tokyo.ems.systems;
 import static afk.bot.london.TankRobot.*;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.TankTurretNode;
-import com.hackoeur.jglm.Vec3;
+import afk.ge.tokyo.ems.nodes.TurretNode;
 import com.hackoeur.jglm.Vec4;
 import java.util.List;
 
@@ -12,10 +11,8 @@ import java.util.List;
  *
  * @author Jw
  */
-public class TankTurretSystem implements ISystem
+public class TurretSystem implements ISystem
 {
-    public static final int TURRET_AV = 10;
-
     Engine engine;
 
     @Override
@@ -28,15 +25,15 @@ public class TankTurretSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        List<TankTurretNode> nodes = engine.getNodeList(TankTurretNode.class);
-        for (TankTurretNode node : nodes)
+        List<TurretNode> nodes = engine.getNodeList(TurretNode.class);
+        for (TurretNode node : nodes)
         {
             if (engine.getFlag(node.controller.id, AIM_CLOCK))
             {
-                node.velocity.av = new Vec4(0,-TURRET_AV,0,0);
+                node.velocity.av = new Vec4(0,-node.turret.angularVelocity,0,0);
             } else if (engine.getFlag(node.controller.id, AIM_ANTICLOCK))
             {
-                node.velocity.av = new Vec4(0, TURRET_AV,0,0);
+                node.velocity.av = new Vec4(0, node.turret.angularVelocity,0,0);
             } else
             {
                 node.velocity.av = Vec4.VEC4_ZERO;

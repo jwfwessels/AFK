@@ -11,7 +11,7 @@ import afk.ge.tokyo.ems.components.Velocity;
  *
  * @author Daniel
  */
-public class TankTurretNode extends Node
+public class TurretNode extends Node
 {
     public Controller controller;
     public Turret turret;

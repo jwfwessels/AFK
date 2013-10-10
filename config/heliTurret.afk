@@ -1,4 +1,5 @@
 Turret
+	angularVelocity = 10
 State
 	pos = 0 -0.08407595 0.2089244
 Velocity

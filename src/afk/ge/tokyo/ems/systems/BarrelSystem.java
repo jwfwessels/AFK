@@ -4,7 +4,7 @@ import static afk.bot.london.TankRobot.*;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.State;
-import afk.ge.tokyo.ems.nodes.TankBarrelNode;
+import afk.ge.tokyo.ems.nodes.BarrelNode;
 import com.hackoeur.jglm.Vec3;
 import java.util.List;
 import static afk.ge.ems.Utils.*;
@@ -16,10 +16,8 @@ import com.hackoeur.jglm.Vec4;
  *
  * @author Jw
  */
-public class TankBarrelSystem implements ISystem
+public class BarrelSystem implements ISystem
 {
-
-    public static final int BARREL_AV = 5;
     private Engine engine;
     private ProjectileFactory factory = new ProjectileFactory();
 
@@ -33,15 +31,15 @@ public class TankBarrelSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        List<TankBarrelNode> nodes = engine.getNodeList(TankBarrelNode.class);
-        for (TankBarrelNode node : nodes)
+        List<BarrelNode> nodes = engine.getNodeList(BarrelNode.class);
+        for (BarrelNode node : nodes)
         {
             if (engine.getFlag(node.controller.id, AIM_UP))
             {
-                node.velocity.av = new Vec4(0, 0, 0, -BARREL_AV);
+                node.velocity.av = new Vec4(0, 0, 0, -node.barrel.angularVelocity);
             } else if (engine.getFlag(node.controller.id, AIM_DOWN))
             {
-                node.velocity.av = new Vec4(0, 0, 0, BARREL_AV);
+                node.velocity.av = new Vec4(0, 0, 0, node.barrel.angularVelocity);
             } else
             {
                 node.velocity.av = Vec4.VEC4_ZERO;
@@ -58,7 +56,7 @@ public class TankBarrelSystem implements ISystem
         }
     }
 
-    public void fire(TankBarrelNode node)
+    public void fire(BarrelNode node)
     {
         State state = getWorldState(node.entity);
         float barrelLength = node.barrel.length * state.scale.getZ();

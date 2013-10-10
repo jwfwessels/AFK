@@ -6,5 +6,16 @@ package afk.ge.tokyo.ems.components;
  */
 public class Turret
 {
-    // TOKEN CLASS
+    public float angularVelocity = 0;
+
+    public Turret()
+    {
+    }
+
+    public Turret(float angularVelocity)
+    {
+        this.angularVelocity = angularVelocity;
+    }
+    
+    
 }

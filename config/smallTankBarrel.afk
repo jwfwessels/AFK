@@ -1,5 +1,6 @@
 Barrel
 	length = 0.105
+	angularVelocity = 5
 State
 	pos = 0 0.09351 0.16116
 Velocity

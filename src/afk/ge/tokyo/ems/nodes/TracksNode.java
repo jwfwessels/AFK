@@ -11,7 +11,7 @@ import afk.ge.tokyo.ems.components.Velocity;
  *
  * @author daniel
  */
-public class TankTracksNode extends Node
+public class TracksNode extends Node
 {
     public Controller controller;
     public Tracks tankTracks;

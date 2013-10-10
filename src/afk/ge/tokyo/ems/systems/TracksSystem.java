@@ -3,7 +3,7 @@ package afk.ge.tokyo.ems.systems;
 import static afk.bot.london.TankRobot.*;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.TankTracksNode;
+import afk.ge.tokyo.ems.nodes.TracksNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Jw
  */
-public class TankTracksSystem implements ISystem
+public class TracksSystem implements ISystem
 {
 
     Engine engine;
@@ -27,8 +27,8 @@ public class TankTracksSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        List<TankTracksNode> nodes = engine.getNodeList(TankTracksNode.class);
-        for (TankTracksNode node : nodes)
+        List<TracksNode> nodes = engine.getNodeList(TracksNode.class);
+        for (TracksNode node : nodes)
         {
             float angle = -(float) Math.toRadians(node.state.rot.getY());
             float sin = (float) Math.sin(angle);
