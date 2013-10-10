@@ -1,0 +1,17 @@
+TankBarrel
+	length = 0.134
+State
+	pos = 0 0 0
+Velocity
+Weapon
+	range = 50
+	damage = 5
+	speed = 10
+    fireInterval = 0.25
+    timeSinceLastFire = 0.25
+    ammo = 0
+Renderable
+	type = heliBarrel
+AngleConstraint
+	min = 0 0 0 -10
+	max = 0 0 0 45
