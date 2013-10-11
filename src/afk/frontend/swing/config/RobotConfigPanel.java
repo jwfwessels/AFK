@@ -166,6 +166,9 @@ public class RobotConfigPanel extends JPanel
     
     private void back()
     {
+        configEngine.stop();
+        configEngine = null;
+        
         robot = null;
         root.recallMenuPanel();
     }

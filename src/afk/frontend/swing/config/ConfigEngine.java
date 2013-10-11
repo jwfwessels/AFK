@@ -82,6 +82,7 @@ public class ConfigEngine implements Runnable
 
     public void stop()
     {
+        //engine.shutDown();
         running = false;
     }
 
