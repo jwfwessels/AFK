@@ -49,7 +49,7 @@ public class RandomHeliBot extends HeliRobot
             float bearing = visibles[0][0];
             float elevation = visibles[0][1]-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
-            final float give = 0.6f;
+            final float give = 1.2f;
 
             if (Float.compare(diff, give*give) < 0)
             {

@@ -29,7 +29,7 @@ public class Tokyo implements GameEngine, Runnable
     private boolean paused = false;
     private boolean gameOver = false;
     public static final float BOARD_SIZE = 100;
-    public final static float GAME_SPEED = 30;
+    public final static float GAME_SPEED = 60;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
     public static float LOGIC_DELTA = DELTA;

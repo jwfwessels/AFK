@@ -1,11 +1,11 @@
 Barrel
 	length = 0.545
-	angularVelocity = 5
+	angularVelocity = 25
 State
 	pos = 0 0.032 0.22199
 Velocity
 Weapon
-	range = 50
+	range = 40
 	damage = 20
 	speed = 10
     fireInterval = 1
@@ -14,5 +14,5 @@ Weapon
 Renderable
 	type = largeTankBarrel
 AngleConstraint
-	min = 0 0 0 -45
-	max = 0 0 0 10
+	min = 0 0 0 -40
+	max = 0 0 0 40

@@ -1,13 +1,13 @@
 Turret
-	angularVelocity = 10
+	angularVelocity = 25
 State
 	pos = 0 0.17623 -0.15976
 Velocity
 Renderable
 	type = largeTankTurret
 Vision
-	dist = 15
-	fovy = 70
-	fovx = 170
+	dist = 20
+	fovy = 80
+	fovx = 178
 
 -> largeTankBarrel

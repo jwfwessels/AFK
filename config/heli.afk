@@ -6,11 +6,11 @@ BBoxComponent
 	offset = 0 0.1355 0
 Velocity
 Motor
-	topSpeed = 2
-	angularVelocity = 20
+	topSpeed = 6
+	angularVelocity = 40
 Life
-	hp = 100
-	maxHp = 100
+	hp = 20
+	maxHp = 20
 Renderable
 	type = heli
 RobotToken

@@ -1,18 +1,18 @@
 Barrel
 	length = 0.134
-	angularVelocity = 5
+	angularVelocity = 60
 State
 	pos = 0 0 0
 Velocity
 Weapon
-	range = 50
+	range = 40
 	damage = 5
-	speed = 10
+	speed = 20
     fireInterval = 0.25
     timeSinceLastFire = 0.25
     ammo = 0
 Renderable
 	type = heliBarrel
 AngleConstraint
-	min = 0 0 0 -10
-	max = 0 0 0 45
+	min = 0 0 0 -75
+	max = 0 0 0 75

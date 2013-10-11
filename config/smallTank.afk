@@ -9,8 +9,8 @@ Motor
 	topSpeed = 4
 	angularVelocity = 40
 Life
-	hp = 50
-	maxHp = 50
+	hp = 60
+	maxHp = 60
 Renderable
 	type = smallTankBase
 RobotToken

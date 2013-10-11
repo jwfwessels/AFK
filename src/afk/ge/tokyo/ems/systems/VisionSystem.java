@@ -55,6 +55,7 @@ public class VisionSystem implements ISystem
                         state,
                         tnode.state,
                         vnode.vision.fovx,
+                        vnode.vision.fovy,
                         vnode.vision.dist);
 
                 if (theta != null)
@@ -105,11 +106,11 @@ public class VisionSystem implements ISystem
      *
      * @param a
      * @param b
-     * @param fov
+     * @param fovx
      * @param viewingDistance
      * @return
      */
-    protected float[] isVisible(State a, State b, float fov, float viewingDistance)
+    protected float[] isVisible(State a, State b, float fovx, float fovy, float viewingDistance)
     {
         // point lies outside of viewing distance, reject
         if (Float.compare(b.pos.subtract(a.pos).getLengthSquared(),
@@ -127,8 +128,9 @@ public class VisionSystem implements ISystem
         float relativeBearing = (float)Math.toDegrees(them[0] - me[0]);
         float relativeElevation = (float)Math.toDegrees(them[1] - me[1]);
 
-        float halfFOV = fov * 0.5f;
-        if (within(relativeBearing, halfFOV) && within(relativeElevation, halfFOV))
+        float halfFOVX = fovx * 0.5f;
+        float halfFOVY = fovy * 0.5f;
+        if (within(relativeBearing, halfFOVX) && within(relativeElevation, halfFOVY))
         {
             return new float[]
             {
