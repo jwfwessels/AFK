@@ -50,7 +50,7 @@ public interface GraphicsEngine
      */
     public boolean isKeyDown(int keyCode);
     
-    public static final int NUM_MOUSE_BUTTONS = 3;
+    public static final int NUM_MOUSE_BUTTONS = 20;
     
     /**
      * Reads the status of a button on the mouse.
@@ -108,6 +108,12 @@ public interface GraphicsEngine
      * @return the current camera object.
      */
     public AbstractCamera getCamera();
+    
+    /**
+     * Sets the graphics engine's current camera object;
+     * @param camera the camera object.
+     */
+    public void setCamera(AbstractCamera camera);
     
     public void primeDebug();
     public GfxEntity getDebugEntity(BBox bbox);

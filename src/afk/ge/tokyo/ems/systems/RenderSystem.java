@@ -2,10 +2,12 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
+import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.HUDNode;
+import afk.ge.tokyo.ems.nodes.NoClipCameraNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.AbstractCamera;
 import afk.gfx.GfxEntity;
@@ -41,6 +43,12 @@ public class RenderSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
+        AbstractCamera gfxCamera = gfxEngine.getCamera();
+        Camera camera = engine.getNodeList(NoClipCameraNode.class).get(0).camera;
+        gfxCamera.at = camera.at;
+        gfxCamera.eye = camera.eye;
+        gfxCamera.up = camera.up;
+        
         gfxEngine.prime();
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
         for (RenderNode node : nodes)
@@ -99,9 +107,8 @@ public class RenderSystem implements ISystem
             {
                 GfxEntity gfx = gfxEngine.getGfxEntity(r);
 
-                AbstractCamera camera = gfxEngine.getCamera();
-                Vec4 p = camera.projection.multiply(
-                        camera.view.multiply(
+                Vec4 p = gfxCamera.projection.multiply(
+                        gfxCamera.view.multiply(
                         gfx.getWorldMatrix().multiply(
                         Vec3.VEC3_ZERO.toPoint())));
 

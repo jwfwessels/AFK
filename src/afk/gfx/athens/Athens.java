@@ -66,7 +66,7 @@ public class Athens implements GraphicsEngine
     float daytime = 0.0f;
     static final float MOUSE_SENSITIVITY = 60.0f;
     private boolean[] mouses = new boolean[NUM_MOUSE_BUTTONS];
-    private int mouseX, mouseY;
+    private int mouseX = 0, mouseY = 0;
     /* Amount to move / scale by in one step. */
     static final float DELTA = 5f, ANGLE_DELTA = 30.0f;
     private GLProfile glProfile;
@@ -122,7 +122,7 @@ public class Athens implements GraphicsEngine
             public void mouseMoved(MouseEvent e)
             {
                 mouseX = e.getX();
-                mouseX = e.getY();
+                mouseY = e.getY();
             }
             
             @Override
@@ -144,7 +144,7 @@ public class Athens implements GraphicsEngine
             public void mouseDragged(MouseEvent e)
             {
                 mouseX = e.getX();
-                mouseX = e.getY();
+                mouseY = e.getY();
                 
                 if (e.getX() == cx && e.getY() == cy)
                 {
@@ -281,29 +281,6 @@ public class Athens implements GraphicsEngine
     private void update(float delta)
     {
 
-        float amount = DELTA * delta;
-
-        if (keys[KeyEvent.VK_SHIFT])
-        {
-            amount *= 5;
-        }
-
-        if (keys[KeyEvent.VK_W])
-        {
-            camera.moveForward(amount);
-        } else if (keys[KeyEvent.VK_S])
-        {
-            camera.moveForward(-amount);
-        }
-
-        if (keys[KeyEvent.VK_D])
-        {
-            camera.moveRight(amount);
-        } else if (keys[KeyEvent.VK_A])
-        {
-            camera.moveRight(-amount);
-        }
-
         if (keys[KeyEvent.VK_2])
         {
             daytime += 1.0f;
@@ -439,12 +416,6 @@ public class Athens implements GraphicsEngine
 
     private void mouseMoved(int x, int y)
     {
-        final float LEFT_RIGHT_ROT = (2.0f * (float) x / (float) w_width) * MOUSE_SENSITIVITY;
-        final float UP_DOWN_ROT = (2.0f * (float) y / (float) w_height) * MOUSE_SENSITIVITY;
-
-        camera.rotate(LEFT_RIGHT_ROT, UP_DOWN_ROT);
-
-        updateView();
 
     }
 
@@ -595,6 +566,12 @@ public class Athens implements GraphicsEngine
     public AbstractCamera getCamera()
     {
         return camera;
+    }
+
+    @Override
+    public void setCamera(AbstractCamera camera)
+    {
+        this.camera = camera;
     }
 
     @Override
