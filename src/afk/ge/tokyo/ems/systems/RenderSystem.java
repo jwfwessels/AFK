@@ -44,10 +44,13 @@ public class RenderSystem implements ISystem
     public void update(float t, float dt)
     {
         AbstractCamera gfxCamera = gfxEngine.getCamera();
-        Camera camera = engine.getNodeList(NoClipCameraNode.class).get(0).camera;
-        gfxCamera.at = camera.at;
-        gfxCamera.eye = camera.eye;
-        gfxCamera.up = camera.up;
+        Camera camera = engine.getGlobal(Camera.class);
+        if (camera != null)
+        {
+            gfxCamera.at = camera.at;
+            gfxCamera.eye = camera.eye;
+            gfxCamera.up = camera.up;
+        }
         
         gfxEngine.prime();
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);

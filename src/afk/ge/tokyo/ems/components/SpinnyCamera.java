@@ -8,6 +8,7 @@ import com.hackoeur.jglm.Vec3;
  */
 public class SpinnyCamera
 {
+    public float angle = 0;
     public float angularVelocity = 0;
     public float pitch = 0;
     public float distance = 0;
@@ -17,8 +18,9 @@ public class SpinnyCamera
     {
     }
 
-    public SpinnyCamera(float angularVelocity, float pitch, float distance, Vec3 target)
+    public SpinnyCamera(float angle, float angularVelocity, float pitch, float distance, Vec3 target)
     {
+        this.angle = angle;
         this.angularVelocity = angularVelocity;
         this.pitch = pitch;
         this.distance = distance;

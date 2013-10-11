@@ -94,12 +94,14 @@ public class Tokyo implements GameEngine, Runnable
         
         // TODO: put this somewhere else?
         Entity entity = new Entity();
-        entity.add(new Camera(
+        Camera camera = new Camera(
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
-                new Vec3(0f, 1f, 0f)));
+                new Vec3(0f, 1f, 0f));
+        entity.add(camera);
         entity.add(new NoClipCamera(1, 5, 0.2f));
         engine.addEntity(entity);
+        engine.addGlobal(camera);
     }
     // TODO: make these customisable/generic/not hard-coded/just somewhere else!
     public static final int SPAWNVALUE = (int) (BOARD_SIZE * 0.45);
