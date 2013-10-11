@@ -15,8 +15,6 @@ import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
-import java.util.UUID;
-
 /**
  *
  * @author Jw
@@ -57,7 +55,6 @@ public class Tokyo implements GameEngine, Runnable
 
         System.out.println("gfx" + gfxEngine.getFPS());
 
-        ///possible move somewhere else later///
         engine.addLogicSystem(new SpawnSystem());
         engine.addLogicSystem(new PaintSystem());
         engine.addLogicSystem(new RobotSystem(botEngine));
@@ -80,6 +77,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new TextLabelSystem());
         engine.addLogicSystem(new GameStateSystem(game));
         
+        engine.addSystem(new InputSystem(gfxEngine));
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...

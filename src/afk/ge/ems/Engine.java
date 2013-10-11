@@ -22,6 +22,7 @@ public class Engine implements EntityListener, FlagManager
     private Collection<ISystem> systemsToRemove = new ArrayList<ISystem>();
     private Collection<EntityComponent> componentsAdded = new ArrayList<EntityComponent>();
     private Collection<EntityComponent> componentsRemoved = new ArrayList<EntityComponent>();
+    private Map<Class, Object> globals = new HashMap<Class, Object>();
     private Map<Class, Family> families = new HashMap<Class, Family>();
     private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
     private AtomicBoolean updating = new AtomicBoolean(false);
@@ -80,6 +81,21 @@ public class Engine implements EntityListener, FlagManager
         {
             removeEntity(dep);
         }
+    }
+    
+    public void addGlobal(Object global)
+    {
+        globals.put(global.getClass(), global);
+    }
+    
+    public void removeGlobal(Class globalClass)
+    {
+        globals.remove(globalClass);
+    }
+    
+    public <T> T getGlobal(Class<T> globalClass)
+    {
+        return (T)globals.get(globalClass);
     }
 
     @Override

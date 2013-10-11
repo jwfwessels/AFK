@@ -41,12 +41,16 @@ public interface GraphicsEngine
      */
     public void redisplay();
     
+    public static final int NUM_KEYS = 1024;
+    
     /**
      * Reads the status of a key on the keyboard.
      * @param keyCode the key to read.
      * @return true if the key is currently pressed, false otherwise.
      */
     public boolean isKeyDown(int keyCode);
+    
+    public static final int NUM_MOUSE_BUTTONS = 3;
     
     /**
      * Reads the status of a button on the mouse.

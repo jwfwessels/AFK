@@ -52,12 +52,9 @@ public class Athens implements GraphicsEngine
     protected Map<BBox, DebugBox> entitiesDebug = new LinkedHashMap<BBox, DebugBox>();
     protected List<BBox> removedDebug = new ArrayList<BBox>();
     private int w_width, w_height;
-    private float aspect;
-    // TODO: 1024 is enough, but there are some obscure codes in the region of 65000 that WILL make this program crash
-    private boolean[] keys = new boolean[1024];
+    private boolean[] keys = new boolean[NUM_KEYS];
     private long frameCount = 0;
     private long lastUpdate;
-    private float time = 0.0f;
     private float lastFPS = 0.0f;
     private float fpsInterval = 1.0f;
     AbstractCamera camera;
@@ -68,6 +65,8 @@ public class Athens implements GraphicsEngine
     Vec3 sun = new Vec3(origin_sun);
     float daytime = 0.0f;
     static final float MOUSE_SENSITIVITY = 60.0f;
+    private boolean[] mouses = new boolean[NUM_MOUSE_BUTTONS];
+    private int mouseX, mouseY;
     /* Amount to move / scale by in one step. */
     static final float DELTA = 5f, ANGLE_DELTA = 30.0f;
     private GLProfile glProfile;
@@ -120,15 +119,33 @@ public class Athens implements GraphicsEngine
             int cy = glCanvas.getHeight() / 2;
 
             @Override
+            public void mouseMoved(MouseEvent e)
+            {
+                mouseX = e.getX();
+                mouseX = e.getY();
+            }
+            
+            @Override
             public void mousePressed(MouseEvent e)
             {
                 cx = e.getX();
                 cy = e.getY();
+                
+                mouses[e.getButton()] = true;
             }
 
             @Override
+            public void mouseReleased(MouseEvent e)
+            {
+                mouses[e.getButton()] = false;
+            }
+            
+            @Override
             public void mouseDragged(MouseEvent e)
             {
+                mouseX = e.getX();
+                mouseX = e.getY();
+                
                 if (e.getX() == cx && e.getY() == cy)
                 {
                     return;
@@ -222,7 +239,6 @@ public class Athens implements GraphicsEngine
         long nanos = nTime - lastUpdate;
         lastUpdate = nTime;
         float delta = nanos / (float) NANOS_PER_SECOND;
-        time += delta;
         lastFPS += delta;
 
         if (fpsComp != null && lastFPS >= fpsInterval)
@@ -435,22 +451,19 @@ public class Athens implements GraphicsEngine
     @Override
     public boolean isMouseDown(int button)
     {
-        // TODO: implement isMouseDown
-        throw new UnsupportedOperationException("Not supported yet.");
+        return mouses[button];
     }
 
     @Override
     public int getMouseX()
     {
-        // TODO: implement getMouseX
-        throw new UnsupportedOperationException("Not supported yet.");
+        return mouseX;
     }
 
     @Override
     public int getMouseY()
     {
-        // TODO: implement getMouseY
-        throw new UnsupportedOperationException("Not supported yet.");
+        return mouseY;
     }
 
     private void reshape(GL2 gl, int newWidth, int newHeight)
