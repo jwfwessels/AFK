@@ -41,12 +41,16 @@ public interface GraphicsEngine
      */
     public void redisplay();
     
+    public static final int NUM_KEYS = 1024;
+    
     /**
      * Reads the status of a key on the keyboard.
      * @param keyCode the key to read.
      * @return true if the key is currently pressed, false otherwise.
      */
     public boolean isKeyDown(int keyCode);
+    
+    public static final int NUM_MOUSE_BUTTONS = 20;
     
     /**
      * Reads the status of a button on the mouse.
@@ -104,6 +108,12 @@ public interface GraphicsEngine
      * @return the current camera object.
      */
     public AbstractCamera getCamera();
+    
+    /**
+     * Sets the graphics engine's current camera object;
+     * @param camera the camera object.
+     */
+    public void setCamera(AbstractCamera camera);
     
     public void primeDebug();
     public GfxEntity getDebugEntity(BBox bbox);

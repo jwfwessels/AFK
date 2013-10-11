@@ -10,13 +10,15 @@ import afk.game.Game;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
+import afk.ge.tokyo.ems.components.Camera;
+import afk.ge.tokyo.ems.components.Mouse;
+import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
-import java.util.UUID;
-
 /**
  *
  * @author Jw
@@ -57,7 +59,6 @@ public class Tokyo implements GameEngine, Runnable
 
         System.out.println("gfx" + gfxEngine.getFPS());
 
-        ///possible move somewhere else later///
         engine.addLogicSystem(new SpawnSystem());
         engine.addLogicSystem(new PaintSystem());
         engine.addLogicSystem(new RobotSystem(botEngine));
@@ -80,12 +81,25 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new TextLabelSystem());
         engine.addLogicSystem(new GameStateSystem(game));
         
+        engine.addSystem(new InputSystem(gfxEngine));
+        engine.addSystem(new NoClipCameraSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
         DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
         engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
+        
+        engine.addGlobal(new Mouse());
+        
+        // TODO: put this somewhere else?
+        Entity entity = new Entity();
+        entity.add(new Camera(
+                new Vec3(10f, 10f, 10f),
+                new Vec3(0f, 0f, 0f),
+                new Vec3(0f, 1f, 0f)));
+        entity.add(new NoClipCamera(1, 5, 0.2f));
+        engine.addEntity(entity);
     }
     // TODO: make these customisable/generic/not hard-coded/just somewhere else!
     public static final int SPAWNVALUE = (int) (BOARD_SIZE * 0.45);
