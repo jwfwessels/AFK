@@ -7,7 +7,6 @@ import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.nodes.HUDNode;
-import afk.ge.tokyo.ems.nodes.NoClipCameraNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.AbstractCamera;
 import afk.gfx.GfxEntity;
@@ -45,7 +44,7 @@ public class RenderSystem implements ISystem
     {
         AbstractCamera gfxCamera = gfxEngine.getCamera();
         Camera camera = engine.getGlobal(Camera.class);
-        if (camera != null)
+        if (camera != null && gfxCamera != null)
         {
             gfxCamera.at = camera.at;
             gfxCamera.eye = camera.eye;
@@ -79,6 +78,7 @@ public class RenderSystem implements ISystem
             gfx.rotation = node.state.rot;
             gfx.scale = node.state.scale;
             gfx.colour = node.renderable.colour;
+            gfx.opacity = node.renderable.opacity;
             Lifetime lifetime = node.entity.get(Lifetime.class);
             if (lifetime != null)
             {

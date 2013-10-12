@@ -23,7 +23,7 @@ public class ProjectileFactory implements Factory<ProjectileFactoryRequest>
         entity.add(state);
 
         entity.add(new Velocity(request.forward.multiply(request.weapon.speed), Vec4.VEC4_ZERO));
-        entity.add(new Renderable(request.type, request.colour));
+        entity.add(new Renderable(request.type, request.colour, 1.0f));
         entity.add(new Bullet(request.weapon.range, request.weapon.damage, request.parent));
 
         return entity;

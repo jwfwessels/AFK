@@ -79,7 +79,7 @@ public class AthensEntity extends GfxEntity
     protected void draw(GL2 gl, AbstractCamera camera, Vec3 sun)
     {
         // by default, active sets visibility of entity
-        if (!active)
+        if (!active || opacity <= 0.0f)
         {
             return;
         }

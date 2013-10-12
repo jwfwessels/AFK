@@ -26,6 +26,7 @@ import java.util.Queue;
  */
 public class ParticleFactory implements Factory<ParticleFactoryRequest>, Pool
 {
+
     private Queue<Entity> pool = new ArrayDeque<Entity>();
 
     @Override
@@ -89,11 +90,11 @@ public class ParticleFactory implements Factory<ParticleFactoryRequest>, Pool
         Entity pie = pool.poll();
         if (pie == null)
         {
-            pie = new Entity("particle",this);
+            pie = new Entity("particle", this);
             pie.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, Vec3.VEC3_ZERO));
             pie.add(new Lifetime(0));
             pie.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
-            pie.add(new Renderable("particle", Vec3.VEC3_ZERO));
+            pie.add(new Renderable("particle", Vec3.VEC3_ZERO, 1.0f));
         }
         return pie;
     }
@@ -103,5 +104,4 @@ public class ParticleFactory implements Factory<ParticleFactoryRequest>, Pool
     {
         pool.add(entity);
     }
-    
 }

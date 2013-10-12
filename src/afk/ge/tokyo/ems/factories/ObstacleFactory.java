@@ -21,7 +21,7 @@ public class ObstacleFactory implements Factory<ObstacleFactoryRequest>
         Entity entity = new Entity();
         entity.add(new State(request.pos, Vec4.VEC4_ZERO, request.scale));
         entity.add(new BBoxComponent(new Vec3(0.5f),new Vec3(0,0.5f,0)));
-        entity.add(new Renderable(request.type, new Vec3(0.75f, 0.75f, 0.75f)));
+        entity.add(new Renderable(request.type, new Vec3(0.75f, 0.75f, 0.75f),request.opacity));
 
         return entity;
     }

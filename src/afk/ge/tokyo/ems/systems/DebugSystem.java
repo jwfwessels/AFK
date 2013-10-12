@@ -257,7 +257,7 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 Entity entity = new Entity();
-                entity.add(new Renderable("wall", GfxEntity.MAGENTA));
+                entity.add(new Renderable("wall", GfxEntity.MAGENTA, 1.0f));
                 entity.add(new SnapToTerrain());
                 entity.add(new Targetable());
                 Vec3 scale = new Vec3(0.3f);
@@ -453,7 +453,7 @@ public class DebugSystem implements ISystem
                 {
                     RenderNode node = new RenderNode();
                     node.entity = placeEntity;
-                    node.renderable = new Renderable("cube", GfxEntity.MAGENTA);
+                    node.renderable = new Renderable("cube", GfxEntity.MAGENTA, 1.0f);
                     node.state = state;
                     drawRenderable(g, node);
                 }

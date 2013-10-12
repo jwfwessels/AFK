@@ -10,15 +10,17 @@ public class Renderable {
     
     public String type = "";
     public Vec3 colour = Vec3.VEC3_ZERO;
+    public float opacity = 1.0f;
 
     public Renderable()
     {
     }
 
-    public Renderable(String type, Vec3 colour )
+    public Renderable(String type, Vec3 colour, float opacity)
     {
         this.type = type;
         this.colour = colour;
+        this.opacity = opacity;
     }
     
 }
