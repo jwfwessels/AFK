@@ -5,9 +5,11 @@ import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
 import afk.ge.ems.Utils;
+import afk.ge.tokyo.HeightmapLoader;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
+import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.TargetableNode;
 import afk.ge.tokyo.ems.nodes.VisionNode;
 import com.hackoeur.jglm.Vec3;
@@ -37,6 +39,7 @@ public class VisionSystem implements ISystem
         List<VisionNode> vnodes = engine.getNodeList(VisionNode.class);
         List<TargetableNode> tnodes = engine.getNodeList(TargetableNode.class);
         List<CollisionNode> cnodes = engine.getNodeList(CollisionNode.class);
+        HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
 
         for (VisionNode vnode : vnodes)
         {
@@ -74,6 +77,11 @@ public class VisionSystem implements ISystem
                         {
                             continue targetloop;
                         }
+                    }
+                    
+                    if (HeightmapLoader.getIntersections(state.pos, tnode.state.pos, 0.1f, hnode.heightmap).length > 0)
+                    {
+                        continue targetloop;
                     }
 
                     thetas.add(theta);
