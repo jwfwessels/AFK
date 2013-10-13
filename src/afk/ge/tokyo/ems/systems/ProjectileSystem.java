@@ -48,11 +48,10 @@ public class ProjectileSystem implements ISystem
             // TODO: get this bloody thing working!!
             if (hnode != null)
             {
-                float y = HeightmapLoader.getHeight(bullet.state.pos.getX(),
-                        bullet.state.pos.getY(), hnode.heightmap);
-                if (bullet.state.pos.getY() < y)
+                Vec3[] intersections = HeightmapLoader.getIntersections(bullet.state.prevPos, bullet.state.pos, 0.01f, hnode.heightmap);
+                if (intersections.length > 0)
                 {
-                    bang(bullet);
+                    bang(bullet, intersections[0]);
                     continue;
                 }
             }
@@ -146,16 +145,20 @@ public class ProjectileSystem implements ISystem
         System.out.println("HIT!");
         return true;
     }
-
+    
     private void bang(ProjectileNode bullet)
+    {
+        this.bang(bullet, bullet.state.pos);
+    }
+
+    private void bang(ProjectileNode bullet, Vec3 where)
     {
         try
         {
             Entity entity = new GenericFactory().create(GenericFactoryRequest.load("explosionProjectile"));
-            entity.add(new State(bullet.state.pos, Vec4.VEC4_ZERO, new Vec3(1)));
+            entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1)));
             engine.addEntity(entity);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             ex.printStackTrace(System.err);
         }
