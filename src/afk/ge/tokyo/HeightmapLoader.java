@@ -166,14 +166,14 @@ public class HeightmapLoader
     }
 
     /**
-     * Finds the intersections of the given line segment to the heightmap using
+     * Finds the intersections between the given line segment and the heightmap using
      * a brute force raymarching algorithm.
      *
      * @param a
      * @param b
      * @param accuracy
      * @param hm
-     * @return
+     * @return an array containing all the intersections between the line segment and the heigtmap
      */
     public static Vec3[] getIntersections(Vec3 a, Vec3 b, float accuracy, Heightmap hm)
     {
@@ -199,5 +199,42 @@ public class HeightmapLoader
             intersections.add(b);
         }
         return intersections.toArray(new Vec3[0]);
+    }
+    
+    /**
+     * Finds the first intersection of the given line segment to the heightmap using
+     * a brute force raymarching algorithm. Faster than getIntersections but only returns a single result.
+     *
+     * @param a
+     * @param b
+     * @param accuracy
+     * @param hm
+     * @return the first intersection between the segment at the heightmap, null if the segment does not intersect.
+     */
+    public static Vec3 getIntersection(Vec3 a, Vec3 b, float accuracy, Heightmap hm)
+    {
+        Vec3 v = b.subtract(a);
+        float len = v.getLength();
+        int n = (int) (len / accuracy);
+        v = v.multiply(accuracy / len);
+        boolean under = under(a, hm);
+        if (under) return a;
+        Vec3 temp = a.add(v);
+        ArrayList<Vec3> intersections = new ArrayList<Vec3>();
+        for (int i = 0; i < n; i++)
+        {
+            boolean under2 = under(temp, hm);
+            if (under != under2)
+            {
+                return temp;
+            }
+            under = under2;
+            temp = temp.add(v);
+        }
+        if (under != under(b,hm))
+        {
+            return b;
+        }
+        return null;
     }
 }

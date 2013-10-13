@@ -79,7 +79,7 @@ public class VisionSystem implements ISystem
                         }
                     }
                     
-                    if (HeightmapLoader.getIntersections(state.pos, tnode.state.pos, 0.1f, hnode.heightmap).length > 0)
+                    if (HeightmapLoader.getIntersection(state.pos, tnode.state.pos, 0.1f, hnode.heightmap) != null)
                     {
                         continue targetloop;
                     }

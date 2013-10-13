@@ -56,10 +56,10 @@ public class ProjectileSystem implements ISystem
                     bang(bullet,bullet.state.pos);
                 } else
                 {
-                    Vec3[] intersections = HeightmapLoader.getIntersections(bullet.state.prevPos, bullet.state.pos, 0.1f, hnode.heightmap);
-                    if (intersections.length > 0)
+                    Vec3 intersection = HeightmapLoader.getIntersection(bullet.state.prevPos, bullet.state.pos, 0.1f, hnode.heightmap);
+                    if (intersection != null)
                     {
-                        bang(bullet, intersections[0]);
+                        bang(bullet, intersection);
                         continue;
                     }
                 }
