@@ -162,7 +162,7 @@ public class HeightmapLoader
      */
     public static boolean under(Vec3 v, Heightmap hm)
     {
-        return v.getY() < getHeight(v.getX(), v.getY(), hm);
+        return v.getY() < getHeight(v.getX(), v.getZ(), hm);
     }
 
     /**
@@ -189,14 +189,14 @@ public class HeightmapLoader
             boolean under2 = under(temp, hm);
             if (under != under2)
             {
-                intersections.add(a.add(temp).scale(0.5f));
+                intersections.add(temp);
             }
             under = under2;
             temp = temp.add(v);
         }
         if (under != under(b,hm))
         {
-            intersections.add(temp.add(b).scale(0.5f));
+            intersections.add(b);
         }
         return intersections.toArray(new Vec3[0]);
     }

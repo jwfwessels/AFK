@@ -48,11 +48,20 @@ public class ProjectileSystem implements ISystem
             // TODO: get this bloody thing working!!
             if (hnode != null)
             {
-                Vec3[] intersections = HeightmapLoader.getIntersections(bullet.state.prevPos, bullet.state.pos, 0.01f, hnode.heightmap);
-                if (intersections.length > 0)
+                if (HeightmapLoader.under(bullet.state.prevPos, hnode.heightmap))
                 {
-                    bang(bullet, intersections[0]);
-                    continue;
+                    bang(bullet,bullet.state.prevPos);
+                } else if (HeightmapLoader.under(bullet.state.pos, hnode.heightmap))
+                {
+                    bang(bullet,bullet.state.pos);
+                } else
+                {
+                    Vec3[] intersections = HeightmapLoader.getIntersections(bullet.state.prevPos, bullet.state.pos, 0.1f, hnode.heightmap);
+                    if (intersections.length > 0)
+                    {
+                        bang(bullet, intersections[0]);
+                        continue;
+                    }
                 }
             }
 
