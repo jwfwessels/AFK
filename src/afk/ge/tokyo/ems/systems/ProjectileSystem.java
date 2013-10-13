@@ -4,12 +4,14 @@ import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
+import afk.ge.tokyo.HeightmapLoader;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
+import afk.ge.tokyo.ems.nodes.HeightmapNode;
 import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
@@ -38,22 +40,22 @@ public class ProjectileSystem implements ISystem
 
         List<ProjectileNode> bullets = engine.getNodeList(ProjectileNode.class);
         List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
-//        HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
+        HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
 
         bulletLoop:
         for (ProjectileNode bullet : bullets)
         {
             // TODO: get this bloody thing working!!
-//            if (hnode != null)
-//            {
-//                float y = HeightmapLoader.getHeight(bullet.state.pos.getX(),
-//                        bullet.state.pos.getY(), hnode.heightmap);
-//                if (bullet.state.pos.getY() < y)
-//                {
-//                    bang(bullet);
-//                    continue;
-//                }
-//            }
+            if (hnode != null)
+            {
+                float y = HeightmapLoader.getHeight(bullet.state.pos.getX(),
+                        bullet.state.pos.getY(), hnode.heightmap);
+                if (bullet.state.pos.getY() < y)
+                {
+                    bang(bullet);
+                    continue;
+                }
+            }
 
             // collision testing for box
             for (CollisionNode node : nodes)
