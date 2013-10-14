@@ -81,10 +81,12 @@ public class RootWindow extends JFrame implements Frontend
             menuPanel = new MenuPanel(this);
             configPanel = new RobotConfigPanel(this);
             menuPanel.setup();
+            menuPanel.loadExistingRobots();
   
         } 
         catch (Exception e)
         {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Intitializing components for rootWindow failed:\n" + e);
         }
     }
