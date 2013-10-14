@@ -40,6 +40,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class MenuPanel extends JPanel
 {
 
+    private static String RELETIVE_ROBOT_DIRECTORY = "";
     RootWindow parent;
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
@@ -65,6 +66,7 @@ public class MenuPanel extends JPanel
     private Point p;
     private Game game;
     private RobotLoader botLoader;
+    
 
     public MenuPanel(RootWindow parent)
     {
@@ -77,6 +79,12 @@ public class MenuPanel extends JPanel
         game = new AFKGame(botLoader);
     }
 
+    
+    public void loadExistingBots()
+    {
+        
+    }
+    
     void setup()
     {
         initComponents();
