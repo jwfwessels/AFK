@@ -2,8 +2,8 @@ Helicopter
 State
 	scale = 3.5 3.5 3.5
 BBoxComponent
-	extent = 0.311 0.1355 0.5
-	offset = 0 0.1355 0
+	extent = 0.262 0.1875 0.5
+	offset = 0 0.06009 -0.24975
 Velocity
 Motor
 	topSpeed = 6
