@@ -19,11 +19,13 @@ public class DebugBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-	if (visibles.length > 0 && different(visibles[0][0], theta))
+	if (!events.visibleBots.isEmpty() && different(events.visibleBots.get(0).bearing, theta))
         {
-            System.out.println(getId() + " -> " + (theta = visibles[0][0]));
+            System.out.println(getId() + " -> " + (theta = events.visibleBots.get(0).bearing));
         }
+        
+        System.out.println("pitch: " + events.pitch);
+        System.out.println("heading: " + events.heading);
     }
     
     private boolean different(float a, float b)

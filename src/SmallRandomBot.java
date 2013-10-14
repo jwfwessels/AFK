@@ -1,5 +1,6 @@
 
 import afk.bot.london.TankRobot;
+import afk.bot.london.VisibleBot;
 
 /**
  * Sample class of what coded bot will look like
@@ -30,8 +31,7 @@ public class SmallRandomBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-        if (events.hitWall())
+        if (events.hitWall)
         {
             turning = false;
             movement = 50;
@@ -44,19 +44,20 @@ public class SmallRandomBot extends TankRobot
                 retaliating = -1;
             }
         }
-        if (visibles.length > 0)
+        if (!events.visibleBots.isEmpty())
         {
-            float bearing = visibles[0][0];
-            float elevation = visibles[0][1]-events.barrel;
-            float diff = bearing*bearing+elevation*elevation;
+            VisibleBot visible = events.visibleBots.get(0);
+            float bearing = visible.bearing;
+            float elevation = visible.elevation - events.barrel;
+            float diff = bearing * bearing + elevation * elevation;
             final float give = 0.6f;
 
-            if (Float.compare(diff, give*give) < 0)
+            if (Float.compare(diff, give * give) < 0)
             {
                 attack();
                 return;
             }
-            
+
             if (Float.compare(bearing, 0) < 0)
             {
                 aimAntiClockwise();
@@ -74,16 +75,13 @@ public class SmallRandomBot extends TankRobot
             {
                 aimUp();
             }
-            return;
-        }
-        if (retaliating != 0)
+        } else if (retaliating != 0)
         {
             retaliate();
         } else if (turning)
         {
             turn();
-        }
-        else
+        } else
         {
             move();
         }

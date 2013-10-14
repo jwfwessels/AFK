@@ -1,5 +1,7 @@
 package afk.ge.tokyo.ems.systems;
 
+import afk.bot.london.RobotEvent;
+import afk.bot.london.VisibleBot;
 import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
@@ -43,7 +45,7 @@ public class VisionSystem implements ISystem
 
         for (VisionNode vnode : vnodes)
         {
-            List<float[]> thetas = new ArrayList<float[]>();
+            List<VisibleBot> thetas = new ArrayList<VisibleBot>();
             targetloop:
             for (TargetableNode tnode : tnodes)
             {
@@ -84,7 +86,7 @@ public class VisionSystem implements ISystem
                         continue targetloop;
                     }
 
-                    thetas.add(theta);
+                    thetas.add(new VisibleBot(theta[0], theta[1]));
                 }
             }
             vnode.controller.events.visibleBots = thetas;

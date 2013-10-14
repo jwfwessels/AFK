@@ -1,5 +1,6 @@
 
 import afk.bot.london.TankRobot;
+import afk.bot.london.VisibleBot;
 import com.hackoeur.jglm.support.FastMath;
 
 /**
@@ -27,10 +28,10 @@ public class ScaredBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        if (!events.visibleBots.isEmpty())
         {
-            thetaAngle = visibles[0][0];
+            VisibleBot visible = events.visibleBots.get(0);
+            thetaAngle = visible.bearing;
             float diff = FastMath.abs(thetaAngle);
 
             if (Float.compare(diff, 1) < 0)
@@ -52,7 +53,7 @@ public class ScaredBot extends TankRobot
             }
         } else
         {
-            if (events.hitWall())
+            if (events.hitWall)
             {
                 if (antiBot)
                 {

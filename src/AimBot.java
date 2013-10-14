@@ -1,5 +1,6 @@
 
 import afk.bot.london.TankRobot;
+import afk.bot.london.VisibleBot;
 
 /**
  * Sample class of what coded bot will look like
@@ -18,14 +19,23 @@ public class AimBot extends TankRobot
     @Override
     public void run()
     {
-        
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        if (events.gotHit)
         {
-            System.out.println("elevation: " + visibles[0][1]);
+            System.out.println("I got hit!");
+        }
+        
+        if (events.didHit)
+        {
+            System.out.println("I hit someone!");
+        }
+        
+        if (!events.visibleBots.isEmpty())
+        {
+            VisibleBot visible = events.visibleBots.get(0);
+            System.out.println("elevation: " + visible.elevation);
             System.out.println("barrel: " + events.barrel);
-            float bearing = visibles[0][0];
-            float elevation = visibles[0][1]-events.barrel;
+            float bearing = visible.bearing;
+            float elevation = visible.elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
             final float give = 0.6f;
 

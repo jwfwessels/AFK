@@ -1,5 +1,5 @@
 import afk.bot.london.TankRobot;
-import com.hackoeur.jglm.support.FastMath;
+import afk.bot.london.VisibleBot;
 
 /**
  * Sample class of what coded bot will look like
@@ -26,32 +26,41 @@ public class CircleBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        if (!events.visibleBots.isEmpty())
         {
-            thetaAngle = visibles[0][0];
-            float diff = FastMath.abs(thetaAngle);
+            VisibleBot visible = events.visibleBots.get(0);
+            float bearing = visible.bearing;
+            float elevation = visible.elevation-events.barrel;
+            float diff = bearing*bearing+elevation*elevation;
+            final float give = 0.6f;
 
-            if (Float.compare(diff, 1) < 0)
+            if (Float.compare(diff, give*give) < 0)
             {
                 attack();
-            } else
+                return;
+            }
+            
+            if (Float.compare(bearing, 0) < 0)
             {
-                if (Float.compare(thetaAngle, 0) < 0)
-                {
-                    turnAntiClockwise();
-                    thetaAngle++;
-                }
-                if (Float.compare(thetaAngle, 0) > 0)
-                {
-                    turnClockwise();
-                    thetaAngle--;
-                }
+                aimAntiClockwise();
+            }
+            if (Float.compare(bearing, 0) > 0)
+            {
+                aimClockwise();
+            }
+
+            if (Float.compare(elevation, 0) < 0)
+            {
+                aimDown();
+            }
+            if (Float.compare(elevation, 0) > 0)
+            {
+                aimUp();
             }
         } else
         {
 
-            if (events.hitWall())
+            if (events.hitWall)
             {
                 if (antiBot)
                 {

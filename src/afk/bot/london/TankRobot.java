@@ -26,6 +26,7 @@ public abstract class TankRobot extends AbstractRobot
     @Override
     public void init()
     {
+        super.init();
         setType("largeTank");
     }
 
