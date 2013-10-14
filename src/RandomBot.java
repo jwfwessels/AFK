@@ -1,5 +1,7 @@
 
 import afk.bot.london.TankRobot;
+import afk.bot.london.VisibleBot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -30,7 +32,6 @@ public class RandomBot extends TankRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
         if (events.hitWall())
         {
             turning = false;
@@ -44,10 +45,12 @@ public class RandomBot extends TankRobot
                 retaliating = -1;
             }
         }
-        if (visibles.length > 0)
+        List<VisibleBot> visibles = events.getVisibleBots();
+        if (!visibles.isEmpty())
         {
-            float bearing = visibles[0][0];
-            float elevation = visibles[0][1]-events.barrel;
+            VisibleBot visible = visibles.get(0);
+            float bearing = visible.bearing;
+            float elevation = visible.elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
             final float give = 0.6f;
 
@@ -74,9 +77,7 @@ public class RandomBot extends TankRobot
             {
                 aimUp();
             }
-            return;
-        }
-        if (retaliating != 0)
+        } else if (retaliating != 0)
         {
             retaliate();
         } else if (turning)

@@ -1,5 +1,7 @@
 
 import afk.bot.london.HeliRobot;
+import afk.bot.london.VisibleBot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -30,13 +32,14 @@ public class AimHeliBot extends HeliRobot
     @Override
     public void run()
     {
-        float[][] visibles = events.getVisibleBots();
-        if (visibles.length > 0)
+        List<VisibleBot> visibles = events.getVisibleBots();
+        if (!visibles.isEmpty())
         {
-        System.out.println("visibles: " + visibles.length);
-        System.out.println(": " + visibles[0].toString());
-            float bearing = visibles[0][0];
-            float elevation = visibles[0][1]-events.barrel;
+            VisibleBot visible = visibles.get(0);
+            System.out.println("elevation: " + visible.elevation);
+            System.out.println("barrel: " + events.barrel);
+            float bearing = visible.bearing;
+            float elevation = visible.elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
             final float give = 1.5f;
             System.out.println("diff0ld: " + diff + "      " + 0.6f*0.6f);

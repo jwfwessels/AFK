@@ -11,13 +11,13 @@ public class RobotEvent
 {
     
     /** List of visible bots as angles from where tank is facing. Empty if there are none. */
-    public List<float[]> visibleBots;
+    public List<VisibleBot> visibleBots;
     
     public float turret;
     public float barrel;
     
     /** True if bot was hit by another. */
-    public boolean gotHit; // TODO: change to reflect where hit came from
+    public boolean gotHit;
     
     /** True if bot successfully hit another. */
     public boolean didHit;
@@ -27,18 +27,15 @@ public class RobotEvent
 
     public RobotEvent()
     {
-        visibleBots = new ArrayList<float[]>();
+        visibleBots = new ArrayList<VisibleBot>();
         gotHit = false;
         didHit = false;
         hitWall = false;
     }
     
-    public float[][] getVisibleBots()
+    public List<VisibleBot> getVisibleBots()
     {
-        float[][] v = new float[visibleBots.size()][];
-        for (int i = 0; i < v.length; i++)
-            v[i] = visibleBots.get(i);
-        return v;
+        return visibleBots;
     }
 
     public boolean gotHit()
