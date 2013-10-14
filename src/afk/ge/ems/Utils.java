@@ -74,6 +74,9 @@ public class Utils
     public static Mat4 getBBoxMatrix(State state, Vec3 offset)
     {
         Mat4 monkeyWorld = new Mat4(1f);
+        
+        Mat4 rotMatrix = getRotationMatrix(state);
+        offset = rotMatrix.multiply(new Vec4(offset, 1)).getXYZ();
 
         monkeyWorld = translate(monkeyWorld, state.pos.add(offset));
 
