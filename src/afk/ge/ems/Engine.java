@@ -19,6 +19,8 @@ public class Engine implements EntityListener, FlagManager
     private Collection<Entity> entities = new ArrayList<Entity>();
     private Collection<Entity> toAdd = new ArrayList<Entity>();
     private Collection<Entity> toRemove = new ArrayList<Entity>();
+    private Collection<ISystem> systemsToAdd = new ArrayList<ISystem>();
+    private Collection<ISystem> logicSystemsToAdd = new ArrayList<ISystem>();
     private Collection<ISystem> systemsToRemove = new ArrayList<ISystem>();
     private Collection<EntityComponent> componentsAdded = new ArrayList<EntityComponent>();
     private Collection<EntityComponent> componentsRemoved = new ArrayList<EntityComponent>();
@@ -145,17 +147,31 @@ public class Engine implements EntityListener, FlagManager
 
     public void addLogicSystem(ISystem system)
     {
-        if (system.init(this))
+        if (updating.get())
         {
-            logicSystems.add(system);
+            logicSystemsToAdd.add(system);
+        }
+        else
+        {
+            if (system.init(this))
+            {
+                logicSystems.add(system);
+            }
         }
     }
 
     public void addSystem(ISystem system)
     {
-        if (system.init(this))
+        if (updating.get())
         {
-            systems.add(system);
+            systemsToAdd.add(system);
+        }
+        else
+        {
+            if (system.init(this))
+            {
+                systems.add(system);
+            }
         }
     }
 
@@ -195,6 +211,18 @@ public class Engine implements EntityListener, FlagManager
             addEntity(e);
         }
         toAdd.clear();
+        
+        for (ISystem s : systemsToAdd)
+        {
+            addSystem(s);
+        }
+        systemsToAdd.clear();
+        for (ISystem s : logicSystemsToAdd)
+        {
+            addLogicSystem(s);
+        }
+        logicSystemsToAdd.clear();
+        
         for (ISystem s : systemsToRemove)
         {
             removeSystem(s);
