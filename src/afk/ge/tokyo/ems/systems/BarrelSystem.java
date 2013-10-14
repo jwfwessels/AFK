@@ -66,7 +66,7 @@ public class BarrelSystem implements ISystem
                 state.rot,
                 new Vec3(0.3f, 0.3f, -0.3f),
                 forward, "projectile", new Vec3(0.5f,0.5f,0.5f),
-                node.weapon, node.controller.id)));
+                node.weapon, node.controller)));
     }
 
     @Override

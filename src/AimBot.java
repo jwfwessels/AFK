@@ -19,6 +19,16 @@ public class AimBot extends TankRobot
     @Override
     public void run()
     {
+        if (events.gotHit)
+        {
+            System.out.println("I got hit!");
+        }
+        
+        if (events.didHit)
+        {
+            System.out.println("I hit someone!");
+        }
+        
         if (!events.visibleBots.isEmpty())
         {
             VisibleBot visible = events.visibleBots.get(0);

@@ -16,6 +16,7 @@ import afk.ge.tokyo.ems.nodes.ProjectileNode;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,12 +26,23 @@ import java.util.List;
 public class ProjectileSystem implements ISystem
 {
 
-    Engine engine;
+    private Engine engine;
+    private GenericFactory factory = new GenericFactory();
+    private GenericFactoryRequest explosionRequest;
 
     @Override
     public boolean init(Engine engine)
     {
         this.engine = engine;
+        try
+        {
+            explosionRequest = GenericFactoryRequest.load("explosionProjectile");
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace(System.err);
+            return false;
+        }
         return true;
     }
 
@@ -45,15 +57,17 @@ public class ProjectileSystem implements ISystem
         bulletLoop:
         for (ProjectileNode bullet : bullets)
         {
-            // TODO: get this bloody thing working!!
+            // collision with terrain
             if (hnode != null)
             {
                 if (HeightmapLoader.under(bullet.state.prevPos, hnode.heightmap))
                 {
-                    bang(bullet,bullet.state.prevPos);
+                    bang(bullet, bullet.state.prevPos);
+                    continue;
                 } else if (HeightmapLoader.under(bullet.state.pos, hnode.heightmap))
                 {
-                    bang(bullet,bullet.state.pos);
+                    bang(bullet, bullet.state.pos);
+                    continue;
                 } else
                 {
                     Vec3 intersection = HeightmapLoader.getIntersection(bullet.state.prevPos, bullet.state.pos, 0.1f, hnode.heightmap);
@@ -70,7 +84,7 @@ public class ProjectileSystem implements ISystem
             {
                 // to stop shells from exploding inside the tank's barrel:
                 Controller controller = node.entity.get(Controller.class);
-                if (controller != null && controller.id == bullet.bullet.parent)
+                if (controller != null && controller == bullet.bullet.parent)
                 {
                     continue;
                 }
@@ -84,12 +98,23 @@ public class ProjectileSystem implements ISystem
                         life.hp -= bullet.bullet.damage;
                     }
 
+                    // notify the victim that they got shot
+                    // (only if the victim was not an innocent wall)
+                    Controller victim = node.entity.get(Controller.class);
+                    if (victim != null)
+                    {
+                        victim.events.gotHit = true;
+                        // notify the shooter that they shot someone
+                        bullet.bullet.parent.events.didHit = true;
+                    }
+
+
                     bang(bullet);
                     continue bulletLoop;
                 }
             }
 
-            // range testing for box
+            // range testing
             float dist = bullet.state.prevPos.subtract(bullet.state.pos).getLength();
             bullet.bullet.rangeLeft -= dist;
             if (Float.compare(bullet.bullet.rangeLeft, 0) <= 0)
@@ -151,10 +176,9 @@ public class ProjectileSystem implements ISystem
         {
             return false;
         }
-        System.out.println("HIT!");
         return true;
     }
-    
+
     private void bang(ProjectileNode bullet)
     {
         this.bang(bullet, bullet.state.pos);
@@ -162,15 +186,9 @@ public class ProjectileSystem implements ISystem
 
     private void bang(ProjectileNode bullet, Vec3 where)
     {
-        try
-        {
-            Entity entity = new GenericFactory().create(GenericFactoryRequest.load("explosionProjectile"));
-            entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1)));
-            engine.addEntity(entity);
-        } catch (Exception ex)
-        {
-            ex.printStackTrace(System.err);
-        }
+        Entity entity = factory.create(explosionRequest);
+        entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1)));
+        engine.addEntity(entity);
         engine.removeEntity(bullet.entity);
     }
 }
