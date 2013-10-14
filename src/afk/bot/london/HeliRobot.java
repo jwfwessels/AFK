@@ -37,6 +37,7 @@ public abstract class HeliRobot extends AbstractRobot
     @Override
     public void init()
     {
+        super.init();
         setType("heli");
     }
 

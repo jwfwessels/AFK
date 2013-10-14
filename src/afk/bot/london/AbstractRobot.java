@@ -34,7 +34,12 @@ public abstract class AbstractRobot implements Robot
     {
         return config;
     }
-    
+
+    @Override
+    public void init()
+    {
+        setName(getClass().getSimpleName());
+    }
     
     /**
      * Set the type of this robot. e.g. small tank, large helicopter, etc.
