@@ -1,7 +1,6 @@
 
 import afk.bot.london.TankRobot;
 import afk.bot.london.VisibleBot;
-import java.util.List;
 
 
 /**
@@ -25,17 +24,16 @@ public class JarBot extends TankRobot
     @Override
     public void run()
     {
-        if (events.hitWall())
+        if (events.hitWall)
         {
             manager.setMovement(200);
             manager.setRotation(180);
             manager.setTurning(true);
         }
         
-        List<VisibleBot> visibles = events.getVisibleBots();
-        if (!visibles.isEmpty())
+        if (!events.visibleBots.isEmpty())
         {
-            VisibleBot visible = visibles.get(0);
+            VisibleBot visible = events.visibleBots.get(0);
             float bearing = visible.bearing;
             float elevation = visible.elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;

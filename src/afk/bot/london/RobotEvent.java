@@ -33,24 +33,4 @@ public class RobotEvent
         hitWall = false;
     }
     
-    public List<VisibleBot> getVisibleBots()
-    {
-        return visibleBots;
-    }
-
-    public boolean gotHit()
-    {
-        return gotHit;
-    }
-
-    public boolean didHit()
-    {
-        return didHit;
-    }
-
-    public boolean hitWall()
-    {
-        return hitWall;
-    }
-    
 }

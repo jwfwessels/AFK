@@ -2,7 +2,6 @@
 import afk.bot.london.TankRobot;
 import afk.bot.london.VisibleBot;
 import com.hackoeur.jglm.support.FastMath;
-import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -29,10 +28,9 @@ public class ScaredBot extends TankRobot
     @Override
     public void run()
     {
-        List<VisibleBot> visibles = events.getVisibleBots();
-        if (!visibles.isEmpty())
+        if (!events.visibleBots.isEmpty())
         {
-            VisibleBot visible = visibles.get(0);
+            VisibleBot visible = events.visibleBots.get(0);
             thetaAngle = visible.bearing;
             float diff = FastMath.abs(thetaAngle);
 
@@ -55,7 +53,7 @@ public class ScaredBot extends TankRobot
             }
         } else
         {
-            if (events.hitWall())
+            if (events.hitWall)
             {
                 if (antiBot)
                 {

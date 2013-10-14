@@ -1,7 +1,5 @@
 
 import afk.bot.london.TankRobot;
-import afk.bot.london.VisibleBot;
-import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -21,10 +19,9 @@ public class DebugBot extends TankRobot
     @Override
     public void run()
     {
-        List<VisibleBot> visibles = events.getVisibleBots();
-	if (!visibles.isEmpty() && different(visibles.get(0).bearing, theta))
+	if (!events.visibleBots.isEmpty() && different(events.visibleBots.get(0).bearing, theta))
         {
-            System.out.println(getId() + " -> " + (theta = visibles.get(0).bearing));
+            System.out.println(getId() + " -> " + (theta = events.visibleBots.get(0).bearing));
         }
     }
     

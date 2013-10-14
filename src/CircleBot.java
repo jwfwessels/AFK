@@ -1,7 +1,5 @@
 import afk.bot.london.TankRobot;
 import afk.bot.london.VisibleBot;
-import com.hackoeur.jglm.support.FastMath;
-import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -28,10 +26,9 @@ public class CircleBot extends TankRobot
     @Override
     public void run()
     {
-        List<VisibleBot> visibles = events.getVisibleBots();
-        if (!visibles.isEmpty())
+        if (!events.visibleBots.isEmpty())
         {
-            VisibleBot visible = visibles.get(0);
+            VisibleBot visible = events.visibleBots.get(0);
             float bearing = visible.bearing;
             float elevation = visible.elevation-events.barrel;
             float diff = bearing*bearing+elevation*elevation;
@@ -63,7 +60,7 @@ public class CircleBot extends TankRobot
         } else
         {
 
-            if (events.hitWall())
+            if (events.hitWall)
             {
                 if (antiBot)
                 {
