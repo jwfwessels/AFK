@@ -27,11 +27,11 @@ public class SonarSystem implements ISystem
         this.engine = engine;
         return true;
     }
-    private static final Vec3[] POS_AXIS =
+    public static final Vec3[] POS_AXIS =
     {
         X_AXIS, Y_AXIS, Z_AXIS
     };
-    private static final Vec3[] NEG_AXIS =
+    public static final Vec3[] NEG_AXIS =
     {
         X_AXIS.getNegated(),
         Y_AXIS.getNegated(),
