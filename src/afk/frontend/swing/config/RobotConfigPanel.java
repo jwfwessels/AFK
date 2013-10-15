@@ -9,6 +9,7 @@ import afk.bot.RobotConfigManager;
 import afk.frontend.swing.RootWindow;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
+import com.sun.imageio.plugins.jpeg.JPEG;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -70,7 +71,8 @@ public class RobotConfigPanel extends JPanel
         
         gfxEngine = new Athens(true);
         
-        pnlCanvas = gfxEngine.getAWTComponent();
+//        pnlCanvas = gfxEngine.getAWTComponent();
+        pnlCanvas = new JPanel();
         btnPrev = new JButton("<");
         btnNext = new JButton(">");
         btnBrowse = new JButton("Browse");
@@ -89,6 +91,8 @@ public class RobotConfigPanel extends JPanel
      */
     public void loadConfig(Robot robot)
     {
+        pnlCanvas = gfxEngine.getAWTComponent();
+        this.validate();
         this.robot = robot;
         RobotConfigManager config = robot.getConfigManager();
         UUID id = robot.getId();
@@ -168,7 +172,7 @@ public class RobotConfigPanel extends JPanel
     {
         configEngine.stop();
         configEngine = null;
-        
+//        pnlCanvas = null;
         robot = null;
         root.recallMenuPanel();
     }
