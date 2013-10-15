@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
@@ -40,6 +41,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class MenuPanel extends JPanel
 {
 
+    private static String RELETIVE_ROBOT_DIRECTORY = "build/classes";
     RootWindow parent;
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
@@ -65,6 +67,7 @@ public class MenuPanel extends JPanel
     private Point p;
     private Game game;
     private RobotLoader botLoader;
+    
 
     public MenuPanel(RootWindow parent)
     {
@@ -77,6 +80,31 @@ public class MenuPanel extends JPanel
         game = new AFKGame(botLoader);
     }
 
+    /*
+     * Loops through the dirctory given by RELETIVE_ROBOT_DIRECTORY and attempts to load all robots in that directory
+     */
+    public void loadExistingRobots()
+    {
+        File robotDir = new File(RELETIVE_ROBOT_DIRECTORY);
+        for (File tempFile : robotDir.listFiles()) 
+        {
+            try
+            {
+                String tempPath = tempFile.getAbsolutePath();
+                botLoader.loadRobot(tempPath);  
+                String botName = tempPath.substring(tempPath.lastIndexOf('\\') + 1, tempPath.lastIndexOf('.'));
+                botMap.put(botName, tempPath);
+                lsAvailableModel.addElement(botName);
+            }
+            catch(RobotException e)
+            {
+            }
+            catch(Exception e)
+            {
+            }
+        }
+    }
+    
     void setup()
     {
         initComponents();
