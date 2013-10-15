@@ -34,7 +34,6 @@ public class DebugRenderSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        gfxEngine.primeDebug();
         List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
         for (CollisionNode node : nodes)
         {
@@ -48,13 +47,10 @@ public class DebugRenderSystem implements ISystem
             gfx.colour = GfxEntity.MAGENTA;
         }
 
-        gfxEngine.postDebug();
     }
 
     @Override
     public void destroy()
     {
-        gfxEngine.primeDebug();
-        gfxEngine.postDebug();
     }
 }
