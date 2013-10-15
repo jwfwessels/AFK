@@ -101,10 +101,10 @@ public class SonarSystem implements ISystem
 
                 node.controller.events.sonar.left = mins[0];
                 node.controller.events.sonar.right = maxs[0];
-                node.controller.events.sonar.up = mins[1];
-                node.controller.events.sonar.down = maxs[1];
-                node.controller.events.sonar.front = mins[2];
-                node.controller.events.sonar.back = maxs[2];
+                node.controller.events.sonar.up = maxs[1];
+                node.controller.events.sonar.down = mins[1];
+                node.controller.events.sonar.front = maxs[2];
+                node.controller.events.sonar.back = mins[2];
             }
         }
     }

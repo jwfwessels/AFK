@@ -7,6 +7,7 @@ import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import static com.hackoeur.jglm.support.FastMath.*;
+import java.util.Arrays;
 
 /**
  * Oriented Bounding Box. Stored as a matrix (without scaling) and Extents( x,
@@ -198,9 +199,12 @@ public class BBox
         rayDir = mInv.multiply(rayDir.toDirection()).getXYZ();
         rayOrig = mInv.multiply(rayOrig.toPoint()).getXYZ();
 
-        boolean[] found = {false, false, false};
+        boolean[] found =
+        {
+            false, false, false
+        };
         float[] p = new float[3];
-        
+
         for (int i = 0; i < 3; i++)
         {
             float org = rayOrig.get(i);
@@ -210,37 +214,59 @@ public class BBox
             {
                 if (dir >= 0)
                 {
-                    System.out.println("ray points away from box [pos]");
+                    System.out.println("ray points away from box [pos " + i + "]");
                     return Float.POSITIVE_INFINITY; // ray points away from box
                 }
-                lineIntersection(rayDir, i, rayOrig, extents.get((i+1)%3), found, p);
+                lineIntersection(rayDir, i, rayOrig, extents.get((i + 1) % 3), extents.get((i + 2) % 3), found, p);
             } else if (org <= -ext)
             {
                 if (dir <= 0)
                 {
-                    System.out.println("ray points away from box [neg]");
+                    System.out.println("ray points away from box [neg " + i + "]");
                     return Float.POSITIVE_INFINITY; // ray points away from box
                 }
-                lineIntersection(rayDir, i, rayOrig, -extents.get((i+1)%3), found, p);
+                lineIntersection(rayDir, i, rayOrig, -extents.get((i + 1) % 3), -extents.get((i + 2) % 3), found, p);
             }
         }
         for (int i = 0; i < 3; i++)
         {
-            System.out.println("some axis missed the box");
-            if (!found[i]) return Float.POSITIVE_INFINITY; // some axis missed the box
+            if (!found[i])
+            {
+                System.out.println("some axis missed the box: " + Arrays.toString(found));
+                return Float.POSITIVE_INFINITY; // some axis missed the box
+            }
         }
-        return new Vec3(p[0],p[1],p[2]).subtract(rayOrig).getLength();
+        return new Vec3(p[0], p[1], p[2]).subtract(rayOrig).getLength();
     }
-    
-    private void lineIntersection(Vec3 rayDir, int i, Vec3 rayOrig, float intersection, boolean[] found, float[] p)
+
+    private void lineIntersection(Vec3 rayDir, int i, Vec3 rayOrig,
+            float sectX, float sectY, boolean[] found, float[] p)
     {
-        float grad = rayDir.get((i+2)%3)/rayDir.get((i+1)%3);
-        float c = rayOrig.get((i+2)%3) - rayOrig.get((i+1)%3)*grad;
-        float y = intersection*grad + c;
-        if (abs(y) <= extents.get((i+2)%3))
+        int yi = (i + 2) % 3;
+        int xi = (i + 1) % 3;
+        if (found[yi] && found[xi])
         {
-            found[i] = true;
-            p[i] = y;
+            return;
+        }
+        float grad = rayDir.get((i + 2) % 3) / rayDir.get((i + 1) % 3);
+        float c = rayOrig.get((i + 2) % 3) - rayOrig.get((i + 1) % 3) * grad;
+        if (!found[yi])
+        {
+            float y = sectX * grad + c;
+            if (abs(y) <= extents.get(yi))
+            {
+                found[yi] = true;
+                p[yi] = y;
+            }
+        }
+        if (!found[xi])
+        {
+            float x = (sectY - c) / grad;
+            if (abs(x) <= extents.get(xi))
+            {
+                found[xi] = true;
+                p[xi] = x;
+            }
         }
     }
 
@@ -346,5 +372,4 @@ public class BBox
         // No separating axis found, the boxes overlap	
         return true;
     }
-
 }
