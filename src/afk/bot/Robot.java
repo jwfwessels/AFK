@@ -39,6 +39,12 @@ public interface Robot
      * @return 
      */
     public UUID getId();
+    
+    /**
+     * Get the robot's number.
+     * @return the robot's number.
+     */
+    public int getBotNum();
 
     /**
      * Main execution method of the robot implemented by the user. This is

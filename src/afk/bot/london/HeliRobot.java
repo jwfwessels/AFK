@@ -1,9 +1,12 @@
 package afk.bot.london;
 
+import afk.bot.Aimable;
+import afk.bot.Attackable;
+
 /**
  * @author Jessica
  */
-public abstract class HeliRobot extends AbstractRobot
+public abstract class HeliRobot extends AbstractRobot implements Aimable, Attackable
 {
 
     public static final int NUM_ACTIONS = 13;
@@ -17,7 +20,6 @@ public abstract class HeliRobot extends AbstractRobot
     public static final int AIM_ANTICLOCK = 6;
     public static final int AIM_UP = 7;
     public static final int AIM_DOWN = 8;
-    
     public static final int MOVE_LEFT = 9;
     public static final int MOVE_RIGHT = 10;
     public static final int MOVE_UP = 11;
@@ -58,7 +60,7 @@ public abstract class HeliRobot extends AbstractRobot
         setFlag(MOVE_BACK, true);
         setFlag(MOVE_FRONT, false);
     }
-    
+
     /**
      * Moves the helicopter left this game tick;
      */
@@ -67,7 +69,7 @@ public abstract class HeliRobot extends AbstractRobot
         setFlag(MOVE_LEFT, true);
         setFlag(MOVE_RIGHT, false);
     }
-    
+
     /**
      * Moves the helicopter right this game tick;
      */
@@ -98,32 +100,42 @@ public abstract class HeliRobot extends AbstractRobot
     /**
      * Attempts to fire a projectile this game tick.
      */
-    protected final void attack()
+    @Override
+    public final void attack()
     {
         setFlag(ATTACK_ACTION, true);
     }
-    
-    protected final void aimClockwise()
+
+    @Override
+    public final void aimClockwise()
     {
         setFlag(AIM_CLOCK, true);
         setFlag(AIM_ANTICLOCK, false);
     }
-    
-    protected final void aimAntiClockwise()
+
+    @Override
+    public final void aimAntiClockwise()
     {
         setFlag(AIM_ANTICLOCK, true);
         setFlag(AIM_CLOCK, false);
     }
-    
-    protected final void aimUp()
+
+    @Override
+    public final void aimUp()
     {
         setFlag(AIM_UP, true);
         setFlag(AIM_DOWN, false);
     }
-    
-    protected final void aimDown()
+
+    @Override
+    public final void aimDown()
     {
         setFlag(AIM_DOWN, true);
         setFlag(AIM_UP, false);
+    }
+
+    public final void target(VisibleBot target, float give)
+    {
+        RobotUtils.target(this, this, target, events, give);
     }
 }

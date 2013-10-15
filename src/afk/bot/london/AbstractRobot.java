@@ -11,9 +11,12 @@ import java.util.UUID;
  */
 public abstract class AbstractRobot implements Robot
 {
+    private static int numBots = 0;
+
     private boolean[] actionFlags;
     protected RobotEvent events;
     private UUID id;
+    private int botNum;
     private RobotConfigManager config;
 
     public AbstractRobot(int numActions)
@@ -22,8 +25,9 @@ public abstract class AbstractRobot implements Robot
         events = new RobotEvent();
 
         id = UUID.randomUUID();
+        botNum = numBots++;
     }
-    
+
     protected final void setConfigManager(RobotConfigManager config)
     {
         this.config = config;
@@ -40,25 +44,27 @@ public abstract class AbstractRobot implements Robot
     {
         setName(getClass().getSimpleName());
     }
-    
+
     /**
      * Set the type of this robot. e.g. small tank, large helicopter, etc.
-     * @param type 
+     *
+     * @param type
      */
     protected final void setType(String type)
     {
         setProperty("type", type);
     }
-    
+
     /**
      * Set the name of this robot. e.g. "The Karl Device" or "Mega J"
-     * @param name 
+     *
+     * @param name
      */
     protected final void setName(String name)
     {
         setProperty("name", name);
     }
-    
+
     private void setProperty(String key, String value)
     {
         if (config == null)
@@ -72,6 +78,12 @@ public abstract class AbstractRobot implements Robot
     public final UUID getId()
     {
         return id;
+    }
+
+    @Override
+    public int getBotNum()
+    {
+        return botNum;
     }
 
     @Override
@@ -103,16 +115,19 @@ public abstract class AbstractRobot implements Robot
     {
         this.events = event;
     }
-    
+
     private String primitiveToString()
     {
         return getClass().getSimpleName();
     }
-    
+
     private String complexToString()
     {
         String name = config.getProperty(getId(), "name");
-        if (name == null || name.trim().isEmpty()) name = primitiveToString();
+        if (name == null || name.trim().isEmpty())
+        {
+            name = primitiveToString();
+        }
         return name;
     }
 
@@ -121,4 +136,6 @@ public abstract class AbstractRobot implements Robot
     {
         return config == null ? primitiveToString() : complexToString();
     }
+
+
 }

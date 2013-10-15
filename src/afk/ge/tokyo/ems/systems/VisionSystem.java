@@ -1,6 +1,5 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.bot.london.RobotEvent;
 import afk.bot.london.VisibleBot;
 import afk.ge.BBox;
 import afk.ge.ems.Engine;
@@ -18,6 +17,7 @@ import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -53,7 +53,7 @@ public class VisionSystem implements ISystem
                 {
                     continue;
                 }
-                
+
                 State state = Utils.getWorldState(vnode.entity);
 
                 float[] theta = isVisible(
@@ -80,19 +80,26 @@ public class VisionSystem implements ISystem
                             continue targetloop;
                         }
                     }
-                    
+
                     if (HeightmapLoader.getIntersection(state.pos, tnode.state.pos, 0.1f, hnode.heightmap) != null)
                     {
                         continue targetloop;
                     }
 
-                    thetas.add(new VisibleBot(theta[0], theta[1]));
+                    Controller controller = tnode.entity.get(Controller.class);
+                    UUID id = null;
+                    if (controller == null)
+                    {
+                        id = controller.id;
+                    }
+
+                    thetas.add(new VisibleBot(theta[0], theta[1], id));
                 }
             }
             vnode.controller.events.visibleBots = thetas;
         }
     }
-    
+
     public boolean sameBot(VisionNode a, Entity b)
     {
         Controller controller = b.get(Controller.class);
@@ -135,8 +142,8 @@ public class VisionSystem implements ISystem
 
         float[] them = getAngles(d);
 
-        float relativeBearing = (float)Math.toDegrees(them[0] - me[0]);
-        float relativeElevation = (float)Math.toDegrees(them[1] - me[1]);
+        float relativeBearing = (float) Math.toDegrees(them[0] - me[0]);
+        float relativeElevation = (float) Math.toDegrees(them[1] - me[1]);
 
         float halfFOVX = fovx * 0.5f;
         float halfFOVY = fovy * 0.5f;
