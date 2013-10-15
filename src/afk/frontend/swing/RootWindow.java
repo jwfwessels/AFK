@@ -10,6 +10,7 @@ import afk.game.Game;
 import afk.bot.RobotException;
 import afk.frontend.Frontend;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
@@ -79,12 +80,10 @@ public class RootWindow extends JFrame implements Frontend
         try
         {
             menuPanel = new MenuPanel(this);
-            configPanel = new RobotConfigPanel(this);
             menuPanel.setup();
             menuPanel.loadExistingRobots();
-  
-        } 
-        catch (Exception e)
+
+        } catch (Exception e)
         {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Intitializing components for rootWindow failed:\n" + e);
@@ -96,9 +95,7 @@ public class RootWindow extends JFrame implements Frontend
         try
         {
             contentPane.add(menuPanel, "menu");
-            contentPane.add(configPanel, "config");
-        } 
-        catch (Exception e)
+        } catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Adding components to rootWindow failed:\n" + e);
         }
@@ -110,8 +107,7 @@ public class RootWindow extends JFrame implements Frontend
         {
             Container c = this.getContentPane();
             c.removeAll();
-        } 
-        catch (Exception err)
+        } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Removing components from rootWindow failed:\n" + err);
         }
@@ -122,13 +118,11 @@ public class RootWindow extends JFrame implements Frontend
         try
         {
 //            this.getContentPane().setBackground(Color.BLUE);
-        } 
-        catch (Exception err)
+        } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);
         }
     }
-
 
     @Override
     public void showGame(Game game)
@@ -146,27 +140,39 @@ public class RootWindow extends JFrame implements Frontend
         contentPane.invalidate();
         contentPane.validate();
     }
-    
+
     public void showConfigPanel(Robot robot)
-    {        
-        CardLayout cl = (CardLayout)contentPane.getLayout();
+    {
+
+        configPanel = new RobotConfigPanel(this);
+        contentPane.add(configPanel, "config");
+
+        CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.show(contentPane, "config");
-        
+
         configPanel.requestFocus();
-        
+
         contentPane.invalidate();
         contentPane.validate();
-        
+
         configPanel.loadConfig(robot);
     }
-    
-    public void recallMenuPanel()
+
+    /**
+     * This method switches the active card in the frames card layout to the manuPanel.
+     * Furthermore it removes and destroys the previous panel that was being displayed
+     * @param card the previous panel being displayed
+     */
+    public void recallMenuPanel(Component card)
     {
-        CardLayout cl = (CardLayout)contentPane.getLayout();
+        
+        CardLayout cl = (CardLayout) contentPane.getLayout();
+        cl.removeLayoutComponent(card);
+        contentPane.remove(card);
         cl.show(contentPane, "menu");
-        
+
         menuPanel.requestFocus();
-        
+
         contentPane.invalidate();
         contentPane.validate();
     }
