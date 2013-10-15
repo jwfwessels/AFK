@@ -7,8 +7,6 @@ import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import static com.hackoeur.jglm.support.FastMath.*;
-import static com.hackoeur.jglm.Matrices.*;
-import static afk.gfx.GfxUtils.*;
 
 /**
  * Oriented Bounding Box. Stored as a matrix (without scaling) and Extents( x,
@@ -42,11 +40,11 @@ public class BBox
     {
         set(m, bl, bh);
     }
-    
+
     public BBox(State state, BBoxComponent bBoxComponent)
     {
         m = Utils.getBBoxMatrix(state, bBoxComponent.offset.multiply(state.scale));
-        
+
         this.extents = bBoxComponent.extent.multiply(state.scale);
     }
 
@@ -193,6 +191,59 @@ public class BBox
         return true;
     }
 
+    public float getEntrancePointDistance(Vec3 rayDir, Vec3 rayOrig)
+    {
+        // Put ray in box space
+        Mat4 mInv = m.invertSimple();
+        rayDir = mInv.multiply(rayDir.toDirection()).getXYZ();
+        rayOrig = mInv.multiply(rayOrig.toPoint()).getXYZ();
+
+        boolean[] found = {false, false, false};
+        float[] p = new float[3];
+        
+        for (int i = 0; i < 3; i++)
+        {
+            float org = rayOrig.get(i);
+            float dir = rayDir.get(i);
+            float ext = extents.get(i);
+            if (org >= ext)
+            {
+                if (dir >= 0)
+                {
+                    System.out.println("ray points away from box [pos]");
+                    return Float.POSITIVE_INFINITY; // ray points away from box
+                }
+                lineIntersection(rayDir, i, rayOrig, extents.get((i+1)%3), found, p);
+            } else if (org <= -ext)
+            {
+                if (dir <= 0)
+                {
+                    System.out.println("ray points away from box [neg]");
+                    return Float.POSITIVE_INFINITY; // ray points away from box
+                }
+                lineIntersection(rayDir, i, rayOrig, -extents.get((i+1)%3), found, p);
+            }
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            System.out.println("some axis missed the box");
+            if (!found[i]) return Float.POSITIVE_INFINITY; // some axis missed the box
+        }
+        return new Vec3(p[0],p[1],p[2]).subtract(rayOrig).getLength();
+    }
+    
+    private void lineIntersection(Vec3 rayDir, int i, Vec3 rayOrig, float intersection, boolean[] found, float[] p)
+    {
+        float grad = rayDir.get((i+2)%3)/rayDir.get((i+1)%3);
+        float c = rayOrig.get((i+2)%3) - rayOrig.get((i+1)%3)*grad;
+        float y = intersection*grad + c;
+        if (abs(y) <= extents.get((i+2)%3))
+        {
+            found[i] = true;
+            p[i] = y;
+        }
+    }
+
     /**
      * Returns a 3x3 rotation matrix as vectors.
      *
@@ -295,4 +346,5 @@ public class BBox
         // No separating axis found, the boxes overlap	
         return true;
     }
+
 }

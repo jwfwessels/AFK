@@ -78,6 +78,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new ParticleSystem());
         engine.addLogicSystem(new LifetimeSystem());
         engine.addLogicSystem(new VisionSystem());
+        engine.addLogicSystem(new SonarSystem());
         engine.addLogicSystem(new RobotStateFeedbackSystem());
         engine.addLogicSystem(new TextLabelSystem());
         engine.addLogicSystem(new GameStateSystem(game));
