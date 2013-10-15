@@ -91,17 +91,22 @@ public class MenuPanel extends JPanel
             try
             {
                 String tempPath = tempFile.getAbsolutePath();
-                botLoader.loadRobot(tempPath);  
-                String botName = tempPath.substring(tempPath.lastIndexOf('\\') + 1, tempPath.lastIndexOf('.'));
+                botLoader.loadRobot(tempPath);
+                String fileName = tempFile.getName();
+                String botName = fileName.substring(0, fileName.lastIndexOf('.'));
+                System.out.println("botname: " + botName);
                 botMap.put(botName, tempPath);
                 lsAvailableModel.addElement(botName);
             }
             catch(RobotException e)
             {
+                // TODO: notify user which files did not load, he/she might be interested
             }
-            catch(Exception e)
-            {
-            }
+            //catch(Exception e)
+            //{
+                // Pokemon exception handling! >.<
+                // not cool :(
+            //}
         }
     }
     
