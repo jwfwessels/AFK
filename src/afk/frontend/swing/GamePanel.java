@@ -13,7 +13,6 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -45,7 +44,7 @@ public class GamePanel extends JPanel
     {
         this.parent = parent;
         gm = game;
-        glCanvas = gm.getAWTComponent();
+        
         System.out.println("glCanvas" + glCanvas.getName());
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
@@ -65,8 +64,9 @@ public class GamePanel extends JPanel
         fps = new JLabel("FPS: x");
         // FIXME: find a new way to show FPS
         //gfxEngine.setFPSComponent(fps);
-        hudLayer = new JLayeredPane();
-        System.out.println("size2" + hudLayer.getSize().toString());
+        //hudLayer = new JLayeredPane();
+        //System.out.println("size2" + hudLayer.getSize().toString());
+        glCanvas = gm.getAWTComponent();
         pnlControls = new JPanel();
         btnPlayPause = new JToggleButton("press");
         btnFaster = new JButton(">>");
@@ -77,7 +77,7 @@ public class GamePanel extends JPanel
     private void addComponents()
     {
 
-        hudLayer.add(glCanvas, new Integer(0));
+        add(glCanvas);
         pnlControls.add(fps);
         pnlControls.add(btnSlower);
         pnlControls.add(btnPlayPause);
@@ -85,7 +85,7 @@ public class GamePanel extends JPanel
         pnlControls.add(lblSpeed);
 //        hudLayer.add(glCanvas, JLayeredPane.DEFAULT_LAYER);
 //        hudLayer.add(fps, JLayeredPane.PALETTE_LAYER);
-        add(hudLayer);
+        //add(hudLayer);
         add(pnlControls);
 //        add(btnStartMatch);
     }

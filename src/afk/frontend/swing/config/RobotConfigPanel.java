@@ -9,7 +9,6 @@ import afk.bot.RobotConfigManager;
 import afk.frontend.swing.RootWindow;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
-import com.sun.imageio.plugins.jpeg.JPEG;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -59,6 +58,13 @@ public class RobotConfigPanel extends JPanel
         this.setBounds(0, 0, 800, 600);
     }
 
+    private void setup()
+    {
+        initComponents();
+        addComponents();
+        styleComponents();
+    }
+
     public void initComponents()
     {
         lblRConfig = new JLabel("Robot Configuration");
@@ -80,28 +86,6 @@ public class RobotConfigPanel extends JPanel
         cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");
-    }
-
-    /**
-     * called when the config is opened.
-     */
-    public void loadConfig(Robot robot)
-    {
-//        pnlCanvas = gfxEngine.getAWTComponent();
-//        this.revalidate();
-        this.robot = robot;
-        RobotConfigManager config = robot.getConfigManager();
-        UUID id = robot.getId();
-
-        txtName.setText(robot.toString());
-
-        if (configEngine == null)
-        {
-            configEngine = new ConfigEngine(gfxEngine, config);
-            configEngine.start();
-        }
-
-        configEngine.setDisplayedRobot(robot);
     }
 
     public void addComponents()
@@ -154,6 +138,28 @@ public class RobotConfigPanel extends JPanel
         });
     }
 
+    /**
+     * called when the config is opened.
+     */
+    public void loadConfig(Robot robot)
+    {
+//        pnlCanvas = gfxEngine.getAWTComponent();
+//        this.revalidate();
+        this.robot = robot;
+        RobotConfigManager config = robot.getConfigManager();
+        UUID id = robot.getId();
+
+        txtName.setText(robot.toString());
+
+        if (configEngine == null)
+        {
+            configEngine = new ConfigEngine(gfxEngine, config);
+            configEngine.start();
+        }
+
+        configEngine.setDisplayedRobot(robot);
+    }
+
     private void saveSettings()
     {
         RobotConfigManager config = robot.getConfigManager();
@@ -170,13 +176,6 @@ public class RobotConfigPanel extends JPanel
         configEngine = null;
         robot = null;
         root.recallMenuPanel(this);
-    }
-
-    private void setup()
-    {
-        initComponents();
-        addComponents();
-        styleComponents();
     }
 
     class RobotConfigPanel_Layout implements LayoutManager
