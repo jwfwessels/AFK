@@ -118,4 +118,10 @@ public interface GraphicsEngine
     
     public GfxEntity getDebugEntity(BBox bbox);
     public GfxEntity getDebugEntity(Vec3[] line);
+    
+    /**
+     * Set the background colour.
+     * @param colour 
+     */
+    public void setBackground(Vec3 colour);
 }

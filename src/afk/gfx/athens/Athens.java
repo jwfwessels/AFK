@@ -75,6 +75,7 @@ public class Athens implements GraphicsEngine
     private Animator animator;
     private float fps = 0.0f;
     private JLabel fpsComp;
+    private Vec3 bgColour = new Vec3(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f);
 
     public Athens(boolean autodraw)
     {
@@ -359,7 +360,7 @@ public class Athens implements GraphicsEngine
 
         // set background colour to white
         // TODO: allow this to be set through an interface
-        gl.glClearColor(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f, 0.0f);
+        gl.glClearColor(bgColour.getX(), bgColour.getY(), bgColour.getZ(), 0);
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
@@ -585,5 +586,11 @@ public class Athens implements GraphicsEngine
         entity.set(line);
         entitiesDebug.add(entity);
         return entity;
+    }
+
+    @Override
+    public void setBackground(Vec3 colour)
+    {
+        bgColour = colour;
     }
 }
