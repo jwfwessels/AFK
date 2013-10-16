@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<synth>
+	  <style id="basicStyle">
+		    <font name="Verdana" size="16"/>
+		    <state>
+	            <color value="MAGENTA" type="BACKGROUND"/>
+	            <color value="#000000" type="FOREGROUND"/>
+		    </state>
+	  </style>
+	  <bind style="basicStyle" type="region" key=".*"/>
+</synth>
