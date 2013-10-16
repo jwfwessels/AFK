@@ -72,13 +72,13 @@ public class RayBox extends JPanel
         float y = getHeight() / 2 + (int) org[I[1]];
         if (p == null)
         {
-            g.drawLine((int)x, (int)y,  (int) (x +ray[I[0]] * getWidth()),  (int) (y +ray[I[1]] * getHeight()));
+            g.drawLine((int)x, (int)y,  (int) (x +ray[I[0]] * 1000),  (int) (y +ray[I[1]] * 1000));
         } else
         {
             g.drawLine((int)x, (int)y, getWidth() / 2 + (int) p[I[0]], getHeight() / 2 + (int) p[I[1]]);
             g.setColor(Color.MAGENTA);
             g.drawLine(getWidth() / 2 + (int) p[I[0]], getHeight() / 2 + (int) p[I[1]],
-                     (int) (x + ray[I[0]] * getWidth()),  (int) (y + ray[I[1]] * getHeight()));
+                     (int) (x + ray[I[0]] * 1000),  (int) (y + ray[I[1]] * 1000));
         }
         g.setColor(Color.CYAN);
         for (float[] z : points)
@@ -93,6 +93,8 @@ public class RayBox extends JPanel
     {
         message = "";
         points.clear();
+        
+        
 
         float[] mext = new float[ext.length];
         for (int i = 0; i < ext.length; i++)
@@ -142,40 +144,49 @@ public class RayBox extends JPanel
         {
             ray[xi] = 0.00000000001f;
         }
-        float gradY = ray[yi] / ray[xi];
-        float gradZ = ray[zi] / ray[xi];
-        float c = org[yi] - org[xi] * gradY;
-        float d = org[zi] - org[xi] * gradZ;
+        
         float[] r = new float[3];
-        float y = lext[xi] * gradY + c;
-        float z = lext[xi] * gradZ + d;
+        
+        float t0 = (lext[xi] - org[xi]) / ray[xi];
+        float t1 = (lext[yi] - org[yi]) / ray[yi];
+        float t2 = (lext[zi] - org[zi]) / ray[zi];
+        
+        System.out.println("t0: " + t0);
+        System.out.println("t1: " + t1);
+        System.out.println("t2: " + t2);
+        
         r[xi] = lext[xi];
-        r[yi] = y;
-        r[zi] = z;
+        r[yi] = org[yi] + ray[yi]*t0;
+        r[zi] = org[zi] + ray[zi]*t0;
+        
         points.add(r);
-        if (Math.abs(y) <= ext[yi] && Math.abs(z) <= ext[zi])
+        if (Math.abs(r[yi]) <= ext[yi] && Math.abs(r[zi]) <= ext[zi])
         {
             return r;
         }
+        
         r = new float[3];
-        float x = (lext[yi] - c) / gradY;
-        r[xi] = x;
+        r[xi] = org[xi] + ray[xi]*t1;
         r[yi] = lext[yi];
-        r[zi] = z;
+        r[zi] = org[zi] + ray[zi]*t1;
+        
         points.add(r);
-        if (Math.abs(x) <= ext[xi] && Math.abs(z) <= ext[zi])
+        if (Math.abs(r[xi]) <= ext[xi] && Math.abs(r[zi]) <= ext[zi])
         {
             return r;
         }
+        
         r = new float[3];
-        r[xi] = x;
-        r[yi] = y;
+        r[xi] = org[xi] + ray[xi]*t2;
+        r[yi] = org[yi] + ray[yi]*t2;
         r[zi] = lext[zi];
+        
         points.add(r);
-        if (Math.abs(x) <= ext[xi] && Math.abs(y) <= ext[yi])
+        if (Math.abs(r[xi]) <= ext[xi] && Math.abs(r[yi]) <= ext[yi])
         {
             return r;
         }
+        
         return null;
     }
 
@@ -190,8 +201,8 @@ public class RayBox extends JPanel
             @Override
             public void mousePressed(MouseEvent e)
             {
-                org[I[0]] = e.getX() - getWidth() / 2;
-                org[I[1]] = e.getY() - getHeight() / 2;
+                org[I[0]] = (float)e.getX() - getWidth() / 2;
+                org[I[1]] = (float)e.getY() - getHeight() / 2;
                 p = findEnterancePoint();
                 getParent().repaint();
             }
@@ -202,8 +213,8 @@ public class RayBox extends JPanel
             @Override
             public void mouseDragged(MouseEvent e)
             {
-                ray[I[0]] = (e.getX() - getWidth() / 2.0f) - org[I[0]];
-                ray[I[1]] = (e.getY() - getHeight() / 2.0f) - org[I[1]];
+                ray[I[0]] = ((float)e.getX() - getWidth() / 2.0f) - org[I[0]];
+                ray[I[1]] = ((float)e.getY() - getHeight() / 2.0f) - org[I[1]];
                 float length = (float) Math.sqrt(ray[I[0]] * ray[I[0]] + ray[I[1]] * ray[I[1]]);
                 ray[I[0]] /= length;
                 ray[I[1]] /= length;
