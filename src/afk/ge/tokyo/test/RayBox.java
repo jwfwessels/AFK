@@ -3,6 +3,7 @@ package afk.ge.tokyo.test;
 import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
+import static afk.ge.tokyo.test.RayBox.axisCol;
 import afk.gfx.GfxEntity;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
@@ -13,6 +14,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import javax.swing.JFrame;
@@ -47,7 +49,19 @@ public class RayBox extends JPanel
         Color.RED.darker(), Color.GREEN.darker(), Color.BLUE.darker()
     };
     static float[] p = null;
-    static Collection<float[]> points = new ConcurrentLinkedDeque<float[]>();
+    static class LPoint
+    {
+        float[] p;
+        String label;
+
+        public LPoint(float[] p, String label)
+        {
+            this.p = p;
+            this.label = label;
+        }
+        
+    }
+    static Collection<RayBox.LPoint> points = new ConcurrentLinkedDeque<RayBox.LPoint>();
     int[] I;
 
     @Override
@@ -81,11 +95,12 @@ public class RayBox extends JPanel
                      (int) (x + ray[I[0]] * 1000),  (int) (y + ray[I[1]] * 1000));
         }
         g.setColor(Color.CYAN);
-        for (float[] z : points)
+        for (RayBox.LPoint z : points)
         {
-            x = getWidth() / 2 + (int) z[I[0]];
-            y = getHeight() / 2 + (int) z[I[1]];
+            x = getWidth() / 2 + (int) z.p[I[0]];
+            y = getHeight() / 2 + (int) z.p[I[1]];
             g.fillOval((int)x - 2, (int)y - 2, 4, 4);
+            g.drawString(z.label, (int)x, (int)y);
         }
     }
 
@@ -93,14 +108,15 @@ public class RayBox extends JPanel
     {
         message = "";
         points.clear();
-        
-        
 
+        System.out.println("=============");
+        
         float[] mext = new float[ext.length];
         for (int i = 0; i < ext.length; i++)
         {
             mext[i] = -ext[i];
         }
+        ArrayList<float[]> ps = new ArrayList<float[]>();
         for (int i = 0; i < ext.length; i++)
         {
             if (org[i] >= ext[i])
@@ -111,12 +127,7 @@ public class RayBox extends JPanel
                     message += "[away]";
                     return null; // ray points away from box
                 }
-                float[] w = lineIntersection(i, ext);
-                if (w != null)
-                {
-                    message += "[yes]";
-                    return w;
-                }
+                ps.addAll(lineIntersection(i, ext));
             } else if (org[i] <= mext[i])
             {
                 message += "[" + axis[i] + "-]";
@@ -125,19 +136,41 @@ public class RayBox extends JPanel
                     message += "[away-]";
                     return null; // ray points away from box
                 }
-                float[] w = lineIntersection(i, mext);
-                if (w != null)
-                {
-                    message += "[yes]";
-                    return w;
-                }
+                ps.addAll(lineIntersection(i, mext));
             }
         }
-        return null;
+        if (ps.isEmpty())
+            return null;
+        float[] choice = ps.get(0);
+        float cdist = getDist(choice,org);
+        for (int i = 1; i < ps.size(); i++)
+        {
+            float[] z = ps.get(i);
+            float dist = getDist(z, org);
+            if (dist < cdist)
+            {
+                cdist = dist;
+                choice = z;
+            }
+        }
+        return choice;
+    }
+    
+    static float getDist(float[] a, float[] b)
+    {
+        float dist = 0;
+        for (int i = 0; i < a.length; i++)
+        {
+            float c = (a[i]-b[i]);
+            dist += c*c;
+        }
+        return dist;
     }
 
-    public static float[] lineIntersection(int xi, float[] lext)
+    public static ArrayList<float[]> lineIntersection(int xi, float[] lext)
     {
+        ArrayList<float[]> ps = new ArrayList<float[]>();
+        
         int yi = (xi + 2) % 3;
         int zi = (xi + 1) % 3;
         if (ray[xi] == 0)
@@ -151,18 +184,20 @@ public class RayBox extends JPanel
         float t1 = (lext[yi] - org[yi]) / ray[yi];
         float t2 = (lext[zi] - org[zi]) / ray[zi];
         
-        System.out.println("t0: " + t0);
-        System.out.println("t1: " + t1);
-        System.out.println("t2: " + t2);
+        System.out.println("-----");
+        System.out.println("t"+xi+".0: " + t0);
+        System.out.println("t"+xi+".1: " + t1);
+        System.out.println("t"+xi+".2: " + t2);
         
         r[xi] = lext[xi];
         r[yi] = org[yi] + ray[yi]*t0;
         r[zi] = org[zi] + ray[zi]*t0;
         
-        points.add(r);
-        if (Math.abs(r[yi]) <= ext[yi] && Math.abs(r[zi]) <= ext[zi])
+        points.add(new RayBox.LPoint(r, "t"+xi+"0"));
+        if (t0 > 0
+                && Math.abs(r[yi]) <= ext[yi] && Math.abs(r[zi]) <= ext[zi])
         {
-            return r;
+            ps.add(r);
         }
         
         r = new float[3];
@@ -170,10 +205,11 @@ public class RayBox extends JPanel
         r[yi] = lext[yi];
         r[zi] = org[zi] + ray[zi]*t1;
         
-        points.add(r);
-        if (Math.abs(r[xi]) <= ext[xi] && Math.abs(r[zi]) <= ext[zi])
+        points.add(new RayBox.LPoint(r, "t"+xi+"0"));
+        if (t1 > 0
+                && Math.abs(r[xi]) <= ext[xi] && Math.abs(r[zi]) <= ext[zi])
         {
-            return r;
+            ps.add(r);
         }
         
         r = new float[3];
@@ -181,13 +217,14 @@ public class RayBox extends JPanel
         r[yi] = org[yi] + ray[yi]*t2;
         r[zi] = lext[zi];
         
-        points.add(r);
-        if (Math.abs(r[xi]) <= ext[xi] && Math.abs(r[yi]) <= ext[yi])
+        points.add(new RayBox.LPoint(r, "t"+xi+"0"));
+        if (t2 > 0
+                && Math.abs(r[xi]) <= ext[xi] && Math.abs(r[yi]) <= ext[yi])
         {
-            return r;
+            ps.add(r);
         }
         
-        return null;
+        return ps;
     }
 
     public RayBox(int a, int b)
@@ -276,14 +313,14 @@ public class RayBox extends JPanel
                     });
                     gfx.colour = new Vec3(1, 0, 1);
                 }
-                for (float[] z : points)
+                for (RayBox.LPoint z : points)
                 {
                     bbox = new BBox(Mat4.MAT4_IDENTITY, new Vec3(0.05f));
 
                     gfx = gfxEngine.getDebugEntity(bbox);
                     gfx.colour = new Vec3(0, 1, 1);
                     gfx.scale = new Vec3(1);
-                    gfx.position = new Vec3(z[0], z[1], z[2]).scale(s);
+                    gfx.position = new Vec3(z.p[0], z.p[1], z.p[2]).scale(s);
                 }
                 gfxEngine.getDebugEntity(new Vec3[]{new Vec3(-1000,0,0),new Vec3(1000,0,0)}).colour = new Vec3(0.7f,0,0);
                 gfxEngine.getDebugEntity(new Vec3[]{new Vec3(0,-1000,0),new Vec3(0,1000,0)}).colour = new Vec3(0,0.7f,0);
