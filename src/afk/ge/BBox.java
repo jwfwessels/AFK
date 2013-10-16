@@ -3,15 +3,12 @@ package afk.ge;
 import afk.ge.ems.Utils;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.State;
-import afk.ge.tokyo.test.RayBox;
-import static afk.ge.tokyo.test.RayBox.lineIntersection;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import com.hackoeur.jglm.support.FastMath;
 import static com.hackoeur.jglm.support.FastMath.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Oriented Bounding Box. Stored as a matrix (without scaling) and Extents( x,
@@ -338,7 +335,7 @@ public class BBox
                 cdist = dist;
             }
         }
-        return 1.0f/FastMath.invSqrtFast(cdist);
+        return FastMath.sqrtFast(cdist);
     }
 
     private ArrayList<Vec3> lineIntersection(int xi, Vec3 org,
@@ -359,11 +356,6 @@ public class BBox
                 (ray.get(yi) == 0 ? JZERO : ray.get(yi));
         float t2 = (lext.get(zi) - org.get(zi)) /
                 (ray.get(zi) == 0 ? JZERO : ray.get(zi));
-        
-        System.out.println("-----");
-        System.out.println("t"+xi+".0: " + t0);
-        System.out.println("t"+xi+".1: " + t1);
-        System.out.println("t"+xi+".2: " + t2);
         
         r[xi] = lext.get(xi);
         r[yi] = org.get(yi) + ray.get(yi)*t0;

@@ -54,6 +54,12 @@ public class SonarSystem implements ISystem
                 posAxis[i] = rot.multiply(POS_AXIS[i].toDirection()).getXYZ();
                 negAxis[i] = rot.multiply(NEG_AXIS[i].toDirection()).getXYZ();
             }
+            float[] mins = new float[3];
+            float[] maxs = new float[3];
+            for (int i = 0; i < 3; i++)
+            {
+                mins[i] = maxs[i] = Float.POSITIVE_INFINITY;
+            }
             for (CollisionNode cnode : cnodes)
             {
                 // stop sonar from picking up itself
@@ -65,8 +71,6 @@ public class SonarSystem implements ISystem
 
                 BBox bbox = new BBox(cnode.state, cnode.bbox);
 
-                float[] mins = new float[3];
-                float[] maxs = new float[3];
                 for (int i = 0; i < 3; i++)
                 {
                     if (node.sonar.min.get(i) == 0)
@@ -78,7 +82,7 @@ public class SonarSystem implements ISystem
                         if (dist > node.sonar.min.get(i))
                         {
                             mins[i] = Float.POSITIVE_INFINITY;
-                        } else
+                        } else if (dist < mins[i])
                         {
                             mins[i] = dist;
                         }
@@ -92,20 +96,19 @@ public class SonarSystem implements ISystem
                         if (dist > node.sonar.max.get(i))
                         {
                             maxs[i] = Float.POSITIVE_INFINITY;
-                        } else
+                        } else if (dist < maxs[i])
                         {
                             maxs[i] = dist;
                         }
                     }
                 }
-
-                node.controller.events.sonar.left = mins[0];
-                node.controller.events.sonar.right = maxs[0];
-                node.controller.events.sonar.up = maxs[1];
-                node.controller.events.sonar.down = mins[1];
-                node.controller.events.sonar.front = maxs[2];
-                node.controller.events.sonar.back = mins[2];
             }
+            node.controller.events.sonar.left = mins[0];
+            node.controller.events.sonar.right = maxs[0];
+            node.controller.events.sonar.up = maxs[1];
+            node.controller.events.sonar.down = mins[1];
+            node.controller.events.sonar.front = maxs[2];
+            node.controller.events.sonar.back = mins[2];
         }
     }
 
