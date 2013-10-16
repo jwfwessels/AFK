@@ -298,7 +298,7 @@ public class RayBox extends JPanel
         engine.start();
 
         panel.add(gfxEngine.getAWTComponent());
-        panel.add(new RayBox(0, 1));
+        panel.add(new RayBox(1, 0));
         panel.add(new RayBox(2, 1));
         panel.add(new RayBox(2, 0));
 
