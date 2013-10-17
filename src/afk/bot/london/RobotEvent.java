@@ -17,6 +17,10 @@ public class RobotEvent
      */
     public List<VisibleBot> visibleBots = new ArrayList<VisibleBot>();
     /**
+     * Information from the robot's sonar;
+     */
+    public Sonar sonar = new Sonar();
+    /**
      * The robot's current pitch.
      */
     public float pitch = 0;

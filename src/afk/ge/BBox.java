@@ -6,9 +6,10 @@ import afk.ge.tokyo.ems.components.State;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
+import com.hackoeur.jglm.support.FastMath;
 import static com.hackoeur.jglm.support.FastMath.*;
-import static com.hackoeur.jglm.Matrices.*;
-import static afk.gfx.GfxUtils.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Oriented Bounding Box. Stored as a matrix (without scaling) and Extents( x,
@@ -42,11 +43,11 @@ public class BBox
     {
         set(m, bl, bh);
     }
-    
+
     public BBox(State state, BBoxComponent bBoxComponent)
     {
         m = Utils.getBBoxMatrix(state, bBoxComponent.offset.multiply(state.scale));
-        
+
         this.extents = bBoxComponent.extent.multiply(state.scale);
     }
 
@@ -294,5 +295,111 @@ public class BBox
 
         // No separating axis found, the boxes overlap	
         return true;
+    }
+
+    public float getEntrancePointDistance(Vec3 org, Vec3 ray)
+    {
+        List<Vec3> ps = getIntersectionPoints(org, ray);
+        
+        if (ps.isEmpty())
+        {
+            return Float.POSITIVE_INFINITY;
+        }
+        float cdist = Float.POSITIVE_INFINITY;
+        for (int i = 0; i < ps.size(); i++)
+        {
+            float dist = ps.get(i).subtract(org).getLengthSquared();
+            if (dist < cdist)
+            {
+                cdist = dist;
+            }
+        }
+        return FastMath.sqrtFast(cdist);
+    }
+    
+    public List<Vec3> getIntersectionPoints(Vec3 org, Vec3 ray)
+    {
+        // Put ray in box space
+        Mat4 mInv = m.invertSimple();
+        ray = mInv.multiply(ray.toDirection()).getXYZ();
+        org = mInv.multiply(org.toPoint()).getXYZ();
+
+        Vec3 mext = extents.getNegated();
+        ArrayList<Vec3> ps = new ArrayList<Vec3>();
+        for (int i = 0; i < 3; i++)
+        {
+            if (org.get(i) >= extents.get(i))
+            {
+                if (ray.get(i) >= 0)
+                {
+                    return new ArrayList<Vec3>(); // ray points away from box
+                }
+                ps.addAll(lineIntersection(i, org, ray, extents));
+            } else if (org.get(i) <= mext.get(i))
+            {
+                if (ray.get(i) <= 0)
+                {
+                    return new ArrayList<Vec3>(); // ray points away from box
+                }
+                ps.addAll(lineIntersection(i, org, ray, mext));
+            }
+        }
+        return ps;
+    }
+
+    private ArrayList<Vec3> lineIntersection(int xi, Vec3 org,
+            Vec3 ray, Vec3 lext)
+    {
+        ArrayList<Vec3> ps = new ArrayList<Vec3>();
+
+        int yi = (xi + 2) % 3;
+        int zi = (xi + 1) % 3;
+
+        final float JZERO = 0.00000000001f;
+
+        float t0 = (lext.get(xi) - org.get(xi))
+                / (ray.get(xi) == 0 ? JZERO : ray.get(xi));
+        float t1 = (lext.get(yi) - org.get(yi))
+                / (ray.get(yi) == 0 ? JZERO : ray.get(yi));
+        float t2 = (lext.get(zi) - org.get(zi))
+                / (ray.get(zi) == 0 ? JZERO : ray.get(zi));
+
+        float[] r = new float[3];
+        r[xi] = lext.get(xi);
+        r[yi] = org.get(yi) + ray.get(yi) * t0;
+        r[zi] = org.get(zi) + ray.get(zi) * t0;
+
+        if (t0 > 0
+                && Math.abs(r[yi]) <= extents.get(yi)
+                && Math.abs(r[zi]) <= extents.get(zi))
+        {
+            ps.add(m.multiply(new Vec4(r[0], r[1], r[2],1.0f)).getXYZ());
+        }
+
+        r = new float[3];
+        r[xi] = org.get(xi) + ray.get(xi) * t1;
+        r[yi] = lext.get(yi);
+        r[zi] = org.get(zi) + ray.get(zi) * t1;
+
+        if (t1 > 0
+                && Math.abs(r[xi]) <= extents.get(xi)
+                && Math.abs(r[zi]) <= extents.get(zi))
+        {
+            ps.add(m.multiply(new Vec4(r[0], r[1], r[2],1.0f)).getXYZ());
+        }
+
+        r = new float[3];
+        r[xi] = org.get(xi) + ray.get(xi) * t2;
+        r[yi] = org.get(yi) + ray.get(yi) * t2;
+        r[zi] = lext.get(zi);
+
+        if (t2 > 0
+                && Math.abs(r[xi]) <= extents.get(xi)
+                && Math.abs(r[yi]) <= extents.get(yi))
+        {
+            ps.add(m.multiply(new Vec4(r[0], r[1], r[2],1.0f)).getXYZ());
+        }
+
+        return ps;
     }
 }

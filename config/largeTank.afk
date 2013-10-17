@@ -16,5 +16,8 @@ Renderable
 RobotToken
 Targetable
 SnapToTerrain
+Sonar
+	min = 0 0 40
+	max = 0 0 40
 
 -> largeTankTurret
