@@ -20,7 +20,7 @@ import java.util.Map;
 public class LondonRobotLoader extends ClassLoader implements RobotLoader<AbstractRobot>
 {
 
-    private final String ROBOT_CLASS = AbstractRobot.class.getName();
+    private final Class ROBOT_CLASS = AbstractRobot.class;
     private byte[] tempByteArray = null;
     private Map<String, Class<?>> robotMap = new HashMap<String, Class<?>>();
     private Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
@@ -38,8 +38,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
             {
                 throw new RobotException(path + " is not a valid Robot class");
             }
-        }
-        else if (path.endsWith(".jar"))
+        } else if (path.endsWith(".jar"))
         {
             robotExists = false;
             loadJar(path);
@@ -47,8 +46,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
             {
                 throw new RobotException("No robot found. " + path + " must contain a class implementing Robot");
             }
-        }
-        else
+        } else
         {
             throw new RobotException(path + "Is not a valid file format");
         }
@@ -63,8 +61,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
             tempFile = new File(path);
             in = new FileInputStream(tempFile);
             tempByteArray = new byte[(int) tempFile.length()];
-        }
-        catch (FileNotFoundException e)
+        } catch (FileNotFoundException e)
         {
             throw new RobotException("Could not fine file " + path);
         }
@@ -85,8 +82,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
                 if (je.isDirectory())
                 {
                     continue;
-                } 
-                else if (je.getName().endsWith(".class"))
+                } else if (je.getName().endsWith(".class"))
                 {
                     //TODO: Check for multiple Robot classes within a jar - report on this or only use the first one found - prevent cheating
                     InputStream in = jarFile.getInputStream(je);
@@ -98,8 +94,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
                  //TODO: Load nested jars to allow use of libraries etc.
                  }*/
             }
-        } 
-        catch (Exception e)
+        } catch (Exception e)
         {
             throw new RobotException("An error ocurred while loading jar file " + path);
         }
@@ -120,17 +115,28 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
             System.out.println(tempByteArray.toString());
             Class loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
             classMap.put(loadedClass.getName(), loadedClass);
-            if (loadedClass.getSuperclass() != null && loadedClass.getSuperclass().getSuperclass() != null)
+            if (hasSuperClass(loadedClass, ROBOT_CLASS))
             {
-                if (loadedClass.getSuperclass().getSuperclass().getName().equals(ROBOT_CLASS))
-                {
-                    System.out.println("It is a bot");
-                    robotExists = true;
-                    robotMap.put(name, loadedClass);
-                    System.out.println("loaded class: " + loadedClass.getName());
-                }
+                System.out.println("It is a bot");
+                robotExists = true;
+                robotMap.put(name, loadedClass);
+                System.out.println("loaded class: " + loadedClass.getName());
             }
         }
+    }
+
+    private boolean hasSuperClass(Class clazz, Class superClazz)
+    {
+        clazz = clazz.getSuperclass();
+        while (clazz != null && !clazz.equals(Object.class))
+        {
+            if (clazz.equals(superClazz))
+            {
+                return true;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return false;
     }
 
     //Returns instances of robots that are in robotClasses - to be used when game is started
@@ -144,8 +150,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
         {
             obj = (tempClass.getDeclaredConstructor().newInstance());
             System.out.println("obj: " + obj.toString());
-        } 
-        catch (Exception e)
+        } catch (Exception e)
         {
             throw new RobotException("Failed to create instance of " + name, e);
         }

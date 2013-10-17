@@ -14,7 +14,7 @@ import afk.bot.Aimable;
 public class RobotUtils
 {
 
-    public static void target(Aimable aimable, Attackable attackable, VisibleBot target, RobotEvent events, float give)
+    public static void target(Aimable aimable, Attackable attackable, VisibleRobot target, RobotEvent events, float give)
     {
         float bearing = target.bearing;
         float elevation = target.elevation - events.barrel;
@@ -28,20 +28,20 @@ public class RobotUtils
 
         if (Float.compare(bearing, 0) < 0)
         {
-            aimable.aimAntiClockwise();
+            aimable.aimAntiClockwise(1);
         }
         if (Float.compare(bearing, 0) > 0)
         {
-            aimable.aimClockwise();
+            aimable.aimClockwise(1);
         }
 
         if (Float.compare(elevation, 0) < 0)
         {
-            aimable.aimDown();
+            aimable.aimDown(1);
         }
         if (Float.compare(elevation, 0) > 0)
         {
-            aimable.aimUp();
+            aimable.aimUp(1);
         }
     }
 }

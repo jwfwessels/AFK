@@ -1,6 +1,7 @@
 
 import afk.bot.london.HeliRobot;
-import afk.bot.london.VisibleBot;
+import afk.bot.london.VisibleRobot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -11,11 +12,8 @@ import afk.bot.london.VisibleBot;
 public class RandomHeliBot extends HeliRobot
 {
 
-    private final float GIVE = 1.4f;
-    private int movement = 0;
-    private int rotation = 0;
-    private boolean turning = true;
-    private int retaliating = 0;
+    private float GIVE = 1.4f;
+    private int AVOIDANCE = 10;
 
     public RandomHeliBot()
     {
@@ -28,101 +26,65 @@ public class RandomHeliBot extends HeliRobot
         super.init();
         setName("Whirlybird");
     }
+    
+    int timer;
 
     @Override
-    public void run()
+    public void start()
     {
-        if (events.hitWall)
-        {
-            turning = false;
-            movement = 100;
-            rotation = 45;
-            if (retaliating != 0)
-            {
-                retaliating = -retaliating;
-            } else
-            {
-                retaliating = -1;
-            }
-        }
-        if (!events.visibleBots.isEmpty())
-        {
-            VisibleBot visible = events.visibleBots.get(0);
-            target(visible, GIVE);
-        } else if (retaliating != 0)
-        {
-            retaliate();
-        } else if (turning)
-        {
-            turn();
-        } else
-        {
-            move();
-        }
+        resetTimer();
+        idle();
     }
 
-    private void turn()
+    @Override
+    public void hitObject()
     {
-        if (rotation > 0)
+        if (Math.random() > 0.5)
         {
-            turnAntiClockwise();
-            rotation--;
-        } else
-        {
-            rotation = (int) (Math.random() * 360);
-            turning = false;
-        }
-    }
-
-    private void move()
-    {
-        if (movement > 0)
-        {
-            moveForward();
-            movement--;
-        } else
-        {
-            movement = (int) (Math.random() * 800);
-            turning = true;
-        }
-    }
-
-    private void retaliate()
-    {
-        if (turning)
-        {
-            if (rotation > 0)
+            if (getActionValue(MOVE_BACK) > 0)
             {
-                if (retaliating == 1)
-                {
-                    turnClockwise();
-                } else
-                {
-                    turnAntiClockwise();
-                }
-                rotation--;
+                moveForward(AVOIDANCE);
             } else
             {
-                retaliating = 0;
-                turning = !turning;
-            }
-        } else
-        {
-            if (movement > 0)
-            {
-                if (retaliating == 1)
-                {
-                    moveForward();
-                } else
-                {
-                    moveBackwards();
-                }
-                movement--;
-            } else
-            {
-                retaliating = 0;
-                turning = !turning;
+                moveBackward(AVOIDANCE);
             }
         }
+        else
+        {
+            clearActions();
+            if (Math.random()>0.5)
+            {
+                strafeLeft(AVOIDANCE);
+            } else
+            {
+                strafeRight(AVOIDANCE);
+            }
+        }
+        timer = 0;
+    }
+
+    @Override
+    public void robotVisible(List<VisibleRobot> visibleBots)
+    {
+        clearActions();
+        target(visibleBots.get(0), GIVE);
+    }
+
+    @Override
+    public void idle()
+    {
+        timer--;
+        if (timer <= 0)
+        {
+            turnAntiClockwise((int) (Math.random() * 180));
+            resetTimer();
+        }
+
+        moveForward(10);
+    }
+
+    private void resetTimer()
+    {
+        timer = (int) (Math.random() * 300);
     }
 }

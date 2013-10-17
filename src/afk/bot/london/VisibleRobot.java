@@ -7,14 +7,14 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public class VisibleBot
+public class VisibleRobot
 {
 
     public UUID targetUUID;
     public float bearing;
     public float elevation;
 
-    public VisibleBot(float bearing, float elevation, UUID targetUUID)
+    public VisibleRobot(float bearing, float elevation, UUID targetUUID)
     {
         this.bearing = bearing;
         this.elevation = elevation;

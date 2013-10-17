@@ -76,7 +76,7 @@ public class London implements RobotEngine, RobotConfigManager
         }
         for (AbstractRobot robot : robots.values())
         {
-            robot.clearFlags();
+//            robot.clearActions(); // braks things now that we use event bases + commands
             robot.run();
         }
     }
@@ -90,7 +90,7 @@ public class London implements RobotEngine, RobotConfigManager
     @Override
     public boolean[] getFlags(UUID id)
     {
-        return robots.get(id).getActionFlags();
+        return robots.get(id).getActions();
     }
 
     @Override

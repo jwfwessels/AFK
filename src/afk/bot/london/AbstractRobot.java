@@ -2,7 +2,6 @@ package afk.bot.london;
 
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -11,9 +10,9 @@ import java.util.UUID;
  */
 public abstract class AbstractRobot implements Robot
 {
-    private static int numBots = 0;
 
-    private boolean[] actionFlags;
+    private static int numBots = 0;
+    private int[] actions;
     protected RobotEvent events;
     private UUID id;
     private int botNum;
@@ -21,7 +20,7 @@ public abstract class AbstractRobot implements Robot
 
     public AbstractRobot(int numActions)
     {
-        actionFlags = new boolean[numActions];
+        actions = new int[numActions];
         events = new RobotEvent();
 
         id = UUID.randomUUID();
@@ -86,27 +85,37 @@ public abstract class AbstractRobot implements Robot
         return botNum;
     }
 
-    @Override
-    public final void setFlag(int index, boolean value)
+    protected final void setActionValue(int index, int value)
     {
-        if (index <= actionFlags.length && index >= 0)
+        if (value < 0)
         {
-            actionFlags[index] = value;
+            throw new RuntimeException("Robot attempted a negative value");
         }
+        actions[index] = value;
+    }
+    
+    protected final int getActionValue(int index)
+    {
+        return actions[index];
     }
 
     @Override
-    public final boolean[] getActionFlags()
+    public final boolean[] getActions()
     {
-        return Arrays.copyOf(actionFlags, actionFlags.length);
-    }
-
-    @Override
-    public final void clearFlags()
-    {
-        for (int x = 0; x < actionFlags.length; x++)
+        boolean[] flags = new boolean[actions.length];
+        for (int i = 0; i < actions.length; i++)
         {
-            actionFlags[x] = false;
+            flags[i] = actions[i] > 0;
+        }
+        return flags;
+    }
+
+    @Override
+    public final void clearActions()
+    {
+        for (int x = 0; x < actions.length; x++)
+        {
+            actions[x] = 0;
         }
     }
 
@@ -136,6 +145,4 @@ public abstract class AbstractRobot implements Robot
     {
         return config == null ? primitiveToString() : complexToString();
     }
-
-
 }

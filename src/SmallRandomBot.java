@@ -1,6 +1,8 @@
 
 import afk.bot.london.TankRobot;
-import afk.bot.london.VisibleBot;
+import static afk.bot.london.TankRobot.MOVE_BACK;
+import afk.bot.london.VisibleRobot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -11,10 +13,7 @@ import afk.bot.london.VisibleBot;
 public class SmallRandomBot extends TankRobot
 {
 
-    private int movement = 0;
-    private int rotation = 0;
-    private boolean turning = true;
-    private int retaliating = 0;
+    private int AVOIDANCE = 30;
 
     public SmallRandomBot()
     {
@@ -25,130 +24,52 @@ public class SmallRandomBot extends TankRobot
     public void init()
     {
         setType("smallTank");
-        setName("Annoying Brat");
+        setName("Brat");
+    }
+    int timer;
+
+    @Override
+    public void start()
+    {
+        resetTimer();
+        idle();
     }
 
     @Override
-    public void run()
+    public void hitObject()
     {
-        if (events.hitWall)
+        if (getActionValue(MOVE_BACK) > 0)
         {
-            turning = false;
-            movement = 50;
-            rotation = 23;
-            if (retaliating != 0)
-            {
-                retaliating = -retaliating;
-            } else
-            {
-                retaliating = -1;
-            }
-        }
-        if (!events.visibleBots.isEmpty())
-        {
-            VisibleBot visible = events.visibleBots.get(0);
-            float bearing = visible.bearing;
-            float elevation = visible.elevation - events.barrel;
-            float diff = bearing * bearing + elevation * elevation;
-            final float give = 0.6f;
-
-            if (Float.compare(diff, give * give) < 0)
-            {
-                attack();
-                return;
-            }
-
-            if (Float.compare(bearing, 0) < 0)
-            {
-                aimAntiClockwise();
-            }
-            if (Float.compare(bearing, 0) > 0)
-            {
-                aimClockwise();
-            }
-
-            if (Float.compare(elevation, 0) < 0)
-            {
-                aimDown();
-            }
-            if (Float.compare(elevation, 0) > 0)
-            {
-                aimUp();
-            }
-        } else if (retaliating != 0)
-        {
-            retaliate();
-        } else if (turning)
-        {
-            turn();
+            moveForward(AVOIDANCE);
         } else
         {
-            move();
+            moveBackward(AVOIDANCE);
         }
+        timer = 0;
     }
 
-    private void turn()
+    @Override
+    public void robotVisible(List<VisibleRobot> visibleBots)
     {
-        if (rotation > 0)
-        {
-            turnAntiClockwise();
-            rotation--;
-        } else
-        {
-            rotation = (int) (Math.random() * 180);
-            turning = false;
-        }
+        clearActions();
+        target(visibleBots.get(0), 0.6f);
     }
 
-    private void move()
+    @Override
+    public void idle()
     {
-        if (movement > 0)
+        timer--;
+        if (timer <= 0)
         {
-            moveForward();
-            movement--;
-        } else
-        {
-            movement = (int) (Math.random() * 400);
-            turning = true;
+            turnAntiClockwise((int) (Math.random() * 180));
+            resetTimer();
         }
+
+        moveForward(10);
     }
 
-    private void retaliate()
+    private void resetTimer()
     {
-        if (turning)
-        {
-            if (rotation > 0)
-            {
-                if (retaliating == 1)
-                {
-                    turnClockwise();
-                } else
-                {
-                    turnAntiClockwise();
-                }
-                rotation--;
-            } else
-            {
-                retaliating = 0;
-                turning = !turning;
-            }
-        } else
-        {
-            if (movement > 0)
-            {
-                if (retaliating == 1)
-                {
-                    moveForward();
-                } else
-                {
-                    moveBackwards();
-                }
-                movement--;
-            } else
-            {
-                retaliating = 0;
-                turning = !turning;
-            }
-        }
+        timer = (int) (Math.random() * 400);
     }
 }
