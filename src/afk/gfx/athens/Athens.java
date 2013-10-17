@@ -49,8 +49,7 @@ public class Athens implements GraphicsEngine
     protected Map<ImageComponent, AthensHUD> huds = new LinkedHashMap<ImageComponent, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
     protected List<ImageComponent> removedHUD = new ArrayList<ImageComponent>();
-    protected Map<BBox, DebugBox> entitiesDebug = new LinkedHashMap<BBox, DebugBox>();
-    protected List<BBox> removedDebug = new ArrayList<BBox>();
+    protected List<AthensEntity> entitiesDebug = new ArrayList<AthensEntity>();
     private int w_width, w_height;
     private boolean[] keys = new boolean[NUM_KEYS];
     private long frameCount = 0;
@@ -76,6 +75,7 @@ public class Athens implements GraphicsEngine
     private Animator animator;
     private float fps = 0.0f;
     private JLabel fpsComp;
+    private Vec3 bgColour = new Vec3(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f);
 
     public Athens(boolean autodraw)
     {
@@ -124,13 +124,13 @@ public class Athens implements GraphicsEngine
                 mouseX = e.getX();
                 mouseY = e.getY();
             }
-            
+
             @Override
             public void mousePressed(MouseEvent e)
             {
                 cx = e.getX();
                 cy = e.getY();
-                
+
                 mouses[e.getButton()] = true;
             }
 
@@ -139,13 +139,13 @@ public class Athens implements GraphicsEngine
             {
                 mouses[e.getButton()] = false;
             }
-            
+
             @Override
             public void mouseDragged(MouseEvent e)
             {
                 mouseX = e.getX();
                 mouseY = e.getY();
-                
+
                 if (e.getX() == cx && e.getY() == cy)
                 {
                     return;
@@ -305,12 +305,6 @@ public class Athens implements GraphicsEngine
         }
         removedHUD.clear();
 
-        for (BBox o : removedDebug)
-        {
-            entitiesDebug.remove(o);
-        }
-        removedDebug.clear();
-
         for (AthensEntity entity : entities.values())
         {
             entity.update(delta);
@@ -342,10 +336,11 @@ public class Athens implements GraphicsEngine
         {
             entity.draw(gl, camera, sun);
         }
-        for (DebugBox entity : entitiesDebug.values())
+        for (AthensEntity entity : entitiesDebug)
         {
             entity.draw(gl, camera, sun);
         }
+        entitiesDebug.clear();
     }
 
     private void renderHUD(GL2 gl, HUDCamera hudCamera)
@@ -365,7 +360,7 @@ public class Athens implements GraphicsEngine
 
         // set background colour to white
         // TODO: allow this to be set through an interface
-        gl.glClearColor(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f, 0.0f);
+        gl.glClearColor(bgColour.getX(), bgColour.getY(), bgColour.getZ(), 0);
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
@@ -416,7 +411,6 @@ public class Athens implements GraphicsEngine
 
     private void mouseMoved(int x, int y)
     {
-
     }
 
     @Override
@@ -575,38 +569,28 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
-    public void primeDebug()
-    {
-        for (DebugBox entity : entitiesDebug.values())
-        {
-            entity.used = false;
-        }
-    }
-
-    @Override
     public GfxEntity getDebugEntity(BBox bbox)
     {
-        DebugBox entity = entitiesDebug.get(bbox);
-        if (entity == null)
-        {
-            entity = new DebugBox();
-            entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
-            entitiesDebug.put(bbox, entity);
-        }
+        DebugBox entity = new DebugBox();
+        entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
         entity.setV(bbox.getSize());
-        entity.used = true;
+        entitiesDebug.add(entity);
         return entity;
     }
 
     @Override
-    public void postDebug()
+    public GfxEntity getDebugEntity(Vec3[] line)
     {
-        for (Map.Entry<BBox, DebugBox> e : entitiesDebug.entrySet())
-        {
-            if (!e.getValue().used)
-            {
-                removedDebug.add(e.getKey());
-            }
-        }
+        DebugLine entity = new DebugLine();
+        entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
+        entity.set(line);
+        entitiesDebug.add(entity);
+        return entity;
+    }
+
+    @Override
+    public void setBackground(Vec3 colour)
+    {
+        bgColour = colour;
     }
 }
