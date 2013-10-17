@@ -19,6 +19,5 @@ SnapToTerrain
 Sonar
 	min = 0 0 40
 	max = 0 0 40
-	offset = 0 0.1355 0
 
 -> largeTankTurret

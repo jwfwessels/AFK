@@ -5,12 +5,8 @@ import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
 import afk.ge.ems.Utils;
-import afk.ge.tokyo.ems.components.Controller;
-import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.SonarNode;
-import static afk.ge.tokyo.ems.systems.SonarSystem.NEG_AXIS;
-import static afk.ge.tokyo.ems.systems.SonarSystem.POS_AXIS;
 import afk.gfx.GfxEntity;
 import static afk.gfx.GfxUtils.X_AXIS;
 import static afk.gfx.GfxUtils.Y_AXIS;
@@ -61,47 +57,41 @@ public class DebugRenderSystem implements ISystem
         List<SonarNode> snodes = engine.getNodeList(SonarNode.class);
         for (SonarNode node : snodes)
         {
-            Vec3[] axis =
+
+            final Vec3[] POS_AXIS =
             {
-                X_AXIS, Y_AXIS, Z_AXIS,
+                X_AXIS, Y_AXIS, Z_AXIS
+            };
+            final Vec3[] NEG_AXIS =
+            {
                 X_AXIS.getNegated(),
                 Y_AXIS.getNegated(),
                 Z_AXIS.getNegated()
             };
             Sonar sonar = node.controller.events.sonar;
-            Vec3 pos = node.state.pos;
+            Mat4 m = Utils.getMatrix(node.state);
+            Vec3 pos = node.state.pos.add(m.multiply(node.bbox.offset.toDirection()).getXYZ());
 
-            float[] sonars =
+            float[] sonarmins =
             {
-                sonar.right, sonar.up, sonar.front,
                 sonar.left, sonar.down, sonar.back
             };
-
-            float[] maxes =
+            float[] sonarmaxes =
             {
-                node.sonar.max.getX(),
-                node.sonar.max.getY(),
-                node.sonar.max.getZ(),
-                node.sonar.min.getX(),
-                node.sonar.min.getY(),
-                node.sonar.min.getZ(),
+                sonar.right, sonar.up, sonar.front
             };
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 3; i++)
             {
-                if (!Float.isNaN(sonars[i]))
+                if (!Float.isNaN(node.sonar.min.get(i)))
                 {
-                    GfxEntity gfx = gfxEngine.getDebugEntity(new Vec3[]
-                    {
-                        Vec3.VEC3_ZERO,
-                        axis[i].scale(Float.isInfinite(sonars[i]) ? maxes[i] : sonars[i])
-                    });
-
-                    gfx.position = node.state.pos.add(
-                            Utils.getMatrix(node.state).multiply(node.sonar.offset.toDirection()).getXYZ());;
-                    gfx.rotation = node.state.rot;
-                    gfx.scale = new Vec3(1);
-                    gfx.colour = GfxEntity.MAGENTA;
+                    drawSonar(node, NEG_AXIS[i], sonarmins[i],
+                            node.sonar.min.get(i), pos.subtract(m.multiply(NEG_AXIS[i].scale(node.bbox.extent.get(i)).toDirection()).getXYZ()));
+                }
+                if (!Float.isNaN(node.sonar.max.get(i)))
+                {
+                    drawSonar(node, POS_AXIS[i], sonarmaxes[i],
+                            node.sonar.max.get(i), pos.add(m.multiply(POS_AXIS[i].scale(node.bbox.extent.get(i)).toDirection()).getXYZ()));
                 }
             }
 
@@ -119,6 +109,20 @@ public class DebugRenderSystem implements ISystem
             }).colour = new Vec3(0, 0, 0.7f);
         }
 
+    }
+
+    private void drawSonar(SonarNode node, Vec3 axis, float sonar, float value, Vec3 pos)
+    {
+        GfxEntity gfx = gfxEngine.getDebugEntity(new Vec3[]
+        {
+            Vec3.VEC3_ZERO,
+            axis.scale((Float.isInfinite(sonar) ? value : sonar))
+        });
+
+        gfx.position = pos;
+        gfx.rotation = node.state.rot;
+        gfx.scale = new Vec3(1);
+        gfx.colour = GfxEntity.MAGENTA;
     }
 
     @Override
