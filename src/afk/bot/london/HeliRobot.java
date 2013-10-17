@@ -6,7 +6,7 @@ import afk.bot.Attackable;
 /**
  * @author Jessica
  */
-public abstract class HeliRobot extends AbstractRobot implements Aimable, Attackable
+public abstract class HeliRobot extends EventBasedBot implements Aimable, Attackable
 {
 
     public static final int NUM_ACTIONS = 13;

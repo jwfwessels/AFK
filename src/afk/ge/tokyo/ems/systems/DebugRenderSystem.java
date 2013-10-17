@@ -74,11 +74,11 @@ public class DebugRenderSystem implements ISystem
 
             float[] sonarmins =
             {
-                sonar.left, sonar.down, sonar.back
+                sonar.distance[3], sonar.distance[4], sonar.distance[5]
             };
             float[] sonarmaxes =
             {
-                sonar.right, sonar.up, sonar.front
+                sonar.distance[0], sonar.distance[1], sonar.distance[2]
             };
 
             for (int i = 0; i < 3; i++)
