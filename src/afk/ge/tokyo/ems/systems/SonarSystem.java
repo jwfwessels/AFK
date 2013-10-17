@@ -46,6 +46,8 @@ public class SonarSystem implements ISystem
 
         for (SonarNode node : nodes)
         {
+            Vec3 pos = node.state.pos.add(
+                    Utils.getMatrix(node.state).multiply(node.sonar.offset.toDirection()).getXYZ());
             Mat4 rot = Utils.getRotationMatrix(node.state);
             Vec3[] posAxis = new Vec3[3];
             Vec3[] negAxis = new Vec3[3];
@@ -78,11 +80,12 @@ public class SonarSystem implements ISystem
                         mins[i] = Float.NaN;
                     } else
                     {
-                        float dist = bbox.getEntrancePointDistance(node.state.pos, negAxis[i]);
+                        float dist = bbox.getEntrancePointDistance(pos, negAxis[i]);
                         if (dist > node.sonar.min.get(i))
                         {
-                            mins[i] = Float.POSITIVE_INFINITY;
-                        } else if (dist < mins[i])
+                            dist = Float.POSITIVE_INFINITY;
+                        }
+                        if (dist < mins[i])
                         {
                             mins[i] = dist;
                         }
@@ -92,11 +95,12 @@ public class SonarSystem implements ISystem
                         maxs[i] = Float.NaN;
                     } else
                     {
-                        float dist = bbox.getEntrancePointDistance(node.state.pos, posAxis[i]);
+                        float dist = bbox.getEntrancePointDistance(pos, posAxis[i]);
                         if (dist > node.sonar.max.get(i))
                         {
-                            maxs[i] = Float.POSITIVE_INFINITY;
-                        } else if (dist < maxs[i])
+                            dist = Float.POSITIVE_INFINITY;
+                        }
+                        if (dist < maxs[i])
                         {
                             maxs[i] = dist;
                         }

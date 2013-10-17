@@ -61,8 +61,8 @@ public class DebugRenderSystem implements ISystem
         List<SonarNode> snodes = engine.getNodeList(SonarNode.class);
         for (SonarNode node : snodes)
         {
-            Mat4 rot = Utils.getRotationMatrix(node.state);
-            Vec3[] axis = {
+            Vec3[] axis =
+            {
                 X_AXIS, Y_AXIS, Z_AXIS,
                 X_AXIS.getNegated(),
                 Y_AXIS.getNegated(),
@@ -76,7 +76,7 @@ public class DebugRenderSystem implements ISystem
                 sonar.right, sonar.up, sonar.front,
                 sonar.left, sonar.down, sonar.back
             };
-            
+
             float[] maxes =
             {
                 node.sonar.max.getX(),
@@ -96,13 +96,27 @@ public class DebugRenderSystem implements ISystem
                         Vec3.VEC3_ZERO,
                         axis[i].scale(Float.isInfinite(sonars[i]) ? maxes[i] : sonars[i])
                     });
-                    
-                    gfx.position = pos;
+
+                    gfx.position = node.state.pos.add(
+                            Utils.getMatrix(node.state).multiply(node.sonar.offset.toDirection()).getXYZ());;
                     gfx.rotation = node.state.rot;
                     gfx.scale = new Vec3(1);
                     gfx.colour = GfxEntity.MAGENTA;
                 }
             }
+
+            gfxEngine.getDebugEntity(new Vec3[]
+            {
+                new Vec3(-1000, 0, 0), new Vec3(1000, 0, 0)
+            }).colour = new Vec3(0.7f, 0, 0);
+            gfxEngine.getDebugEntity(new Vec3[]
+            {
+                new Vec3(0, -1000, 0), new Vec3(0, 1000, 0)
+            }).colour = new Vec3(0, 0.7f, 0);
+            gfxEngine.getDebugEntity(new Vec3[]
+            {
+                new Vec3(0, 0, -1000), new Vec3(0, 0, 1000)
+            }).colour = new Vec3(0, 0, 0.7f);
         }
 
     }
