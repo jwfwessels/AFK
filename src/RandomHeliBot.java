@@ -13,7 +13,7 @@ public class RandomHeliBot extends HeliRobot
 {
 
     private float GIVE = 1.4f;
-    private int AVOIDANCE = 10;
+    private int AVOIDANCE = 50;
 
     public RandomHeliBot()
     {
@@ -26,65 +26,69 @@ public class RandomHeliBot extends HeliRobot
         super.init();
         setName("Whirlybird");
     }
-    
-    int timer;
 
     @Override
     public void start()
     {
-        resetTimer();
         idle();
     }
 
     @Override
     public void hitObject()
     {
-        if (Math.random() > 0.5)
+        clearActions();
+        clearTimers();
+        if (getActionValue(MOVE_BACK) > 0)
         {
-            if (getActionValue(MOVE_BACK) > 0)
-            {
-                moveForward(AVOIDANCE);
-            } else
-            {
-                moveBackward(AVOIDANCE);
-            }
-        }
-        else
+            moveForward(AVOIDANCE);
+        } else
         {
-            clearActions();
-            if (Math.random()>0.5)
-            {
-                strafeLeft(AVOIDANCE);
-            } else
-            {
-                strafeRight(AVOIDANCE);
-            }
+            moveBackward(AVOIDANCE);
         }
-        timer = 0;
+        startTimer(AVOIDANCE / 3, new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (Math.random() > 0.5)
+                {
+                    turnClockwise(180);
+                } else
+                {
+                    turnAntiClockwise(180);
+                }
+            }
+        });
     }
 
     @Override
     public void robotVisible(List<VisibleRobot> visibleBots)
     {
         clearActions();
+        clearTimers();
         target(visibleBots.get(0), GIVE);
     }
 
     @Override
     public void idle()
     {
-        timer--;
-        if (timer <= 0)
-        {
-            turnAntiClockwise((int) (Math.random() * 180));
-            resetTimer();
-        }
+        startTimer((int) (Math.random() * 300), new Runnable() {
 
-        moveForward(10);
-    }
+            @Override
+            public void run()
+            {
+                int amount = (int) (Math.random() * 180);
+                moveForward(amount);
+                if (Math.random() > 0.5)
+                {
+                    turnClockwise(amount);
+                } else
+                {
+                    turnAntiClockwise(amount);
+                }
+            }
+        });
 
-    private void resetTimer()
-    {
-        timer = (int) (Math.random() * 300);
+        moveForward((int) (Math.random() * 300));
     }
 }

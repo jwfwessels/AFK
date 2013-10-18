@@ -1,5 +1,7 @@
 package afk.bot.london;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -15,6 +17,31 @@ public abstract class EventBasedBot extends AbstractRobot
     private long time;
     private boolean idle;
 
+    private class RobotTimer
+    {
+
+        Runnable r;
+        int ticks;
+
+        public RobotTimer(Runnable r, int ticks)
+        {
+            this.r = r;
+            this.ticks = ticks;
+        }
+
+        public boolean tick()
+        {
+            ticks--;
+            if (ticks <= 0)
+            {
+                r.run();
+                return false;
+            }
+            return true;
+        }
+    }
+    private ArrayList<RobotTimer> timers = new ArrayList<RobotTimer>();
+
     public EventBasedBot(int numActions)
     {
         super(numActions);
@@ -24,7 +51,7 @@ public abstract class EventBasedBot extends AbstractRobot
     @Override
     public final void run()
     {
-        
+
         // "use up" a tick in each action value
         for (int i = 0; i < numActions; i++)
         {
@@ -41,6 +68,15 @@ public abstract class EventBasedBot extends AbstractRobot
             idle = false;
             start();
             first = false;
+        }
+
+        Iterator<RobotTimer> it = timers.iterator();
+        while (it.hasNext())
+        {
+            if (!it.next().tick())
+            {
+                it.remove();
+            }
         }
 
         for (int d = 0; d < events.sonar.distance.length; d++)
@@ -74,13 +110,13 @@ public abstract class EventBasedBot extends AbstractRobot
         }
         for (int i = 0; i < numActions; i++)
         {
-            if (getActionValue(i) > 0 )
+            if (getActionValue(i) > 0)
             {
                 idle = false;
                 break;
             }
         }
-        
+
         if (idle)
         {
             idle();
@@ -95,7 +131,7 @@ public abstract class EventBasedBot extends AbstractRobot
      *
      * @param sonarWarningDistance the new sonar warning distance.
      */
-    public final void setSonarWarningDistance(float sonarWarningDistance)
+    protected final void setSonarWarningDistance(float sonarWarningDistance)
     {
         this.sonarWarningDistance = sonarWarningDistance;
     }
@@ -105,16 +141,26 @@ public abstract class EventBasedBot extends AbstractRobot
      *
      * @return the number of ticks since the start of the game.
      */
-    public long getTime()
+    protected long getTime()
     {
         return time;
     }
 
+    protected void startTimer(int ticks, Runnable runnable)
+    {
+        timers.add(new RobotTimer(runnable, ticks));
+    }
+
+    protected void clearTimers()
+    {
+        timers.clear();
+    }
+    
     /**
      * Called at the start of the game. User must give the robot's first
      * commands here.
      */
-    public void start()
+    protected void start()
     {
         idle = true;
     }
@@ -122,7 +168,7 @@ public abstract class EventBasedBot extends AbstractRobot
     /**
      * Called when the robot hits an object (e.g. a wall or another bot).
      */
-    public void hitObject()
+    protected void hitObject()
     {
         idle = true;
     }
@@ -130,7 +176,7 @@ public abstract class EventBasedBot extends AbstractRobot
     /**
      * Called when the robot gets hit by another robot's projectile.
      */
-    public void gotHit()
+    protected void gotHit()
     {
         idle = true;
     }
@@ -138,7 +184,7 @@ public abstract class EventBasedBot extends AbstractRobot
     /**
      * Called when the robot successfully landed a shot on another robot.
      */
-    public void didHit()
+    protected void didHit()
     {
         idle = true;
     }
@@ -147,19 +193,21 @@ public abstract class EventBasedBot extends AbstractRobot
      * Called when one of the sonars reads a measurment below the given
      * threshold. The threshold can be set through
      * setSonarWarningDistance(float).
-     * @param distance the distances of the sonar in each direction.
-     * Distance indices can be found in afk.bot.london.Sonar.
+     *
+     * @param distance the distances of the sonar in each direction. Distance
+     * indices can be found in afk.bot.london.Sonar.
      */
-    public void sonarWarning(float[] distance)
+    protected void sonarWarning(float[] distance)
     {
         idle = true;
     }
 
     /**
      * Called when at least one robot is visible.
+     *
      * @param visibleBots the list of visible bots. Guaranteed to not be empty.
      */
-    public void robotVisible(List<VisibleRobot> visibleBots)
+    protected void robotVisible(List<VisibleRobot> visibleBots)
     {
         idle = true;
     }
@@ -168,5 +216,5 @@ public abstract class EventBasedBot extends AbstractRobot
      * Called when no events were triggered during the tick AND the robot has no
      * commands left to execute,
      */
-    public abstract void idle();
+    protected abstract void idle();
 }
