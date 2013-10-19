@@ -3,6 +3,7 @@ package afk.ge.ems;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +20,7 @@ public class Entity
     private Collection<EntityListener> listeners = new ArrayList<EntityListener>();
     protected Collection<Entity> dependents = new ArrayList<Entity>();
     private Map<Class, Object> components = new HashMap<Class, Object>();
-    private Map<Class, Collection<Object>> events = new HashMap<Class, Collection<Object>>();
+    private Map<Class<? extends Event>, List<Event>> events = new HashMap<Class<? extends Event>, List<Event>>();
     private Pool source;
 
     public Entity()
@@ -130,14 +131,14 @@ public class Entity
         return components.values().toArray();
     }
 
-    public void addEvent(Object event)
+    public <E extends Event> void addEvent(E event)
     {
-        Class eventClass = event.getClass();
-        Collection<Object> eventList = events.get(eventClass);
+        Class<? extends Event> eventClass = event.getClass();
+        List<E> eventList = (List<E>) events.get(eventClass);
         if (eventList == null)
         {
-            eventList = new ArrayList<Object>();
-            events.put(eventClass, eventList);
+            eventList = new ArrayList<E>();
+            events.put(eventClass, (List<Event>) eventList);
         }
         eventList.add(event);
 
@@ -147,10 +148,10 @@ public class Entity
         }
     }
 
-    public void removeEvent(Object event)
+    public <E extends Event> void removeEvent(E event)
     {
-        Class eventClass = event.getClass();
-        Collection<Object> eventList = events.get(eventClass);
+        Class<? extends Event> eventClass = event.getClass();
+        List<? extends Event> eventList = events.get(eventClass);
         if (eventList == null)
         {
             return;
