@@ -1,7 +1,7 @@
 package afk.game;
 
 /**
- *
+ * 
  * @author Daniel
  */
 public interface GameListener

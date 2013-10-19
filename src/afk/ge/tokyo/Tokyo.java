@@ -13,6 +13,7 @@ import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Camera;
+import afk.ge.tokyo.ems.components.GameState;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.components.ScoreBoard;
@@ -22,6 +23,7 @@ import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
 import java.util.Map;
 import java.util.UUID;
+
 /**
  *
  * @author Jw
@@ -32,7 +34,6 @@ public class Tokyo implements GameEngine, Runnable
     private Engine engine;
     private boolean running = true;
     private boolean paused = false;
-    private boolean gameOver = false;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 60;
     private float t = 0.0f;
@@ -49,6 +50,7 @@ public class Tokyo implements GameEngine, Runnable
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
     private ScoreBoard scoreboard;
+    private GameState gameState;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, Game game)
     {
@@ -85,8 +87,8 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new SonarSystem());
         engine.addLogicSystem(new RobotStateFeedbackSystem());
         engine.addLogicSystem(new TextLabelSystem());
-        engine.addLogicSystem(new GameStateSystem(game));
-        
+        engine.addLogicSystem(new GameStateSystem());
+
         engine.addSystem(new InputSystem(gfxEngine));
         engine.addSystem(new NoClipCameraSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
@@ -95,10 +97,11 @@ public class Tokyo implements GameEngine, Runnable
         DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
         engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
-        
+
         engine.addGlobal(new Mouse());
         engine.addGlobal(scoreboard = new ScoreBoard());
-        
+        engine.addGlobal(gameState = new GameState());
+
         // TODO: put this somewhere else?
         Entity entity = new Entity();
         Camera camera = new Camera(
@@ -142,7 +145,7 @@ public class Tokyo implements GameEngine, Runnable
         Robot[] participants = botEngine.getParticipants();
         try
         {
-            
+
             for (int i = 0; i < participants.length; i++)
             {
                 engine.addEntity(robotFactory.create(
@@ -164,32 +167,23 @@ public class Tokyo implements GameEngine, Runnable
         engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
         ObstacleFactory factory = new ObstacleFactory();
 
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall",false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall",false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall",false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall",false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
     }
 
-    @Override
-    public void setState(int i, String msg)
+    private void gameOverDebug()
     {
-        switch (i)
+        if (gameState.gameOver)
         {
-            case 0:
-                gameOver = true;
-                System.out.println("DRAW");
-                break;
-            case 1:
-                gameOver = true;
-                System.out.println("WINNER " + msg);
-                break;
-            case 2:
-                paused = !paused;
-                System.out.println("state: " + msg);
-                break;
-        }
-        if (gameOver)
-        {
+            if (gameState.winner == null)
+            {
+                System.out.println("DRAW :(");
+            } else
+            {
+                System.out.println("WINNER " + gameState.winner);
+            }
             for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
             {
                 System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
@@ -197,13 +191,14 @@ public class Tokyo implements GameEngine, Runnable
         }
     }
 
-//    @Override
-//    public void playPause()
-//    {
-//        System.out.println("playPause() - " + paused);
-//        paused = !paused;
-//        System.out.println("paused: " + paused);
-//    }
+    @Override
+    public void playPause()
+    {
+        System.out.println("playPause() - " + paused);
+        paused = !paused;
+        System.out.println("paused: " + paused);
+    }
+
     @Override
     public float getSpeed()
     {
@@ -254,9 +249,13 @@ public class Tokyo implements GameEngine, Runnable
             //any function called in this block run at the current speedMultiplier speed
             while (logicAccumulator >= LOGIC_DELTA)
             {
-                if (!paused && !gameOver)
+                if (!paused && !gameState.gameOver)
                 {
                     engine.updateLogic(t, DELTA);
+                    if (gameState.gameOver)
+                    {
+                        gameOverDebug();
+                    }
                 }
                 t += DELTA;
                 logicAccumulator -= LOGIC_DELTA;

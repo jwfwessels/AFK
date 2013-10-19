@@ -82,11 +82,11 @@ public class AFKGame implements Game
         listeners.remove(listener);
     }
 
-//    @Override
-//    public void playPause()
-//    {
-//        gameEngine.playPause();
-//    }
+    @Override
+    public void playPause()
+    {
+        gameEngine.playPause();
+    }
 
     @Override
     public float getGameSpeed()
@@ -104,27 +104,5 @@ public class AFKGame implements Game
     public void decreaseSpeed()
     {
         gameEngine.decreaseSpeed();
-    }
-
-    @Override
-    public void gameEvent()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void gameStateChange(String[] state)
-    {
-        if (state[0].equals("DRAW"))
-        {
-            gameEngine.setState(0, "");
-        } else if (state[0].equals("WINNER"))
-        {
-            gameEngine.setState(1, state[1]);
-
-        } else if (state[0].equals("PLAY_PAUSE"))
-        {
-            gameEngine.setState(2, state[1]);
-        }
     }
 }

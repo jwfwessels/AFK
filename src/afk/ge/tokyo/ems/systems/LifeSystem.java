@@ -47,7 +47,8 @@ public class LifeSystem implements ISystem
                 int random = (int)(Math.random()*attackers.length);
                 UUID attacker = attackers[random].id;
                 Integer score = scoreboard.scores.get(attacker);
-                scoreboard.scores.put(attacker, score+1);
+                score += 1;
+                scoreboard.scores.put(attacker, score);
                 engine.removeEntity(node.entity);
             }
             damageEvents.clear();

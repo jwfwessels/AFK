@@ -9,7 +9,8 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public interface Game extends GameListener{
+public interface Game
+{
 
     /**
      * Gets the AWT Component for this game.
@@ -31,7 +32,7 @@ public interface Game extends GameListener{
      */
     public void start() throws RobotException;
 
-//    public void playPause();
+    public void playPause();
     
     public float getGameSpeed();
 

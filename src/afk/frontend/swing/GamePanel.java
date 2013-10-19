@@ -109,11 +109,7 @@ public class GamePanel extends JPanel
                     btnPlayPause.setText("Pause");
                     state = "Playing";
                 }
-                gm.gameStateChange(new String[]
-                {
-                    "PLAY_PAUSE",
-                    state
-                });
+                gm.playPause();
             }
         };
         
@@ -135,11 +131,7 @@ public class GamePanel extends JPanel
                     state = "Playing";
                 }
                 btnPlayPause.setSelected(!btnPlayPause.isSelected());
-                gm.gameStateChange(new String[]
-                {
-                    "PLAY_PAUSE",
-                    state
-                });
+                gm.playPause();
             }
         });
         
