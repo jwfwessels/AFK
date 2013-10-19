@@ -4,7 +4,7 @@
  */
 package afk.frontend.swing;
 
-import afk.game.Game;
+import afk.game.GameMaster;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -37,9 +37,9 @@ public class GamePanel extends JPanel
     JButton btnFaster;
     JButton btnSlower;
     private JLabel lblSpeed;
-    Game gm;
+    GameMaster gm;
     
-    public GamePanel(RootWindow parent, Game game)
+    public GamePanel(RootWindow parent, GameMaster game)
     {
         this.parent = parent;
         gm = game;

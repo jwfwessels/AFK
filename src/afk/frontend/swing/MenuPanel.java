@@ -1,7 +1,7 @@
 package afk.frontend.swing;
 
 import afk.bot.Robot;
-import afk.game.Game;
+import afk.game.GameMaster;
 import afk.bot.RobotException;
 import afk.bot.RobotLoader;
 import afk.bot.london.LondonRobotLoader;
@@ -65,7 +65,7 @@ public class MenuPanel extends JPanel
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<Robot> lsSelectedModel;
     private Point p;
-    private Game game;
+    private GameMaster game;
     private RobotLoader botLoader;
     
 

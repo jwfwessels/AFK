@@ -6,7 +6,7 @@ package afk.ge.tokyo;
 
 import afk.bot.Robot;
 import afk.bot.RobotEngine;
-import afk.game.Game;
+import afk.game.GameMaster;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
@@ -51,9 +51,11 @@ public class Tokyo implements GameEngine, Runnable
     private GenericFactory genericFactory;
     private ScoreBoard scoreboard;
     private GameState gameState;
+    private GameMaster game;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, Game game)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
+        this.game = game;
         this.botEngine = botEngine;
         engine = new Engine();
 
@@ -255,6 +257,7 @@ public class Tokyo implements GameEngine, Runnable
                     if (gameState.gameOver)
                     {
                         gameOverDebug();
+                        game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
                     }
                 }
                 t += DELTA;

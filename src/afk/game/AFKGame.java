@@ -6,6 +6,7 @@ import afk.bot.RobotException;
 import afk.bot.RobotLoader;
 import afk.bot.london.London;
 import afk.ge.GameEngine;
+import afk.ge.tokyo.GameResult;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
@@ -18,7 +19,7 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public class AFKGame implements Game
+public class AFKGame implements GameMaster
 {
 
     private GameEngine gameEngine;
@@ -104,5 +105,14 @@ public class AFKGame implements Game
     public void decreaseSpeed()
     {
         gameEngine.decreaseSpeed();
+    }
+
+    @Override
+    public void gameOver(GameResult result)
+    {
+        for (GameListener l : listeners)
+        {
+            l.gameOver(result);
+        }
     }
 }

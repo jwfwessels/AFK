@@ -2,6 +2,7 @@ package afk.game;
 
 import afk.bot.Robot;
 import afk.bot.RobotException;
+import afk.ge.tokyo.GameResult;
 import java.awt.Component;
 import java.util.UUID;
 
@@ -9,7 +10,7 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public interface Game
+public interface GameMaster
 {
 
     /**
@@ -39,6 +40,8 @@ public interface Game
     public void increaseSpeed();
 
     public void decreaseSpeed();
+    
+    public void gameOver(GameResult result);
 
     /**
      * Registers a game listener to receive game events such as game over and
