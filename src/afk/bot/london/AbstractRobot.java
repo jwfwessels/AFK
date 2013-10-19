@@ -24,7 +24,8 @@ public abstract class AbstractRobot implements Robot
         id = UUID.randomUUID();
     }
     
-    protected final void setConfigManager(RobotConfigManager config)
+    @Override
+    public final void setConfigManager(RobotConfigManager config)
     {
         this.config = config;
     }
@@ -81,6 +82,12 @@ public abstract class AbstractRobot implements Robot
         {
             actionFlags[index] = value;
         }
+    }
+
+    @Override
+    public void setEvents(RobotEvent events)
+    {
+        this.events = events;
     }
 
     @Override

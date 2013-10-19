@@ -20,7 +20,7 @@ public interface GameMaster
      */
     public Component getAWTComponent();
     
-    public Robot addRobotInstance(String robot) throws RobotException;
+    public void addRobotInstance(Robot robot);
     
     public void removeAllRobotInstances();
     

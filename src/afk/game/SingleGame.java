@@ -1,6 +1,7 @@
 package afk.game;
 
 import afk.bot.Robot;
+import afk.bot.RobotConfigManager;
 import afk.bot.RobotEngine;
 import afk.bot.RobotException;
 import afk.bot.RobotLoader;
@@ -19,7 +20,7 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public class AFKGame implements GameMaster
+public class SingleGame implements GameMaster
 {
 
     private GameEngine gameEngine;
@@ -27,9 +28,9 @@ public class AFKGame implements GameMaster
     private RobotEngine botEngine;
     private Collection<GameListener> listeners = new ArrayList<GameListener>();
 
-    public AFKGame(RobotLoader botLoader)
+    public SingleGame(RobotConfigManager config)
     {
-        botEngine = new London(botLoader);
+        this.botEngine = new London(config);
         gfxEngine = new Athens(false);
         gameEngine = new Tokyo(gfxEngine, botEngine, this);
     }
@@ -41,9 +42,9 @@ public class AFKGame implements GameMaster
     }
 
     @Override
-    public Robot addRobotInstance(String robot) throws RobotException
+    public void addRobotInstance(Robot robot)
     {
-        return botEngine.addRobot(robot);
+        botEngine.addRobot(robot);
     }
 
     @Override
@@ -73,7 +74,6 @@ public class AFKGame implements GameMaster
     @Override
     public void start() throws RobotException
     {
-        botEngine.initComplete();
         gameEngine.startGame();
     }
 

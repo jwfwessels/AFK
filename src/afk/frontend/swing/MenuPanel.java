@@ -1,11 +1,15 @@
 package afk.frontend.swing;
 
 import afk.bot.Robot;
+import afk.bot.RobotConfigManager;
+import afk.bot.RobotEngine;
 import afk.game.GameMaster;
 import afk.bot.RobotException;
 import afk.bot.RobotLoader;
+import afk.bot.london.London;
+import afk.bot.london.LondonRobotConfigManager;
 import afk.bot.london.LondonRobotLoader;
-import afk.game.AFKGame;
+import afk.game.SingleGame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -65,19 +69,18 @@ public class MenuPanel extends JPanel
     private DefaultListModel<String> lsAvailableModel;
     private DefaultListModel<Robot> lsSelectedModel;
     private Point p;
-    private GameMaster game;
     private RobotLoader botLoader;
-    
+    private RobotConfigManager config;
 
     public MenuPanel(RootWindow parent)
     {
         this.parent = parent;
 
         LayoutManager layout = new MenuPanel_Layout();
-        this.setLayout(layout);
-
+        
         botLoader = new LondonRobotLoader();
-        game = new AFKGame(botLoader);
+        config = new LondonRobotConfigManager();
+        this.setLayout(layout);
     }
 
     /*
@@ -86,7 +89,7 @@ public class MenuPanel extends JPanel
     public void loadExistingRobots()
     {
         File robotDir = new File(RELETIVE_ROBOT_DIRECTORY);
-        for (File tempFile : robotDir.listFiles()) 
+        for (File tempFile : robotDir.listFiles())
         {
             try
             {
@@ -97,19 +100,18 @@ public class MenuPanel extends JPanel
                 System.out.println("botname: " + botName);
                 botMap.put(botName, tempPath);
                 lsAvailableModel.addElement(botName);
-            }
-            catch(RobotException e)
+            } catch (RobotException e)
             {
                 // TODO: notify user which files did not load, he/she might be interested
             }
             //catch(Exception e)
             //{
-                // Pokemon exception handling! >.<
-                // not cool :(
+            // Pokemon exception handling! >.<
+            // not cool :(
             //}
         }
     }
-    
+
     void setup()
     {
         initComponents();
@@ -220,13 +222,7 @@ public class MenuPanel extends JPanel
                 System.out.println("selectedBot: " + selectedBot);
                 if (selectedBot != null)
                 {
-                    try
-                    {
-                        lsSelectedModel.addElement(game.addRobotInstance(selectedBot));
-                    } catch (RobotException ex)
-                    {
-                        showError(ex);
-                    }
+                    addRobotToSelected(selectedBot);
                 }
             }
         });
@@ -238,13 +234,7 @@ public class MenuPanel extends JPanel
             {
                 for (int i = 0; i < lsAvailableModel.size(); i++)
                 {
-                    try
-                    {
-                        lsSelectedModel.addElement(game.addRobotInstance(lsAvailableModel.getElementAt(i)));
-                    } catch (RobotException ex)
-                    {
-                        showError(ex);
-                    }
+                    addRobotToSelected(lsAvailableModel.getElementAt(i));
                 }
             }
         });
@@ -260,7 +250,6 @@ public class MenuPanel extends JPanel
                     return;
                 }
                 lsSelectedModel.removeElement(selectedBot);
-                game.removeRobotInstance(selectedBot);
             }
         });
 
@@ -273,7 +262,6 @@ public class MenuPanel extends JPanel
                 {
                     lsSelectedModel.removeElementAt(0);
                 }
-                game.removeAllRobotInstances();
             }
         });
 
@@ -305,10 +293,15 @@ public class MenuPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                lsSelectedModel.clear();
+                GameMaster game = new SingleGame(config);
+                for (int i = 0; i < lsSelectedModel.size(); i++)
+                {
+                    game.addRobotInstance(lsSelectedModel.getElementAt(i));
+                }
                 parent.showGame(game);
                 try
                 {
+                    config.initComplete();
                     game.start();
                 } catch (RobotException ex)
                 {
@@ -331,6 +324,20 @@ public class MenuPanel extends JPanel
         });
 
         lstSelectedBots.addMouseListener(new MousePopupListener());
+    }
+
+    private void addRobotToSelected(String robotName)
+    {
+        try
+        {
+            Robot r = botLoader.getRobotInstance(robotName);
+            r.setConfigManager(config);
+            r.init();
+            lsSelectedModel.addElement(r);
+        } catch (RobotException ex)
+        {
+            showError(ex);
+        }
     }
 
     public void showError(Exception ex)

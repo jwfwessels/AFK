@@ -11,11 +11,9 @@ public interface RobotEngine
 {
     /**
      * Adds an instance of a robot to this robot engine and initialises it.
-     * @param path
-     * @return
-     * @throws RobotException 
+     * @param robot the robot to add
      */
-    public Robot addRobot(String path) throws RobotException;
+    public void addRobot(Robot robot);
     
     /**
      * Removes an instance of a robot from this robot engine.
@@ -38,12 +36,7 @@ public interface RobotEngine
      * Retrieve a list of all the currently added robot instances.
      * @return a list of the UUIDs of the current robot instances. 
      */
-    public Robot[] getParticipants();
-    
-    /**
-     * Indicates that the initialisation phase is over and the game has started,
-     */
-    public void initComplete();
+    public Robot[] getAllRobots();
     
     /**
      * Executes a single logic tick of each robot.

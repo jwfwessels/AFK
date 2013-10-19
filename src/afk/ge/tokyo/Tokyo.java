@@ -144,7 +144,7 @@ public class Tokyo implements GameEngine, Runnable
     public void startGame()
     {
         spawnStuff();
-        Robot[] participants = botEngine.getParticipants();
+        Robot[] participants = botEngine.getAllRobots();
         try
         {
 
