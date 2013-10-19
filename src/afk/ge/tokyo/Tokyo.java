@@ -15,10 +15,13 @@ import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
+import afk.ge.tokyo.ems.components.ScoreBoard;
 import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
+import java.util.Map;
+import java.util.UUID;
 /**
  *
  * @author Jw
@@ -45,6 +48,7 @@ public class Tokyo implements GameEngine, Runnable
     private RobotEngine botEngine;
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
+    private ScoreBoard scoreboard;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, Game game)
     {
@@ -93,6 +97,7 @@ public class Tokyo implements GameEngine, Runnable
         ///
         
         engine.addGlobal(new Mouse());
+        engine.addGlobal(scoreboard = new ScoreBoard());
         
         // TODO: put this somewhere else?
         Entity entity = new Entity();
@@ -142,6 +147,7 @@ public class Tokyo implements GameEngine, Runnable
             {
                 engine.addEntity(robotFactory.create(
                         new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i])));
+                scoreboard.scores.put(participants[i].getId(), 0);
             }
             new Thread(this).start();
 
@@ -181,6 +187,13 @@ public class Tokyo implements GameEngine, Runnable
                 paused = !paused;
                 System.out.println("state: " + msg);
                 break;
+        }
+        if (gameOver)
+        {
+            for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
+            {
+                System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
+            }
         }
     }
 
