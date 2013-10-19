@@ -49,17 +49,19 @@ public class London implements RobotEngine
     /// this is where bot execution actually happens
     // TODO: multithread this bad-boy
     @Override
-    public void execute()
+    public void execute(UUID id)
     {
         if (config.isInitComplete())
         {
             throw new RuntimeException("Executing before finishing init phase!");
         }
-        for (Robot robot : robots.values())
+        Robot robot = robots.get(id);
+        if (robot == null)
         {
-            robot.clearFlags();
-            robot.run();
+            throw new RuntimeException("Robot " + id + " does not exist in this engine.");
         }
+        robot.clearFlags();
+        robot.run();
     }
 
     @Override

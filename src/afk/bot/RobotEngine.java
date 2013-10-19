@@ -39,9 +39,10 @@ public interface RobotEngine
     public Robot[] getAllRobots();
     
     /**
-     * Executes a single logic tick of each robot.
+     * Executes a single logic tick of a robot.
+     * @param id the id of the robot.
      */
-    public void execute();
+    public void execute(UUID id);
 
     /**
      * Get the action flags from the specified robot since the last execution.
