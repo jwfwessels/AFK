@@ -65,6 +65,12 @@ public class AFKGame implements GameMaster
     }
 
     @Override
+    public String getRobotName(UUID id)
+    {
+        return botEngine.getConfigManager().getProperty(id, "name");
+    }
+
+    @Override
     public void start() throws RobotException
     {
         botEngine.initComplete();

@@ -27,6 +27,8 @@ public interface GameMaster
     public void removeRobotInstance(Robot robot);
     
     public void removeRobotInstance(UUID robot);
+    
+    public String getRobotName(UUID id);
 
     /**
      * Start the game.

@@ -1,10 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.frontend.swing;
 
+import afk.game.GameListener;
 import afk.game.GameMaster;
+import afk.ge.tokyo.GameResult;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -13,10 +11,12 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -43,6 +43,17 @@ public class GamePanel extends JPanel
     {
         this.parent = parent;
         gm = game;
+        
+        game.addGameListener(new GameListener() {
+
+            @Override
+            public void gameOver(GameResult result)
+            {
+                UUID winnerID = result.getWinner();
+                String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
+                JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
+            }
+        });
 
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
