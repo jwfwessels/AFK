@@ -8,6 +8,7 @@ import afk.ge.tokyo.HeightmapLoader;
 import afk.ge.tokyo.ems.components.Controller;
 import afk.ge.tokyo.ems.components.Life;
 import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.events.DamageEvent;
 import afk.ge.tokyo.ems.factories.GenericFactory;
 import afk.ge.tokyo.ems.factories.GenericFactoryRequest;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
@@ -55,71 +56,72 @@ public class ProjectileSystem implements ISystem
         HeightmapNode hnode = engine.getNodeList(HeightmapNode.class).get(0);
 
         bulletLoop:
-        for (ProjectileNode bullet : bullets)
+        for (ProjectileNode bnode : bullets)
         {
             // collision with terrain
             if (hnode != null)
             {
-                if (HeightmapLoader.under(bullet.state.prevPos, hnode.heightmap))
+                if (HeightmapLoader.under(bnode.state.prevPos, hnode.heightmap))
                 {
-                    bang(bullet, bullet.state.prevPos);
+                    bang(bnode, bnode.state.prevPos);
                     continue;
-                } else if (HeightmapLoader.under(bullet.state.pos, hnode.heightmap))
+                } else if (HeightmapLoader.under(bnode.state.pos, hnode.heightmap))
                 {
-                    bang(bullet, bullet.state.pos);
+                    bang(bnode, bnode.state.pos);
                     continue;
                 } else
                 {
-                    Vec3 intersection = HeightmapLoader.getIntersection(bullet.state.prevPos, bullet.state.pos, 0.1f, hnode.heightmap);
+                    Vec3 intersection = HeightmapLoader.getIntersection(bnode.state.prevPos, bnode.state.pos, 0.1f, hnode.heightmap);
                     if (intersection != null)
                     {
-                        bang(bullet, intersection);
+                        bang(bnode, intersection);
                         continue;
                     }
                 }
             }
 
             // collision testing for box
-            for (CollisionNode node : nodes)
+            for (CollisionNode cnode : nodes)
             {
                 // to stop shells from exploding inside the tank's barrel:
-                Controller controller = node.entity.getComponent(Controller.class);
-                if (controller != null && controller == bullet.bullet.parent)
+                Controller controller = cnode.entity.getComponent(Controller.class);
+                if (controller != null && controller == bnode.bullet.parent)
                 {
                     continue;
                 }
 
-                BBox bbox = new BBox(node.state, node.bbox);
-                if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
+                BBox bbox = new BBox(cnode.state, cnode.bbox);
+                if (bbox.isLineInBox(bnode.state.prevPos, bnode.state.pos))
                 {
-                    Life life = node.entity.getComponent(Life.class);
+                    
+                    Life life = cnode.entity.getComponent(Life.class);
                     if (life != null)
                     {
-                        life.hp -= bullet.bullet.damage;
+                        cnode.entity.addEvent(new DamageEvent(bnode.bullet.damage, bnode.bullet.parent));
                     }
 
                     // notify the victim that they got shot
                     // (only if the victim was not an innocent wall)
-                    Controller victim = node.entity.getComponent(Controller.class);
+                    Controller victim = cnode.entity.getComponent(Controller.class);
                     if (victim != null)
                     {
                         victim.events.gotHit = true;
                         // notify the shooter that they shot someone
-                        bullet.bullet.parent.events.didHit = true;
+                        bnode.bullet.parent.events.didHit = true;
                     }
 
 
-                    bang(bullet);
+                    bang(bnode);
                     continue bulletLoop;
                 }
             }
 
             // range testing
-            float dist = bullet.state.prevPos.subtract(bullet.state.pos).getLength();
-            bullet.bullet.rangeLeft -= dist;
-            if (Float.compare(bullet.bullet.rangeLeft, 0) <= 0)
+            float dist = bnode.state.prevPos.subtract(bnode.state.pos).getLength();
+            bnode.bullet.rangeLeft -= dist;
+            if (Float.compare(bnode.bullet.rangeLeft, 0) <= 0)
             {
-                engine.removeEntity(bullet.entity);
+                engine.removeEntity(bnode.entity);
             }
         }
     }

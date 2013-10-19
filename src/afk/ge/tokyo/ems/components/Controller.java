@@ -12,6 +12,7 @@ public class Controller
     public UUID id = null;
     public boolean[] inputFlags = null;
     public RobotEvent events = null;
+    public int score = 0;
 
     public Controller()
     {

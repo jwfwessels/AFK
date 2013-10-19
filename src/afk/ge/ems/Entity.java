@@ -142,13 +142,19 @@ public class Entity
             events.put(eventClass, (List<Event>) eventList);
         }
         eventList.add(event);
-
-        for (EntityListener l : listeners)
-        {
-            l.eventAdded(event);
-        }
     }
 
+    public <E extends Event> List<E> getEventList(Class<E> eventClass)
+    {
+        List<E> eventList = (List<E>) events.get(eventClass);
+        if (eventList == null)
+        {
+            eventList = new ArrayList<E>();
+            events.put(eventClass, (List<Event>) eventList);
+        }
+        return eventList;
+    }
+    
     public <E extends Event> void removeEvent(E event)
     {
         event.setEntity(null);
@@ -165,11 +171,6 @@ public class Entity
 //            {
 //                events.remove(eventClass);
 //            }
-
-            for (EntityListener l : listeners)
-            {
-                l.eventRemoved(event);
-            }
         }
     }
 

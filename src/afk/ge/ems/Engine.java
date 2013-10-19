@@ -24,9 +24,6 @@ public class Engine implements EntityListener, FlagManager
     private Collection<ISystem> systemsToRemove = new ArrayList<ISystem>();
     private Collection<EntityComponent> componentsAdded = new ArrayList<EntityComponent>();
     private Collection<EntityComponent> componentsRemoved = new ArrayList<EntityComponent>();
-    private Map<Class<? extends Event>, List<Event>> events = new HashMap<Class<? extends Event>, List<Event>>();
-    private Collection<Event> eventsAdded = new ArrayList<Event>();
-    private Collection<Event> eventsRemoved = new ArrayList<Event>();
     private Map<Class, Object> globals = new HashMap<Class, Object>();
     private Map<Class, Family> families = new HashMap<Class, Family>();
     private Map<Flag, Boolean> flags = new HashMap<Flag, Boolean>();
@@ -87,20 +84,20 @@ public class Engine implements EntityListener, FlagManager
             removeEntity(dep);
         }
     }
-
+    
     public void addGlobal(Object global)
     {
         globals.put(global.getClass(), global);
     }
-
+    
     public void removeGlobal(Class globalClass)
     {
         globals.remove(globalClass);
     }
-
+    
     public <T> T getGlobal(Class<T> globalClass)
     {
-        return (T) globals.get(globalClass);
+        return (T)globals.get(globalClass);
     }
 
     @Override
@@ -133,38 +130,6 @@ public class Engine implements EntityListener, FlagManager
         }
     }
 
-    @Override
-    public void eventAdded(Event event)
-    {
-        if (updating.get())
-        {
-            eventsAdded.add(event);
-        } else
-        {
-            Class eventClass = event.getClass();
-            List<Event> eventList = events.get(eventClass);
-            if (eventList == null)
-            {
-                eventList = new ArrayList<Event>();
-                events.put(eventClass, eventList);
-            }
-            eventList.add(event);
-        }
-    }
-
-    @Override
-    public void eventRemoved(Event event)
-    {
-        if (updating.get())
-        {
-            eventsRemoved.add(event);
-        } else
-        {
-            Collection<Event> eventList = events.get(event.getClass());
-            eventList.remove(event);
-        }
-    }
-
     public <N extends Node> List<N> getNodeList(Class<N> nodeClass)
     {
         Family family = families.get(nodeClass);
@@ -180,23 +145,13 @@ public class Engine implements EntityListener, FlagManager
         return family.getNodeList();
     }
 
-    public <E extends Event> List<E> getEventList(Class<E> eventClass)
-    {
-        List<E> eventList = (List<E>) events.get(eventClass);
-        if (eventList == null)
-        {
-            eventList = new ArrayList<E>();
-            events.put(eventClass, (List<Event>) eventList);
-        }
-        return eventList;
-    }
-
     public void addLogicSystem(ISystem system)
     {
         if (updating.get())
         {
             logicSystemsToAdd.add(system);
-        } else
+        }
+        else
         {
             if (system.init(this))
             {
@@ -210,7 +165,8 @@ public class Engine implements EntityListener, FlagManager
         if (updating.get())
         {
             systemsToAdd.add(system);
-        } else
+        }
+        else
         {
             if (system.init(this))
             {
@@ -255,7 +211,7 @@ public class Engine implements EntityListener, FlagManager
             addEntity(e);
         }
         toAdd.clear();
-
+        
         for (ISystem s : systemsToAdd)
         {
             addSystem(s);
@@ -266,7 +222,7 @@ public class Engine implements EntityListener, FlagManager
             addLogicSystem(s);
         }
         logicSystemsToAdd.clear();
-
+        
         for (ISystem s : systemsToRemove)
         {
             removeSystem(s);
@@ -284,18 +240,6 @@ public class Engine implements EntityListener, FlagManager
             componentRemoved(ec.entity, ec.component);
         }
         componentsRemoved.clear();
-
-        for (Event event : eventsAdded)
-        {
-            eventAdded(event);
-        }
-        eventsAdded.clear();
-
-        for (Event event : eventsRemoved)
-        {
-            eventRemoved(event);
-        }
-        eventsRemoved.clear();
     }
 
     public void removeSystem(ISystem system)
