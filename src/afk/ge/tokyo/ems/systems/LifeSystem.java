@@ -31,7 +31,7 @@ public class LifeSystem implements ISystem
                 node.life.hp = node.life.maxHp;
             else if (node.life.hp <= 0)
             {
-                Renderable renderable = node.entity.get(Renderable.class);
+                Renderable renderable = node.entity.getComponent(Renderable.class);
                 
                 if (renderable != null)
                 {

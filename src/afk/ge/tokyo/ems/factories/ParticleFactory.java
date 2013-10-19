@@ -34,10 +34,10 @@ public class ParticleFactory implements Factory<ParticleFactoryRequest>, Pool
     {
         Entity pie = getEntity();
 
-        State state = pie.get(State.class);
-        Velocity velocity = pie.get(Velocity.class);
-        Lifetime lifetime = pie.get(Lifetime.class);
-        Renderable renderable = pie.get(Renderable.class);
+        State state = pie.getComponent(State.class);
+        Velocity velocity = pie.getComponent(Velocity.class);
+        Lifetime lifetime = pie.getComponent(Lifetime.class);
+        Renderable renderable = pie.getComponent(Renderable.class);
 
         Vec3 pos = request.state.pos;
         Vec4 rot = request.state.rot;
@@ -91,10 +91,10 @@ public class ParticleFactory implements Factory<ParticleFactoryRequest>, Pool
         if (pie == null)
         {
             pie = new Entity("particle", this);
-            pie.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, Vec3.VEC3_ZERO));
-            pie.add(new Lifetime(0));
-            pie.add(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
-            pie.add(new Renderable("particle", Vec3.VEC3_ZERO, 1.0f));
+            pie.addComponent(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, Vec3.VEC3_ZERO));
+            pie.addComponent(new Lifetime(0));
+            pie.addComponent(new Velocity(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO));
+            pie.addComponent(new Renderable("particle", Vec3.VEC3_ZERO, 1.0f));
         }
         return pie;
     }

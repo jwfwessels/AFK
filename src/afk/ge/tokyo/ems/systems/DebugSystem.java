@@ -111,7 +111,7 @@ public class DebugSystem implements ISystem
 
             for (RenderNode node : nodes)
             {
-                if (node.entity.has(Parent.class))
+                if (node.entity.hasComponent(Parent.class))
                 {
                     continue;
                 }
@@ -148,7 +148,7 @@ public class DebugSystem implements ISystem
     private void startPlaceItem(Entity entity)
     {
         placeEntity = entity;
-        if (placeEntity.has(Renderable.class))
+        if (placeEntity.hasComponent(Renderable.class))
         {
             engine.addEntity(placeEntity);
         }
@@ -156,14 +156,14 @@ public class DebugSystem implements ISystem
 
     private void placeItem(Point myMouse)
     {
-        State state = placeEntity.get(State.class);
+        State state = placeEntity.getComponent(State.class);
         if (state != null)
         {
             state.prevPos = state.pos;
             state.pos = mouse2world(myMouse);
         }
 
-        if (!placeEntity.has(Renderable.class))
+        if (!placeEntity.hasComponent(Renderable.class))
         {
             engine.addEntity(placeEntity);
         }
@@ -179,7 +179,7 @@ public class DebugSystem implements ISystem
 
     private void drawRenderable(Graphics2D g, RenderNode node)
     {
-        if (node.entity.has(Parent.class))
+        if (node.entity.hasComponent(Parent.class))
         {
             return;
         }
@@ -257,12 +257,12 @@ public class DebugSystem implements ISystem
             public void actionPerformed(ActionEvent e)
             {
                 Entity entity = new Entity();
-                entity.add(new Renderable("wall", GfxEntity.MAGENTA, 1.0f));
-                entity.add(new SnapToTerrain());
-                entity.add(new Targetable());
+                entity.addComponent(new Renderable("wall", GfxEntity.MAGENTA, 1.0f));
+                entity.addComponent(new SnapToTerrain());
+                entity.addComponent(new Targetable());
                 Vec3 scale = new Vec3(0.3f);
-                entity.add(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, scale));
-                entity.add(new BBoxComponent(scale.scale(0.5f), new Vec3(0,scale.getY()*0.5f,0)));
+                entity.addComponent(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, scale));
+                entity.addComponent(new BBoxComponent(scale.scale(0.5f), new Vec3(0,scale.getY()*0.5f,0)));
                 startPlaceItem(entity);
             }
         });
@@ -288,7 +288,7 @@ public class DebugSystem implements ISystem
                 try
                 {
                     Entity entity = new GenericFactory().create(GenericFactoryRequest.load("explosionTank"));
-                    entity.add(new State());
+                    entity.addComponent(new State());
                     startPlaceItem(entity);
                 }
                 catch (Exception ex)
@@ -441,7 +441,7 @@ public class DebugSystem implements ISystem
             } else if (myHover != null)
             {
                 hovered = placeEntity;
-                State state = placeEntity.get(State.class);
+                State state = placeEntity.getComponent(State.class);
                 state.prevPos = state.pos;
                 state.pos = mouse2world(myHover);
                 if (myWheel != 0)
@@ -449,7 +449,7 @@ public class DebugSystem implements ISystem
                     state.prevRot = state.rot;
                     state.rot = state.rot.add(new Vec4(0,myWheel,0,0));
                 }
-                if (!placeEntity.has(Renderable.class))
+                if (!placeEntity.hasComponent(Renderable.class))
                 {
                     RenderNode node = new RenderNode();
                     node.entity = placeEntity;
@@ -492,7 +492,7 @@ public class DebugSystem implements ISystem
     {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(entity.toString());
 
-        for (Object obj : entity.getAll())
+        for (Object obj : entity.getAllComponents())
         {
             Class objClass = obj.getClass();
 

@@ -100,8 +100,8 @@ public class Tokyo implements GameEngine, Runnable
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f));
-        entity.add(camera);
-        entity.add(new NoClipCamera(1, 5, 0.2f));
+        entity.addComponent(camera);
+        entity.addComponent(new NoClipCamera(1, 5, 0.2f));
         engine.addEntity(entity);
         engine.addGlobal(camera);
     }

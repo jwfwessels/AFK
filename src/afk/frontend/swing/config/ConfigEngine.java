@@ -52,8 +52,8 @@ public class ConfigEngine implements Runnable
                 new Vec3(5, 5, 5),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f));
-        entity.add(camera);
-        entity.add(new SpinnyCamera(45, 20, 30, 5, Vec3.VEC3_ZERO));
+        entity.addComponent(camera);
+        entity.addComponent(new SpinnyCamera(45, 20, 30, 5, Vec3.VEC3_ZERO));
         engine.addEntity(entity);
         engine.addGlobal(camera);
     }

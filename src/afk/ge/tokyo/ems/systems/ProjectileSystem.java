@@ -83,7 +83,7 @@ public class ProjectileSystem implements ISystem
             for (CollisionNode node : nodes)
             {
                 // to stop shells from exploding inside the tank's barrel:
-                Controller controller = node.entity.get(Controller.class);
+                Controller controller = node.entity.getComponent(Controller.class);
                 if (controller != null && controller == bullet.bullet.parent)
                 {
                     continue;
@@ -92,7 +92,7 @@ public class ProjectileSystem implements ISystem
                 BBox bbox = new BBox(node.state, node.bbox);
                 if (bbox.isLineInBox(bullet.state.prevPos, bullet.state.pos))
                 {
-                    Life life = node.entity.get(Life.class);
+                    Life life = node.entity.getComponent(Life.class);
                     if (life != null)
                     {
                         life.hp -= bullet.bullet.damage;
@@ -100,7 +100,7 @@ public class ProjectileSystem implements ISystem
 
                     // notify the victim that they got shot
                     // (only if the victim was not an innocent wall)
-                    Controller victim = node.entity.get(Controller.class);
+                    Controller victim = node.entity.getComponent(Controller.class);
                     if (victim != null)
                     {
                         victim.events.gotHit = true;
@@ -187,7 +187,7 @@ public class ProjectileSystem implements ISystem
     private void bang(ProjectileNode bullet, Vec3 where)
     {
         Entity entity = factory.create(explosionRequest);
-        entity.add(new State(where, Vec4.VEC4_ZERO, new Vec3(1)));
+        entity.addComponent(new State(where, Vec4.VEC4_ZERO, new Vec3(1)));
         engine.addEntity(entity);
         engine.removeEntity(bullet.entity);
     }

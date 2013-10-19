@@ -57,10 +57,10 @@ public class RenderSystem implements ISystem
         {
             GfxEntity gfx = gfxEngine.getGfxEntity(node.renderable);
 
-            Parent parent = node.entity.get(Parent.class);
-            if (parent != null && parent.entity.has(Renderable.class))
+            Parent parent = node.entity.getComponent(Parent.class);
+            if (parent != null && parent.entity.hasComponent(Renderable.class))
             {
-                GfxEntity parentGfx = gfxEngine.getGfxEntity(parent.entity.get(Renderable.class));
+                GfxEntity parentGfx = gfxEngine.getGfxEntity(parent.entity.getComponent(Renderable.class));
                 if (parentGfx != gfx.getParent())
                 {
                     parentGfx.addChild(gfx);
@@ -79,7 +79,7 @@ public class RenderSystem implements ISystem
             gfx.scale = node.state.scale;
             gfx.colour = node.renderable.colour;
             gfx.opacity = node.renderable.opacity;
-            Lifetime lifetime = node.entity.get(Lifetime.class);
+            Lifetime lifetime = node.entity.getComponent(Lifetime.class);
             if (lifetime != null)
             {
                 gfx.life = 1.0f-(lifetime.life/lifetime.maxLife);
@@ -101,7 +101,7 @@ public class RenderSystem implements ISystem
 
             GfxHUD hud = gfxEngine.getGfxHUD(hnode.image);
 
-            Renderable r = hnode.entity.get(Renderable.class);
+            Renderable r = hnode.entity.getComponent(Renderable.class);
             if (r == null)
             {
                 hud.setPosition((int) hnode.state.pos.getX(),
