@@ -133,6 +133,7 @@ public class Entity
 
     public <E extends Event> void addEvent(E event)
     {
+        event.setEntity(this);
         Class<? extends Event> eventClass = event.getClass();
         List<E> eventList = (List<E>) events.get(eventClass);
         if (eventList == null)
@@ -150,6 +151,7 @@ public class Entity
 
     public <E extends Event> void removeEvent(E event)
     {
+        event.setEntity(null);
         Class<? extends Event> eventClass = event.getClass();
         List<? extends Event> eventList = events.get(eventClass);
         if (eventList == null)
