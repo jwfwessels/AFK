@@ -33,16 +33,17 @@ public class LifeSystem implements ISystem
             
             Controller[] attackers = new Controller[damageEvents.size()];
             
+            int i = 0;
             for (DamageEvent damage : damageEvents)
             {
                 node.life.hp -= damage.getAmount();
-                if (node.life.hp <= 0)
-                {
-                    int random = (int)(Math.random()*attackers.length);
-                    attackers[random].score++;
-                    engine.removeEntity(node.entity);
-                    break;
-                }
+                attackers[i] = damage.getFrom();
+            }
+            if (node.life.hp <= 0)
+            {
+                int random = (int)(Math.random()*attackers.length);
+                attackers[random].score++;
+                engine.removeEntity(node.entity);
             }
             damageEvents.clear();
             
