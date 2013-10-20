@@ -68,7 +68,7 @@ public class Family
         {
             for (Class componentClass : components.keySet())
             {
-                if (!entity.has(componentClass))
+                if (!entity.hasComponent(componentClass))
                     return;
             }
             
@@ -78,7 +78,7 @@ public class Family
 
                 for (Map.Entry<Class, Field> e : components.entrySet())
                 {
-                    e.getValue().set(node, entity.get(e.getKey()));
+                    e.getValue().set(node, entity.getComponent(e.getKey()));
                 }
                 
                 node.entity = entity;

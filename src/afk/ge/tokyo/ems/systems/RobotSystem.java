@@ -37,20 +37,18 @@ public class RobotSystem implements ISystem
     {
         List<ControllerNode> nodes = engine.getNodeList(ControllerNode.class);
         
-        // pass events to each robot
         for (ControllerNode node : nodes)
 	{
+            // pass events to the robot
             botEngine.setEvents(node.controller.id, node.controller.events);
             
             // clear events for next tick
             node.controller.events = new RobotEvent();
-	}
         
-        botEngine.execute();
-        
-        // get input flags from each robot
-	for (ControllerNode node : nodes)
-	{
+            // ask the bot engine nicely
+            botEngine.execute(node.controller.id);
+
+            // get input flags from the robot
             Object source = node.controller.id;
             boolean[] flags = botEngine.getFlags(node.controller.id);
             for (int i = 0; i < flags.length; i++)

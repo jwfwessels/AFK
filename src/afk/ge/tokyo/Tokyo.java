@@ -6,19 +6,24 @@ package afk.ge.tokyo;
 
 import afk.bot.Robot;
 import afk.bot.RobotEngine;
-import afk.game.Game;
+import afk.game.GameMaster;
 import afk.ge.GameEngine;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Camera;
+import afk.ge.tokyo.ems.components.GameState;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
+import afk.ge.tokyo.ems.components.ScoreBoard;
 import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
+import java.util.Map;
+import java.util.UUID;
+
 /**
  *
  * @author Jw
@@ -29,7 +34,6 @@ public class Tokyo implements GameEngine, Runnable
     private Engine engine;
     private boolean running = true;
     private boolean paused = false;
-    private boolean gameOver = false;
     public static final float BOARD_SIZE = 100;
     public final static float GAME_SPEED = 60;
     private float t = 0.0f;
@@ -45,9 +49,13 @@ public class Tokyo implements GameEngine, Runnable
     private RobotEngine botEngine;
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
+    private ScoreBoard scoreboard;
+    private GameState gameState;
+    private GameMaster game;
 
-    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, Game game)
+    public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
+        this.game = game;
         this.botEngine = botEngine;
         engine = new Engine();
 
@@ -81,27 +89,29 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new SonarSystem());
         engine.addLogicSystem(new RobotStateFeedbackSystem());
         engine.addLogicSystem(new TextLabelSystem());
-        engine.addLogicSystem(new GameStateSystem(game));
-        
+        engine.addLogicSystem(new GameStateSystem());
+
         engine.addSystem(new InputSystem(gfxEngine));
         engine.addSystem(new NoClipCameraSystem());
+        engine.addSystem(new SelectionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
         DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
         engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
-        
-        engine.addGlobal(new Mouse());
-        
+
+        engine.addGlobal(scoreboard = new ScoreBoard());
+        engine.addGlobal(gameState = new GameState());
+
         // TODO: put this somewhere else?
         Entity entity = new Entity();
         Camera camera = new Camera(
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f));
-        entity.add(camera);
-        entity.add(new NoClipCamera(1, 5, 0.2f));
+        entity.addComponent(camera);
+        entity.addComponent(new NoClipCamera(1, 5, 0.2f));
         engine.addEntity(entity);
         engine.addGlobal(camera);
     }
@@ -134,14 +144,15 @@ public class Tokyo implements GameEngine, Runnable
     public void startGame()
     {
         spawnStuff();
-        Robot[] participants = botEngine.getParticipants();
+        Robot[] participants = botEngine.getAllRobots();
         try
         {
-            
+
             for (int i = 0; i < participants.length; i++)
             {
                 engine.addEntity(robotFactory.create(
                         new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i])));
+                scoreboard.scores.put(participants[i].getId(), 0);
             }
             new Thread(this).start();
 
@@ -158,39 +169,38 @@ public class Tokyo implements GameEngine, Runnable
         engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
         ObstacleFactory factory = new ObstacleFactory();
 
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall",false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall",false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall",false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall",false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
     }
 
-    @Override
-    public void setState(int i, String msg)
+    private void gameOverDebug()
     {
-        switch (i)
+        if (gameState.gameOver)
         {
-            case 0:
-                gameOver = true;
-                System.out.println("DRAW");
-                break;
-            case 1:
-                gameOver = true;
-                System.out.println("WINNER " + msg);
-                break;
-            case 2:
-                paused = !paused;
-                System.out.println("state: " + msg);
-                break;
+            if (gameState.winner == null)
+            {
+                System.out.println("DRAW :(");
+            } else
+            {
+                System.out.println("WINNER " + gameState.winner);
+            }
+            for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
+            {
+                System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
+            }
         }
     }
 
-//    @Override
-//    public void playPause()
-//    {
-//        System.out.println("playPause() - " + paused);
-//        paused = !paused;
-//        System.out.println("paused: " + paused);
-//    }
+    @Override
+    public void playPause()
+    {
+        System.out.println("playPause() - " + paused);
+        paused = !paused;
+        System.out.println("paused: " + paused);
+    }
+
     @Override
     public float getSpeed()
     {
@@ -241,9 +251,14 @@ public class Tokyo implements GameEngine, Runnable
             //any function called in this block run at the current speedMultiplier speed
             while (logicAccumulator >= LOGIC_DELTA)
             {
-                if (!paused && !gameOver)
+                if (!paused && !gameState.gameOver)
                 {
                     engine.updateLogic(t, DELTA);
+                    if (gameState.gameOver)
+                    {
+                        gameOverDebug();
+                        game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
+                    }
                 }
                 t += DELTA;
                 logicAccumulator -= LOGIC_DELTA;

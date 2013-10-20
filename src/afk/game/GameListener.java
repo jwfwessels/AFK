@@ -1,21 +1,16 @@
 package afk.game;
 
+import afk.ge.tokyo.GameResult;
+
 /**
- *
+ * 
  * @author Daniel
  */
 public interface GameListener
 {
     /**
-     * Indicates a game event happened. This could include players deaths,
-     * picking up of key items such as an opponent's flag, etc.
+     * Called when a game is complete.
+     * @param result the result of the game.
      */
-    public void gameEvent();
-    
-    /**
-     * Indicates that a game state change has occurred. This includes
-     * end-of-game, or in some unique cases where there may include half-time,
-     * etc.
-     */
-    public void gameStateChange(String[] state);
+    public void gameOver(GameResult result);
 }

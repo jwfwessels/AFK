@@ -27,7 +27,8 @@ public abstract class AbstractRobot implements Robot
         botNum = numBots++;
     }
 
-    protected final void setConfigManager(RobotConfigManager config)
+    @Override
+    public final void setConfigManager(RobotConfigManager config)
     {
         this.config = config;
     }
@@ -120,7 +121,7 @@ public abstract class AbstractRobot implements Robot
     }
 
     @Override
-    public final void feedback(RobotEvent event)
+    public final void setEvents(RobotEvent event)
     {
         this.events = event;
     }

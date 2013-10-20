@@ -6,7 +6,7 @@ package afk.frontend.swing;
 
 import afk.bot.Robot;
 import afk.frontend.swing.config.RobotConfigPanel;
-import afk.game.Game;
+import afk.game.GameMaster;
 import afk.bot.RobotException;
 import afk.frontend.Frontend;
 import java.awt.CardLayout;
@@ -125,7 +125,7 @@ public class RootWindow extends JFrame implements Frontend
     }
 
     @Override
-    public void showGame(Game game)
+    public void showGame(GameMaster game)
     {
         gamePanel = new GamePanel(this, game);
 

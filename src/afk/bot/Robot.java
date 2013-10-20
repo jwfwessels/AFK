@@ -17,16 +17,16 @@ public interface Robot
     public void clearActions();
 
     /**
-     * Sets the feedback object.
-     * @param event 
-     */
-    public void feedback(RobotEvent event);
-
-    /**
      * Gets a copy of the action array.
      * @return 
      */
     public boolean[] getActions();
+    
+    /**
+     * Sets the events for this tick.
+     * @param events the events.
+     */
+    public void setEvents(RobotEvent events);
 
     /**
      * Gets the robot's unique ID.
@@ -58,5 +58,11 @@ public interface Robot
      * @return the RobotConfigManager associated with this robot.
      */
     public RobotConfigManager getConfigManager();
+    
+    /**
+     * Sets the RobotConfigManager to associate with this robot.
+     * @return the RobotConfigManager to associate with this robot.
+     */
+    public void setConfigManager(RobotConfigManager config);
     
 }

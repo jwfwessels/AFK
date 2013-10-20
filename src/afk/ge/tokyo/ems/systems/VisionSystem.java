@@ -86,9 +86,9 @@ public class VisionSystem implements ISystem
                         continue targetloop;
                     }
 
-                    Controller controller = tnode.entity.get(Controller.class);
+                    Controller controller = tnode.entity.getComponent(Controller.class);
                     UUID id = null;
-                    if (controller == null)
+                    if (controller != null)
                     {
                         id = controller.id;
                     }
@@ -102,7 +102,7 @@ public class VisionSystem implements ISystem
 
     public boolean sameBot(VisionNode a, Entity b)
     {
-        Controller controller = b.get(Controller.class);
+        Controller controller = b.getComponent(Controller.class);
         return (controller != null && controller.id == a.controller.id);
     }
 

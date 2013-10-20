@@ -21,12 +21,12 @@ public class Utils
 
     public static State getWorldState(Entity entity)
     {
-        State state = entity.get(State.class);
+        State state = entity.getComponent(State.class);
         if (state == null)
         {
             return null;
         }
-        Parent parent = entity.get(Parent.class);
+        Parent parent = entity.getComponent(Parent.class);
         if (parent == null)
         {
             return state;
