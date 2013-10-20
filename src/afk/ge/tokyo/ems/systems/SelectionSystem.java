@@ -68,7 +68,7 @@ public class SelectionSystem implements ISystem
             if (dist < closest)
             {
                 temp = node.entity;
-                dist = closest;
+                closest = dist;
                 break;
             }
         }
