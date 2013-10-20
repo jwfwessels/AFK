@@ -9,6 +9,7 @@ import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.Selection;
 import afk.ge.tokyo.ems.components.SnapToTerrain;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.Targetable;
@@ -87,7 +88,6 @@ public class DebugSystem implements ISystem
     private JFileChooser fileChooser;
     private List<DefaultMutableTreeNode> leaves;
     private DefaultTreeModel model;
-    private Entity selected = null;
     private Entity hovered = null;
     private RobotEngine botEngine;
     private Entity placeEntity = null;
@@ -128,9 +128,11 @@ public class DebugSystem implements ISystem
 
     private void select(Entity newSelected)
     {
+        Entity selected = engine.getGlobal(Selection.class).getEntity();
         if (newSelected != selected)
         {
             selected = newSelected;
+            engine.addGlobal(new Selection(selected));
         }
 
         if (selected != null)
@@ -191,6 +193,7 @@ public class DebugSystem implements ISystem
         g.transform(AffineTransform.getScaleInstance(node.state.scale.getX(),
                 node.state.scale.getZ()));
 
+        Entity selected = engine.getGlobal(Selection.class).getEntity();
         if (node.entity == selected)
         {
             g.setColor(Color.WHITE);
@@ -322,6 +325,7 @@ public class DebugSystem implements ISystem
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                Entity selected = DebugSystem.this.engine.getGlobal(Selection.class).getEntity();
                 if (selected != null)
                 {
                     placeEntity = selected;
@@ -336,6 +340,7 @@ public class DebugSystem implements ISystem
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                Entity selected = DebugSystem.this.engine.getGlobal(Selection.class).getEntity();
                 if (selected != null)
                 {
                     DebugSystem.this.engine.removeEntity(selected);
