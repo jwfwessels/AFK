@@ -6,6 +6,8 @@ import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.nodes.SelectableNode;
+import com.hackoeur.jglm.Matrices;
+import com.hackoeur.jglm.Vec4;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -46,10 +48,14 @@ public class SelectionSystem implements ISystem
 
         // TODO: these constants need to come from somewhere else!
         final float fov = 60.0f, near = 0.1f, far = 200.0f;
+        
+        // TODO: need aspect ratio from somewhere :/
+        //Mat4 proj = Matrices.perspective(fov, near, near, far);
 
         for (SelectableNode node : nodes)
         {
-            System.out.println("checking click on " + node.entity);
+            Vec4 mouseNear = new Vec4(mouse.nx,mouse.ny,0,1);
+            Vec4 mouseFar = new Vec4(mouse.nx,mouse.ny,1,1);
         }
     }
 
