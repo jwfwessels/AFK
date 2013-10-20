@@ -26,12 +26,10 @@ public class RandomBot extends TankRobot
         super.init();
         setName("Pampoen");
     }
-    int timer;
 
     @Override
     public void start()
     {
-        resetTimer();
         idle();
     }
 
@@ -47,7 +45,6 @@ public class RandomBot extends TankRobot
             clearActions();
             moveBackward(AVOIDANCE);
         }
-        timer = 0;
     }
 
     @Override
@@ -60,18 +57,14 @@ public class RandomBot extends TankRobot
     @Override
     public void idle()
     {
-        timer--;
-        if (timer <= 0)
-        {
-            turnAntiClockwise((int) (Math.random() * 360));
-            resetTimer();
-        }
+        startTimer((int) (Math.random() * 100), new Runnable() {
+            @Override
+            public void run()
+            {
+                turnAntiClockwise((int) (Math.random() * 360));
+            }
+        });
 
         moveForward(10);
-    }
-
-    private void resetTimer()
-    {
-        timer = (int) (Math.random() * 100);
     }
 }

@@ -76,7 +76,7 @@ public class MenuPanel extends JPanel
         LayoutManager layout = new MenuPanel_Layout();
         this.setLayout(layout);
 
-        botLoader = new LondonRobotLoader();
+        botLoader = new LondonRobotLoader(this.getClass().getClassLoader());
         game = new AFKGame(botLoader);
     }
 

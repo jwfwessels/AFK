@@ -1,6 +1,6 @@
 package afk.bot.london;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,6 +16,7 @@ public abstract class EventBasedBot extends AbstractRobot
     private float sonarWarningDistance = 3.0f;
     private long time;
     private boolean idle;
+    private int numTimers = 0;
 
     private class RobotTimer
     {
@@ -40,7 +41,7 @@ public abstract class EventBasedBot extends AbstractRobot
             return true;
         }
     }
-    private ArrayList<RobotTimer> timers = new ArrayList<RobotTimer>();
+    private HashMap<Integer, RobotTimer> timers = new HashMap<Integer, RobotTimer>();
 
     public EventBasedBot(int numActions)
     {
@@ -70,7 +71,7 @@ public abstract class EventBasedBot extends AbstractRobot
             first = false;
         }
 
-        Iterator<RobotTimer> it = timers.iterator();
+        Iterator<RobotTimer> it = timers.values().iterator();
         while (it.hasNext())
         {
             if (!it.next().tick())
@@ -146,9 +147,19 @@ public abstract class EventBasedBot extends AbstractRobot
         return time;
     }
 
-    protected void startTimer(int ticks, Runnable runnable)
+    protected int startTimer(int ticks, Runnable runnable)
     {
-        timers.add(new RobotTimer(runnable, ticks));
+        int timerID = numTimers++;
+        timers.put(timerID, new RobotTimer(runnable, ticks));
+        return timerID;
+    }
+    
+    protected void cancelTimer(int timerID)
+    {
+        if (timers.containsKey(timerID))
+        {
+            timers.remove(timerID);
+        }
     }
 
     protected void clearTimers()

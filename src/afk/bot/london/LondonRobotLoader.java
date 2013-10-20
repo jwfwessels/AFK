@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -17,7 +20,7 @@ import java.util.Map;
  *
  * @author Jessica
  */
-public class LondonRobotLoader extends ClassLoader implements RobotLoader<AbstractRobot>
+public class LondonRobotLoader extends URLClassLoader implements RobotLoader<AbstractRobot>
 {
 
     private final Class ROBOT_CLASS = AbstractRobot.class;
@@ -25,6 +28,30 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
     private Map<String, Class<?>> robotMap = new HashMap<String, Class<?>>();
     private Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
     private boolean robotExists;
+    
+    private static final URLClassLoader SystemLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+
+    public LondonRobotLoader()
+    {
+        //this(SystemLoader.getURLs());
+        this(new URL[] {});
+    }
+
+    public LondonRobotLoader(URL[] urls)
+    {
+        this(urls, null);
+    }
+
+    public LondonRobotLoader(ClassLoader parent)
+    {
+        //this(SystemLoader.getURLs(), parent);
+        this(new URL[] {}, parent);
+    }
+
+    public LondonRobotLoader(URL[] urls, ClassLoader parent)
+    {
+        super(urls, parent);
+    }
 
     //Loads all necessary classes needed for the robot specified by path
     @Override
@@ -61,11 +88,14 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
             tempFile = new File(path);
             in = new FileInputStream(tempFile);
             tempByteArray = new byte[(int) tempFile.length()];
+            addURL(tempFile.toURI().toURL());
+            loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
         } catch (FileNotFoundException e)
         {
             throw new RobotException("Could not fine file " + path);
+        } catch (MalformedURLException ex)
+        {
         }
-        loadClass(in, tempFile.getName().substring(0, tempFile.getName().lastIndexOf('.')));
     }
 
     private void loadJar(String path) throws RobotException
@@ -96,7 +126,7 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
             }
         } catch (Exception e)
         {
-            throw new RobotException("An error ocurred while loading jar file " + path);
+            throw new RobotException("An error ocurred while loading jar file " + path, e);
         }
     }
 
@@ -104,6 +134,9 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
     {
         if (!classMap.containsKey(name))
         {
+//            int dollar = name.indexOf("$");
+//            if (dollar != -1)
+//                name = name.substring(dollar+1);
             System.out.println("Loading class: " + name);
             try
             {
@@ -113,14 +146,43 @@ public class LondonRobotLoader extends ClassLoader implements RobotLoader<Abstra
                 throw new RobotException("???");
             }
             System.out.println(tempByteArray.toString());
-            Class loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
-            classMap.put(loadedClass.getName(), loadedClass);
-            if (hasSuperClass(loadedClass, ROBOT_CLASS))
+            System.out.println("File read, defining class");
+            
+            Class loadedClass = null;
+            try
             {
-                System.out.println("It is a bot");
-                robotExists = true;
-                robotMap.put(name, loadedClass);
-                System.out.println("loaded class: " + loadedClass.getName());
+                //loadedClass = defineClass(null, tempByteArray, 0, tempByteArray.length);
+                loadedClass = super.loadClass(name, robotExists);
+            }
+            catch (ClassNotFoundException e)
+            {
+                System.out.println("ERROR MAN: " + e.getMessage());
+                throw new RobotException("An error ocurred while loading class file " + name, e);
+            }
+            catch (Error e)
+            {
+                System.out.println("ERROR MAN: " + e.getMessage());
+                throw new RobotException("An error ocurred while loading class file " + name, e);
+            }
+            
+            System.out.println("Class defined, checking for bots");
+            
+            if (loadedClass != null)
+            {
+                System.out.println("$$$$ Class name: " + loadedClass.getName());
+                
+                classMap.put(loadedClass.getName(), loadedClass);
+                if (hasSuperClass(loadedClass, ROBOT_CLASS))
+                {
+                    System.out.println("It is a bot");
+                    robotExists = true;
+                    robotMap.put(name, loadedClass);
+                    System.out.println("loaded class: " + loadedClass.getName());
+                }
+            }
+            else
+            {
+                System.out.println("defineClass() did not work so great man");
             }
         }
     }
