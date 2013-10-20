@@ -587,7 +587,7 @@ public final class Mat4 extends AbstractMat {
          * (Doesn't work properly if there is a scaling or skewing transformation.)
          * @return the inverse of this matrix.
          */
-	public Mat4 invertSimple()
+	public Mat4 getInverseSimple()
 	{
             return new Mat4(
                 m00, m10, m20, 0,
@@ -604,7 +604,7 @@ public final class Mat4 extends AbstractMat {
          * Invert for only a rotation, any translation is zeroed out
          * @return the inverse of this matrix.
          */
-	public Mat4 invertRot( )
+	public Mat4 getInverseRot( )
 	{
             return new Mat4(
                  m00, m10, m20, 0,
@@ -618,7 +618,7 @@ public final class Mat4 extends AbstractMat {
          * Invert the matrix.
          * @return the inverse of the matrix.
          */
-        public Mat4 invert()
+        public Mat4 getInverse()
         {
             float[] inv = new float[16];
             float det;

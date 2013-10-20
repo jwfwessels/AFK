@@ -1,12 +1,17 @@
 package afk.ge.tokyo.ems.systems;
 
+import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.Camera;
+import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Mouse;
+import afk.ge.tokyo.ems.components.Selection;
 import afk.ge.tokyo.ems.nodes.SelectableNode;
+import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Matrices;
+import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -17,8 +22,6 @@ import java.util.List;
  */
 public class SelectionSystem implements ISystem
 {
-
-    private Entity selected = null;
     private Engine engine;
 
     @Override
@@ -38,34 +41,42 @@ public class SelectionSystem implements ISystem
         
         Camera camera = engine.getGlobal(Camera.class);
         Mouse mouse = engine.getGlobal(Mouse.class);
-
-        if (camera == null || mouse == null)
-        {
-            return;
-        }
+        Display display = engine.getGlobal(Display.class);
         
         List<SelectableNode> nodes = engine.getNodeList(SelectableNode.class);
 
         // TODO: these constants need to come from somewhere else!
         final float fov = 60.0f, near = 0.1f, far = 200.0f;
         
-        // TODO: need aspect ratio from somewhere :/
-        //Mat4 proj = Matrices.perspective(fov, near, near, far);
+        Mat4 proj = Matrices.perspective(fov, display.screenWidth/display.screenHeight, near, far);
+        Mat4 view = Matrices.lookAt(camera.eye, camera.at, camera.up);
+        Mat4 cam = proj.multiply(view);
+        Mat4 camInv = cam.getInverse();
+        
+        Vec4 mouseNear4 = camInv.multiply(new Vec4(mouse.nx,mouse.ny,1,1));
+        Vec4 mouseFar4 = camInv.multiply(new Vec4(mouse.nx,mouse.ny,-1,1));
 
+        Vec3 mouseNear = mouseNear4.getXYZ().scale(1.0f/mouseNear4.getW());
+        Vec3 mouseFar = mouseFar4.getXYZ().scale(1.0f/mouseFar4.getW());
+
+        Entity temp = null;
+        float closest = Float.POSITIVE_INFINITY;
         for (SelectableNode node : nodes)
         {
-            Vec4 mouseNear = new Vec4(mouse.nx,mouse.ny,0,1);
-            Vec4 mouseFar = new Vec4(mouse.nx,mouse.ny,1,1);
+            BBox bbox = new BBox(node.state, node.bbox);
+            float dist = bbox.getEntrancePointDistance(mouseNear, mouseFar.subtract(mouseNear).getUnitVector());
+            if (dist < closest)
+            {
+                temp = node.entity;
+                dist = closest;
+                break;
+            }
         }
+        engine.addGlobal(new Selection(temp));
     }
 
     @Override
     public void destroy()
     {
-    }
-
-    public Entity getSelected()
-    {
-        return selected;
     }
 }

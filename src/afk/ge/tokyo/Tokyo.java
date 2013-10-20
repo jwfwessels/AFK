@@ -101,7 +101,6 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new DebugSystem(botEngine, wireFramer));
         ///
 
-        engine.addGlobal(new Mouse());
         engine.addGlobal(scoreboard = new ScoreBoard());
         engine.addGlobal(gameState = new GameState());
 

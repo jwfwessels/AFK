@@ -5,15 +5,22 @@ import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
 import afk.ge.ems.Utils;
+import afk.ge.tokyo.ems.components.Camera;
+import afk.ge.tokyo.ems.components.Display;
+import afk.ge.tokyo.ems.components.Mouse;
+import afk.ge.tokyo.ems.components.Selection;
 import afk.ge.tokyo.ems.nodes.CollisionNode;
 import afk.ge.tokyo.ems.nodes.SonarNode;
 import afk.gfx.GfxEntity;
+import static afk.gfx.GfxEntity.*;
 import static afk.gfx.GfxUtils.X_AXIS;
 import static afk.gfx.GfxUtils.Y_AXIS;
 import static afk.gfx.GfxUtils.Z_AXIS;
 import afk.gfx.GraphicsEngine;
 import com.hackoeur.jglm.Mat4;
+import com.hackoeur.jglm.Matrices;
 import com.hackoeur.jglm.Vec3;
+import com.hackoeur.jglm.Vec4;
 import java.util.List;
 
 /**
@@ -41,6 +48,12 @@ public class DebugRenderSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
+        
+        Camera camera = engine.getGlobal(Camera.class);
+        Mouse mouse = engine.getGlobal(Mouse.class);
+        Display display = engine.getGlobal(Display.class);
+        Selection selection = engine.getGlobal(Selection.class);
+        
         List<CollisionNode> nodes = engine.getNodeList(CollisionNode.class);
         for (CollisionNode node : nodes)
         {
@@ -51,7 +64,7 @@ public class DebugRenderSystem implements ISystem
             gfx.position = bbox.getCenterPoint();
             gfx.rotation = node.state.rot;
             gfx.scale = new Vec3(1);
-            gfx.colour = GfxEntity.MAGENTA;
+            gfx.colour = selection.getEntity() == node.entity ? GREEN : MAGENTA;
         }
 
         List<SonarNode> snodes = engine.getNodeList(SonarNode.class);
@@ -107,6 +120,24 @@ public class DebugRenderSystem implements ISystem
             {
                 new Vec3(0, 0, -1000), new Vec3(0, 0, 1000)
             }).colour = new Vec3(0, 0, 0.7f);
+            
+            final float fov = 60.0f, near = 0.1f, far = 200.0f;
+        
+            Mat4 proj = Matrices.perspective(fov, display.screenWidth/display.screenHeight, near, far);
+            Mat4 view = Matrices.lookAt(camera.eye, camera.at, camera.up);
+            Mat4 cam = proj.multiply(view);
+            Mat4 camInv = cam.getInverse();
+
+            Vec4 mouseNear4 = camInv.multiply(new Vec4(mouse.nx,mouse.ny,-1,1));
+            Vec4 mouseFar4 = camInv.multiply(new Vec4(mouse.nx,mouse.ny,1,1));
+            
+            Vec3 mouseNear = mouseNear4.getXYZ().scale(1.0f/mouseNear4.getW());
+            Vec3 mouseFar = mouseFar4.getXYZ().scale(1.0f/mouseFar4.getW());
+            
+            gfxEngine.getDebugEntity(new Vec3[]
+            {
+                mouseNear, mouseFar
+            }).colour = new Vec3(1,0,0);
         }
 
     }
@@ -122,7 +153,7 @@ public class DebugRenderSystem implements ISystem
         gfx.position = pos;
         gfx.rotation = node.state.rot;
         gfx.scale = new Vec3(1);
-        gfx.colour = GfxEntity.MAGENTA;
+        gfx.colour = MAGENTA;
     }
 
     @Override

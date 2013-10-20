@@ -3,6 +3,7 @@ package afk.ge.tokyo.ems.systems;
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.Camera;
+import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
@@ -44,12 +45,16 @@ public class RenderSystem implements ISystem
     {
         AbstractCamera gfxCamera = gfxEngine.getCamera();
         Camera camera = engine.getGlobal(Camera.class);
-        if (camera != null && gfxCamera != null)
+        if (gfxCamera != null)
         {
             gfxCamera.at = camera.at;
             gfxCamera.eye = camera.eye;
             gfxCamera.up = camera.up;
         }
+        
+        Display display = engine.getGlobal(Display.class);
+        display.screenWidth = gfxEngine.getWidth();
+        display.screenHeight = gfxEngine.getHeight();
         
         gfxEngine.prime();
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);

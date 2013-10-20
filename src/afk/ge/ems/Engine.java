@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -97,7 +99,22 @@ public class Engine implements EntityListener, FlagManager
     
     public <T> T getGlobal(Class<T> globalClass)
     {
-        return (T)globals.get(globalClass);
+        T global = (T)globals.get(globalClass);
+        if (global == null)
+        {
+            try
+            {
+                global = globalClass.newInstance();
+                addGlobal(global);
+            } catch (InstantiationException ex)
+            {
+                ex.printStackTrace(System.err);
+            } catch (IllegalAccessException ex)
+            {
+                ex.printStackTrace(System.err);
+            }
+        }
+        return global;
     }
 
     @Override

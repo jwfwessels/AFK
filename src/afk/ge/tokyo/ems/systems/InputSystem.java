@@ -2,6 +2,7 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
+import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.gfx.GraphicsEngine;
 
