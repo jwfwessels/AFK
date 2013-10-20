@@ -93,6 +93,7 @@ public class Tokyo implements GameEngine, Runnable
 
         engine.addSystem(new InputSystem(gfxEngine));
         engine.addSystem(new NoClipCameraSystem());
+        engine.addSystem(new SelectionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
         // TODO: if (DEBUG)  ...
