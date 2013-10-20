@@ -1,6 +1,5 @@
 package afk.ge.tokyo;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,5 +26,10 @@ public class GameResult
     public int getScore(UUID id)
     {
         return scores.get(id);
+    }
+    
+    public UUID[] getParticipants()
+    {
+        return scores.keySet().toArray(new UUID[0]);
     }
 }
