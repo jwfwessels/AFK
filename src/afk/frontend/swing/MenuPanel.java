@@ -299,14 +299,8 @@ public class MenuPanel extends JPanel
                     game.addRobotInstance(lsSelectedModel.getElementAt(i));
                 }
                 parent.showGame(game);
-                try
-                {
-                    config.initComplete();
-                    game.start();
-                } catch (RobotException ex)
-                {
-                    showError(ex);
-                }
+                config.initComplete();
+                game.start();
             }
         });
 

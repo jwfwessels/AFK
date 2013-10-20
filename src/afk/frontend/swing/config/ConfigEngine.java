@@ -82,7 +82,6 @@ public class ConfigEngine implements Runnable
 
     public void stop()
     {
-        //engine.shutDown();
         running = false;
     }
 
@@ -119,5 +118,6 @@ public class ConfigEngine implements Runnable
                 accumulator -= DELTA;
             }
         }
+        engine.shutDown();
     }
 }

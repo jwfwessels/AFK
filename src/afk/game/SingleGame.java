@@ -72,9 +72,15 @@ public class SingleGame implements GameMaster
     }
 
     @Override
-    public void start() throws RobotException
+    public void start() 
     {
         gameEngine.startGame();
+    }
+
+    @Override
+    public void stop()
+    {
+        gameEngine.stopGame();
     }
 
     @Override

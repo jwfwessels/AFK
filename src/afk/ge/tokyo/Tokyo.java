@@ -14,7 +14,6 @@ import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.GameState;
-import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.components.ScoreBoard;
 import afk.ge.tokyo.ems.factories.*;
@@ -163,6 +162,12 @@ public class Tokyo implements GameEngine, Runnable
         }
     }
 
+    @Override
+    public void stopGame()
+    {
+        running = false;
+    }
+
     // TODO: this should be put in a map file
     private void spawnStuff()
     {
@@ -264,5 +269,6 @@ public class Tokyo implements GameEngine, Runnable
                 logicAccumulator -= LOGIC_DELTA;
             }
         }
+        engine.shutDown();
     }
 }

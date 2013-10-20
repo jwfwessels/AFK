@@ -7,6 +7,8 @@ package afk.ge;
 public interface GameEngine {
 
     public void startGame();
+    
+    public void stopGame();
 
     public void playPause();
 
