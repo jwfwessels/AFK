@@ -43,19 +43,21 @@ public class RenderSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
+        if (!gfxEngine.isReady())
+        {
+            return;
+        }
+
         AbstractCamera gfxCamera = gfxEngine.getCamera();
         Camera camera = engine.getGlobal(Camera.class);
-        if (gfxCamera != null)
-        {
-            gfxCamera.at = camera.at;
-            gfxCamera.eye = camera.eye;
-            gfxCamera.up = camera.up;
-        }
-        
+        gfxCamera.at = camera.at;
+        gfxCamera.eye = camera.eye;
+        gfxCamera.up = camera.up;
+
         Display display = engine.getGlobal(Display.class);
         display.screenWidth = gfxEngine.getWidth();
         display.screenHeight = gfxEngine.getHeight();
-        
+
         gfxEngine.prime();
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
         for (RenderNode node : nodes)
@@ -87,7 +89,7 @@ public class RenderSystem implements ISystem
             Lifetime lifetime = node.entity.getComponent(Lifetime.class);
             if (lifetime != null)
             {
-                gfx.life = 1.0f-(lifetime.life/lifetime.maxLife);
+                gfx.life = 1.0f - (lifetime.life / lifetime.maxLife);
             } else
             {
                 gfx.life = 0.0f;

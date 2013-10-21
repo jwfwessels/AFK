@@ -14,7 +14,6 @@ import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.GameState;
-import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.components.ScoreBoard;
 import afk.ge.tokyo.ems.factories.*;
@@ -38,7 +37,7 @@ public class Tokyo implements GameEngine, Runnable
     public final static float GAME_SPEED = 60;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
-    public static float LOGIC_DELTA = DELTA;
+    public float logicDelta = DELTA;
     private float speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
@@ -164,6 +163,12 @@ public class Tokyo implements GameEngine, Runnable
         }
     }
 
+    @Override
+    public void stopGame()
+    {
+        running = false;
+    }
+
     // TODO: this should be put in a map file
     private void spawnStuff()
     {
@@ -212,14 +217,14 @@ public class Tokyo implements GameEngine, Runnable
     public void increaseSpeed()
     {
         speedMultiplier *= 2;
-        LOGIC_DELTA = 1 / (GAME_SPEED * speedMultiplier);
+        logicDelta = 1 / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
     public void decreaseSpeed()
     {
         speedMultiplier /= 2;
-        LOGIC_DELTA = 1.0f / (GAME_SPEED * speedMultiplier);
+        logicDelta = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     // TODO: put this code into a separate timer class
@@ -250,7 +255,7 @@ public class Tokyo implements GameEngine, Runnable
             }
 
             //any function called in this block run at the current speedMultiplier speed
-            while (logicAccumulator >= LOGIC_DELTA)
+            while (logicAccumulator >= logicDelta)
             {
                 if (!paused && !gameState.gameOver)
                 {
@@ -262,8 +267,9 @@ public class Tokyo implements GameEngine, Runnable
                     }
                 }
                 t += DELTA;
-                logicAccumulator -= LOGIC_DELTA;
+                logicAccumulator -= logicDelta;
             }
         }
+        engine.shutDown();
     }
 }

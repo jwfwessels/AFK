@@ -565,5 +565,6 @@ public class DebugSystem implements ISystem
     @Override
     public void destroy()
     {
+        frame.dispose();
     }
 }

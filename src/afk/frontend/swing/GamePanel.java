@@ -1,5 +1,6 @@
 package afk.frontend.swing;
 
+import afk.frontend.swing.postgame.PostGamePanel;
 import afk.game.GameListener;
 import afk.game.GameMaster;
 import afk.ge.tokyo.GameResult;
@@ -36,6 +37,7 @@ public class GamePanel extends JPanel
     JToggleButton btnPlayPause;
     JButton btnFaster;
     JButton btnSlower;
+    JButton btnBack;
     private JLabel lblSpeed;
     GameMaster gm;
     
@@ -52,14 +54,18 @@ public class GamePanel extends JPanel
                 UUID winnerID = result.getWinner();
                 String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
                 JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
+                GamePanel.this.parent.destroyMe(GamePanel.this);
+                GamePanel.this.parent.showPanel(
+                        new PostGamePanel(GamePanel.this.parent, result, gm), "postGame");
             }
         });
 
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
+        setup();
     }
     
-    void setup()
+    private void setup()
     {
         initComponents();
         addComponents();
@@ -76,6 +82,7 @@ public class GamePanel extends JPanel
         btnFaster = new JButton(">>");
         btnSlower = new JButton("<<");
         lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
+        btnBack = new JButton("Back");
     }
     
     private void addComponents()
@@ -88,6 +95,7 @@ public class GamePanel extends JPanel
         pnlControls.add(btnPlayPause);
         pnlControls.add(btnFaster);
         pnlControls.add(lblSpeed);
+        pnlControls.add(btnBack);
         add(view);
         add(pnlControls);
     }
@@ -175,6 +183,16 @@ public class GamePanel extends JPanel
         btnSlower.addActionListener(decreaseSpeed);
         btnSlower.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "increaseSpeed");
         btnSlower.getActionMap().put("increaseSpeed", decreaseSpeed);
+        
+        btnBack.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                gm.stop();
+                parent.recallMenuPanel(GamePanel.this);
+            }
+        });
     }
     
     private void setLblSpeed()

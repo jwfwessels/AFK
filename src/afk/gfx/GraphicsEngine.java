@@ -14,6 +14,12 @@ public interface GraphicsEngine
 {
     
     /**
+     * Indicates if the graphics engine is ready yet.
+     * @return true if the graphics engine is initialised, false otherwise
+     */
+    public boolean isReady();
+    
+    /**
      * Adds the specified graphics event listener to receive events from this
      * graphics engine.
      * @param listener the graphics event listener. 
