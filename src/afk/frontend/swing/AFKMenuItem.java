@@ -4,21 +4,21 @@
  */
 package afk.frontend.swing;
 
-import javax.swing.JButton;
+import javax.swing.JMenuItem;
 
 /**
  *
  * @author Jessica
  */
-public class AFKButton extends JButton
+public class AFKMenuItem extends JMenuItem
 {
-    public AFKButton()
+    public AFKMenuItem()
     {
-        super();
+         super();
     }
     
-    public AFKButton(String value)
+    public AFKMenuItem(String text)
     {
-        super(value);
+        super(text);
     }
 }

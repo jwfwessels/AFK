@@ -4,21 +4,21 @@
  */
 package afk.frontend.swing;
 
-import javax.swing.JButton;
+import javax.swing.JLabel;
 
 /**
  *
  * @author Jessica
  */
-public class AFKButton extends JButton
+public class AFKLabel extends JLabel 
 {
-    public AFKButton()
+    public AFKLabel()
     {
         super();
     }
     
-    public AFKButton(String value)
+    public AFKLabel(String text)
     {
-        super(value);
+        super(text);
     }
 }

@@ -4,21 +4,16 @@
  */
 package afk.frontend.swing;
 
-import javax.swing.JButton;
+import javax.swing.JTextArea;
 
 /**
  *
  * @author Jessica
  */
-public class AFKButton extends JButton
+public class AFKTextArea extends JTextArea
 {
-    public AFKButton()
+    public AFKTextArea()
     {
         super();
-    }
-    
-    public AFKButton(String value)
-    {
-        super(value);
     }
 }
