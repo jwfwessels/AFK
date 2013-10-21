@@ -4,10 +4,13 @@
  */
 package afk.frontend.swing;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Stroke;
 import javax.swing.UIManager;
 import javax.swing.plaf.synth.SynthContext;
 import javax.swing.plaf.synth.SynthPainter;
@@ -33,11 +36,6 @@ public class AFKPanelPainter extends SynthPainter
     @Override
     public void paintPanelBorder(SynthContext context, Graphics g, int x, int y, int w, int h)
     {
-        /*Graphics2D g2 = (Graphics2D) g;
-        Color temp = UIManager.getColor("Panel.first");
-        g2.setPaint(temp);
-        g2.fillRect(x, y, w, h);
-        g2.setPaint(null);*/
 
     }
 }

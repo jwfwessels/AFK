@@ -24,8 +24,8 @@ public class AFKButtonPainter extends SynthPainter
     @Override
     public void paintButtonBackground(SynthContext context, Graphics g, int x, int y, int w, int h)
     {
-        System.out.println("COMPONENT STATE: " + context.getComponentState());
         boolean pressed = false;
+        
         int state = context.getComponentState();
         
         if((state & 4) == 0)
@@ -53,8 +53,6 @@ public class AFKButtonPainter extends SynthPainter
             g2.fillRect(x, y, w, h);
             g2.setPaint(null);
         }
-        
-
     }
     
     @Override
@@ -71,10 +69,5 @@ public class AFKButtonPainter extends SynthPainter
         g2.setStroke(borderStroke);
         g2.setPaint(borderPaint);
         g2.drawRect(x, y, w-1, h-1);
-    }
-    
-    private void paintPressed(SynthContext context, Graphics g, int x, int y, int w, int h)
-    {
-        
     }
 }

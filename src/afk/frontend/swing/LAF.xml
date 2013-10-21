@@ -108,14 +108,24 @@
         <bind style="panelStyle" type="region" key="Panel"/>
         
         <style id="buttonStyle">
-            <object  class="afk.frontend.swing.AFKButtonPainter" id="butPainter"/>
+            <object  class="afk.frontend.swing.AFKButtonPainter" id="buttonPainter"/>
             <defaultsProperty key="Button.first" type="idref" value="grey3"/>
             <defaultsProperty key="Button.second" type="idref" value="grey5"/>
             <defaultsProperty key="Button.third" type="idref" value="grey1"/>
-            <painter method="buttonBackground" idref="butPainter"/>
-            <painter method="buttonBorder" idref="butPainter" /> 
+            <painter method="buttonBackground" idref="buttonPainter"/>
+            <painter method="buttonBorder" idref="buttonPainter" /> 
         </style>
         
         <bind style="buttonStyle" type="region" key="Button"/>
+        
+        <style id="listStyle">
+            <object  class="afk.frontend.swing.AFKListPainter" id="listPainter"/>
+            <defaultsProperty key="List.first" type="idref" value="grey2"/>
+            <defaultsProperty key="List.second" type="idref" value="grey4"/>
+            <painter method="listBackground" idref="listPainter"/>
+            <painter method="listBorder" idref="listPainter" /> 
+        </style>
+        
+        <bind style="listStyle" type="region" key="List"/>
 
 </synth>
