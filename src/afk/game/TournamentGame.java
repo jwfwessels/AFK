@@ -75,10 +75,14 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void gameOver(GameResult result)
     {
-        UUID[] topBots = result.getTop();
-        for (int i = 0; i < MAX_GROUP_SIZE/2; i++)
+        UUID[] bots = result.getTop();
+        for (int i = 0; i < bots.length; i++)
         {
-            nextRoundRobots.put(topBots[i], robots.get(topBots[i]));
+            if (i < MAX_GROUP_SIZE/2)
+                nextRoundRobots.put(bots[i], robots.get(bots[i]));
+            int score = scores.get(bots[i]);
+            score += result.getScore(bots[i]);
+            scores.put(bots[i], score);
         }
         nextGame();
     }
