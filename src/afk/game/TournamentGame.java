@@ -4,9 +4,9 @@ import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
 import afk.ge.tokyo.GameResult;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -17,7 +17,8 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
 {
     private SingleGame currentGame = null;
     private RobotConfigManager config;
-    private Collection<Robot> robots = new ArrayList<Robot>();
+    private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
+    private Map<UUID, Integer> scores = new HashMap<UUID, Integer>();
     
     // TODO: these should be user specified some time
     public static final int MIN_GROUP_SIZE = 3;
@@ -41,7 +42,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void addRobotInstance(Robot robot)
     {
-        robots.add(robot);
+        robots.put(robot.getId(), robot);
     }
 
     @Override
@@ -53,20 +54,13 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void removeRobotInstance(Robot robot)
     {
-        robots.remove(robot);
+        removeRobotInstance(robot.getId());
     }
 
     @Override
     public void removeRobotInstance(UUID robot)
     {
-        Iterator<Robot> it = robots.iterator();
-        while(it.hasNext())
-        {
-            if (it.next().getId().equals(robot))
-            {
-                it.remove();
-            }
-        }
+        robots.remove(robot);
     }
 
     @Override
@@ -121,7 +115,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         
         // put the robots in the groups
         Robot[][] robotGroups = new Robot[numGroups][];
-        Iterator<Robot> it = robots.iterator();
+        Iterator<Robot> it = robots.values().iterator();
         for (int i = 0; i < numGroups; i++)
         {
             robotGroups[i] = new Robot[groupSizes[i]];
