@@ -51,6 +51,7 @@ public class GamePanel extends JPanel
             @Override
             public void gameOver(GameResult result)
             {
+                gm.stop();
                 UUID winnerID = result.getWinner();
                 String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
                 JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
