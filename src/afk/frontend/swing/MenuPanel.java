@@ -302,7 +302,6 @@ public class MenuPanel extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 final GameMaster gm = new SingleGame(config);
-                
                 gm.addGameListener(new GameListener()
                 {
                     @Override
@@ -320,9 +319,9 @@ public class MenuPanel extends JPanel
                     @Override
                     public void newGame(GameMaster gm)
                     {
+                        MenuPanel.this.parent.destroyGame();
                         parent.showGame(gm);
                     }
-                    
                 });
                 startGame(gm);
             }
@@ -333,13 +332,19 @@ public class MenuPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                GameMaster gm = new TournamentGame(config);
-                gm.addGameListener(new GameListener() {
-
+                final GameMaster gm = new TournamentGame(config);
+                gm.addGameListener(new GameListener()
+                {
                     @Override
                     public void gameOver(GameResult result)
                     {
-                        System.out.println("Tournament Over (should print results)");
+                        gm.stop();
+                        UUID winnerID = result.getWinner();
+                        String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
+                        JOptionPane.showMessageDialog(MenuPanel.this.parent, winner + " won!");
+                        MenuPanel.this.parent.destroyGame();
+                        MenuPanel.this.parent.showPanel(
+                                new PostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
                     }
 
                     @Override
@@ -384,7 +389,7 @@ public class MenuPanel extends JPanel
 
     private void startGame(final GameMaster gm)
     {
-        
+
         for (int i = 0; i < lsSelectedModel.size(); i++)
         {
             gm.addRobotInstance(lsSelectedModel.getElementAt(i));

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -92,16 +91,43 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             score += result.getScore(bots[i]);
             scores.put(bots[i], score);
         }
-        nextGame();
+        if (bots.length == 2)
+        {
+            tournamentOver();
+        }
+        else
+        {
+            nextGame();
+        }
+    }
+
+    private void tournamentOver()
+    {
+        for (GameListener listener : listeners)
+        {
+            UUID winner = null;
+            int highScore = 0;
+            // TODO: deal with ties? here or somehwere else?
+            for (UUID id : scores.keySet())
+            {
+                int score = scores.get(id);
+                if (score > highScore)
+                {
+                    winner = id;
+                    highScore = score;
+                }
+            }
+            listener.gameOver(new GameResult(winner, scores));
+        }
     }
 
     @Override
     public void newGame(GameMaster gm)
     {
-        JOptionPane.showMessageDialog(null,
-                "Round " + currentRound + "\n"
-                + "Group " + (currentGroup+1) + "/" + groups.length + "\n"
-                + "Bots: " + botsThisRounds);
+//        JOptionPane.showMessageDialog(null,
+//                "Round " + currentRound + "\n"
+//                + "Group " + (currentGroup + 1) + "/" + groups.length + "\n"
+//                + "Bots: " + botsThisRounds);
         for (GameListener listener : listeners)
         {
             listener.newGame(gm);
@@ -111,6 +137,17 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     private Robot[][] makeGroups()
     {
         int numBots = robots.size();
+
+        if (numBots < MIN_GROUP_SIZE)
+        {
+            Robot[][] robotGroups = new Robot[1][numBots];
+            Iterator<Robot> it = robots.values().iterator();
+            for (int i = 0; i < numBots; i++)
+            {
+                robotGroups[0][i] = it.next();
+            }
+            return robotGroups;
+        }
 
         int leftOvers = numBots % MAX_GROUP_SIZE;
         int numGroups = numBots / MAX_GROUP_SIZE;
@@ -208,15 +245,18 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         System.out.print("[ ");
         for (int i = 0; i < groups.length; i++)
         {
-                for (int j = 0; j < groups[i].length; j++)
-                {
-                        System.out.print((groups[i][j] == null ? 0 : 1) + " ");
-                }
-                if (i != groups.length-1) System.out.print("| ");
+            for (int j = 0; j < groups[i].length; j++)
+            {
+                System.out.print((groups[i][j] == null ? 0 : 1) + " ");
+            }
+            if (i != groups.length - 1)
+            {
+                System.out.print("| ");
+            }
         }
         System.out.println("]");
     }
-    
+
     @Override
     public void stop()
     {
