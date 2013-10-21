@@ -228,8 +228,8 @@ public class TypeFactory
             
             AthensEntity floorSidesEntity = createEntity(GfxEntity.NORMAL);
             floorSidesEntity.attachResource(terrain.getSides());
-            floorSidesEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "grass"));
-            floorSidesEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
+            floorSidesEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "dirt"));
+            floorSidesEntity.attachResource(resourceManager.getResource(SHADER, "sides"));
             
             floorGfxEntity.addChild(floorSidesEntity);
             
