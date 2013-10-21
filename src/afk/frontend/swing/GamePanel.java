@@ -1,5 +1,6 @@
 package afk.frontend.swing;
 
+import afk.frontend.swing.postgame.PostGamePanel;
 import afk.game.GameListener;
 import afk.game.GameMaster;
 import afk.ge.tokyo.GameResult;
@@ -53,14 +54,18 @@ public class GamePanel extends JPanel
                 UUID winnerID = result.getWinner();
                 String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
                 JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
+                GamePanel.this.parent.destroyMe(GamePanel.this);
+                GamePanel.this.parent.showPanel(
+                        new PostGamePanel(GamePanel.this.parent, result, gm), "postGame");
             }
         });
 
         LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
+        setup();
     }
     
-    void setup()
+    private void setup()
     {
         initComponents();
         addComponents();

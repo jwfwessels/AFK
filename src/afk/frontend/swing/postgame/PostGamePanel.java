@@ -2,6 +2,7 @@ package afk.frontend.swing.postgame;
 
 import afk.bot.RobotConfigManager;
 import afk.frontend.swing.RootWindow;
+import afk.game.GameMaster;
 import afk.ge.tokyo.GameResult;
 import java.awt.Component;
 import java.awt.Container;
@@ -22,27 +23,27 @@ public class PostGamePanel extends JPanel
 {
 
     private RootWindow parent;
+    private JPanel pnlTop, pnlBottom;
     private JLabel lblTitle;
     private JButton btnBack;
     private RobotScoreList scoreList;
     private GameResult result;
-    private RobotConfigManager config;
+    private GameMaster gm;
     
 
-    public PostGamePanel(RootWindow parent, GameResult result, RobotConfigManager config)
+    public PostGamePanel(RootWindow parent, GameResult result, GameMaster gm)
     {
         this.result = result;
-        this.config = config;
+        this.gm = gm;
         this.parent = parent;
 
         LayoutManager layout = new PostGamePanel_Layout();
         
         this.setLayout(layout);
+        setup();
     }
 
-    
-
-    void setup()
+    private void setup()
     {
         initComponents();
         addComponents();
@@ -53,14 +54,18 @@ public class PostGamePanel extends JPanel
     {
         lblTitle = new JLabel("Game Result");
         btnBack = new JButton("Back");
-        scoreList = new RobotScoreList(result, config);
+        scoreList = new RobotScoreList(result, gm);
     }
 
     private void addComponents()
     {
-        add(lblTitle);
+        pnlTop = new JPanel();
+        pnlTop.add(lblTitle);
+        add(pnlTop);
         add(scoreList);
-        add(btnBack);
+        pnlBottom = new JPanel();
+        pnlBottom.add(btnBack);
+        add(pnlBottom);
     }
 
 //    private void removeComponents()
@@ -123,33 +128,35 @@ public class PostGamePanel extends JPanel
             int w = parent.getSize().width;
             int h = parent.getSize().height;
 
-            int num1 = 0;
-            int num2 = 0;
             Component c;
+            
+            int topHeight = 50;
+            int bottomHeight = 50;
+            int centerHeight = h-(topHeight+bottomHeight);
 
-            //pnlAvailable;
+            //pnlTop
 
-//            c = parent.getComponent(0);
-//            int wVal = 220;
-//            int hVal = 0;
-//            if (c.isVisible())
-//            {
-//                wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-//                hVal = ((h / 8) * 7);
-//                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
-//                num1 += c.getSize().width;
-//            }
-//
-//            //pnlSelected
-//
-//            c = parent.getComponent(2);
-//            if (c.isVisible())
-//            {
-//                wVal = (w) >= 500 ? (w / 3) : ((w - 100) / 2);
-//                hVal = (h / 8) * 7;
-//                c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
-//                num2 += c.getSize().height;
-//            }
+            c = parent.getComponent(0);
+            if (c.isVisible())
+            {
+                c.setBounds(0, 0, w, topHeight);
+            }
+
+            // scorelist
+
+            c = parent.getComponent(1);
+            if (c.isVisible())
+            {
+                c.setBounds(0, topHeight, w, centerHeight);
+            }
+            
+            //pnlBottom
+
+            c = parent.getComponent(2);
+            if (c.isVisible())
+            {
+                c.setBounds(0, h-bottomHeight, w, bottomHeight);
+            }
         }
     }
 }

@@ -1,27 +1,27 @@
 package afk.frontend.swing.postgame;
 
-import afk.bot.RobotConfigManager;
+import afk.game.GameMaster;
 import afk.ge.tokyo.GameResult;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.UUID;
-import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 /**
  *
  * @author daniel
  */
-public class RobotScoreList extends JComponent
+public class RobotScoreList extends JPanel
 {
 
     private GameResult result;
-    private RobotConfigManager config;
+    private GameMaster gm;
 
-    public RobotScoreList(GameResult result, RobotConfigManager config)
+    public RobotScoreList(GameResult result, GameMaster gm)
     {
         this.result = result;
-        this.config = config;
+        this.gm = gm;
     }
 
     @Override
@@ -29,13 +29,13 @@ public class RobotScoreList extends JComponent
     {
         Graphics2D g = (Graphics2D) g1;
         
-        g.setBackground(Color.WHITE);
+        g.setBackground(Color.YELLOW);
         
         g.setColor(Color.BLACK);
         UUID[] ids = result.getParticipants();
         for (int i = 0; i < ids.length; i++)
         {
-            g.drawString((i+1)+". "+config.getProperty(ids[i], "name"), 10, 10+i*10);
+            g.drawString((i+1)+". "+gm.getRobotName(ids[i]), 10, 10+i*10);
         }
     }
 }
