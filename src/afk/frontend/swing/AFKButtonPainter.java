@@ -27,41 +27,10 @@ public class AFKButtonPainter extends SynthPainter
         System.out.println("COMPONENT STATE: " + context.getComponentState());
         boolean pressed = false;
         int state = context.getComponentState();
-        if(state >= 1024)
+        
+        if((state & 4) == 0)
         {
-            // DEFAULT
-            state -= 1024;
-        }
-        if(state >= 512)
-        {
-            // SELECTED
-            state -= 512;
-        }
-        if(state >= 256)
-        {
-            // FOCUSED
-            state -= 256;
-        }
-        if(state >= 8)
-        {
-            // DISABLED
-            state -= 8;
-        }
-        if(state >= 4)
-        {
-            // PRESSED
             pressed = true;
-            state -= 4;
-        }
-        if(state >= 2)
-        {
-            // MOUSE_OVER
-            state -= 2;
-        }
-        if(state >= 1)
-        {
-            // ENABLED
-            state -= 2;
         }
         
         if(pressed)
