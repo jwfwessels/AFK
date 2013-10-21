@@ -4,8 +4,8 @@ uniform sampler2D tex;
 
 varying float ip;
 
-const float dark = 0.4;
-const float light = 1.3;
+const float dark = 0.2;
+const float light = 1.2;
 
 void main()
 {
