@@ -1,35 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <synth>   
-    <!-- TODO: replace colours with AFK colours --> 
-        <object class="javax.swing.plaf.ColorUIResource" id="darkGrey">
-            <int>33</int>
-            <int>33</int>
-            <int>33</int>
+        <!-- Grey Scale -->
+        
+        <!-- #333333 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey1">
+            <int>51</int>
+            <int>51</int>
+            <int>51</int>
         </object>
-        <!-- #2e2e2e -->
-        <object class="javax.swing.plaf.ColorUIResource" id="darkGreyless">
-            <int>46</int>
-            <int>46</int>
-            <int>46</int>
+
+        <!-- #444444 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey2">
+            <int>68</int>
+            <int>68</int>
+            <int>68</int>
         </object>
-        <!-- #373737 -->
-        <object class="javax.swing.plaf.ColorUIResource" id="darkGreyless2">
-            <int>55</int>
-            <int>55</int>
-            <int>55</int>
+
+        <!-- #555555 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey3">
+            <int>85</int>
+            <int>85</int>
+            <int>85</int>
         </object>
-        <!-- #212121 -->
-        <object class="javax.swing.plaf.ColorUIResource" id="mediumGrey">
-            <int>186</int>
+
+        <!-- #666666 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey4">
+            <int>102</int>
+            <int>102</int>
+            <int>102</int>
+        </object>
+
+        <!-- #777777 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey5">
+            <int>119</int>
+            <int>119</int>
+            <int>119</int>
+        </object>
+
+        <!-- #888888 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey6">
+            <int>136</int>
+            <int>136</int>
+            <int>136</int>
+        </object>
+
+        <!-- #999999 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey1">
+            <int>153</int>
+            <int>153</int>
+            <int>153</int>
+        </object>
+
+        <!-- #AAAAAA -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey2">
+            <int>170</int>
+            <int>170</int>
+            <int>170</int>
+        </object>
+
+        <!-- #BBBBBB -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey3">
             <int>187</int>
-            <int>188</int>
+            <int>187</int>
+            <int>187</int>
         </object>
-        <!-- #212121 -->
-        <object class="javax.swing.plaf.ColorUIResource" id="lightGray">
-            <int>220</int>
-            <int>220</int>
-            <int>220</int>
-        </object>  
+
+        <!-- #CCCCCC -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey4">
+            <int>204</int>
+            <int>204</int>
+            <int>204</int>
+        </object>
+
+        <!-- #DDDDDD -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey5">
+            <int>221</int>
+            <int>221</int>
+            <int>221</int>
+        </object>
+
+        <!-- #EEEEEE -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey6">
+            <int>238</int>
+            <int>238</int>
+            <int>238</int>
+        </object>
         
         <style id="mainStyle">
             <opaque value="TRUE"/>
@@ -38,51 +93,29 @@
                 <color value="#CCCCCC" type="BACKGROUND"/>
                 <color value="#000000" type="FOREGROUND"/>
             </state>
-	</style>
-	<bind style="mainStyle" type="region" key=".*"/>
+    	</style>
         
-        <!--<style id="panelStyle">
-            <state>
-                <font name="Verdana" size="14"/>
-                <color value="#FFFFFF" type="BACKGROUND"/>
-                <color value="#BB0000" type="FOREGROUND"/>
-            </state>
-	</style>
-        <bind style="panelStyle" type="region" key="AFKPanel"/>-->
-	<!--<bind style="panelStyle" type="name" key="BotSelPanel"/>-->
+    	<bind style="mainStyle" type="region" key=".*"/>
         
         <style id="panelStyle">
             <object  class="afk.frontend.swing.AFKPanelPainter" id="panPainter"/>
-            <defaultsProperty key="Panel.first" type="idref" value="darkGreyless2"/>
-            <defaultsProperty key="Panel.second" type="idref" value="darkGrey"/>
+            <defaultsProperty key="Panel.first" type="idref" value="grey1"/>
+            <defaultsProperty key="Panel.second" type="idref" value="grey2"/>
             <painter method="panelBackground" idref="panPainter"/>
+
         </style>
+
         <bind style="panelStyle" type="region" key="Panel"/>
         
         <style id="buttonStyle">
             <object  class="afk.frontend.swing.AFKButtonPainter" id="butPainter"/>
-            <defaultsProperty key="Button.first" type="idref" value="mediumGrey"/>
-            <defaultsProperty key="Button.second" type="idref" value="lightGray"/>
+            <defaultsProperty key="Button.first" type="idref" value="grey3"/>
+            <defaultsProperty key="Button.second" type="idref" value="grey5"/>
+            <defaultsProperty key="Button.third" type="idref" value="grey1"/>
             <painter method="buttonBackground" idref="butPainter"/>
-            <painter method="buttonBorder" idref="butPainter"/>
+            <painter method="buttonBorder" idref="butPainter" /> 
         </style>
+        
         <bind style="buttonStyle" type="region" key="Button"/>
-        
-       <!--<style id="buttonStyle">
-            <state>
-                <font name="Verdana" size="14"/>
-                <color value="#FFFFFF" type="BACKGROUND"/>
-                <color value="#FF0000" type="FOREGROUND"/>
-            </state>
-	</style>
-	<bind style="buttonStyle" type="region" key="Button"/>-->
-        
-        <!--<style id="labelStyle">
-            <state>
-                <font name="Verdana" size="14"/>
-                <color value="#D2DFF2" type="BACKGROUND"/>
-                <color value="#000000" type="TEXT_FOREGROUND"/>
-            </state>
-	</style>
-	<bind style="labelStyle" type="region" key="Label"/>-->
+
 </synth>
