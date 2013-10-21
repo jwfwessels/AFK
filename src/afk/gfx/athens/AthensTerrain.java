@@ -1,11 +1,11 @@
 package afk.gfx.athens;
 
+import static afk.gfx.Resource.HEIGHTMAP_MESH;
 import com.hackoeur.jglm.Vec3;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL2;
 
@@ -25,6 +25,7 @@ public class AthensTerrain extends Mesh
     private float[][] botVerts;
     private float[][] leftVerts;
     private float[][] rightVerts;
+    private TerrainSides sides;
 
     private float samplei(int u, int v)
     {
@@ -96,6 +97,7 @@ public class AthensTerrain extends Mesh
     public AthensTerrain(String name)
     {
         super(HEIGHTMAP_MESH, name);
+        sides = new TerrainSides(name+"$sides");
     }
 
     @Override
@@ -199,6 +201,40 @@ public class AthensTerrain extends Mesh
                     gl.glEnd();
                 }
             }
+        }
+        gl.glEndList();
+        
+        sides.load(gl);
+
+        loaded.set(true);
+    }
+
+    @Override
+    public void unload(GL2 gl)
+    {
+        super.unload(gl);
+        sides.unload(gl);
+    }
+    
+    public Mesh getSides()
+    {
+        return sides;
+    }
+    
+    private class TerrainSides extends Mesh
+    {
+        public TerrainSides(String name)
+        {
+            super(HEIGHTMAP_MESH, name);
+        }
+        
+        @Override
+        public void load(GL2 gl)
+                throws IOException
+        {
+            if (this.loaded.get()) return;
+            
+            gl.glNewList(this.handle, GL2.GL_COMPILE);
             for (int i = 0; i < xGrid - 1; i++)
             {
                 gl.glBegin(GL2.GL_QUADS);
@@ -281,9 +317,9 @@ public class AthensTerrain extends Mesh
                 }
                 gl.glEnd();
             }
-        }
-        gl.glEndList();
+            gl.glEndList();
 
-        loaded.set(true);
+            this.loaded.set(true);
+        }
     }
 }

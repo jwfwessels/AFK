@@ -221,9 +221,17 @@ public class TypeFactory
         public AthensEntity create()
         {
             AthensEntity floorGfxEntity = createEntity(GfxEntity.NORMAL);
-            floorGfxEntity.attachResource(resourceManager.getResource(HEIGHTMAP_MESH, "hm2"));
+            AthensTerrain terrain = (AthensTerrain) resourceManager.getResource(HEIGHTMAP_MESH, "hm2");
+            floorGfxEntity.attachResource(terrain);
             floorGfxEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "grass"));
             floorGfxEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
+            
+            AthensEntity floorSidesEntity = createEntity(GfxEntity.NORMAL);
+            floorSidesEntity.attachResource(terrain.getSides());
+            floorSidesEntity.attachResource(resourceManager.getResource(TEXTURE_2D, "grass"));
+            floorSidesEntity.attachResource(resourceManager.getResource(SHADER, "floor"));
+            
+            floorGfxEntity.addChild(floorSidesEntity);
             
             return floorGfxEntity;
         }
