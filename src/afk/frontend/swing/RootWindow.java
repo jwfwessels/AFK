@@ -168,6 +168,7 @@ public class RootWindow extends JFrame implements Frontend
      */
     public void recallMenuPanel(Component card)
     {
+        menuPanel.recalled();
 
         CardLayout cl = (CardLayout) contentPane.getLayout();
         destroyMe(card);

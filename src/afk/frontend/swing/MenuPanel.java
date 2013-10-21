@@ -2,11 +2,9 @@ package afk.frontend.swing;
 
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
-import afk.bot.RobotEngine;
 import afk.game.GameMaster;
 import afk.bot.RobotException;
 import afk.bot.RobotLoader;
-import afk.bot.london.London;
 import afk.bot.london.LondonRobotConfigManager;
 import afk.bot.london.LondonRobotLoader;
 import afk.game.SingleGame;
@@ -71,6 +69,7 @@ public class MenuPanel extends JPanel
     private Point p;
     private RobotLoader botLoader;
     private RobotConfigManager config;
+    private boolean gameRunning = false;
 
     public MenuPanel(RootWindow parent)
     {
@@ -301,6 +300,7 @@ public class MenuPanel extends JPanel
                 parent.showGame(game);
                 config.initComplete();
                 game.start();
+                gameRunning = true;
             }
         });
 
@@ -340,6 +340,21 @@ public class MenuPanel extends JPanel
         txtErrorConsole.setText("Error: " + ex.getMessage());
     }
 
+    public void recalled()
+    {
+        if (gameRunning)
+        {
+            flushConfig();
+            gameRunning = false;
+        }
+    }
+    
+    private void flushConfig()
+    {
+        config = new LondonRobotConfigManager();
+        lsSelectedModel.clear();
+    }
+    
     class MenuPanel_Layout implements LayoutManager
     {
 
