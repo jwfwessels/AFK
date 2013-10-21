@@ -60,7 +60,7 @@ public class Athens implements GraphicsEngine
     HUDCamera hudCamera;
     Mat4 monkeyWorld, skyboxWorld;
     // TODO: move this to a sun/light position
-    Vec3 origin_sun = new Vec3(-2.0f, 1.5f, 5.0f);
+    Vec3 origin_sun = new Vec3(-2.47511f, 3.87557f, 3.17864f);
     Vec3 sun = new Vec3(origin_sun);
     float daytime = 0.0f;
     static final float MOUSE_SENSITIVITY = 60.0f;
