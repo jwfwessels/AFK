@@ -29,7 +29,8 @@ public class RobotScoreList extends JPanel
     {
         Graphics2D g = (Graphics2D) g1;
         
-        g.setBackground(Color.YELLOW);
+        g.setBackground(Color.WHITE);
+        g.clearRect(0, 0, getWidth(), getHeight());
         
         g.setColor(Color.BLACK);
         UUID[] ids = result.getParticipants();

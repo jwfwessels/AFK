@@ -133,6 +133,7 @@ public class PostGamePanel extends JPanel
             int topHeight = 50;
             int bottomHeight = 50;
             int centerHeight = h-(topHeight+bottomHeight);
+            int centerWidth = (w*2)/3;
 
             //pnlTop
 
@@ -147,7 +148,7 @@ public class PostGamePanel extends JPanel
             c = parent.getComponent(1);
             if (c.isVisible())
             {
-                c.setBounds(0, topHeight, w, centerHeight);
+                c.setBounds(w/2-centerWidth/2, topHeight, centerWidth, centerHeight);
             }
             
             //pnlBottom
