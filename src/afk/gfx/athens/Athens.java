@@ -472,7 +472,6 @@ public class Athens implements GraphicsEngine
         Vec4 sun4 = sunWorld.multiply(new Vec4(origin_sun, 0.0f));
 
         sun = new Vec3(sun4.getX(), sun4.getY(), sun4.getZ());
-        System.out.println("sun: " + sun);
     }
 
     @Override
