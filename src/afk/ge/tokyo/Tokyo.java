@@ -66,6 +66,7 @@ public class Tokyo implements GameEngine, Runnable
         System.out.println("DELTA = " + DELTA);
 
         System.out.println("gfx" + gfxEngine.getFPS());
+        gfxEngine.setBackground(Vec3.VEC3_ZERO);
 
         engine.addLogicSystem(new SpawnSystem());
         engine.addLogicSystem(new PaintSystem());
