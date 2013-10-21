@@ -46,12 +46,14 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     public void addRobotInstance(Robot robot)
     {
         robots.put(robot.getId(), robot);
+        scores.put(robot.getId(), 0);
     }
 
     @Override
     public void removeAllRobotInstances()
     {
         robots.clear();
+        scores.clear();
     }
 
     @Override
@@ -64,6 +66,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     public void removeRobotInstance(UUID robot)
     {
         robots.remove(robot);
+        scores.remove(robot);
     }
 
     @Override
@@ -85,6 +88,15 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             scores.put(bots[i], score);
         }
         nextGame();
+    }
+
+    @Override
+    public void newGame(GameMaster gm)
+    {
+        for (GameListener listener : listeners)
+        {
+            listener.newGame(gm);
+        }
     }
 
     private Robot[][] makeGroups()
@@ -161,10 +173,9 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         if (currentGame != null)
         {
             currentGame.stop();
-            currentGame.removeGameListener(this);
         }
         currentGroup++;
-        if (groups == null || currentGroup > groups.length)
+        if (groups == null || currentGroup >= groups.length)
         {
             nextRound();
         }

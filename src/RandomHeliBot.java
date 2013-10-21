@@ -34,7 +34,7 @@ public class RandomHeliBot extends HeliRobot
         if (events.hitWall)
         {
             turning = false;
-            movement = 100;
+            movement = 50;
             rotation = 45;
             if (retaliating != 0)
             {

@@ -7,7 +7,11 @@ import afk.bot.RobotException;
 import afk.bot.RobotLoader;
 import afk.bot.london.LondonRobotConfigManager;
 import afk.bot.london.LondonRobotLoader;
+import afk.frontend.swing.postgame.PostGamePanel;
+import afk.game.GameListener;
 import afk.game.SingleGame;
+import afk.game.TournamentGame;
+import afk.ge.tokyo.GameResult;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -24,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -31,6 +36,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
@@ -56,6 +62,7 @@ public class MenuPanel extends JPanel
     JButton btnRemoveBot;
     JButton btnRemoveAllBots;
     JButton btnStartMatch;
+    JButton btnStartTournament;
     JButton btnLoadBot;
     JPopupMenu configMenu;
     JMenuItem configMenuItem;
@@ -76,7 +83,7 @@ public class MenuPanel extends JPanel
         this.parent = parent;
 
         LayoutManager layout = new MenuPanel_Layout();
-        
+
         botLoader = new LondonRobotLoader();
         config = new LondonRobotConfigManager();
         this.setLayout(layout);
@@ -135,7 +142,8 @@ public class MenuPanel extends JPanel
         btnAddAllBots = new JButton(">>");
         btnRemoveBot = new JButton("<");
         btnRemoveAllBots = new JButton("<<");
-        btnStartMatch = new JButton("Start");
+        btnStartMatch = new JButton("Match");
+        btnStartTournament = new JButton("Tournament");
         btnLoadBot = new JButton("Load Bot");
 
         botMap = new HashMap<String, String>();
@@ -184,6 +192,7 @@ public class MenuPanel extends JPanel
         pnlBotSelButtons.add(btnRemoveBot);
         pnlBotSelButtons.add(btnRemoveAllBots);
         pnlBotSelButtons.add(btnStartMatch);
+        pnlBotSelButtons.add(btnStartTournament);
 
         pnlSelected.add(lblSelected, BorderLayout.NORTH);
         pnlSelected.add(lstSelectedBots, BorderLayout.CENTER);
@@ -292,15 +301,54 @@ public class MenuPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                GameMaster game = new SingleGame(config);
-                for (int i = 0; i < lsSelectedModel.size(); i++)
+                final GameMaster gm = new SingleGame(config);
+                
+                gm.addGameListener(new GameListener()
                 {
-                    game.addRobotInstance(lsSelectedModel.getElementAt(i));
-                }
-                parent.showGame(game);
-                config.initComplete();
-                game.start();
-                gameRunning = true;
+                    @Override
+                    public void gameOver(GameResult result)
+                    {
+                        gm.stop();
+                        UUID winnerID = result.getWinner();
+                        String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
+                        JOptionPane.showMessageDialog(MenuPanel.this.parent, winner + " won!");
+                        MenuPanel.this.parent.destroyGame();
+                        MenuPanel.this.parent.showPanel(
+                                new PostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
+                    }
+
+                    @Override
+                    public void newGame(GameMaster gm)
+                    {
+                        parent.showGame(gm);
+                    }
+                    
+                });
+                startGame(gm);
+            }
+        });
+
+        btnStartTournament.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                GameMaster gm = new TournamentGame(config);
+                gm.addGameListener(new GameListener() {
+
+                    @Override
+                    public void gameOver(GameResult result)
+                    {
+                        System.out.println("Tournament Over (should print results)");
+                    }
+
+                    @Override
+                    public void newGame(GameMaster gm)
+                    {
+                        parent.showGame(gm);
+                    }
+                });
+                startGame(gm);
             }
         });
 
@@ -334,6 +382,18 @@ public class MenuPanel extends JPanel
         }
     }
 
+    private void startGame(final GameMaster gm)
+    {
+        
+        for (int i = 0; i < lsSelectedModel.size(); i++)
+        {
+            gm.addRobotInstance(lsSelectedModel.getElementAt(i));
+        }
+        config.initComplete();
+        gm.start();
+        gameRunning = true;
+    }
+
     public void showError(Exception ex)
     {
         ex.printStackTrace(System.err);
@@ -348,13 +408,13 @@ public class MenuPanel extends JPanel
             gameRunning = false;
         }
     }
-    
+
     private void flushConfig()
     {
         config = new LondonRobotConfigManager();
         lsSelectedModel.clear();
     }
-    
+
     class MenuPanel_Layout implements LayoutManager
     {
 
@@ -425,7 +485,7 @@ public class MenuPanel extends JPanel
                 hVal = (h / 8) * 7;
                 c.setBounds(insets.left + num1, insets.top, (int) wVal, (int) hVal);
                 num1 += c.getSize().width;
-                pnlBotSelButtons.setLayout(new GridLayout(5, 1, 0, (int) (hVal / 7)));
+                pnlBotSelButtons.setLayout(new GridLayout(6, 1, 0, (int) (hVal / 9)));
                 pnlBotSelButtons.setBorder(BorderFactory.createEmptyBorder(wVal / 12, wVal / 3, wVal / 12, wVal / 3));
             }
 

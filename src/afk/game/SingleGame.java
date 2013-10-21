@@ -69,6 +69,10 @@ public class SingleGame extends AbstractGameMaster
     public void start() 
     {
         gameEngine.startGame();
+        for (GameListener listener : listeners)
+        {
+            listener.newGame(this);
+        }
     }
 
     @Override

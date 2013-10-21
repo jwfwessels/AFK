@@ -146,8 +146,12 @@ public class RootWindow extends JFrame implements Frontend
         gamePanel = new GamePanel(this, game);
 
         showPanel(gamePanel, "game");
-        gamePanel.glCanvas.requestFocus();
 
+    }
+    
+    public void destroyGame()
+    {
+        destroyMe(gamePanel);
     }
 
     public void showConfigPanel(Robot robot)
