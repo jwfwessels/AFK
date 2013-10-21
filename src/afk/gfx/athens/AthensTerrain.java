@@ -232,6 +232,8 @@ public class AthensTerrain extends Mesh
         public void load(GL2 gl)
                 throws IOException
         {
+            super.load(gl);
+            
             if (this.loaded.get()) return;
             
             gl.glNewList(this.handle, GL2.GL_COMPILE);
