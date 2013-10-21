@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,11 +19,13 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
 
     private SingleGame currentGame = null;
     private RobotConfigManager config;
+    private Map<UUID, Robot> allRobots = new HashMap<UUID, Robot>();
     private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
-    private Map<UUID, Robot> nextRoundRobots = new HashMap<UUID, Robot>();
     private Map<UUID, Integer> scores = new HashMap<UUID, Integer>();
     private Robot[][] groups = null;
-    private int currentGroup;
+    private int currentGroup = 0;
+    private int currentRound = 0;
+    private int botsThisRounds = 0;
     // TODO: these should be user specified some time
     public static final int MIN_GROUP_SIZE = 3;
     public static final int MAX_GROUP_SIZE = 4;
@@ -45,14 +48,14 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void addRobotInstance(Robot robot)
     {
-        robots.put(robot.getId(), robot);
+        allRobots.put(robot.getId(), robot);
         scores.put(robot.getId(), 0);
     }
 
     @Override
     public void removeAllRobotInstances()
     {
-        robots.clear();
+        allRobots.clear();
         scores.clear();
     }
 
@@ -65,7 +68,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void removeRobotInstance(UUID robot)
     {
-        robots.remove(robot);
+        allRobots.remove(robot);
         scores.remove(robot);
     }
 
@@ -81,8 +84,10 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         UUID[] bots = result.getTop();
         for (int i = 0; i < bots.length; i++)
         {
-            if (i < MAX_GROUP_SIZE/2)
-                nextRoundRobots.put(bots[i], robots.get(bots[i]));
+            if (i < MAX_GROUP_SIZE / 2)
+            {
+                robots.put(bots[i], allRobots.get(bots[i]));
+            }
             int score = scores.get(bots[i]);
             score += result.getScore(bots[i]);
             scores.put(bots[i], score);
@@ -93,6 +98,10 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void newGame(GameMaster gm)
     {
+        JOptionPane.showMessageDialog(null,
+                "Round " + currentRound + "\n"
+                + "Group " + (currentGroup+1) + "/" + groups.length + "\n"
+                + "Bots: " + botsThisRounds);
         for (GameListener listener : listeners)
         {
             listener.newGame(gm);
@@ -157,15 +166,17 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void start()
     {
+        robots.putAll(allRobots);
         nextGame();
     }
 
     private void nextRound()
     {
+        botsThisRounds = robots.size();
         groups = makeGroups();
-        robots = nextRoundRobots;
-        nextRoundRobots = new HashMap<UUID, Robot>();
+        robots.clear();
         currentGroup = 0;
+        currentRound++;
     }
 
     private void nextGame()
@@ -183,11 +194,29 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         currentGame.addGameListener(this);
         for (int i = 0; i < groups[currentGroup].length; i++)
         {
+            if (groups[currentGroup][i] == null)
+            {
+                printGroups();
+            }
             currentGame.addRobotInstance(groups[currentGroup][i]);
         }
         currentGame.start();
     }
 
+    private void printGroups()
+    {
+        System.out.print("[ ");
+        for (int i = 0; i < groups.length; i++)
+        {
+                for (int j = 0; j < groups[i].length; j++)
+                {
+                        System.out.print((groups[i][j] == null ? 0 : 1) + " ");
+                }
+                if (i != groups.length-1) System.out.print("| ");
+        }
+        System.out.println("]");
+    }
+    
     @Override
     public void stop()
     {
