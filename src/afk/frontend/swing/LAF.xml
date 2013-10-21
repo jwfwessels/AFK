@@ -53,11 +53,20 @@
         
         <style id="panelStyle">
             <object  class="afk.frontend.swing.AFKPanelPainter" id="panPainter"/>
-            <defaultsProperty key="Heading.Panel.first" type="idref" value="darkGreyless2"/>
-            <defaultsProperty key="Heading.Panel.second" type="idref" value="darkGrey"/>
+            <defaultsProperty key="Panel.first" type="idref" value="darkGreyless2"/>
+            <defaultsProperty key="Panel.second" type="idref" value="darkGrey"/>
             <painter method="panelBackground" idref="panPainter"/>
         </style>
         <bind style="panelStyle" type="region" key="Panel"/>
+        
+        <style id="buttonStyle">
+            <object  class="afk.frontend.swing.AFKButtonPainter" id="butPainter"/>
+            <defaultsProperty key="Button.first" type="idref" value="mediumGrey"/>
+            <defaultsProperty key="Button.second" type="idref" value="lightGray"/>
+            <painter method="buttonBackground" idref="butPainter"/>
+            <painter method="buttonBorder" idref="butPainter"/>
+        </style>
+        <bind style="buttonStyle" type="region" key="Button"/>
         
        <!--<style id="buttonStyle">
             <state>

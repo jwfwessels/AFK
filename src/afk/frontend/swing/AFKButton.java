@@ -12,8 +12,8 @@ import javax.swing.JButton;
  */
 public class AFKButton extends JButton
 {
-    public AFKButton()
+    public AFKButton(String value)
     {
-        super();
+        super(value);
     }
 }

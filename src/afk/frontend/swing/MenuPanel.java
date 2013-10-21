@@ -140,12 +140,12 @@ public class MenuPanel extends JPanel
         lblSelected = new JLabel("Selected Bots");
         pnlSelected.setLayout(new BorderLayout());
 
-        btnAddBot = new JButton(">");
-        btnAddAllBots = new JButton(">>");
-        btnRemoveBot = new JButton("<");
-        btnRemoveAllBots = new JButton("<<");
-        btnStartMatch = new JButton("Start");
-        btnLoadBot = new JButton("Load Bot");
+        btnAddBot = new AFKButton(">");
+        btnAddAllBots = new AFKButton(">>");
+        btnRemoveBot = new AFKButton("<");
+        btnRemoveAllBots = new AFKButton("<<");
+        btnStartMatch = new AFKButton("Start");
+        btnLoadBot = new AFKButton("Load Bot");
 
         botMap = new HashMap<String, String>();
 
