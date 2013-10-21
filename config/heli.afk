@@ -17,6 +17,7 @@ RobotToken
 Targetable
 TerrainDisplacement
 	height = 6
+Selectable
 
 -> heliBlades
 -> heliTurret

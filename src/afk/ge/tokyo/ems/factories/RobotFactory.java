@@ -45,11 +45,11 @@ public class RobotFactory implements Factory<RobotFactoryRequest>
         {
             throw new FactoryException(ex);
         }
-        entity.add(new Spawn(request.spawn, Vec4.VEC4_ZERO));
-        entity.add(new TextLabel(configManager.getProperty(id, "name")));
-        entity.add(new ImageComponent());
-        entity.addToDependents(new Paint(request.colour));
-        entity.addToDependents(new Controller(id));
+        entity.addComponent(new Spawn(request.spawn, Vec4.VEC4_ZERO));
+        entity.addComponent(new TextLabel(configManager.getProperty(id, "name")));
+        entity.addComponent(new ImageComponent());
+        entity.deepAddComponent(new Paint(request.colour));
+        entity.deepAddComponent(new Controller(id));
         return entity;
     }
     

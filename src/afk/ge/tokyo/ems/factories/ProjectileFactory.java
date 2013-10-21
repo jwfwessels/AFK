@@ -20,11 +20,11 @@ public class ProjectileFactory implements Factory<ProjectileFactoryRequest>
     {
         Entity entity = new Entity();
         State state = new State(request.pos, request.rot, request.scale);
-        entity.add(state);
+        entity.addComponent(state);
 
-        entity.add(new Velocity(request.forward.multiply(request.weapon.speed), Vec4.VEC4_ZERO));
-        entity.add(new Renderable(request.type, request.colour, 1.0f));
-        entity.add(new Bullet(request.weapon.range, request.weapon.damage, request.parent));
+        entity.addComponent(new Velocity(request.forward.multiply(request.weapon.speed), Vec4.VEC4_ZERO));
+        entity.addComponent(new Renderable(request.type, request.colour, 1.0f));
+        entity.addComponent(new Bullet(request.weapon.range, request.weapon.damage, request.parent));
 
         return entity;
     }

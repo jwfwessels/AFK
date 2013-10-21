@@ -2,9 +2,7 @@ package afk.bot.london;
 
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
-import afk.bot.RobotException;
 import afk.bot.RobotEngine;
-import afk.bot.RobotLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -13,30 +11,21 @@ import java.util.UUID;
  *
  * @author Jessica
  */
-public class London implements RobotEngine, RobotConfigManager
+public class London implements RobotEngine
 {
+    private RobotConfigManager config;
+    private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
 
-    private Map<UUID, AbstractRobot> robots = new HashMap<UUID, AbstractRobot>();
-    private Map<UUID, Map<String, String>> config = new HashMap<UUID, Map<String, String>>();
-    private LondonRobotLoader robotLoader;
-    // flag that states if bots are still in initialisation phase
-    private boolean init = true;
-
-    public London(RobotLoader robotLoader)
+    public London(RobotConfigManager config)
     {
-        this.robotLoader = (LondonRobotLoader) robotLoader;
+        this.config = config;
     }
 
     @Override
-    public Robot addRobot(String path) throws RobotException
+    public void addRobot(Robot robot) 
     {
-        AbstractRobot r = robotLoader.getRobotInstance(path);
-        r.setConfigManager(this);
-        UUID id = r.getId();
-        robots.put(id, r);
-        config.put(id, new HashMap<String, String>());
-        r.init();
-        return r;
+        UUID id = robot.getId();
+        robots.put(id, (AbstractRobot)robot);
     }
 
     @Override
@@ -49,40 +38,34 @@ public class London implements RobotEngine, RobotConfigManager
     public void removeRobot(UUID id)
     {
         robots.remove(id);
-        config.remove(id);
     }
 
     @Override
     public void removeAllRobots()
     {
         robots.clear();
-        config.clear();
-    }
-
-    @Override
-    public void initComplete()
-    {
-        init = false;
     }
 
     /// this is where bot execution actually happens
     // TODO: multithread this bad-boy
     @Override
-    public void execute()
+    public void execute(UUID id)
     {
-        if (init)
+        if (config.isInitComplete())
         {
             throw new RuntimeException("Executing before finishing init phase!");
         }
-        for (AbstractRobot robot : robots.values())
+        Robot robot = robots.get(id);
+        if (robot == null)
         {
-            robot.clearFlags();
-            robot.run();
+            throw new RuntimeException("Robot " + id + " does not exist in this engine.");
         }
+        robot.clearFlags();
+        robot.run();
     }
 
     @Override
-    public Robot[] getParticipants()
+    public Robot[] getAllRobots()
     {
         return robots.values().toArray(new Robot[0]);
     }
@@ -96,29 +79,13 @@ public class London implements RobotEngine, RobotConfigManager
     @Override
     public void setEvents(UUID id, RobotEvent events)
     {
-        robots.get(id).events = events;
-    }
-
-    @Override
-    public String getProperty(UUID id, String name)
-    {
-        return config.get(id).get(name);
-    }
-
-    @Override
-    public void setProperty(UUID id, String name, String value)
-    {
-        if (!init)
-        {
-            throw new RuntimeException("Property set outside of init phase");
-        }
-        config.get(id).put(name, value);
+        robots.get(id).setEvents(events);
     }
 
     @Override
     public RobotConfigManager getConfigManager()
     {
-        return this;
+        return config;
     }
     
 }

@@ -16,5 +16,6 @@ Renderable
 RobotToken
 Targetable
 SnapToTerrain
+Selectable
 
 -> smallTankTurret

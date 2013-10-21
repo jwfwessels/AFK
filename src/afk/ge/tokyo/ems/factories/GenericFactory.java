@@ -48,7 +48,7 @@ public class GenericFactory implements Factory<GenericFactoryRequest>
                         field.set(component, getWrapperClass(fieldClass).getMethod("valueOf", String.class).invoke(null, e2.getValue()));
                     }
                 }
-                entity.add(component);
+                entity.addComponent(component);
             }
             catch (ReflectiveOperationException ex)
             {
@@ -58,7 +58,7 @@ public class GenericFactory implements Factory<GenericFactoryRequest>
         for (GenericFactoryRequest r : request.dependents)
         {
             Entity dep = create(r);
-            dep.add(new Parent(entity));
+            dep.addComponent(new Parent(entity));
             entity.addDependent(dep);
         }
         return entity;

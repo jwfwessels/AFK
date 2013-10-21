@@ -33,6 +33,12 @@ public interface Robot
      * @return 
      */
     public boolean[] getActionFlags();
+    
+    /**
+     * Sets the events for this tick.
+     * @param events the events.
+     */
+    public void setEvents(RobotEvent events);
 
     /**
      * Gets the robot's unique ID.
@@ -58,5 +64,11 @@ public interface Robot
      * @return the RobotConfigManager associated with this robot.
      */
     public RobotConfigManager getConfigManager();
+    
+    /**
+     * Sets the RobotConfigManager to associate with this robot.
+     * @return the RobotConfigManager to associate with this robot.
+     */
+    public void setConfigManager(RobotConfigManager config);
     
 }

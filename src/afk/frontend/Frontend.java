@@ -1,6 +1,6 @@
 package afk.frontend;
 
-import afk.game.Game;
+import afk.game.GameMaster;
 
 /**
  *
@@ -10,5 +10,5 @@ public interface Frontend
 {
     public void showMain();
     
-    public void showGame(Game game);
+    public void showGame(GameMaster game);
 }
