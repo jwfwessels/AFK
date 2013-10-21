@@ -1,11 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<synth>
-	  <style id="basicStyle">
-		    <font name="Verdana" size="16"/>
-		    <state>
-	            <color value="MAGENTA" type="BACKGROUND"/>
-	            <color value="#000000" type="FOREGROUND"/>
-		    </state>
-	  </style>
-	  <bind style="basicStyle" type="region" key=".*"/>
+<synth> 
+    
+        <object class="javax.swing.plaf.ColorUIResource" id="darkGrey">
+            <int>33</int>
+            <int>33</int>
+            <int>33</int>
+        </object>
+        <!-- #2e2e2e -->
+        <object class="javax.swing.plaf.ColorUIResource" id="darkGreyless">
+            <int>46</int>
+            <int>46</int>
+            <int>46</int>
+        </object>
+        <!-- #373737 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="darkGreyless2">
+            <int>55</int>
+            <int>55</int>
+            <int>55</int>
+        </object>
+        <!-- #212121 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="mediumGrey">
+            <int>186</int>
+            <int>187</int>
+            <int>188</int>
+        </object>
+        <!-- #212121 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="lightGray">
+            <int>220</int>
+            <int>220</int>
+            <int>220</int>
+        </object> 
+    
+    
+    
+    
+    
+            
+        <style id="mainStyle">
+            <opaque value="TRUE"/>
+            <font name="Dialog" size="14"/>
+            <state>
+                <color value="#CCCCCC" type="BACKGROUND"/>
+                <color value="#000000" type="FOREGROUND"/>
+            </state>
+	</style>
+	<bind style="mainStyle" type="region" key=".*"/>
+        
+        <!--<style id="panelStyle">
+            <state>
+                <font name="Verdana" size="14"/>
+                <color value="#FFFFFF" type="BACKGROUND"/>
+                <color value="#BB0000" type="FOREGROUND"/>
+            </state>
+	</style>
+        <bind style="panelStyle" type="region" key="AFKPanel"/>-->
+	<!--<bind style="panelStyle" type="name" key="BotSelPanel"/>-->
+        
+        <style id="panelStyle">
+            <object  class="afk.frontend.swing.AFKPanelPainter" id="panPainter"/>
+            <defaultsProperty key="Heading.Panel.first" type="idref" value="darkGreyless2"/>
+            <defaultsProperty key="Heading.Panel.second" type="idref" value="darkGrey"/>
+            <painter method="panelBackground" idref="panPainter"/>
+        </style>
+        <bind style="panelStyle" type="region" key="Panel"/>
+        
+        
+        
+        
+        
+       <style id="buttonStyle">
+            <state>
+                <font name="Verdana" size="14"/>
+                <color value="#FFFFFF" type="BACKGROUND"/>
+                <color value="#FF0000" type="FOREGROUND"/>
+            </state>
+	</style>
+	<bind style="buttonStyle" type="region" key="Button"/>
+        
+        <!--<style id="labelStyle">
+            <state>
+                <font name="Verdana" size="14"/>
+                <color value="#D2DFF2" type="BACKGROUND"/>
+                <color value="#000000" type="TEXT_FOREGROUND"/>
+            </state>
+	</style>
+	<bind style="labelStyle" type="region" key="Label"/>-->
 </synth>

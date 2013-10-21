@@ -117,17 +117,23 @@ public class MenuPanel extends JPanel
         initComponents();
         addComponents();
         styleComponents();
+        
+        System.out.println("COLOUR:" + pnlBotSelButtons.getBackground());
     }
 
     private void initComponents()
     {
+        //pnlAvailable = new JPanel();
         pnlAvailable = new JPanel();
         pnlAvailable.setLayout(new BorderLayout());
         lblAvailable = new JLabel("Available Bots");
 
-        pnlBotSelButtons = new JPanel();
+        //pnlBotSelButtons = new JPanel();
+        pnlBotSelButtons = new AFKPanel();
+        pnlBotSelButtons.setName("PanelBotSel");
         //pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
 
+        //pnlSelected = new JPanel();
         pnlSelected = new JPanel();
         lblSelected = new JLabel("Selected Bots");
         pnlSelected.setLayout(new BorderLayout());
@@ -150,6 +156,7 @@ public class MenuPanel extends JPanel
         lsAvailableModel = new DefaultListModel();
         lsSelectedModel = new DefaultListModel();
 
+        //pnlRobotError = new JPanel();
         pnlRobotError = new JPanel();
         txtErrorConsole = new JTextArea();
         txtErrorConsole.setEditable(false);
@@ -163,12 +170,6 @@ public class MenuPanel extends JPanel
     /*
      * Used for synth look and feel
      */
-    private void setComponentNames()
-    {
-        pnlAvailable.setName("ListPanel");
-        pnlSelected.setName("ListPanel");
-    }
-
     private void addComponents()
     {
         Iterator it = botMap.keySet().iterator();
@@ -223,9 +224,6 @@ public class MenuPanel extends JPanel
         pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));*/
 
-        
-        setComponentNames();
-        
         btnAddBot.addActionListener(new ActionListener()
         {
             @Override
