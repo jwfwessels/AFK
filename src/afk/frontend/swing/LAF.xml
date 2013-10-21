@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<synth> 
-    
+<synth>   
+    <!-- TODO: replace colours with AFK colours --> 
         <object class="javax.swing.plaf.ColorUIResource" id="darkGrey">
             <int>33</int>
             <int>33</int>
@@ -29,13 +29,8 @@
             <int>220</int>
             <int>220</int>
             <int>220</int>
-        </object> 
-    
-    
-    
-    
-    
-            
+        </object>  
+        
         <style id="mainStyle">
             <opaque value="TRUE"/>
             <font name="Dialog" size="14"/>
@@ -64,18 +59,14 @@
         </style>
         <bind style="panelStyle" type="region" key="Panel"/>
         
-        
-        
-        
-        
-       <style id="buttonStyle">
+       <!--<style id="buttonStyle">
             <state>
                 <font name="Verdana" size="14"/>
                 <color value="#FFFFFF" type="BACKGROUND"/>
                 <color value="#FF0000" type="FOREGROUND"/>
             </state>
 	</style>
-	<bind style="buttonStyle" type="region" key="Button"/>
+	<bind style="buttonStyle" type="region" key="Button"/>-->
         
         <!--<style id="labelStyle">
             <state>

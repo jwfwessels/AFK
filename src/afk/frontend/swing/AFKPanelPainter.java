@@ -18,19 +18,24 @@ import javax.swing.plaf.synth.SynthPainter;
 public class AFKPanelPainter extends SynthPainter
 {
     @Override
-    public void paintPanelBackground(SynthContext context, Graphics g,
-            int x, int y, int w, int h) {
-
+    public void paintPanelBackground(SynthContext context, Graphics g, int x, int y, int w, int h) 
+    {
+        
         Color start = UIManager.getColor("Heading.Panel.first");
         Color end = UIManager.getColor("Heading.Panel.second");
         Graphics2D g2 = (Graphics2D) g;
-//specify 2 points and the colours on either end. 
-//gradient will run perpendiculalar to tangent, thus mid of top x and bottme x
         GradientPaint grPaint = new GradientPaint(
                 (float) (x + w / 2), (float) y, start,
                 (float) w / 2, (float) h, end);
         g2.setPaint(grPaint);
         g2.fillRect(x, y, w, h);
         g2.setPaint(null);
+        
+    }
+    
+    @Override
+    public void paintPanelBorder(SynthContext context, Graphics g, int x, int y, int w, int h)
+    {
+        
     }
 }

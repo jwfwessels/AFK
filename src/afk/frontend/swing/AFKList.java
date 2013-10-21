@@ -2,18 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package afk.frontend.swing;
 
-import javax.swing.JPanel;
+import javax.swing.JList;
 
 /**
  *
  * @author Jessica
  */
-public class AFKPanel extends JPanel
+public class AFKList extends JList
 {
-    public AFKPanel()
+    public AFKList()
     {
         super();
     }
