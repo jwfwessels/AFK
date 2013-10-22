@@ -22,7 +22,7 @@ public class TextLabelSystem implements ISystem
 {
     public static final int PAD = 3;
     private FontRenderContext frc = new FontRenderContext(null, true, true);
-    private Font font = new Font("Century Gothic", Font.BOLD, 12);
+    private Font font = new Font("Myriad Pro", Font.BOLD, 10);
     private Engine engine;
 
     @Override
@@ -67,9 +67,9 @@ public class TextLabelSystem implements ISystem
 //        g.setBackground(Color.BLACK);
 //        g.clearRect(0, 0, image.getWidth(), image.getHeight());
 
-        g.setColor(new Color(0, 0, 0, 0.3f));
+        g.setColor(new Color(0xE62C2A2B));
         g.fillRoundRect(0, 0, image.getWidth(), image.getHeight(), 5, 5);
-        g.setColor(Color.YELLOW);
+        g.setColor(new Color(0xD1D2D4));
         g.drawString(str, PAD, PAD+metrics.getAscent());
 
         g.dispose();
