@@ -6,6 +6,7 @@ package afk.frontend.swing;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -23,14 +24,17 @@ public class AFKListPainter extends SynthPainter
 {
     @Override
     public void paintListBackground(SynthContext context, Graphics g, int x, int y, int w, int h)
-    {
-        Graphics2D g2 = (Graphics2D) g;
-        Color start = UIManager.getColor("List.first");
-        Color end = UIManager.getColor("List.second");
-        GradientPaint grPaint = new GradientPaint((float) (x + w / 2), (float) y, start, (float) w / 2, (float) h, end);
-        g2.setPaint(grPaint);
-        g2.fillRect(x, y, w, h);
-        g2.setPaint(null);
+    {  
+        int state = context.getComponentState();
+       // if((state & 32) == 0) //selected
+        
+            Graphics2D g2 = (Graphics2D) g;
+            Color start = UIManager.getColor("List.first");
+            Color end = UIManager.getColor("List.second");
+            GradientPaint grPaint = new GradientPaint((float) (x + w / 2), (float) y, start, (float) w / 2, (float) h, end);
+            g2.setPaint(grPaint);
+            g2.fillRect(x, y, w, h);
+            g2.setPaint(null);    
     }
     
     public void paintListBorder(SynthContext context, Graphics g, int x, int y, int w, int h)    

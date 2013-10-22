@@ -118,14 +118,14 @@
         
         <bind style="buttonStyle" type="region" key="Button"/>
         
-        <style id="listStyle">
+        <!--<style id="listStyle">
             <object  class="afk.frontend.swing.AFKListPainter" id="listPainter"/>
             <defaultsProperty key="List.first" type="idref" value="grey2"/>
             <defaultsProperty key="List.second" type="idref" value="grey4"/>
             <painter method="listBackground" idref="listPainter"/>
-            <painter method="listBorder" idref="listPainter" /> 
+            <painter method="listBorder" idref="listPainter" />
         </style>
         
-        <bind style="listStyle" type="region" key="List"/>
+        <bind style="listStyle" type="region" key="List"/>-->
 
 </synth>

@@ -167,6 +167,8 @@ public class MenuPanel extends JPanel
 
         configMenu = new JPopupMenu();
         configMenuItem = new JMenuItem("Configure");
+        
+        lstAvailableBots.setCellRenderer(new AFKListCellRenderer());
     }
     
     /*
@@ -182,7 +184,7 @@ public class MenuPanel extends JPanel
         }
         lstAvailableBots.setModel(lsAvailableModel);
         lstSelectedBots.setModel(lsSelectedModel);
-
+        
         this.add(pnlAvailable);
         this.add(pnlBotSelButtons);
         this.add(pnlSelected);
