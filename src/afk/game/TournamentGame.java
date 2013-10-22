@@ -97,7 +97,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         } else
         {
             displayScores(result);
-            nextGame();
+//            nextGame();
         }
     }
 
@@ -225,7 +225,8 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         currentRound++;
     }
 
-    private void nextGame()
+    @Override
+    public void nextGame()
     {
         if (currentGame != null)
         {

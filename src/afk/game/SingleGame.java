@@ -66,13 +66,19 @@ public class SingleGame extends AbstractGameMaster
     }
 
     @Override
-    public void start() 
+    public void start()
     {
         gameEngine.startGame();
         for (GameListener listener : listeners)
         {
             listener.newGame(this);
         }
+    }
+
+    @Override
+    public void nextGame()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

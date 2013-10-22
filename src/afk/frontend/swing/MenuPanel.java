@@ -8,6 +8,7 @@ import afk.bot.RobotLoader;
 import afk.bot.london.LondonRobotConfigManager;
 import afk.bot.london.LondonRobotLoader;
 import afk.frontend.swing.postgame.PostGamePanel;
+import afk.frontend.swing.postgame.TournamentPostGamePanel;
 import afk.game.GameListener;
 import afk.game.SingleGame;
 import afk.game.TournamentGame;
@@ -363,8 +364,9 @@ public class MenuPanel extends JPanel
                     @Override
                     public void displayScores(GameResult result)
                     {
+                        System.out.println("TEST");
                         MenuPanel.this.parent.showPanel(
-                                new PostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
+                                new TournamentPostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
                     }
                 });
                 startGame(gm);
