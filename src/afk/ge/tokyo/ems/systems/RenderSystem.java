@@ -2,17 +2,19 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
+import afk.ge.ems.Utils;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
-import afk.ge.tokyo.ems.nodes.HUDNode;
+import afk.ge.tokyo.ems.nodes.HUDTagNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.AbstractCamera;
 import afk.gfx.GfxEntity;
 import afk.gfx.GfxHUD;
 import afk.gfx.GraphicsEngine;
+import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import java.awt.image.BufferedImage;
@@ -96,50 +98,42 @@ public class RenderSystem implements ISystem
             }
         }
 
-        List<HUDNode> hnodes = engine.getNodeList(HUDNode.class);
-        for (HUDNode hnode : hnodes)
+        List<HUDTagNode> tnodes = engine.getNodeList(HUDTagNode.class);
+        for (HUDTagNode tnode : tnodes)
         {
-            BufferedImage img = hnode.image.getImage();
+            BufferedImage img = tnode.image.getImage();
 
             if (img == null)
             {
                 continue;
             }
 
-            GfxHUD hud = gfxEngine.getGfxHUD(hnode.image);
+            Mat4 world = Utils.getMatrix(tnode.state);
 
-            Renderable r = hnode.entity.getComponent(Renderable.class);
-            if (r == null)
+            Vec4 p = gfxCamera.projection.multiply(
+                    gfxCamera.view.multiply(
+                    world.multiply(
+                    Vec3.VEC3_ZERO.toPoint())));
+
+            float depth = p.getZ() / p.getW();
+            if (depth < -1 || depth > 1)
             {
-                hud.setPosition((int) hnode.state.pos.getX(),
-                        (int) hnode.state.pos.getY());
-            } else
-            {
-                GfxEntity gfx = gfxEngine.getGfxEntity(r);
-
-                Vec4 p = gfxCamera.projection.multiply(
-                        gfxCamera.view.multiply(
-                        gfx.getWorldMatrix().multiply(
-                        Vec3.VEC3_ZERO.toPoint())));
-
-                float depth = p.getZ() / p.getW();
-                if (depth < -1 || depth > 1)
-                {
-                    // FIXME: need some interface for aborting rendering of objects
-                    hud.setPosition(-9999, -9999);
-                    continue;
-                }
-
-                int x = (int) ((p.getX() / p.getW() + 1.0f) * 0.5f * gfxEngine.getWidth());
-                int y = (int) ((1.0f - (p.getY() / p.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight());
-
-                hud.setPosition(x, y);
+                continue;
             }
+            
+            GfxHUD hud = gfxEngine.getGfxHUD(tnode.image);
 
-            if (hnode.image.isUpdated())
+            int x = (int) ((p.getX() / p.getW() + 1.0f) * 0.5f * gfxEngine.getWidth()) + tnode.tag.x;
+            int y = (int) ((1.0f - (p.getY() / p.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight()) + tnode.tag.y;
+            if (tnode.tag.centerX) x -= tnode.image.getImage().getWidth()/2.0f;
+            if (tnode.tag.centerY) y -= tnode.image.getImage().getHeight()/2.0f;
+
+            hud.setPosition(x, y);
+
+            if (tnode.image.isUpdated())
             {
                 hud.setImage(img);
-                hnode.image.setUpdated(false);
+                tnode.image.setUpdated(false);
             }
         }
 

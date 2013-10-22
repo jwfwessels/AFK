@@ -1,6 +1,6 @@
 package afk.gfx;
 
-import afk.ge.tokyo.ems.components.ImageComponent;
+import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
 import com.hackoeur.jglm.Vec3;
@@ -107,7 +107,7 @@ public interface GraphicsEngine
     
     public void prime();
     public GfxEntity getGfxEntity(Renderable renderable);
-    public GfxHUD getGfxHUD(ImageComponent image);
+    public GfxHUD getGfxHUD(HUDImage image);
     public void post();
 
     /**

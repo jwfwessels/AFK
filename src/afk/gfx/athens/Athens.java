@@ -1,6 +1,6 @@
 package afk.gfx.athens;
 
-import afk.ge.tokyo.ems.components.ImageComponent;
+import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.AbstractCamera;
@@ -46,9 +46,9 @@ public class Athens implements GraphicsEngine
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
-    protected Map<ImageComponent, AthensHUD> huds = new LinkedHashMap<ImageComponent, AthensHUD>();
+    protected Map<HUDImage, AthensHUD> huds = new LinkedHashMap<HUDImage, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
-    protected List<ImageComponent> removedHUD = new ArrayList<ImageComponent>();
+    protected List<HUDImage> removedHUD = new ArrayList<HUDImage>();
     protected List<AthensEntity> entitiesDebug = new ArrayList<AthensEntity>();
     private int w_width, w_height;
     private boolean[] keys = new boolean[NUM_KEYS];
@@ -300,7 +300,7 @@ public class Athens implements GraphicsEngine
         }
         removed.clear();
 
-        for (ImageComponent r : removedHUD)
+        for (HUDImage r : removedHUD)
         {
             huds.remove(r);
         }
@@ -522,7 +522,7 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
-    public GfxHUD getGfxHUD(ImageComponent image)
+    public GfxHUD getGfxHUD(HUDImage image)
     {
         AthensHUD hud = huds.get(image);
         if (hud == null)
@@ -544,7 +544,7 @@ public class Athens implements GraphicsEngine
                 removed.add(e.getKey());
             }
         }
-        for (Map.Entry<ImageComponent, AthensHUD> h : huds.entrySet())
+        for (Map.Entry<HUDImage, AthensHUD> h : huds.entrySet())
         {
             if (!h.getValue().used)
             {
