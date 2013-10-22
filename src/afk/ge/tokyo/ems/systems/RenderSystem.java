@@ -8,6 +8,7 @@ import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.nodes.HUDNode;
 import afk.ge.tokyo.ems.nodes.HUDTagNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
 import afk.gfx.AbstractCamera;
@@ -63,7 +64,8 @@ public class RenderSystem implements ISystem
 
         gfxEngine.prime();
         doRenderables();
-        doHUD(gfxCamera);
+        doHUDTags(gfxCamera);
+        doHUD();
 
         gfxEngine.post();
         gfxEngine.redisplay();
@@ -74,12 +76,36 @@ public class RenderSystem implements ISystem
     {
     }
 
-    private void doHUD(AbstractCamera gfxCamera)
+    private void doHUD()
     {
-        List<HUDTagNode> tnodes = engine.getNodeList(HUDTagNode.class);
-        for (HUDTagNode tnode : tnodes)
+        List<HUDNode> nodes = engine.getNodeList(HUDNode.class);
+        for (HUDNode node : nodes)
         {
-            BufferedImage img = tnode.image.getImage();
+            BufferedImage img = node.image.getImage();
+
+            if (img == null)
+            {
+                continue;
+            }
+            
+            GfxHUD hud = gfxEngine.getGfxHUD(node.image);
+            
+            hud.setPosition(node.hud.x, node.hud.y);
+
+            if (node.image.isUpdated())
+            {
+                hud.setImage(img);
+                node.image.setUpdated(false);
+            }
+        }
+    }
+    
+    private void doHUDTags(AbstractCamera gfxCamera)
+    {
+        List<HUDTagNode> nodes = engine.getNodeList(HUDTagNode.class);
+        for (HUDTagNode node : nodes)
+        {
+            BufferedImage img = node.image.getImage();
 
             if (img == null)
             {
@@ -87,12 +113,12 @@ public class RenderSystem implements ISystem
             }
 
             // TODO: pre-multiply ther matrices for performance
-            Mat4 world = Utils.getMatrix(tnode.state);
+            Mat4 world = Utils.getMatrix(node.state);
 
             Vec4 p = gfxCamera.projection.multiply(
                     gfxCamera.view.multiply(
                     world.multiply(
-                    new Vec3(0, tnode.tag.worldY, 0).toPoint())));
+                    new Vec3(0, node.tag.worldY, 0).toPoint())));
 
             Vec4 center = gfxCamera.projection.multiply(
                     gfxCamera.view.multiply(
@@ -105,31 +131,31 @@ public class RenderSystem implements ISystem
                 continue;
             }
 
-            GfxHUD hud = gfxEngine.getGfxHUD(tnode.image);
+            GfxHUD hud = gfxEngine.getGfxHUD(node.image);
 
             Point q = toScreen(p);
             Point r = toScreen(center);
             int yDiff = Math.abs(q.y - r.y);
-            if (yDiff < tnode.tag.minY)
+            if (yDiff < node.tag.minY)
             {
-                q.y = r.y - tnode.tag.minY * (tnode.tag.worldY < 0 ? -1 : 1);
+                q.y = r.y - node.tag.minY * (node.tag.worldY < 0 ? -1 : 1);
             }
-            q.x += (int) tnode.tag.xOffset;
-            if (tnode.tag.centerX)
+            q.x += (int) node.tag.xOffset;
+            if (node.tag.centerX)
             {
-                q.x -= tnode.image.getImage().getWidth() / 2.0f;
+                q.x -= node.image.getImage().getWidth() / 2.0f;
             }
-            if (tnode.tag.centerY)
+            if (node.tag.centerY)
             {
-                q.y -= tnode.image.getImage().getHeight() / 2.0f;
+                q.y -= node.image.getImage().getHeight() / 2.0f;
             }
 
             hud.setPosition(q.x, q.y);
 
-            if (tnode.image.isUpdated())
+            if (node.image.isUpdated())
             {
                 hud.setImage(img);
-                tnode.image.setUpdated(false);
+                node.image.setUpdated(false);
             }
         }
     }
