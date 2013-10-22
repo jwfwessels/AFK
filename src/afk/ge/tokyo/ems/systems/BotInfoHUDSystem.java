@@ -39,7 +39,7 @@ public class BotInfoHUDSystem implements ISystem
     public static final Color HEALTH_COLOUR = new Color(0xEE2524);
     public static final Color ENERGY_COLOUR = new Color(0x47B649);
     public static final Color TEXT_COLOUR = new Color(0xD1D2D4);
-    public static final Color BG_COLOUR = new Color(0x33313266, true);
+    public static final Color BG_COLOUR = new Color(0x66333132, true);
 
     public BotInfoHUDSystem(RobotConfigManager config)
     {

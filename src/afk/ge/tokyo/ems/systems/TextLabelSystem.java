@@ -22,7 +22,8 @@ import java.util.List;
  */
 public class TextLabelSystem implements ISystem
 {
-    public static final Color BG_COLOUR = new Color(0x2C2A2BFF, true);
+    int x = 0xFFFFFFFF;
+    public static final Color BG_COLOUR = new Color(0xB32C2A2B, true);
     public static final Color TEXT_COLOUR = new Color(0xD1D2D4);
     private final FontRenderContext FRC = new FontRenderContext(null, true, true);
     private final Font FONT = new Font("Myriad Pro", Font.BOLD, 12);
@@ -66,6 +67,7 @@ public class TextLabelSystem implements ISystem
                 if (node.entity == selectedEntity)
                 {
                     node.label.setSelected(true);
+                    selectedLabel = node.label;
                 }
             }
             if (node.label.isUpdated())
