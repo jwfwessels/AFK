@@ -5,7 +5,12 @@ import afk.ge.ems.ISystem;
 import afk.ge.tokyo.ems.components.TextLabel;
 import afk.ge.tokyo.ems.nodes.TextLabelNode;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -15,8 +20,10 @@ import java.util.List;
  */
 public class TextLabelSystem implements ISystem
 {
-
-    Engine engine;
+    public static final int PAD = 3;
+    private FontRenderContext frc = new FontRenderContext(null, true, true);
+    private Font font = new Font("Century Gothic", Font.BOLD, 12);
+    private Engine engine;
 
     @Override
     public boolean init(Engine engine)
@@ -34,7 +41,6 @@ public class TextLabelSystem implements ISystem
             
             if (node.label.isUpdated())
             {
-                System.out.println("I'm drawin a label!");
                 node.image.setImage(createTextLabel(node.label));
                 node.label.setUpdated(false);
             }
@@ -43,19 +49,28 @@ public class TextLabelSystem implements ISystem
     
     private BufferedImage createTextLabel(TextLabel label)
     {
-        BufferedImage image = new BufferedImage(100, 20, BufferedImage.TRANSLUCENT);
-        Graphics2D g = image.createGraphics();
-        
         String str = label.getText();
+        
+        LineMetrics metrics = font.getLineMetrics(str, frc);
+        Rectangle r = font.getStringBounds(str, frc).getBounds();
+        int width = r.width;
+        int height = (int)(metrics.getAscent()+metrics.getDescent());
+        
+        BufferedImage image = new BufferedImage(width+PAD*2, height+PAD*2, BufferedImage.TRANSLUCENT);
+        Graphics2D g = image.createGraphics();
+        g.setFont(font);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
 //        g.setBackground(Color.BLACK);
 //        g.clearRect(0, 0, image.getWidth(), image.getHeight());
-        int width = g.getFontMetrics().stringWidth(str);
 
         g.setColor(new Color(0, 0, 0, 0.3f));
-        g.fillRoundRect(0, 0, width+10, 20, 5, 5);
+        g.fillRoundRect(0, 0, image.getWidth(), image.getHeight(), 5, 5);
         g.setColor(Color.YELLOW);
-        g.drawString(str, 5, 15);
+        g.drawString(str, PAD, PAD+metrics.getAscent());
 
         g.dispose();
 
