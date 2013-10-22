@@ -319,8 +319,13 @@ public class MenuPanel extends JPanel
                     @Override
                     public void newGame(GameMaster gm)
                     {
-                        MenuPanel.this.parent.destroyGame();
                         parent.showGame(gm);
+                    }
+
+                    @Override
+                    public void displayScores(GameResult result)
+                    {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
                 });
                 startGame(gm);
@@ -335,6 +340,7 @@ public class MenuPanel extends JPanel
                 final GameMaster gm = new TournamentGame(config);
                 gm.addGameListener(new GameListener()
                 {
+                    
                     @Override
                     public void gameOver(GameResult result)
                     {
@@ -350,7 +356,15 @@ public class MenuPanel extends JPanel
                     @Override
                     public void newGame(GameMaster gm)
                     {
+                        MenuPanel.this.parent.destroyGame();
                         parent.showGame(gm);
+                    }
+
+                    @Override
+                    public void displayScores(GameResult result)
+                    {
+                        MenuPanel.this.parent.showPanel(
+                                new PostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
                     }
                 });
                 startGame(gm);

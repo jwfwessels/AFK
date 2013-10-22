@@ -94,10 +94,19 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         if (bots.length == 2)
         {
             tournamentOver();
-        }
-        else
+        } else
         {
+            displayScores(result);
             nextGame();
+        }
+    }
+
+    @Override
+    public void displayScores(GameResult result)
+    {
+        for (GameListener listener : listeners)
+        {
+            listener.gameOver(result);
         }
     }
 

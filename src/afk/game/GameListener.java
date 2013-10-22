@@ -19,4 +19,10 @@ public interface GameListener
      * @param gm the handle on the new game.
      */
     public void newGame(GameMaster gm);
+    
+    /**
+     * Called to display tournament tree and results between matches.
+     * @param result the result of the game.
+     */
+    public void displayScores(GameResult result);
 }
