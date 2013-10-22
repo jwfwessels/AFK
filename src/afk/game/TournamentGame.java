@@ -240,10 +240,6 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         currentGame.addGameListener(this);
         for (int i = 0; i < groups[currentGroup].length; i++)
         {
-            if (groups[currentGroup][i] == null)
-            {
-                printGroups();
-            }
             currentGame.addRobotInstance(groups[currentGroup][i]);
         }
         currentGame.start();
