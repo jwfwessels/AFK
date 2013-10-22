@@ -106,7 +106,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     {
         for (GameListener listener : listeners)
         {
-            listener.gameOver(result);
+            listener.displayScores(result);
         }
     }
 

@@ -357,14 +357,13 @@ public class MenuPanel extends JPanel
                     @Override
                     public void newGame(GameMaster gm)
                     {
-                        MenuPanel.this.parent.destroyGame();
                         parent.showGame(gm);
                     }
 
                     @Override
                     public void displayScores(GameResult result)
                     {
-                        System.out.println("TEST");
+                        MenuPanel.this.parent.destroyGame();
                         MenuPanel.this.parent.showPanel(
                                 new TournamentPostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
                     }
