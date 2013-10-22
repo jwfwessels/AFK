@@ -43,7 +43,7 @@ public class RobotFactory implements Factory<RobotFactoryRequest>
         }
         entity.addComponent(new Spawn(request.spawn, Vec4.VEC4_ZERO));
         entity.addComponent(new TextLabel(configManager.getProperty(id, "name")));
-        entity.addComponent(new HUDTag(0, 2, true, true));
+        entity.addComponent(new HUDTag(0, 1.2f, true, true));
         entity.addComponent(new HUDImage());
         entity.deepAddComponent(new Paint(request.colour));
         entity.deepAddComponent(new Controller(id));
