@@ -128,6 +128,7 @@ public class MenuPanel extends JPanel
         pnlAvailable = new JPanel();
         pnlAvailable.setLayout(new BorderLayout());
         lblAvailable = new JLabel("Available Bots");
+        lblAvailable.setName("label");
 
         //pnlBotSelButtons = new JPanel();
         pnlBotSelButtons = new AFKPanel();
@@ -138,6 +139,7 @@ public class MenuPanel extends JPanel
         pnlSelected = new JPanel();
         lblSelected = new JLabel("Selected Bots");
         pnlSelected.setLayout(new BorderLayout());
+        lblSelected.setName("label");
 
         btnAddBot = new AFKButton(">");
         btnAddAllBots = new AFKButton(">>");

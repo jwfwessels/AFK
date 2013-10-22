@@ -23,17 +23,10 @@ public class AFKButtonPainter extends SynthPainter
 {
     @Override
     public void paintButtonBackground(SynthContext context, Graphics g, int x, int y, int w, int h)
-    {
-        boolean pressed = false;
-        
+    {        
         int state = context.getComponentState();
         
         if((state & 4) == 0)
-        {
-            pressed = true;
-        }
-        
-        if(pressed)
         {
             Graphics2D g2 = (Graphics2D) g;
             Color start = UIManager.getColor("Button.third");

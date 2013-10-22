@@ -88,7 +88,7 @@
         
         <style id="mainStyle">
             <opaque value="TRUE"/>
-            <font name="Dialog" size="14"/>
+            <font name="Constantia" size="16"/>
             <state>
                 <color value="#333333" type="BACKGROUND"/>
                 <color value="#CCCCCC" type="FOREGROUND"/>
@@ -108,6 +108,8 @@
         <bind style="panelStyle" type="region" key="Panel"/>
         
         <style id="buttonStyle">
+            <property key="Button.margin" type="insets" value="5 5 5 5"/>
+            <font name="Copperplate Gothic Bold" size="16"/>
             <object  class="afk.frontend.swing.AFKButtonPainter" id="buttonPainter"/>
             <defaultsProperty key="Button.first" type="idref" value="grey3"/>
             <defaultsProperty key="Button.second" type="idref" value="grey5"/>
@@ -127,5 +129,15 @@
         </style>
         
         <bind style="listStyle" type="region" key="List"/>-->
+        
+        <style id="labelStyle">
+            <font name="Copperplate Gothic Bold" size="18"/>
+            <state>
+                <color value="#333333" type="BACKGROUND"/>
+                <color value="#CCCCCC" type="FOREGROUND"/>
+            </state>
+        </style>
+        
+        <bind style="labelStyle" type="name" key="label"/>
 
 </synth>
