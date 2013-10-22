@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -86,20 +84,20 @@ public class Engine implements EntityListener, FlagManager
             removeEntity(dep);
         }
     }
-    
+
     public void addGlobal(Object global)
     {
         globals.put(global.getClass(), global);
     }
-    
+
     public void removeGlobal(Class globalClass)
     {
         globals.remove(globalClass);
     }
-    
+
     public <T> T getGlobal(Class<T> globalClass)
     {
-        T global = (T)globals.get(globalClass);
+        T global = (T) globals.get(globalClass);
         if (global == null)
         {
             try
@@ -167,8 +165,7 @@ public class Engine implements EntityListener, FlagManager
         if (updating.get())
         {
             logicSystemsToAdd.add(system);
-        }
-        else
+        } else
         {
             if (system.init(this))
             {
@@ -182,8 +179,7 @@ public class Engine implements EntityListener, FlagManager
         if (updating.get())
         {
             systemsToAdd.add(system);
-        }
-        else
+        } else
         {
             if (system.init(this))
             {
@@ -228,7 +224,7 @@ public class Engine implements EntityListener, FlagManager
             addEntity(e);
         }
         toAdd.clear();
-        
+
         for (ISystem s : systemsToAdd)
         {
             addSystem(s);
@@ -239,7 +235,7 @@ public class Engine implements EntityListener, FlagManager
             addLogicSystem(s);
         }
         logicSystemsToAdd.clear();
-        
+
         for (ISystem s : systemsToRemove)
         {
             removeSystem(s);
@@ -278,9 +274,6 @@ public class Engine implements EntityListener, FlagManager
 
     public void shutDown()
     {
-        while (updating.get())
-        { /* spin */ }
-
         for (ISystem s : logicSystems)
         {
             s.destroy();

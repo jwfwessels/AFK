@@ -60,7 +60,7 @@ public class Athens implements GraphicsEngine
     HUDCamera hudCamera;
     Mat4 monkeyWorld, skyboxWorld;
     // TODO: move this to a sun/light position
-    Vec3 origin_sun = new Vec3(-2.0f, 1.5f, 5.0f);
+    Vec3 origin_sun = new Vec3(-2.47511f, 3.87557f, 3.17864f);
     Vec3 sun = new Vec3(origin_sun);
     float daytime = 0.0f;
     static final float MOUSE_SENSITIVITY = 60.0f;
@@ -76,6 +76,7 @@ public class Athens implements GraphicsEngine
     private float fps = 0.0f;
     private JLabel fpsComp;
     private Vec3 bgColour = new Vec3(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f);
+    private boolean init = false;
 
     public Athens(boolean autodraw)
     {
@@ -379,6 +380,14 @@ public class Athens implements GraphicsEngine
 
         // initialise update time with current time
         lastUpdate = System.nanoTime();
+        
+        init = true;
+    }
+
+    @Override
+    public boolean isReady()
+    {
+        return init;
     }
 
     private void keyPressed(KeyEvent ke)
