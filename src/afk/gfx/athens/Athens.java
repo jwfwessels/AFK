@@ -30,6 +30,7 @@ import static afk.gfx.GfxUtils.*;
 import afk.gfx.HUDCamera;
 import java.io.IOException;
 import afk.gfx.Resource;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class Athens implements GraphicsEngine
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
-    protected Map<HUDImage, AthensHUD> huds = new LinkedHashMap<HUDImage, AthensHUD>();
+    protected Map<HUDImage, AthensHUD> huds = new HashMap<HUDImage, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
     protected List<HUDImage> removedHUD = new ArrayList<HUDImage>();
     protected List<AthensEntity> entitiesDebug = new ArrayList<AthensEntity>();
@@ -264,6 +265,7 @@ public class Athens implements GraphicsEngine
             }
             if (hud.isUpdated())
             {
+                hud.bind(gl);
                 hud.setup(gl);
             }
         }
@@ -544,11 +546,11 @@ public class Athens implements GraphicsEngine
                 removed.add(e.getKey());
             }
         }
-        for (Map.Entry<HUDImage, AthensHUD> h : huds.entrySet())
+        for (Map.Entry<HUDImage, AthensHUD> e : huds.entrySet())
         {
-            if (!h.getValue().used)
+            if (!e.getValue().used)
             {
-                removedHUD.add(h.getKey());
+                removedHUD.add(e.getKey());
             }
         }
     }

@@ -7,6 +7,7 @@ package afk.ge.tokyo.ems.components;
 public class TextLabel
 {
     private String text = "";
+    private boolean selected = false;
     private boolean updated = true;
 
     public TextLabel()
@@ -21,6 +22,12 @@ public class TextLabel
     public void setText(String text)
     {
         this.text = text;
+        updated = true;
+    }
+    
+    public void setSelected(boolean selected)
+    {
+        this.selected = selected;
         updated = true;
     }
 
@@ -38,6 +45,9 @@ public class TextLabel
     {
         this.updated = updated;
     }
-    
-    
+
+    public boolean isSelected()
+    {
+        return selected;
+    }
 }

@@ -64,8 +64,8 @@ public class RenderSystem implements ISystem
 
         gfxEngine.prime();
         doRenderables();
-        doHUDTags(gfxCamera);
         doHUD();
+        doHUDTags(gfxCamera);
 
         gfxEngine.post();
         gfxEngine.redisplay();
