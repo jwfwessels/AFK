@@ -61,6 +61,66 @@ public class RenderSystem implements ISystem
         display.screenHeight = gfxEngine.getHeight();
 
         gfxEngine.prime();
+        doRenderables();
+        doHUD(gfxCamera);
+
+        gfxEngine.post();
+        gfxEngine.redisplay();
+    }
+
+    @Override
+    public void destroy()
+    {
+    }
+
+    private void doHUD(AbstractCamera gfxCamera)
+    {
+        List<HUDTagNode> tnodes = engine.getNodeList(HUDTagNode.class);
+        for (HUDTagNode tnode : tnodes)
+        {
+            BufferedImage img = tnode.image.getImage();
+
+            if (img == null)
+            {
+                continue;
+            }
+
+            Mat4 world = Utils.getMatrix(tnode.state);
+
+            Vec4 p = gfxCamera.projection.multiply(
+                    gfxCamera.view.multiply(
+                    world.multiply(
+//                    Vec3.VEC3_ZERO // uncomment for screen-space offset ...
+                    new Vec3(0,tnode.tag.y,0)  // ... and then comment this one out
+                    .toPoint())));
+
+            float depth = p.getZ() / p.getW();
+            if (depth < -1 || depth > 1)
+            {
+                continue;
+            }
+            
+            GfxHUD hud = gfxEngine.getGfxHUD(tnode.image);
+
+            int x = (int) ((p.getX() / p.getW() + 1.0f) * 0.5f * gfxEngine.getWidth());
+            int y = (int) ((1.0f - (p.getY() / p.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight());
+            x += (int)tnode.tag.x;
+//            y += tnode.tag.y; // uncomment for screen-space offset
+            if (tnode.tag.centerX) x -= tnode.image.getImage().getWidth()/2.0f;
+            if (tnode.tag.centerY) y -= tnode.image.getImage().getHeight()/2.0f;
+
+            hud.setPosition(x, y);
+
+            if (tnode.image.isUpdated())
+            {
+                hud.setImage(img);
+                tnode.image.setUpdated(false);
+            }
+        }
+    }
+
+    private void doRenderables()
+    {
         List<RenderNode> nodes = engine.getNodeList(RenderNode.class);
         for (RenderNode node : nodes)
         {
@@ -97,52 +157,5 @@ public class RenderSystem implements ISystem
                 gfx.life = 0.0f;
             }
         }
-
-        List<HUDTagNode> tnodes = engine.getNodeList(HUDTagNode.class);
-        for (HUDTagNode tnode : tnodes)
-        {
-            BufferedImage img = tnode.image.getImage();
-
-            if (img == null)
-            {
-                continue;
-            }
-
-            Mat4 world = Utils.getMatrix(tnode.state);
-
-            Vec4 p = gfxCamera.projection.multiply(
-                    gfxCamera.view.multiply(
-                    world.multiply(
-                    Vec3.VEC3_ZERO.toPoint())));
-
-            float depth = p.getZ() / p.getW();
-            if (depth < -1 || depth > 1)
-            {
-                continue;
-            }
-            
-            GfxHUD hud = gfxEngine.getGfxHUD(tnode.image);
-
-            int x = (int) ((p.getX() / p.getW() + 1.0f) * 0.5f * gfxEngine.getWidth()) + tnode.tag.x;
-            int y = (int) ((1.0f - (p.getY() / p.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight()) + tnode.tag.y;
-            if (tnode.tag.centerX) x -= tnode.image.getImage().getWidth()/2.0f;
-            if (tnode.tag.centerY) y -= tnode.image.getImage().getHeight()/2.0f;
-
-            hud.setPosition(x, y);
-
-            if (tnode.image.isUpdated())
-            {
-                hud.setImage(img);
-                tnode.image.setUpdated(false);
-            }
-        }
-
-        gfxEngine.post();
-        gfxEngine.redisplay();
-    }
-
-    @Override
-    public void destroy()
-    {
     }
 }

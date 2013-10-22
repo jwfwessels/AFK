@@ -22,7 +22,7 @@ public class TextLabelSystem implements ISystem
 {
     public static final int PAD = 3;
     private FontRenderContext frc = new FontRenderContext(null, true, true);
-    private Font font = new Font("Myriad Pro", Font.BOLD, 10);
+    private Font font = new Font("Myriad Pro", Font.BOLD, 12);
     private Engine engine;
 
     @Override

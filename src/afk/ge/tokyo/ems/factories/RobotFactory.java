@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.ge.tokyo.ems.factories;
 
 import afk.bot.RobotConfigManager;
@@ -15,7 +11,6 @@ import afk.ge.tokyo.ems.components.Paint;
 import afk.ge.tokyo.ems.components.Spawn;
 import afk.ge.tokyo.ems.components.TextLabel;
 import com.hackoeur.jglm.Vec4;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -48,7 +43,7 @@ public class RobotFactory implements Factory<RobotFactoryRequest>
         }
         entity.addComponent(new Spawn(request.spawn, Vec4.VEC4_ZERO));
         entity.addComponent(new TextLabel(configManager.getProperty(id, "name")));
-        entity.addComponent(new HUDTag(0, -50, true, false));
+        entity.addComponent(new HUDTag(0, 2, true, true));
         entity.addComponent(new HUDImage());
         entity.deepAddComponent(new Paint(request.colour));
         entity.deepAddComponent(new Controller(id));
