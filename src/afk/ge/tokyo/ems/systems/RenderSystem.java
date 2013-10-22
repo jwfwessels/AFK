@@ -17,6 +17,7 @@ import afk.gfx.GraphicsEngine;
 import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -85,31 +86,45 @@ public class RenderSystem implements ISystem
                 continue;
             }
 
+            // TODO: pre-multiply ther matrices for performance
             Mat4 world = Utils.getMatrix(tnode.state);
 
             Vec4 p = gfxCamera.projection.multiply(
                     gfxCamera.view.multiply(
                     world.multiply(
-//                    Vec3.VEC3_ZERO // uncomment for screen-space offset ...
-                    new Vec3(0,tnode.tag.y,0)  // ... and then comment this one out
-                    .toPoint())));
+                    new Vec3(0, tnode.tag.worldY, 0).toPoint())));
+
+            Vec4 center = gfxCamera.projection.multiply(
+                    gfxCamera.view.multiply(
+                    world.multiply(
+                    Vec3.VEC3_ZERO.toPoint())));
 
             float depth = p.getZ() / p.getW();
             if (depth < -1 || depth > 1)
             {
                 continue;
             }
-            
+
             GfxHUD hud = gfxEngine.getGfxHUD(tnode.image);
 
-            int x = (int) ((p.getX() / p.getW() + 1.0f) * 0.5f * gfxEngine.getWidth());
-            int y = (int) ((1.0f - (p.getY() / p.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight());
-            x += (int)tnode.tag.x;
-//            y += tnode.tag.y; // uncomment for screen-space offset
-            if (tnode.tag.centerX) x -= tnode.image.getImage().getWidth()/2.0f;
-            if (tnode.tag.centerY) y -= tnode.image.getImage().getHeight()/2.0f;
+            Point q = toScreen(p);
+            Point r = toScreen(center);
+            int yDiff = Math.abs(q.y - r.y);
+            if (yDiff < tnode.tag.minY)
+            {
+                q.y = r.y - tnode.tag.minY * (tnode.tag.worldY < 0 ? -1 : 1);
+            }
+            q.x += (int) tnode.tag.xOffset;
+            if (tnode.tag.centerX)
+            {
+                q.x -= tnode.image.getImage().getWidth() / 2.0f;
+            }
+            if (tnode.tag.centerY)
+            {
+                q.y -= tnode.image.getImage().getHeight() / 2.0f;
+            }
 
-            hud.setPosition(x, y);
+            hud.setPosition(q.x, q.y);
 
             if (tnode.image.isUpdated())
             {
@@ -117,6 +132,13 @@ public class RenderSystem implements ISystem
                 tnode.image.setUpdated(false);
             }
         }
+    }
+
+    private Point toScreen(Vec4 ndc)
+    {
+        int x = (int) ((ndc.getX() / ndc.getW() + 1.0f) * 0.5f * gfxEngine.getWidth());
+        int y = (int) ((1.0f - (ndc.getY() / ndc.getW() + 1.0f) * 0.5f) * gfxEngine.getHeight());
+        return new Point(x, y);
     }
 
     private void doRenderables()
