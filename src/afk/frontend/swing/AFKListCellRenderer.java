@@ -37,15 +37,16 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
          //else 
          if (isSelected) 
          {
-             background = new Color(51, 51, 51);
-             foreground = new Color(254, 254, 254);
+
+             background = new Color(153, 153, 153);  //204
+             foreground = new Color(0, 0, 0);
          } 
          
          // unselected, and not the DnD drop location
          else 
          {
-             background = new Color(204, 204, 204);
-             foreground = new Color(0, 0, 0);
+             background = new Color(51, 51, 51);
+             foreground = new Color(204, 204, 204);
          }
 
          setBackground(background);

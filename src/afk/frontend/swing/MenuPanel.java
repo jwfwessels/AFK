@@ -168,11 +168,9 @@ public class MenuPanel extends JPanel
         configMenuItem = new JMenuItem("Configure");
         
         lstAvailableBots.setCellRenderer(new AFKListCellRenderer());
+        lstSelectedBots.setCellRenderer(new AFKListCellRenderer());
     }
     
-    /*
-     * Used for synth look and feel
-     */
     private void addComponents()
     {
         Iterator it = botMap.keySet().iterator();

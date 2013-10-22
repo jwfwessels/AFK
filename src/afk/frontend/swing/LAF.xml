@@ -45,42 +45,42 @@
         </object>
 
         <!-- #999999 -->
-        <object class="javax.swing.plaf.ColorUIResource" id="grey1">
+        <object class="javax.swing.plaf.ColorUIResource" id="grey7">
             <int>153</int>
             <int>153</int>
             <int>153</int>
         </object>
 
         <!-- #AAAAAA -->
-        <object class="javax.swing.plaf.ColorUIResource" id="grey2">
+        <object class="javax.swing.plaf.ColorUIResource" id="grey8">
             <int>170</int>
             <int>170</int>
             <int>170</int>
         </object>
 
         <!-- #BBBBBB -->
-        <object class="javax.swing.plaf.ColorUIResource" id="grey3">
+        <object class="javax.swing.plaf.ColorUIResource" id="grey9">
             <int>187</int>
             <int>187</int>
             <int>187</int>
         </object>
 
         <!-- #CCCCCC -->
-        <object class="javax.swing.plaf.ColorUIResource" id="grey4">
+        <object class="javax.swing.plaf.ColorUIResource" id="grey10">
             <int>204</int>
             <int>204</int>
             <int>204</int>
         </object>
 
         <!-- #DDDDDD -->
-        <object class="javax.swing.plaf.ColorUIResource" id="grey5">
+        <object class="javax.swing.plaf.ColorUIResource" id="grey11">
             <int>221</int>
             <int>221</int>
             <int>221</int>
         </object>
 
         <!-- #EEEEEE -->
-        <object class="javax.swing.plaf.ColorUIResource" id="grey6">
+        <object class="javax.swing.plaf.ColorUIResource" id="grey12">
             <int>238</int>
             <int>238</int>
             <int>238</int>
@@ -90,8 +90,8 @@
             <opaque value="TRUE"/>
             <font name="Dialog" size="14"/>
             <state>
-                <color value="#CCCCCC" type="BACKGROUND"/>
-                <color value="#000000" type="FOREGROUND"/>
+                <color value="#333333" type="BACKGROUND"/>
+                <color value="#CCCCCC" type="FOREGROUND"/>
             </state>
     	</style>
         
