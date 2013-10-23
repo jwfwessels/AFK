@@ -2,6 +2,7 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
+import static afk.ge.tokyo.FlagSources.*;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.nodes.NoClipCameraNode;
@@ -46,7 +47,7 @@ public class NoClipCameraSystem implements ISystem
             Vec3 dir = node.camera.at.subtract(node.camera.eye).getUnitVector();
             Vec3 right = dir.cross(node.camera.up).getUnitVector();
             
-            if (engine.getFlag("mouse", MouseEvent.BUTTON3))
+            if (engine.getFlag(MOUSE, MouseEvent.BUTTON3))
             {
                 final float lateral = dx * node.noclip.sensitivity;
                 final float vertical = dy * node.noclip.sensitivity;
@@ -56,23 +57,23 @@ public class NoClipCameraSystem implements ISystem
             
             float amount = node.noclip.normalSpeed;
 
-            if (engine.getFlag("keyboard", KeyEvent.VK_SHIFT))
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_SHIFT))
             {
                 amount *= node.noclip.sprintSpeed;
             }
 
-            if (engine.getFlag("keyboard", KeyEvent.VK_W))
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_W))
             {
                 moveForward(node.camera, dir, amount);
-            } else if (engine.getFlag("keyboard", KeyEvent.VK_S))
+            } else if (engine.getFlag(KEYBOARD, KeyEvent.VK_S))
             {
                 moveForward(node.camera, dir, -amount);
             }
 
-            if (engine.getFlag("keyboard", KeyEvent.VK_D))
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_D))
             {
                 moveRight(node.camera, right, amount);
-            } else if (engine.getFlag("keyboard", KeyEvent.VK_A))
+            } else if (engine.getFlag(KEYBOARD, KeyEvent.VK_A))
             {
                 moveRight(node.camera, right, -amount);
             }

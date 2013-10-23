@@ -4,6 +4,7 @@ import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
 import afk.ge.ems.Utils;
+import static afk.ge.tokyo.FlagSources.*;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.HUD;
@@ -44,6 +45,7 @@ public class RenderSystem implements ISystem
     
     private float fpsUpdateInterval = 0.5f;
     private float sinceLastFPS = fpsUpdateInterval;
+    private boolean tildePressed = false;
 
     public RenderSystem(GraphicsEngine gfxEngine)
     {
@@ -83,18 +85,28 @@ public class RenderSystem implements ISystem
         gfxEngine.post();
         gfxEngine.redisplay();
         
-        if (engine.getFlag("keyboard", KeyEvent.VK_BACK_QUOTE))
+        if (!tildePressed)
         {
-            if (fpsLabel == null)
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_BACK_QUOTE))
             {
-                fpsLabel = labelFactory.create(fpsLabelRequest);
-                sinceLastFPS = fpsUpdateInterval;
-                engine.addEntity(fpsLabel);
+                if (fpsLabel == null)
+                {
+                    fpsLabel = labelFactory.create(fpsLabelRequest);
+                    sinceLastFPS = fpsUpdateInterval;
+                    engine.addEntity(fpsLabel);
+                } else
+                {
+                    engine.removeEntity(fpsLabel);
+                    fpsLabel = null;
+                }
+                tildePressed = true;
             } else
             {
-                engine.removeEntity(fpsLabel);
-                fpsLabel = null;
+                tildePressed = false;
             }
+        } else
+        {
+            tildePressed = engine.getFlag(KEYBOARD, KeyEvent.VK_BACK_QUOTE);
         }
         
         if (fpsLabel != null)

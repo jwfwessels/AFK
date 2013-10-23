@@ -38,8 +38,8 @@ public class SpinnyCameraSystem implements ISystem
             node.camera.up = new Vec3(0, 1, 0);
             float y = (float) FastMath.sin(pitchRad) * node.spinny.distance;
             float r = (float) FastMath.cos(pitchRad) * node.spinny.distance;
-            float x = (float) FastMath.sin(angleRad) * r;
-            float z = (float) FastMath.cos(angleRad) * r;
+            float x = node.spinny.target.getX() + (float) FastMath.sin(angleRad) * r;
+            float z = node.spinny.target.getZ() + (float) FastMath.cos(angleRad) * r;
             node.camera.eye = new Vec3(x, y, z);
         }
     }
