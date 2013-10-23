@@ -137,18 +137,31 @@
                 <color value="#000F" type="BACKGROUND"/>
                 <color value="#CCCCCC" type="FOREGROUND"/>
             </state>
-
-
         </style>
         
         <bind style="labelStyle" type="region" key="label"/>
         
-       <style id="fileChooserStyle">
+       <!--<style id="fileChooserStyle">
             <object  class="afk.frontend.swing.AFKFileChooserPainter" id="fileChooserPainter"/>
-            <defaultsProperty key="FileChooser.firts" type="idref" value="grey4"/>
+            <defaultsProperty key="FileChooser.first" type="idref" value="grey4"/>
             <painter method="fileChooserBackground" idref="fileChooserPainter" />
         </style>
         
-        <bind style="fileChooserStyle" type="region" key="fileChooser"/>
+        <bind style="fileChooserStyle" type="region" key="fileChooser"/>-->
+        
+        <style id="textFieldStyle">
+            <insets top="5" bottom="5" left="5" right="5"/>
+            <object  class="afk.frontend.swing.AFKTextFieldPainter" id="textFieldPainter"/>
+            <defaultsProperty key="TextField.first" type="idref" value="grey4"/>
+            <defaultsProperty key="TextField.second" type="idref" value="grey6"/>
+            <!--<defaultsProperty key="TextField.third" type="idref" value="grey1"/>-->
+            <state>
+                <color value="#333333" type="FOREGROUND"/>
+            </state>
+            <painter method="textFieldBackground" idref="textFieldPainter" />
+            <painter method="textFieldBorder" idref="textFieldPainter" />
+        </style>
+        
+        <bind style="textFieldStyle" type="region" key="textField"/>
 
 </synth>
