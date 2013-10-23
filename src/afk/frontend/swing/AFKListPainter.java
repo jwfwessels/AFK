@@ -32,8 +32,9 @@ public class AFKListPainter extends SynthPainter
             Color start = UIManager.getColor("List.first");
             Color end = UIManager.getColor("List.second");
             GradientPaint grPaint = new GradientPaint((float) (x + w / 2), (float) y, start, (float) w / 2, (float) h, end);
+
             g2.setPaint(grPaint);
-            g2.fillRect(x, y, w, h);
+            g2.fillRoundRect(x, y, w, h, 10, 10);
             g2.setPaint(null);    
     }
     
@@ -45,10 +46,10 @@ public class AFKListPainter extends SynthPainter
         borderPaint = new Color(1, 1, 1);
         
         Stroke borderStroke;
-        borderStroke = new BasicStroke(2);
+        borderStroke = new BasicStroke(1);
         
         g2.setStroke(borderStroke);
-        g2.setPaint(borderPaint);
+        g2.setPaint(UIManager.getColor("List.second"));
         g2.drawRect(x, y, w-1, h-1);
     }
 }

@@ -27,7 +27,6 @@ public class Main
         catch (Exception e) 
         {
             e.printStackTrace();
-        }
-        System.out.println("SYNTH INIT DONE");
+        }        
     }
 }

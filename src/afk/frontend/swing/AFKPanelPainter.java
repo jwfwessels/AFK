@@ -36,6 +36,16 @@ public class AFKPanelPainter extends SynthPainter
     @Override
     public void paintPanelBorder(SynthContext context, Graphics g, int x, int y, int w, int h)
     {
-
+       /* Graphics2D g2 = (Graphics2D) g;
+        
+        Paint borderPaint;
+        borderPaint = new Color(1, 1, 1);
+        
+        Stroke borderStroke;
+        borderStroke = new BasicStroke(1);
+        
+        g2.setStroke(borderStroke);
+        g2.setPaint(UIManager.getColor("List.second"));
+        g2.drawRect(x, y, w-1, h-1);*/
     }
 }

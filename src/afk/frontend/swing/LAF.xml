@@ -98,11 +98,11 @@
     	<bind style="mainStyle" type="region" key=".*"/>
         
         <style id="panelStyle">
+            <insets top="2" bottom="5" left="5" right="5"/>
             <object  class="afk.frontend.swing.AFKPanelPainter" id="panPainter"/>
             <defaultsProperty key="Panel.first" type="idref" value="grey1"/>
             <defaultsProperty key="Panel.second" type="idref" value="grey2"/>
             <painter method="panelBackground" idref="panPainter"/>
-
         </style>
 
         <bind style="panelStyle" type="region" key="Panel"/>
@@ -120,17 +120,19 @@
         
         <bind style="buttonStyle" type="region" key="Button"/>
         
-        <!--<style id="listStyle">
+        <style id="listStyle">
+            <insets top="5" bottom="5" left="5" right="5"/>
             <object  class="afk.frontend.swing.AFKListPainter" id="listPainter"/>
-            <defaultsProperty key="List.first" type="idref" value="grey2"/>
+            <defaultsProperty key="List.first" type="idref" value="grey1"/>
             <defaultsProperty key="List.second" type="idref" value="grey4"/>
-            <painter method="listBackground" idref="listPainter"/>
+            <!--<painter method="listBackground" idref="listPainter"/>-->
             <painter method="listBorder" idref="listPainter" />
         </style>
         
-        <bind style="listStyle" type="region" key="List"/>-->
+        <bind style="listStyle" type="region" key="List"/>
         
         <style id="labelStyle">
+            <insets top="5" bottom="5" left="5" right="5"/>
             <font name="Copperplate Gothic Bold" size="18"/>
             <state>
                 <color value="#333333" type="BACKGROUND"/>
@@ -139,5 +141,15 @@
         </style>
         
         <bind style="labelStyle" type="name" key="label"/>
+        
+       <style id="fileChooserStyle">
+            <object  class="afk.frontend.swing.AFKFileChooserPainter" id="fileChooserPainter"/>
+            <defaultsProperty key="List.first" type="idref" value="grey1"/>
+            <defaultsProperty key="List.second" type="idref" value="grey4"/>
+            <!--<painter method="listBackground" idref="listPainter"/>-->
+            <painter method="fileChooserBackground" idref="fileChooserPainter" />
+        </style>
+        
+        <bind style="fileChooserStyle" type="region" key="fileChooser"/>
 
 </synth>
