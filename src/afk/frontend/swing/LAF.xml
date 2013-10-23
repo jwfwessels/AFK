@@ -120,6 +120,8 @@
         
         <bind style="buttonStyle" type="region" key="Button"/>
         
+        <bind style="buttonStyle" type="region" key="ToggleButton"/>
+        
         <style id="listStyle">
             <insets top="5" bottom="5" left="5" right="5"/>
             <object  class="afk.frontend.swing.AFKListPainter" id="listPainter"/>
