@@ -8,14 +8,22 @@ import afk.ge.ems.FactoryRequest;
  */
 public class TextLabelFactoryRequest implements FactoryRequest
 {
+
     protected String text;
-    protected int x;
-    protected int y;
+    protected Integer top, right, bottom, left;
 
     public TextLabelFactoryRequest(String text, int x, int y)
     {
+        this(text,y,null,null,x);
+    }
+    
+    public TextLabelFactoryRequest(String text, Integer top, Integer right,
+            Integer bottom, Integer left)
+    {
         this.text = text;
-        this.x = x;
-        this.y = y;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        this.left = left;
     }
 }

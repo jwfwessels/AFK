@@ -5,6 +5,7 @@ import afk.ge.ems.ISystem;
 import afk.ge.ems.Utils;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Display;
+import afk.ge.tokyo.ems.components.HUD;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
@@ -64,7 +65,7 @@ public class RenderSystem implements ISystem
 
         gfxEngine.prime();
         doRenderables();
-        doHUD();
+        doHUD(display);
         doHUDTags(gfxCamera);
 
         gfxEngine.post();
@@ -76,7 +77,7 @@ public class RenderSystem implements ISystem
     {
     }
 
-    private void doHUD()
+    private void doHUD(Display display)
     {
         List<HUDNode> nodes = engine.getNodeList(HUDNode.class);
         for (HUDNode node : nodes)
@@ -90,7 +91,9 @@ public class RenderSystem implements ISystem
             
             GfxHUD hud = gfxEngine.getGfxHUD(node.image);
             
-            hud.setPosition(node.hud.x, node.hud.y);
+            Point p = getTopLeft(node.hud, img.getWidth(), img.getHeight(),
+                    display);
+            hud.setPosition(p.x, p.y);
 
             if (node.image.isUpdated())
             {
@@ -158,6 +161,28 @@ public class RenderSystem implements ISystem
                 node.image.setUpdated(false);
             }
         }
+    }
+    
+    private Point getTopLeft(HUD hud, int w, int h, Display display)
+    {
+        Point p = new Point();
+        if (hud.bottom != null)
+        {
+            p.y = (int)(display.screenHeight-h-hud.bottom);
+        }
+        if (hud.top != null)
+        {
+            p.y = hud.top;
+        }
+        if (hud.right != null)
+        {
+            p.x = (int)(display.screenWidth-w-hud.right);
+        }
+        if (hud.left != null)
+        {
+            p.x = hud.left;
+        }
+        return p;
     }
 
     private Point toScreen(Vec4 ndc)
