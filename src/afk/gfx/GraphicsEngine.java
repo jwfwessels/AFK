@@ -1,8 +1,9 @@
 package afk.gfx;
 
-import afk.ge.tokyo.ems.components.ImageComponent;
+import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
+import com.hackoeur.jglm.Vec3;
 import java.awt.Component;
 
 /**
@@ -11,6 +12,12 @@ import java.awt.Component;
  */
 public interface GraphicsEngine
 {
+    
+    /**
+     * Indicates if the graphics engine is ready yet.
+     * @return true if the graphics engine is initialised, false otherwise
+     */
+    public boolean isReady();
     
     /**
      * Adds the specified graphics event listener to receive events from this
@@ -100,7 +107,7 @@ public interface GraphicsEngine
     
     public void prime();
     public GfxEntity getGfxEntity(Renderable renderable);
-    public GfxHUD getGfxHUD(ImageComponent image);
+    public GfxHUD getGfxHUD(HUDImage image);
     public void post();
 
     /**
@@ -115,7 +122,12 @@ public interface GraphicsEngine
      */
     public void setCamera(AbstractCamera camera);
     
-    public void primeDebug();
     public GfxEntity getDebugEntity(BBox bbox);
-    public void postDebug();
+    public GfxEntity getDebugEntity(Vec3[] line);
+    
+    /**
+     * Set the background colour.
+     * @param colour 
+     */
+    public void setBackground(Vec3 colour);
 }

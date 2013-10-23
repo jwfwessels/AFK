@@ -1,6 +1,6 @@
 package afk.gfx.athens;
 
-import afk.ge.tokyo.ems.components.ImageComponent;
+import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.AbstractCamera;
@@ -30,6 +30,7 @@ import static afk.gfx.GfxUtils.*;
 import afk.gfx.HUDCamera;
 import java.io.IOException;
 import afk.gfx.Resource;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,11 +47,10 @@ public class Athens implements GraphicsEngine
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
-    protected Map<ImageComponent, AthensHUD> huds = new LinkedHashMap<ImageComponent, AthensHUD>();
+    protected Map<HUDImage, AthensHUD> huds = new HashMap<HUDImage, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
-    protected List<ImageComponent> removedHUD = new ArrayList<ImageComponent>();
-    protected Map<BBox, DebugBox> entitiesDebug = new LinkedHashMap<BBox, DebugBox>();
-    protected List<BBox> removedDebug = new ArrayList<BBox>();
+    protected List<HUDImage> removedHUD = new ArrayList<HUDImage>();
+    protected List<AthensEntity> entitiesDebug = new ArrayList<AthensEntity>();
     private int w_width, w_height;
     private boolean[] keys = new boolean[NUM_KEYS];
     private long frameCount = 0;
@@ -61,7 +61,7 @@ public class Athens implements GraphicsEngine
     HUDCamera hudCamera;
     Mat4 monkeyWorld, skyboxWorld;
     // TODO: move this to a sun/light position
-    Vec3 origin_sun = new Vec3(-2.0f, 1.5f, 5.0f);
+    Vec3 origin_sun = new Vec3(-2.47511f, 3.87557f, 3.17864f);
     Vec3 sun = new Vec3(origin_sun);
     float daytime = 0.0f;
     static final float MOUSE_SENSITIVITY = 60.0f;
@@ -76,6 +76,8 @@ public class Athens implements GraphicsEngine
     private Animator animator;
     private float fps = 0.0f;
     private JLabel fpsComp;
+    private Vec3 bgColour = new Vec3(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f);
+    private boolean init = false;
 
     public Athens(boolean autodraw)
     {
@@ -124,13 +126,13 @@ public class Athens implements GraphicsEngine
                 mouseX = e.getX();
                 mouseY = e.getY();
             }
-            
+
             @Override
             public void mousePressed(MouseEvent e)
             {
                 cx = e.getX();
                 cy = e.getY();
-                
+
                 mouses[e.getButton()] = true;
             }
 
@@ -139,13 +141,13 @@ public class Athens implements GraphicsEngine
             {
                 mouses[e.getButton()] = false;
             }
-            
+
             @Override
             public void mouseDragged(MouseEvent e)
             {
                 mouseX = e.getX();
                 mouseY = e.getY();
-                
+
                 if (e.getX() == cx && e.getY() == cy)
                 {
                     return;
@@ -263,6 +265,7 @@ public class Athens implements GraphicsEngine
             }
             if (hud.isUpdated())
             {
+                hud.bind(gl);
                 hud.setup(gl);
             }
         }
@@ -299,17 +302,11 @@ public class Athens implements GraphicsEngine
         }
         removed.clear();
 
-        for (ImageComponent r : removedHUD)
+        for (HUDImage r : removedHUD)
         {
             huds.remove(r);
         }
         removedHUD.clear();
-
-        for (BBox o : removedDebug)
-        {
-            entitiesDebug.remove(o);
-        }
-        removedDebug.clear();
 
         for (AthensEntity entity : entities.values())
         {
@@ -342,10 +339,11 @@ public class Athens implements GraphicsEngine
         {
             entity.draw(gl, camera, sun);
         }
-        for (DebugBox entity : entitiesDebug.values())
+        for (AthensEntity entity : entitiesDebug)
         {
             entity.draw(gl, camera, sun);
         }
+        entitiesDebug.clear();
     }
 
     private void renderHUD(GL2 gl, HUDCamera hudCamera)
@@ -365,7 +363,7 @@ public class Athens implements GraphicsEngine
 
         // set background colour to white
         // TODO: allow this to be set through an interface
-        gl.glClearColor(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f, 0.0f);
+        gl.glClearColor(bgColour.getX(), bgColour.getY(), bgColour.getZ(), 0);
 
         // initialize camera
         // TODO: allow this to be done through an interface and let additional cameras be set
@@ -373,7 +371,7 @@ public class Athens implements GraphicsEngine
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f),
-                60.0f, 0.1f, 200.0f);
+                60.0f, 0.1f, 200.0f); // TODO: these constants need to go somewhere else!
 
         hudCamera = new HUDCamera(0, w_height, 0, w_width);
         hudCamera.updateView();
@@ -384,6 +382,14 @@ public class Athens implements GraphicsEngine
 
         // initialise update time with current time
         lastUpdate = System.nanoTime();
+        
+        init = true;
+    }
+
+    @Override
+    public boolean isReady()
+    {
+        return init;
     }
 
     private void keyPressed(KeyEvent ke)
@@ -416,7 +422,6 @@ public class Athens implements GraphicsEngine
 
     private void mouseMoved(int x, int y)
     {
-
     }
 
     @Override
@@ -519,7 +524,7 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
-    public GfxHUD getGfxHUD(ImageComponent image)
+    public GfxHUD getGfxHUD(HUDImage image)
     {
         AthensHUD hud = huds.get(image);
         if (hud == null)
@@ -541,11 +546,11 @@ public class Athens implements GraphicsEngine
                 removed.add(e.getKey());
             }
         }
-        for (Map.Entry<ImageComponent, AthensHUD> h : huds.entrySet())
+        for (Map.Entry<HUDImage, AthensHUD> e : huds.entrySet())
         {
-            if (!h.getValue().used)
+            if (!e.getValue().used)
             {
-                removedHUD.add(h.getKey());
+                removedHUD.add(e.getKey());
             }
         }
     }
@@ -575,38 +580,28 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
-    public void primeDebug()
-    {
-        for (DebugBox entity : entitiesDebug.values())
-        {
-            entity.used = false;
-        }
-    }
-
-    @Override
     public GfxEntity getDebugEntity(BBox bbox)
     {
-        DebugBox entity = entitiesDebug.get(bbox);
-        if (entity == null)
-        {
-            entity = new DebugBox();
-            entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
-            entitiesDebug.put(bbox, entity);
-        }
+        DebugBox entity = new DebugBox();
+        entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
         entity.setV(bbox.getSize());
-        entity.used = true;
+        entitiesDebug.add(entity);
         return entity;
     }
 
     @Override
-    public void postDebug()
+    public GfxEntity getDebugEntity(Vec3[] line)
     {
-        for (Map.Entry<BBox, DebugBox> e : entitiesDebug.entrySet())
-        {
-            if (!e.getValue().used)
-            {
-                removedDebug.add(e.getKey());
-            }
-        }
+        DebugLine entity = new DebugLine();
+        entity.attachResource(resourceManager.getResource(Resource.SHADER, "debug"));
+        entity.set(line);
+        entitiesDebug.add(entity);
+        return entity;
+    }
+
+    @Override
+    public void setBackground(Vec3 colour)
+    {
+        bgColour = colour;
     }
 }

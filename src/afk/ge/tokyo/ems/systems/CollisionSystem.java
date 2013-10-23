@@ -31,7 +31,7 @@ public class CollisionSystem implements ISystem
         for (CollisionNode nodeA : nodes)
         {
             // stop collision detection between static objects
-            if (!nodeA.entity.has(Velocity.class)) continue;
+            if (!nodeA.entity.hasComponent(Velocity.class)) continue;
             
             BBox boxA = new BBox(nodeA.state, nodeA.bbox);
             for (CollisionNode nodeB : nodes)
@@ -46,12 +46,12 @@ public class CollisionSystem implements ISystem
                     nodeA.state.set(nodeA.state.prevPos, nodeA.state.prevRot, nodeA.state.prevScale);
                     nodeB.state.set(nodeB.state.prevPos, nodeB.state.prevRot, nodeB.state.prevScale);
                     
-                    Controller controller = nodeA.entity.get(Controller.class);
+                    Controller controller = nodeA.entity.getComponent(Controller.class);
                     if (controller != null)
                     {
                         controller.events.hitWall = true;
                     }
-                    controller = nodeB.entity.get(Controller.class);
+                    controller = nodeB.entity.getComponent(Controller.class);
                     if (controller != null)
                     {
                         controller.events.hitWall = true;

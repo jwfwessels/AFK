@@ -1,11 +1,13 @@
 package afk.game;
 
 import afk.bot.Robot;
+import afk.bot.RobotConfigManager;
 import afk.bot.RobotEngine;
 import afk.bot.RobotException;
 import afk.bot.RobotLoader;
 import afk.bot.london.London;
 import afk.ge.GameEngine;
+import afk.ge.tokyo.GameResult;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
@@ -18,7 +20,7 @@ import java.util.UUID;
  *
  * @author Daniel
  */
-public class AFKGame implements Game
+public class SingleGame implements GameMaster
 {
 
     private GameEngine gameEngine;
@@ -26,9 +28,9 @@ public class AFKGame implements Game
     private RobotEngine botEngine;
     private Collection<GameListener> listeners = new ArrayList<GameListener>();
 
-    public AFKGame(RobotLoader botLoader)
+    public SingleGame(RobotConfigManager config)
     {
-        botEngine = new London(botLoader);
+        this.botEngine = new London(config);
         gfxEngine = new Athens(false);
         gameEngine = new Tokyo(gfxEngine, botEngine, this);
     }
@@ -40,9 +42,9 @@ public class AFKGame implements Game
     }
 
     @Override
-    public Robot addRobotInstance(String robot) throws RobotException
+    public void addRobotInstance(Robot robot)
     {
-        return botEngine.addRobot(robot);
+        botEngine.addRobot(robot);
     }
 
     @Override
@@ -64,10 +66,21 @@ public class AFKGame implements Game
     }
 
     @Override
-    public void start() throws RobotException
+    public String getRobotName(UUID id)
     {
-        botEngine.initComplete();
+        return botEngine.getConfigManager().getProperty(id, "name");
+    }
+
+    @Override
+    public void start() 
+    {
         gameEngine.startGame();
+    }
+
+    @Override
+    public void stop()
+    {
+        gameEngine.stopGame();
     }
 
     @Override
@@ -82,11 +95,11 @@ public class AFKGame implements Game
         listeners.remove(listener);
     }
 
-//    @Override
-//    public void playPause()
-//    {
-//        gameEngine.playPause();
-//    }
+    @Override
+    public void playPause()
+    {
+        gameEngine.playPause();
+    }
 
     @Override
     public float getGameSpeed()
@@ -107,24 +120,11 @@ public class AFKGame implements Game
     }
 
     @Override
-    public void gameEvent()
+    public void gameOver(GameResult result)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void gameStateChange(String[] state)
-    {
-        if (state[0].equals("DRAW"))
+        for (GameListener l : listeners)
         {
-            gameEngine.setState(0, "");
-        } else if (state[0].equals("WINNER"))
-        {
-            gameEngine.setState(1, state[1]);
-
-        } else if (state[0].equals("PLAY_PAUSE"))
-        {
-            gameEngine.setState(2, state[1]);
+            l.gameOver(result);
         }
     }
 }

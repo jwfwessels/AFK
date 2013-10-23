@@ -1,7 +1,5 @@
 package afk.frontend;
 
-import afk.game.Game;
-
 /**
  *
  * @author Daniel
@@ -9,6 +7,4 @@ import afk.game.Game;
 public interface Frontend
 {
     public void showMain();
-    
-    public void showGame(Game game);
 }

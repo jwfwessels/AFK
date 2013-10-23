@@ -84,20 +84,35 @@ public class Engine implements EntityListener, FlagManager
             removeEntity(dep);
         }
     }
-    
+
     public void addGlobal(Object global)
     {
         globals.put(global.getClass(), global);
     }
-    
+
     public void removeGlobal(Class globalClass)
     {
         globals.remove(globalClass);
     }
-    
+
     public <T> T getGlobal(Class<T> globalClass)
     {
-        return (T)globals.get(globalClass);
+        T global = (T) globals.get(globalClass);
+        if (global == null)
+        {
+            try
+            {
+                global = globalClass.newInstance();
+                addGlobal(global);
+            } catch (InstantiationException ex)
+            {
+                ex.printStackTrace(System.err);
+            } catch (IllegalAccessException ex)
+            {
+                ex.printStackTrace(System.err);
+            }
+        }
+        return global;
     }
 
     @Override
@@ -150,8 +165,7 @@ public class Engine implements EntityListener, FlagManager
         if (updating.get())
         {
             logicSystemsToAdd.add(system);
-        }
-        else
+        } else
         {
             if (system.init(this))
             {
@@ -165,8 +179,7 @@ public class Engine implements EntityListener, FlagManager
         if (updating.get())
         {
             systemsToAdd.add(system);
-        }
-        else
+        } else
         {
             if (system.init(this))
             {
@@ -211,7 +224,7 @@ public class Engine implements EntityListener, FlagManager
             addEntity(e);
         }
         toAdd.clear();
-        
+
         for (ISystem s : systemsToAdd)
         {
             addSystem(s);
@@ -222,7 +235,7 @@ public class Engine implements EntityListener, FlagManager
             addLogicSystem(s);
         }
         logicSystemsToAdd.clear();
-        
+
         for (ISystem s : systemsToRemove)
         {
             removeSystem(s);
@@ -261,9 +274,6 @@ public class Engine implements EntityListener, FlagManager
 
     public void shutDown()
     {
-        while (updating.get())
-        { /* spin */ }
-
         for (ISystem s : logicSystems)
         {
             s.destroy();

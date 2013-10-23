@@ -587,7 +587,7 @@ public final class Mat4 extends AbstractMat {
          * (Doesn't work properly if there is a scaling or skewing transformation.)
          * @return the inverse of this matrix.
          */
-	public Mat4 invertSimple()
+	public Mat4 getInverseSimple()
 	{
             return new Mat4(
                 m00, m10, m20, 0,
@@ -604,7 +604,7 @@ public final class Mat4 extends AbstractMat {
          * Invert for only a rotation, any translation is zeroed out
          * @return the inverse of this matrix.
          */
-	public Mat4 invertRot( )
+	public Mat4 getInverseRot( )
 	{
             return new Mat4(
                  m00, m10, m20, 0,
@@ -613,4 +613,139 @@ public final class Mat4 extends AbstractMat {
                  0, 0, 0, 1.0f
             );
 	}
+        
+        /**
+         * Invert the matrix.
+         * @return the inverse of the matrix.
+         */
+        public Mat4 getInverse()
+        {
+            float[] inv = new float[16];
+            float det;
+            int i;
+
+            inv[0] = m11  * m22 * m33 - 
+                     m11  * m23 * m32 - 
+                     m21  * m12  * m33 + 
+                     m21  * m13  * m32 +
+                     m31 * m12  * m23 - 
+                     m31 * m13  * m22;
+
+            inv[4] = -m10  * m22 * m33 + 
+                      m10  * m23 * m32 + 
+                      m20  * m12  * m33 - 
+                      m20  * m13  * m32 - 
+                      m30 * m12  * m23 + 
+                      m30 * m13  * m22;
+
+            inv[8] = m10  * m21 * m33 - 
+                     m10  * m23 * m31 - 
+                     m20  * m11 * m33 + 
+                     m20  * m13 * m31 + 
+                     m30 * m11 * m23 - 
+                     m30 * m13 * m21;
+
+            inv[12] = -m10  * m21 * m32 + 
+                       m10  * m22 * m31 +
+                       m20  * m11 * m32 - 
+                       m20  * m12 * m31 - 
+                       m30 * m11 * m22 + 
+                       m30 * m12 * m21;
+
+            inv[1] = -m01  * m22 * m33 + 
+                      m01  * m23 * m32 + 
+                      m21  * m02 * m33 - 
+                      m21  * m03 * m32 - 
+                      m31 * m02 * m23 + 
+                      m31 * m03 * m22;
+
+            inv[5] = m00  * m22 * m33 - 
+                     m00  * m23 * m32 - 
+                     m20  * m02 * m33 + 
+                     m20  * m03 * m32 + 
+                     m30 * m02 * m23 - 
+                     m30 * m03 * m22;
+
+            inv[9] = -m00  * m21 * m33 + 
+                      m00  * m23 * m31 + 
+                      m20  * m01 * m33 - 
+                      m20  * m03 * m31 - 
+                      m30 * m01 * m23 + 
+                      m30 * m03 * m21;
+
+            inv[13] = m00  * m21 * m32 - 
+                      m00  * m22 * m31 - 
+                      m20  * m01 * m32 + 
+                      m20  * m02 * m31 + 
+                      m30 * m01 * m22 - 
+                      m30 * m02 * m21;
+
+            inv[2] = m01  * m12 * m33 - 
+                     m01  * m13 * m32 - 
+                     m11  * m02 * m33 + 
+                     m11  * m03 * m32 + 
+                     m31 * m02 * m13 - 
+                     m31 * m03 * m12;
+
+            inv[6] = -m00  * m12 * m33 + 
+                      m00  * m13 * m32 + 
+                      m10  * m02 * m33 - 
+                      m10  * m03 * m32 - 
+                      m30 * m02 * m13 + 
+                      m30 * m03 * m12;
+
+            inv[10] = m00  * m11 * m33 - 
+                      m00  * m13 * m31 - 
+                      m10  * m01 * m33 + 
+                      m10  * m03 * m31 + 
+                      m30 * m01 * m13 - 
+                      m30 * m03 * m11;
+
+            inv[14] = -m00  * m11 * m32 + 
+                       m00  * m12 * m31 + 
+                       m10  * m01 * m32 - 
+                       m10  * m02 * m31 - 
+                       m30 * m01 * m12 + 
+                       m30 * m02 * m11;
+
+            inv[3] = -m01 * m12 * m23 + 
+                      m01 * m13 * m22 + 
+                      m11 * m02 * m23 - 
+                      m11 * m03 * m22 - 
+                      m21 * m02 * m13 + 
+                      m21 * m03 * m12;
+
+            inv[7] = m00 * m12 * m23 - 
+                     m00 * m13 * m22 - 
+                     m10 * m02 * m23 + 
+                     m10 * m03 * m22 + 
+                     m20 * m02 * m13 - 
+                     m20 * m03 * m12;
+
+            inv[11] = -m00 * m11 * m23 + 
+                       m00 * m13 * m21 + 
+                       m10 * m01 * m23 - 
+                       m10 * m03 * m21 - 
+                       m20 * m01 * m13 + 
+                       m20 * m03 * m11;
+
+            inv[15] = m00 * m11 * m22 - 
+                      m00 * m12 * m21 - 
+                      m10 * m01 * m22 + 
+                      m10 * m02 * m21 + 
+                      m20 * m01 * m12 - 
+                      m20 * m02 * m11;
+
+            det = m00 * inv[0] + m01 * inv[4] + m02 * inv[8] + m03 * inv[12];
+
+            if (det == 0)
+                return null;
+
+            det = 1.0f / det;
+
+            for (i = 0; i < 16; i++)
+                inv[i] *= det;
+
+            return new Mat4(inv);
+        }
 }

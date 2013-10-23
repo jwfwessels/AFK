@@ -24,8 +24,8 @@ public class DebugBot extends TankRobot
             System.out.println(getId() + " -> " + (theta = events.visibleBots.get(0).bearing));
         }
         
-        System.out.println("pitch: " + events.pitch);
-        System.out.println("heading: " + events.heading);
+        System.out.println("sonar_front: " + events.sonar.front);
+        System.out.println("sonar_back: " + events.sonar.back);
     }
     
     private boolean different(float a, float b)

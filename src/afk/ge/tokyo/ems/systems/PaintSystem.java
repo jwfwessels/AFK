@@ -29,7 +29,7 @@ public class PaintSystem implements ISystem
         for (PaintNode node : nodes)
         {
             node.renderable.colour = node.paint.colour;
-            node.entity.remove(Paint.class);
+            node.entity.removeComponent(Paint.class);
         }
     }
 
