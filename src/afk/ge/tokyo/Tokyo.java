@@ -13,11 +13,14 @@ import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.GameState;
 import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.components.ScoreBoard;
+import afk.ge.tokyo.ems.components.SpinnyCamera;
 import afk.ge.tokyo.ems.factories.*;
+import afk.ge.tokyo.ems.nodes.RobotNode;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Map;
 import java.util.UUID;
 
@@ -54,6 +57,7 @@ public class Tokyo implements GameEngine, Runnable
     private DebugSystem debugSystem = null;
     private boolean debug = false;
     private boolean debugPressed = false;
+    private Entity cameraEntity;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
@@ -99,6 +103,7 @@ public class Tokyo implements GameEngine, Runnable
 
         engine.addSystem(new InputSystem(gfxEngine));
         engine.addSystem(new NoClipCameraSystem());
+        engine.addSystem(new SpinnyCameraSystem());
         engine.addSystem(new SelectionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
@@ -108,14 +113,14 @@ public class Tokyo implements GameEngine, Runnable
         debugSystem = new DebugSystem(botEngine, new DebugRenderSystem(gfxEngine));
 
         // TODO: put this somewhere else?
-        Entity entity = new Entity();
+        cameraEntity = new Entity();
         Camera camera = new Camera(
-                new Vec3(10f, 10f, 10f),
+                new Vec3(20f, 20f, 20f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f));
-        entity.addComponent(camera);
-        entity.addComponent(new NoClipCamera(1, 5, 0.2f));
-        engine.addEntity(entity);
+        cameraEntity.addComponent(camera);
+        cameraEntity.addComponent(new NoClipCamera(1, 5, 0.2f));
+        engine.addEntity(cameraEntity);
         engine.addGlobal(camera);
     }
     // TODO: make these customisable/generic/not hard-coded/just somewhere else!
@@ -190,22 +195,38 @@ public class Tokyo implements GameEngine, Runnable
 //        engine.addEntity(labelFactory.create(new TextLabelFactoryRequest("Test", 50, 50)));
     }
 
-    private void gameOverDebug()
+    private void gameOver()
     {
-        if (gameState.gameOver)
+        Vec3 focusPoint = Vec3.VEC3_ZERO;
+        float distance;
+        if (gameState.winner == null)
         {
-            if (gameState.winner == null)
+            System.out.println("DRAW :(");
+            distance = BOARD_SIZE;
+        } else
+        {
+            System.out.println("WINNER " + gameState.winner);
+            for (RobotNode node : engine.getNodeList(RobotNode.class))
             {
-                System.out.println("DRAW :(");
-            } else
-            {
-                System.out.println("WINNER " + gameState.winner);
+                if (node.controller.id == gameState.winner)
+                {
+                    focusPoint = node.state.pos;
+                    break;
+                }
             }
-            for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
-            {
-                System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
-            }
+            distance = 10;
         }
+        cameraEntity.removeComponent(NoClipCamera.class);
+        cameraEntity.addComponent(new SpinnyCamera(0, 60, 30, distance, focusPoint));
+        for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
+        {
+            System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
+        }
+    }
+    
+    private void notifyGameOver()
+    {
+        game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
     }
 
     @Override
@@ -278,9 +299,12 @@ public class Tokyo implements GameEngine, Runnable
                     engine.updateLogic(t, DELTA);
                     if (gameState.gameOver)
                     {
-                        gameOverDebug();
-                        game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
+                        gameOver();
                     }
+                } else if (gameState.gameOver
+                        && engine.getFlag(MOUSE, MouseEvent.BUTTON1))
+                {
+                    notifyGameOver();
                 }
                 t += DELTA;
                 logicAccumulator -= logicDelta;

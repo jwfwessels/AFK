@@ -2,7 +2,7 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
-import afk.ge.tokyo.ems.nodes.RobotStateFeedbackNode;
+import afk.ge.tokyo.ems.nodes.RobotNode;
 import java.util.List;
 import afk.ge.ems.Utils;
 import com.hackoeur.jglm.Vec3;
@@ -26,8 +26,8 @@ public class RobotStateFeedbackSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        List<RobotStateFeedbackNode> nodes = engine.getNodeList(RobotStateFeedbackNode.class);
-        for (RobotStateFeedbackNode node : nodes)
+        List<RobotNode> nodes = engine.getNodeList(RobotNode.class);
+        for (RobotNode node : nodes)
         {
             float heading = node.state.rot.getY() % 360.0f;
             if (heading < 0) heading+= 360;
