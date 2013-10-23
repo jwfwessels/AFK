@@ -168,5 +168,31 @@
         </style>
         
         <bind style="comboBoxStyle" type="region" key="comboBox"/>
+        
+        <style id="scrollBarTrackStyle">
+            <insets top="2" bottom="2" left="2" right="2"/>
+            <object  class="afk.frontend.swing.AFKScrollBarPainter" id="scrollBarPainter"/>
+            <defaultsProperty key="ScrollBar.first" type="idref" value="grey2"/>
+            <defaultsProperty key="ScrollBar.second" type="idref" value="grey3"/>
+            <painter method="scrollBarTrackBackground" idref="scrollBarPainter" />
+            <painter method="scrollBarTrackBorder" idref="scrollBarPainter" />
+        </style>
+        
+        <bind style="scrollBarTrackStyle" type="region" key="scrollBarTrack"/>
+        
+        <style id="scrollBarThumbStyle">
+            <insets top="2" bottom="2" left="2" right="2"/>
+            <object  class="afk.frontend.swing.AFKScrollBarPainter" id="scrollBarPainter"/>
+            <defaultsProperty key="ScrollBar.first" type="idref" value="grey1"/>
+            <defaultsProperty key="ScrollBar.second" type="idref" value="grey2"/>
+            <defaultsProperty key="ScrollBar.third" type="idref" value="grey3"/>
+            <defaultsProperty key="ScrollBar.fourth" type="idref" value="grey4"/>
+            <defaultsProperty key="ScrollBar.fifth" type="idref" value="grey5"/>
+            <defaultsProperty key="ScrollBar.sixth" type="idref" value="grey6"/>
+            <painter method="scrollBarThumbBackground" idref="scrollBarPainter" />
+            <painter method="scrollBarThumbBorder" idref="scrollBarPainter" />
+        </style>
+        
+        <bind style="scrollBarThumbStyle" type="region" key="scrollBarThumb"/>
 
 </synth>
