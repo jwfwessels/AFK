@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.ge.tokyo;
 
 import afk.bot.Robot;
@@ -12,6 +8,7 @@ import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
+import static afk.ge.tokyo.FlagSources.*;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.GameState;
 import afk.ge.tokyo.ems.components.NoClipCamera;
@@ -20,6 +17,7 @@ import afk.ge.tokyo.ems.factories.*;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
+import java.awt.event.KeyEvent;
 import java.util.Map;
 import java.util.UUID;
 
@@ -53,6 +51,9 @@ public class Tokyo implements GameEngine, Runnable
     private ScoreBoard scoreboard;
     private GameState gameState;
     private GameMaster game;
+    private DebugSystem debugSystem = null;
+    private boolean debug = false;
+    private boolean debugPressed = false;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
@@ -101,13 +102,10 @@ public class Tokyo implements GameEngine, Runnable
         engine.addSystem(new SelectionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
-        // TODO: if (DEBUG)  ...
-        DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
-        engine.addSystem(new DebugSystem(botEngine, wireFramer));
-        ///
-
         engine.addGlobal(scoreboard = new ScoreBoard());
         engine.addGlobal(gameState = new GameState());
+        
+        debugSystem = new DebugSystem(botEngine, new DebugRenderSystem(gfxEngine));
 
         // TODO: put this somewhere else?
         Entity entity = new Entity();
@@ -247,6 +245,13 @@ public class Tokyo implements GameEngine, Runnable
         double logicAccumulator = 0.0f;
         while (running)
         {
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_CONTROL) &&
+                    engine.getFlag(KEYBOARD, KeyEvent.VK_Z)
+                    && !engine.containsSystem(debugSystem))
+            {
+                engine.addSystem(debugSystem);
+            }
+            
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
