@@ -27,7 +27,13 @@ public class AFKFileChooserPainter extends SynthPainter
     @Override
     public void paintFileChooserBackground(SynthContext context, Graphics g, int x, int y, int w, int h)
     {
-        JFileChooser temp = (JFileChooser)context.getComponent();  
+        JFileChooser temp = (JFileChooser)context.getComponent();
+        int num = temp.getComponentCount();
+        for(int a = 0; a < num; a++)
+        {
+            Component thing = temp.getComponent(a);
+            System.out.println(thing.toString());
+        }
     }
     
     @Override
