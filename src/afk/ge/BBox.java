@@ -83,7 +83,7 @@ public class BBox
     public boolean isPointInBox(final Vec3 inP)
     {
         // Rotate the point into the box's coordinates
-        Vec4 p = m.invertSimple().multiply(inP.toPoint());
+        Vec4 p = m.getInverseSimple().multiply(inP.toPoint());
 
         // Now just use an axis-aligned check
         if (abs(p.getX()) < extents.getX()
@@ -107,7 +107,7 @@ public class BBox
     {
         float fDist;
         float fDistSq = 0;
-        Vec4 p = m.invertSimple().multiply(inP.toPoint());
+        Vec4 p = m.getInverseSimple().multiply(inP.toPoint());
 
         // Add distance squared from sphere centerpoint to box for each axis
         for (int i = 0; i < 3; i++)
@@ -134,7 +134,7 @@ public class BBox
     public boolean boxOutsidePlane(final Vec3 inNorm, final Vec3 inP)
     {
         // Plane Normal in Box Space
-        Vec3 norm = m.invertSimple().roatateVector(inNorm); // roatateVector only uses rotation portion of matrix
+        Vec3 norm = m.getInverseSimple().roatateVector(inNorm); // roatateVector only uses rotation portion of matrix
         norm = new Vec3(abs(norm.getX()), abs(norm.getY()), abs(norm.getZ()));
 
         float extent = norm.dot(extents); // Box Extent along the plane normal
@@ -158,7 +158,7 @@ public class BBox
     public boolean isLineInBox(final Vec3 l1, final Vec3 l2)
     {
         // Put line in box space
-        Mat4 mInv = m.invertSimple();
+        Mat4 mInv = m.getInverseSimple();
         Vec4 lb1 = mInv.multiply(l1.toPoint());
         Vec4 lb2 = mInv.multiply(l2.toPoint());
 
@@ -320,7 +320,7 @@ public class BBox
     public List<Vec3> getIntersectionPoints(Vec3 org, Vec3 ray)
     {
         // Put ray in box space
-        Mat4 mInv = m.invertSimple();
+        Mat4 mInv = m.getInverseSimple();
         ray = mInv.multiply(ray.toDirection()).getXYZ();
         org = mInv.multiply(org.toPoint()).getXYZ();
 

@@ -65,7 +65,7 @@ public class SonarSystem implements ISystem
             for (CollisionNode cnode : cnodes)
             {
                 // stop sonar from picking up itself
-                Controller controller = cnode.entity.get(Controller.class);
+                Controller controller = cnode.entity.getComponent(Controller.class);
                 if (controller == node.controller)
                 {
                     continue;

@@ -2,6 +2,7 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
+import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.gfx.GraphicsEngine;
 
@@ -40,8 +41,10 @@ public class InputSystem implements ISystem
         
         Mouse mouse = engine.getGlobal(Mouse.class);
         
-        mouse.x = gfxEngine.getMouseX();
-        mouse.y = gfxEngine.getMouseY();
+        mouse.x = (float)gfxEngine.getMouseX();
+        mouse.y = (float)gfxEngine.getMouseY();
+        mouse.nx = (mouse.x/gfxEngine.getWidth())*2.0f-1.0f;
+        mouse.ny = (mouse.y/gfxEngine.getHeight())*-2.0f+1.0f;
     }
 
     @Override

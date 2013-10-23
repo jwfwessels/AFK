@@ -3,6 +3,7 @@ package afk.ge.ems;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,15 +13,14 @@ import java.util.Map;
 public class Entity
 {
     // keeps track of how many entities there are, for debug purposes
+
     private static int count = 0;
     public static final String DEFAULT_NAME = "entity";
-    
     private String name; // for debug purposes
-    
     private Collection<EntityListener> listeners = new ArrayList<EntityListener>();
     protected Collection<Entity> dependents = new ArrayList<Entity>();
     private Map<Class, Object> components = new HashMap<Class, Object>();
-    
+    private Map<Class<? extends Event>, List<Event>> events = new HashMap<Class<? extends Event>, List<Event>>();
     private Pool source;
 
     public Entity()
@@ -32,18 +32,18 @@ public class Entity
     {
         this(DEFAULT_NAME, source);
     }
-    
+
     public Entity(String name)
     {
         this(name, null);
     }
-    
+
     public Entity(String name, Pool source)
     {
         this.source = source;
-        this.name = name+"_"+(count++);
+        this.name = name + "_" + (count++);
     }
-    
+
     protected void returnToSource()
     {
         if (source != null)
@@ -51,80 +51,127 @@ public class Entity
             source.returnEntity(this);
         }
     }
-    
+
     public void addEntityListener(EntityListener l)
     {
         listeners.add(l);
     }
-    
+
     public void removeEntityListener(EntityListener l)
     {
         listeners.remove(l);
     }
-    
-    public void add(Object component)
+
+    public void addComponent(Object component)
     {
         Class componentClass = component.getClass();
         components.put(componentClass, component);
-        
+
         for (EntityListener l : listeners)
-            l.componentAdded(this, componentClass);
-    }
-    
-    public void addToDependents(Object component)
-    {
-        add(component);
-        for (Entity dep : dependents)
         {
-            dep.addToDependents(component);
+            l.componentAdded(this, componentClass);
         }
     }
-    
-    public void remove(Class componentClass)
+
+    public void deepAddComponent(Object component)
+    {
+        addComponent(component);
+        for (Entity dep : dependents)
+        {
+            dep.deepAddComponent(component);
+        }
+    }
+
+    public void removeComponent(Class componentClass)
     {
         components.remove(componentClass);
-        
+
         for (EntityListener l : listeners)
-            l.componentRemoved(this, componentClass);
-    }
-    
-    public void removeFromDependents(Class componentClass)
-    {
-        remove(componentClass);
-        for (Entity dep : dependents)
         {
-            dep.removeFromDependents(componentClass);
+            l.componentRemoved(this, componentClass);
         }
     }
-    
+
+    public void deepRemoveComponent(Class componentClass)
+    {
+        removeComponent(componentClass);
+        for (Entity dep : dependents)
+        {
+            dep.deepRemoveComponent(componentClass);
+        }
+    }
+
     public void addDependent(Entity entity)
     {
         dependents.add(entity);
     }
-    
+
     public Collection<Entity> getDependents()
     {
         return dependents;
     }
-    
+
     public void removeDependent(Entity entity)
     {
         dependents.remove(entity);
     }
-    
-    public <T> T get(Class<T> componentClass)
+
+    public <T> T getComponent(Class<T> componentClass)
     {
-        return (T)components.get(componentClass);
+        return (T) components.get(componentClass);
     }
-    
-    public boolean has(Class componentClass)
+
+    public boolean hasComponent(Class componentClass)
     {
         return components.containsKey(componentClass);
     }
-    
-    public Object[] getAll()
+
+    public Object[] getAllComponents()
     {
         return components.values().toArray();
+    }
+
+    public <E extends Event> void addEvent(E event)
+    {
+        event.setEntity(this);
+        Class<? extends Event> eventClass = event.getClass();
+        List<E> eventList = (List<E>) events.get(eventClass);
+        if (eventList == null)
+        {
+            eventList = new ArrayList<E>();
+            events.put(eventClass, (List<Event>) eventList);
+        }
+        eventList.add(event);
+    }
+
+    public <E extends Event> List<E> getEventList(Class<E> eventClass)
+    {
+        List<E> eventList = (List<E>) events.get(eventClass);
+        if (eventList == null)
+        {
+            eventList = new ArrayList<E>();
+            events.put(eventClass, (List<Event>) eventList);
+        }
+        return eventList;
+    }
+    
+    public <E extends Event> void removeEvent(E event)
+    {
+        event.setEntity(null);
+        Class<? extends Event> eventClass = event.getClass();
+        List<? extends Event> eventList = events.get(eventClass);
+        if (eventList == null)
+        {
+            return;
+        }
+        if (eventList.remove(event))
+        {
+            // NOTE: not sure about this for garbage collection issues.
+//            if (eventList.isEmpty())
+//            {
+//                events.remove(eventClass);
+//            }
+        }
     }
 
     @Override

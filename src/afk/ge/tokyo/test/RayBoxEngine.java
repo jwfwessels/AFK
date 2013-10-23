@@ -45,8 +45,8 @@ public class RayBoxEngine extends Engine implements Runnable
                 new Vec3(20f, 20f, 20f),
                 new Vec3(0f, 0f, 0f),
                 new Vec3(0f, 1f, 0f));
-        entity.add(camera);
-        entity.add(new NoClipCamera(1, 5, 0.2f));
+        entity.addComponent(camera);
+        entity.addComponent(new NoClipCamera(1, 5, 0.2f));
         addEntity(entity);
         addGlobal(camera);
     }

@@ -31,7 +31,7 @@ public class SpawnSystem implements ISystem
             System.out.println("Spawing: " + node.entity.toString());
             node.state.prevPos = node.state.pos = node.spawn.pos;
             node.state.prevRot = node.state.rot = node.spawn.rot;
-            node.entity.remove(Spawn.class);
+            node.entity.removeComponent(Spawn.class);
         }
     }
 
