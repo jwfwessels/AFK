@@ -14,7 +14,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -75,7 +74,7 @@ public class BotInfoHUDSystem implements ISystem
             if (last != life.hp)
             {
                 node.image.setImage(createBotInfoPanel(controller.id, life, color));
-                lastLife.put(controller.id, last);
+                lastLife.put(controller.id, life.hp);
             }
         }
     }
@@ -106,14 +105,15 @@ public class BotInfoHUDSystem implements ISystem
         g.setColor(BG_COLOUR);
         g.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
 
-        g.setColor(Color.BLACK);
         try
         {
+            g.setColor(Color.BLACK);
             g.drawImage(getIcon(config.getProperty(id, "type")),
                     new MultiplyFilter(colour), PANEL_PADDING, PANEL_PADDING);
         } catch (IOException ex)
         {
             ex.printStackTrace(System.err);
+            g.setColor(Color.MAGENTA);
             g.fillRoundRect(PANEL_PADDING, PANEL_PADDING, ICON_SIZE, ICON_SIZE, 2, 2);
         }
 
