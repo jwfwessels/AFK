@@ -98,13 +98,6 @@ public interface GraphicsEngine
      */
     public int getHeight();
     
-    
-    /**
-     * register swing component for frame rate updates.
-     * @param comp the component to register for Updates.
-     */
-    public void setFPSComponent(Component comp);
-    
     public void prime();
     public GfxEntity getGfxEntity(Renderable renderable);
     public GfxHUD getGfxHUD(HUDImage image);

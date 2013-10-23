@@ -1,6 +1,7 @@
 package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
+import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
 import afk.ge.ems.Utils;
 import afk.ge.tokyo.ems.components.Camera;
@@ -9,6 +10,9 @@ import afk.ge.tokyo.ems.components.HUD;
 import afk.ge.tokyo.ems.components.Lifetime;
 import afk.ge.tokyo.ems.components.Parent;
 import afk.ge.tokyo.ems.components.Renderable;
+import afk.ge.tokyo.ems.components.TextLabel;
+import afk.ge.tokyo.ems.factories.TextLabelFactory;
+import afk.ge.tokyo.ems.factories.TextLabelFactoryRequest;
 import afk.ge.tokyo.ems.nodes.HUDNode;
 import afk.ge.tokyo.ems.nodes.HUDTagNode;
 import afk.ge.tokyo.ems.nodes.RenderNode;
@@ -20,6 +24,7 @@ import com.hackoeur.jglm.Mat4;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -30,8 +35,15 @@ import java.util.List;
 public class RenderSystem implements ISystem
 {
 
-    Engine engine;
-    GraphicsEngine gfxEngine;
+    private Engine engine;
+    private GraphicsEngine gfxEngine;
+    private Entity fpsLabel = null;
+    private TextLabelFactory labelFactory = new TextLabelFactory();
+    private TextLabelFactoryRequest fpsLabelRequest
+            = new TextLabelFactoryRequest("0", 10, 10, null, null);
+    
+    private float fpsUpdateInterval = 0.5f;
+    private float sinceLastFPS = fpsUpdateInterval;
 
     public RenderSystem(GraphicsEngine gfxEngine)
     {
@@ -70,6 +82,32 @@ public class RenderSystem implements ISystem
 
         gfxEngine.post();
         gfxEngine.redisplay();
+        
+        if (engine.getFlag("keyboard", KeyEvent.VK_BACK_QUOTE))
+        {
+            if (fpsLabel == null)
+            {
+                fpsLabel = labelFactory.create(fpsLabelRequest);
+                sinceLastFPS = fpsUpdateInterval;
+                engine.addEntity(fpsLabel);
+            } else
+            {
+                engine.removeEntity(fpsLabel);
+                fpsLabel = null;
+            }
+        }
+        
+        if (fpsLabel != null)
+        {
+            sinceLastFPS += dt;
+            if (sinceLastFPS >= fpsUpdateInterval)
+            {
+                TextLabel label = fpsLabel.getComponent(TextLabel.class);
+                float fps = gfxEngine.getFPS();
+                label.setText(String.format("%.2f FPS", fps));
+                sinceLastFPS = 0;
+            }
+        }
     }
 
     @Override
