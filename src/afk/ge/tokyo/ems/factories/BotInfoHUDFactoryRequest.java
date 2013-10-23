@@ -10,14 +10,24 @@ import afk.ge.ems.FactoryRequest;
 public class BotInfoHUDFactoryRequest implements FactoryRequest
 {
     protected Entity bot;
-    protected int x;
-    protected int y;
+    public Integer top;
+    public Integer right;
+    public Integer bottom;
+    public Integer left;
 
     public BotInfoHUDFactoryRequest(Entity bot, int x, int y)
     {
+        this(bot, y, null, null, x);
+    }
+
+    public BotInfoHUDFactoryRequest(Entity bot, Integer top, Integer right,
+            Integer bottom, Integer left)
+    {
         this.bot = bot;
-        this.x = x;
-        this.y = y;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        this.left = left;
     }
     
 }

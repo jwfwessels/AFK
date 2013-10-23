@@ -6,17 +6,21 @@ package afk.ge.tokyo.ems.components;
  */
 public class HUD
 {
-    public int x = 0;
-    public int y = 0;
+    public Integer top = null;
+    public Integer right = null;
+    public Integer bottom = null;
+    public Integer left = null;
 
     public HUD()
     {
     }
 
-    public HUD(int x, int y)
+    public HUD(Integer top, Integer right, Integer bottom, Integer left)
     {
-        this.x = x;
-        this.y = y;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
+        this.left = left;
     }
     
 }
