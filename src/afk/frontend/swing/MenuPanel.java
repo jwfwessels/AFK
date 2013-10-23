@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -36,6 +37,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.filechooser.FileView;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 
 /**
@@ -118,58 +121,74 @@ public class MenuPanel extends JPanel
         initComponents();
         addComponents();
         styleComponents();
+        
+        System.out.println("COLOUR:" + pnlBotSelButtons.getBackground());
     }
 
     private void initComponents()
     {
+        //pnlAvailable = new JPanel();
         pnlAvailable = new JPanel();
         pnlAvailable.setLayout(new BorderLayout());
         lblAvailable = new JLabel("Available Bots");
+        lblAvailable.setName("label");
 
-        pnlBotSelButtons = new JPanel();
+        //pnlBotSelButtons = new JPanel();
+        pnlBotSelButtons = new AFKPanel();
+        pnlBotSelButtons.setName("PanelBotSel");
         //pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
 
+        //pnlSelected = new JPanel();
         pnlSelected = new JPanel();
         lblSelected = new JLabel("Selected Bots");
         pnlSelected.setLayout(new BorderLayout());
+        lblSelected.setName("label");
 
-        btnAddBot = new JButton(">");
-        btnAddAllBots = new JButton(">>");
-        btnRemoveBot = new JButton("<");
-        btnRemoveAllBots = new JButton("<<");
-        btnStartMatch = new JButton("Start");
-        btnLoadBot = new JButton("Load Bot");
+        btnAddBot = new AFKButton(">");
+        btnAddAllBots = new AFKButton(">>");
+        btnRemoveBot = new AFKButton("<");
+        btnRemoveAllBots = new AFKButton("<<");
+        btnStartMatch = new AFKButton("Start");
+        btnLoadBot = new AFKButton("Load Bot");
 
         botMap = new HashMap<String, String>();
 
         fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle("Load Bot");
         fileChooser.setFileFilter(new FileNameExtensionFilter(".class, .jar", "class", "jar"));
+        
+        fileChooser.setFileView(new FileView(){
+            public Icon getIcon(File f)
+            {
+                return FileSystemView.getFileSystemView().getSystemIcon(f);
+            }
+        });
+        
+        System.out.println(fileChooser.getComponent(0).toString());
+        System.out.println(fileChooser.getComponent(1).toString());
+        System.out.println(fileChooser.getComponent(2).toString());
+        System.out.println(fileChooser.getComponent(3).toString());
+        
 
         lstAvailableBots = new JList();
         lstSelectedBots = new JList();
         lsAvailableModel = new DefaultListModel();
         lsSelectedModel = new DefaultListModel();
 
+        //pnlRobotError = new JPanel();
         pnlRobotError = new JPanel();
         txtErrorConsole = new JTextArea();
         txtErrorConsole.setEditable(false);
-        txtErrorConsole.setForeground(Color.red);
+        txtErrorConsole.setForeground(new Color(154, 00, 00));
         pnlRobotError.setLayout(new BorderLayout());
 
         configMenu = new JPopupMenu();
         configMenuItem = new JMenuItem("Configure");
+        
+        lstAvailableBots.setCellRenderer(new AFKListCellRenderer());
+        lstSelectedBots.setCellRenderer(new AFKListCellRenderer());
     }
     
-    /*
-     * Used for synth look and feel
-     */
-    private void setComponentNames()
-    {
-        pnlAvailable.setName("ListPanel");
-        pnlSelected.setName("ListPanel");
-    }
-
     private void addComponents()
     {
         Iterator it = botMap.keySet().iterator();
@@ -180,7 +199,7 @@ public class MenuPanel extends JPanel
         }
         lstAvailableBots.setModel(lsAvailableModel);
         lstSelectedBots.setModel(lsSelectedModel);
-
+        
         this.add(pnlAvailable);
         this.add(pnlBotSelButtons);
         this.add(pnlSelected);
@@ -224,9 +243,6 @@ public class MenuPanel extends JPanel
         pnlSelected.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         pnlRobotError.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));*/
 
-        
-        setComponentNames();
-        
         btnAddBot.addActionListener(new ActionListener()
         {
             @Override

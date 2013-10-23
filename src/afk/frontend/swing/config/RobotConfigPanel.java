@@ -90,6 +90,10 @@ public class RobotConfigPanel extends JPanel
 
     public void addComponents()
     {
+        lblRColour.setName("label");
+        lblRConfig.setName("label");
+        lblRName.setName("label");
+        
         pnlModel.setLayout(new ModelPanel_Layout());
         pnlModel.add(btnPrev);
         pnlModel.add(pnlCanvas);
@@ -112,8 +116,9 @@ public class RobotConfigPanel extends JPanel
 
     public void styleComponents()
     {
-        pnlModel.setBorder(new LineBorder(Color.yellow));
+        /*pnlModel.setBorder(new LineBorder(Color.yellow));
         pnlSettings.setBorder(new LineBorder(Color.blue));
+        */
         this.setLayout(new RobotConfigPanel_Layout());
 
 
@@ -359,7 +364,7 @@ public class RobotConfigPanel extends JPanel
             if (c.isVisible())
             {
                 hVal = (int) (h - numH);
-                wVal = (int) (w / 5);
+                wVal = (int) (w / 3);
                 c.setSize(new Dimension((int) wVal, (int) hVal));
                 c.setBounds(((w / 2) - (c.getWidth() / 2)), numH, wVal, hVal);
             }
