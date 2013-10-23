@@ -33,7 +33,14 @@ public interface GameMaster
     /**
      * Start the game.
      */
-    public void start() throws RobotException;
+    public void start();
+    
+    public void nextGame();
+    
+    /**
+     * Stop the game.
+     */
+    public void stop();
 
     public void playPause();
     

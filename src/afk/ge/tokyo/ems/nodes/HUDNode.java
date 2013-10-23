@@ -1,15 +1,15 @@
 package afk.ge.tokyo.ems.nodes;
 
 import afk.ge.ems.Node;
-import afk.ge.tokyo.ems.components.ImageComponent;
-import afk.ge.tokyo.ems.components.State;
+import afk.ge.tokyo.ems.components.HUD;
+import afk.ge.tokyo.ems.components.HUDImage;
 
 /**
  *
- * @author Daniel
+ * @author daniel
  */
 public class HUDNode extends Node
 {
-    public State state;
-    public ImageComponent image;
+    public HUD hud;
+    public HUDImage image;
 }

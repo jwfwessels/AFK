@@ -2,9 +2,9 @@ package afk.ge.tokyo.ems.systems;
 
 import afk.ge.ems.Engine;
 import afk.ge.ems.ISystem;
-import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.gfx.GraphicsEngine;
+import static afk.ge.tokyo.FlagSources.*;
 
 /**
  *
@@ -32,11 +32,11 @@ public class InputSystem implements ISystem
     {
         for (int i = 0; i < GraphicsEngine.NUM_KEYS; i++)
         {
-            engine.setFlag("keyboard", i, gfxEngine.isKeyDown(i));
+            engine.setFlag(KEYBOARD, i, gfxEngine.isKeyDown(i));
         }
         for (int i = 0; i < GraphicsEngine.NUM_MOUSE_BUTTONS; i++)
         {
-            engine.setFlag("mouse", i, gfxEngine.isMouseDown(i));
+            engine.setFlag(MOUSE, i, gfxEngine.isMouseDown(i));
         }
         
         Mouse mouse = engine.getGlobal(Mouse.class);

@@ -19,18 +19,6 @@ import javax.media.opengl.GLException;
 
 public class AthensUtils {
     
-    public static int
-    findAttribute(GL2 gl, String name, int program)
-    {
-       return gl.glGetAttribLocation(program, name);
-    }
-
-    public static int
-    findUniform(GL2 gl, String name, int program)
-    {
-       return gl.glGetUniformLocation(program, name);
-    }
-    
     static String
     loadFile(String fileName)
     {

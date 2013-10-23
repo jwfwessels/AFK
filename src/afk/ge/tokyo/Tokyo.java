@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package afk.ge.tokyo;
 
 import afk.bot.Robot;
@@ -12,15 +8,19 @@ import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.FactoryException;
+import static afk.ge.tokyo.FlagSources.*;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.GameState;
-import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.components.ScoreBoard;
+import afk.ge.tokyo.ems.components.SpinnyCamera;
 import afk.ge.tokyo.ems.factories.*;
+import afk.ge.tokyo.ems.nodes.RobotNode;
 import afk.ge.tokyo.ems.systems.*;
 import afk.gfx.GfxUtils;
 import com.hackoeur.jglm.Vec3;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public class Tokyo implements GameEngine, Runnable
     public final static float GAME_SPEED = 60;
     private float t = 0.0f;
     public final static float DELTA = 1.0f / GAME_SPEED;
-    public static float LOGIC_DELTA = DELTA;
+    public float logicDelta = DELTA;
     private float speedMultiplier = 1;
     public final static double NANOS_PER_SECOND = (double) GfxUtils.NANOS_PER_SECOND;
     //get NUM_RENDERS from GraphicsEngine average fps..?, currently hard coded
@@ -49,9 +49,16 @@ public class Tokyo implements GameEngine, Runnable
     private RobotEngine botEngine;
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
+    private TextLabelFactory labelFactory;
+    private BotInfoHUDFactory botInfoHUDFactory;
     private ScoreBoard scoreboard;
     private GameState gameState;
     private GameMaster game;
+    private DebugSystem debugSystem = null;
+    private boolean debug = false;
+    private boolean debugPressed = false;
+    private Entity cameraEntity;
+    private boolean quellTheUndead = false;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
@@ -61,11 +68,14 @@ public class Tokyo implements GameEngine, Runnable
 
         genericFactory = new GenericFactory();
         robotFactory = new RobotFactory(botEngine.getConfigManager(), genericFactory);
+        labelFactory = new TextLabelFactory();
+        botInfoHUDFactory = new BotInfoHUDFactory();
 
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
 
         System.out.println("gfx" + gfxEngine.getFPS());
+        gfxEngine.setBackground(Vec3.VEC3_ZERO);
 
         engine.addLogicSystem(new SpawnSystem());
         engine.addLogicSystem(new PaintSystem());
@@ -88,31 +98,31 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new VisionSystem());
         engine.addLogicSystem(new SonarSystem());
         engine.addLogicSystem(new RobotStateFeedbackSystem());
+        
         engine.addLogicSystem(new TextLabelSystem());
+        engine.addLogicSystem(new BotInfoHUDSystem(botEngine.getConfigManager()));
         engine.addLogicSystem(new GameStateSystem());
 
         engine.addSystem(new InputSystem(gfxEngine));
         engine.addSystem(new NoClipCameraSystem());
+        engine.addSystem(new SpinnyCameraSystem());
         engine.addSystem(new SelectionSystem());
         engine.addSystem(new RenderSystem(gfxEngine));
 
-        // TODO: if (DEBUG)  ...
-        DebugRenderSystem wireFramer = new DebugRenderSystem(gfxEngine);
-        engine.addSystem(new DebugSystem(botEngine, wireFramer));
-        ///
-
         engine.addGlobal(scoreboard = new ScoreBoard());
         engine.addGlobal(gameState = new GameState());
+        
+        debugSystem = new DebugSystem(botEngine, new DebugRenderSystem(gfxEngine));
 
         // TODO: put this somewhere else?
-        Entity entity = new Entity();
+        cameraEntity = new Entity();
         Camera camera = new Camera(
-                new Vec3(10f, 10f, 10f),
-                new Vec3(0f, 0f, 0f),
-                new Vec3(0f, 1f, 0f));
-        entity.addComponent(camera);
-        entity.addComponent(new NoClipCamera(1, 5, 0.2f));
-        engine.addEntity(entity);
+                new Vec3(BOARD_SIZE, 60, 0), // eye
+                new Vec3(0f, -10f, 0f), // at
+                new Vec3(0f, 1f, 0f)); // up
+        cameraEntity.addComponent(camera);
+        cameraEntity.addComponent(new NoClipCamera(1, 5, 0.2f));
+        engine.addEntity(cameraEntity);
         engine.addGlobal(camera);
     }
     // TODO: make these customisable/generic/not hard-coded/just somewhere else!
@@ -150,8 +160,12 @@ public class Tokyo implements GameEngine, Runnable
 
             for (int i = 0; i < participants.length; i++)
             {
-                engine.addEntity(robotFactory.create(
-                        new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i])));
+                Entity botEntity = robotFactory.create(
+                        new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i]));
+                engine.addEntity(botEntity);
+                engine.addEntity(botInfoHUDFactory.create(
+                        new BotInfoHUDFactoryRequest(botEntity,
+                        10, 10 + i*(BotInfoHUDSystem.PANEL_HEIGHT+10))));
                 scoreboard.scores.put(participants[i].getId(), 0);
             }
             new Thread(this).start();
@@ -161,6 +175,12 @@ public class Tokyo implements GameEngine, Runnable
             // FIXME: this needs to propagate somewhere else!
             ex.printStackTrace(System.err);
         }
+    }
+
+    @Override
+    public void stopGame()
+    {
+        running = false;
     }
 
     // TODO: this should be put in a map file
@@ -173,24 +193,48 @@ public class Tokyo implements GameEngine, Runnable
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
+        
+//        engine.addEntity(labelFactory.create(new TextLabelFactoryRequest("Test", 50, 50)));
     }
 
-    private void gameOverDebug()
+    private void gameOver()
     {
-        if (gameState.gameOver)
+        Vec3 focusPoint = Vec3.VEC3_ZERO;
+        float distance;
+        float speed;
+        float pitch;
+        if (gameState.winner == null)
         {
-            if (gameState.winner == null)
+            System.out.println("DRAW :(");
+            distance = BOARD_SIZE;
+            speed = 45;
+            pitch = 30;
+        } else
+        {
+            System.out.println("WINNER " + gameState.winner);
+            for (RobotNode node : engine.getNodeList(RobotNode.class))
             {
-                System.out.println("DRAW :(");
-            } else
-            {
-                System.out.println("WINNER " + gameState.winner);
+                if (node.controller.id == gameState.winner)
+                {
+                    focusPoint = node.state.pos;
+                    break;
+                }
             }
-            for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
-            {
-                System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
-            }
+            distance = 12;
+            speed = 60;
+            pitch = 25;
         }
+        cameraEntity.removeComponent(NoClipCamera.class);
+        cameraEntity.addComponent(new SpinnyCamera(0, speed, pitch, distance, focusPoint));
+        for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
+        {
+            System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
+        }
+    }
+    
+    private void notifyGameOver()
+    {
+        game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
     }
 
     @Override
@@ -211,14 +255,14 @@ public class Tokyo implements GameEngine, Runnable
     public void increaseSpeed()
     {
         speedMultiplier *= 2;
-        LOGIC_DELTA = 1 / (GAME_SPEED * speedMultiplier);
+        logicDelta = 1 / (GAME_SPEED * speedMultiplier);
     }
 
     @Override
     public void decreaseSpeed()
     {
         speedMultiplier /= 2;
-        LOGIC_DELTA = 1.0f / (GAME_SPEED * speedMultiplier);
+        logicDelta = 1.0f / (GAME_SPEED * speedMultiplier);
     }
 
     // TODO: put this code into a separate timer class
@@ -230,6 +274,13 @@ public class Tokyo implements GameEngine, Runnable
         double logicAccumulator = 0.0f;
         while (running)
         {
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_CONTROL) &&
+                    engine.getFlag(KEYBOARD, KeyEvent.VK_Z)
+                    && !engine.containsSystem(debugSystem))
+            {
+                engine.addSystem(debugSystem);
+            }
+            
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
@@ -249,20 +300,25 @@ public class Tokyo implements GameEngine, Runnable
             }
 
             //any function called in this block run at the current speedMultiplier speed
-            while (logicAccumulator >= LOGIC_DELTA)
+            while (logicAccumulator >= logicDelta)
             {
                 if (!paused && !gameState.gameOver)
                 {
                     engine.updateLogic(t, DELTA);
                     if (gameState.gameOver)
                     {
-                        gameOverDebug();
-                        game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
+                        gameOver();
                     }
+                } else if (gameState.gameOver && !quellTheUndead
+                        && engine.getFlag(MOUSE, MouseEvent.BUTTON1))
+                {
+                    notifyGameOver();
+                    quellTheUndead = true;
                 }
                 t += DELTA;
-                logicAccumulator -= LOGIC_DELTA;
+                logicAccumulator -= logicDelta;
             }
         }
+        engine.shutDown();
     }
 }

@@ -37,6 +37,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
@@ -244,6 +246,15 @@ public class DebugSystem implements ISystem
 
         frame = new JFrame(WINDOW_TITLE_VIEW);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                DebugSystem.this.engine.removeSystem(DebugSystem.this);
+            }
+            
+        });
 
         fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle("Load Bot");
@@ -565,5 +576,6 @@ public class DebugSystem implements ISystem
     @Override
     public void destroy()
     {
+        frame.dispose();
     }
 }

@@ -1,11 +1,11 @@
 package afk.gfx.athens;
 
+import static afk.gfx.Resource.HEIGHTMAP_MESH;
 import com.hackoeur.jglm.Vec3;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL2;
 
@@ -16,6 +16,7 @@ import javax.media.opengl.GL2;
  */
 public class AthensTerrain extends Mesh
 {
+    public static final float BLEED = 0.02f;
 
     private BufferedImage heightmap;
     private int xGrid, yGrid;
@@ -25,6 +26,7 @@ public class AthensTerrain extends Mesh
     private float[][] botVerts;
     private float[][] leftVerts;
     private float[][] rightVerts;
+    private TerrainSides sides;
 
     private float samplei(int u, int v)
     {
@@ -96,6 +98,7 @@ public class AthensTerrain extends Mesh
     public AthensTerrain(String name)
     {
         super(HEIGHTMAP_MESH, name);
+        sides = new TerrainSides(name+"$sides");
     }
 
     @Override
@@ -204,38 +207,157 @@ public class AthensTerrain extends Mesh
                 gl.glBegin(GL2.GL_QUADS);
                 {
                     gl.glNormal3f(-1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), leftVerts[i][1]+0.5f);
                     gl.glVertex3f(leftVerts[i][0], leftVerts[i][1], leftVerts[i][2]);
                     
                     gl.glNormal3f(-1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
-                    gl.glVertex3f(leftVerts[i][0], -0.5f, leftVerts[i][2]);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), leftVerts[i][1]-BLEED+0.5f);
+                    gl.glVertex3f(leftVerts[i][0], leftVerts[i][1]-BLEED, leftVerts[i][2]);
                     
                     gl.glNormal3f(-1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
-                    gl.glVertex3f(leftVerts[i+1][0], -0.5f, leftVerts[i+1][2]);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), leftVerts[i+1][1]-BLEED+0.5f);
+                    gl.glVertex3f(leftVerts[i+1][0], leftVerts[i+1][1]-BLEED, leftVerts[i+1][2]);
                     
                     gl.glNormal3f(-1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), leftVerts[i+1][1]+0.5f);
                     gl.glVertex3f(leftVerts[i+1][0], leftVerts[i+1][1], leftVerts[i+1][2]);
                 }
                 gl.glEnd();
                 gl.glBegin(GL2.GL_QUADS);
                 {
                     gl.glNormal3f(1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), rightVerts[i][1]+0.5f);
                     gl.glVertex3f(rightVerts[i][0], rightVerts[i][1], rightVerts[i][2]);
                     
                     gl.glNormal3f(1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), rightVerts[i+1][1]+0.5f);
                     gl.glVertex3f(rightVerts[i+1][0], rightVerts[i+1][1], rightVerts[i+1][2]);
                     
                     gl.glNormal3f(1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), rightVerts[i+1][1]-BLEED+0.5f);
+                    gl.glVertex3f(rightVerts[i+1][0], rightVerts[i+1][1]-BLEED, rightVerts[i+1][2]);
+                    
+                    gl.glNormal3f(1, 0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), rightVerts[i][1]-BLEED+0.5f);
+                    gl.glVertex3f(rightVerts[i][0], rightVerts[i][1]-BLEED, rightVerts[i][2]);
+                }
+                gl.glEnd();
+            }
+            for (int i = 0; i < yGrid - 1; i++)
+            {
+                gl.glBegin(GL2.GL_QUADS);
+                {
+                    gl.glNormal3f(0, 0, 1);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), botVerts[i][1]+0.5f);
+                    gl.glVertex3f(botVerts[i][0], botVerts[i][1], botVerts[i][2]);
+                    
+                    gl.glNormal3f(0, 0, 1);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), botVerts[i][1]+0.5f-BLEED);
+                    gl.glVertex3f(botVerts[i][0], botVerts[i][1]-BLEED, botVerts[i][2]);
+                    
+                    gl.glNormal3f(0, 0, 1);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), botVerts[i+1][1]+0.5f-BLEED);
+                    gl.glVertex3f(botVerts[i+1][0], botVerts[i+1][1]-BLEED, botVerts[i+1][2]);
+                    
+                    gl.glNormal3f(0, 0, 1);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), botVerts[i+1][1]+0.5f);
+                    gl.glVertex3f(botVerts[i+1][0], botVerts[i+1][1], botVerts[i+1][2]);
+                }
+                gl.glEnd();
+                gl.glBegin(GL2.GL_QUADS);
+                {
+                    gl.glNormal3f(0, 0, -1);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), topVerts[i][1]+0.5f);
+                    gl.glVertex3f(topVerts[i][0], topVerts[i][1], topVerts[i][2]);
+                    
+                    gl.glNormal3f(0, 0, -1);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), topVerts[i+1][1]+0.5f);
+                    gl.glVertex3f(topVerts[i+1][0], topVerts[i+1][1], topVerts[i+1][2]);
+                    
+                    gl.glNormal3f(0, 0, -1);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), topVerts[i+1][1]-BLEED+0.5f);
+                    gl.glVertex3f(topVerts[i+1][0], topVerts[i+1][1]-BLEED, topVerts[i+1][2]);
+                    
+                    gl.glNormal3f(0, 0, -1);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), topVerts[i][1]-BLEED+0.5f);
+                    gl.glVertex3f(topVerts[i][0], topVerts[i][1]-BLEED, topVerts[i][2]);
+                }
+                gl.glEnd();
+            }
+            gl.glEndList();
+        }
+        gl.glEndList();
+        
+        sides.load(gl);
+
+        loaded.set(true);
+    }
+
+    @Override
+    public void unload(GL2 gl)
+    {
+        super.unload(gl);
+        sides.unload(gl);
+    }
+    
+    public Mesh getSides()
+    {
+        return sides;
+    }
+    
+    private class TerrainSides extends Mesh
+    {
+        public TerrainSides(String name)
+        {
+            super(HEIGHTMAP_MESH, name);
+        }
+        
+        @Override
+        public void load(GL2 gl)
+                throws IOException
+        {
+            super.load(gl);
+            
+            if (this.loaded.get()) return;
+            
+            gl.glNewList(this.handle, GL2.GL_COMPILE);
+            for (int i = 0; i < xGrid - 1; i++)
+            {
+                gl.glBegin(GL2.GL_QUADS);
+                {
+                    gl.glNormal3f(-1, 0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), leftVerts[i][1]+0.5f-BLEED);
+                    gl.glVertex3f(leftVerts[i][0], leftVerts[i][1]-BLEED, leftVerts[i][2]);
+                    
+                    gl.glNormal3f(-1, 0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), 0);
+                    gl.glVertex3f(leftVerts[i][0], -0.5f, leftVerts[i][2]);
+                    
+                    gl.glNormal3f(-1, 0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), 0);
+                    gl.glVertex3f(leftVerts[i+1][0], -0.5f, leftVerts[i+1][2]);
+                    
+                    gl.glNormal3f(-1, 0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), leftVerts[i+1][1]+0.5f-BLEED);
+                    gl.glVertex3f(leftVerts[i+1][0], leftVerts[i+1][1]-BLEED, leftVerts[i+1][2]);
+                }
+                gl.glEnd();
+                gl.glBegin(GL2.GL_QUADS);
+                {
+                    gl.glNormal3f(1, 0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), rightVerts[i][1]+0.5f-BLEED);
+                    gl.glVertex3f(rightVerts[i][0], rightVerts[i][1]-BLEED, rightVerts[i][2]);
+                    
+                    gl.glNormal3f(1, 0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), rightVerts[i+1][1]+0.5f-BLEED);
+                    gl.glVertex3f(rightVerts[i+1][0], rightVerts[i+1][1]-BLEED, rightVerts[i+1][2]);
+                    
+                    gl.glNormal3f(1, 0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (xGrid - 1), 0);
                     gl.glVertex3f(rightVerts[i+1][0], -0.5f, rightVerts[i+1][2]);
                     
                     gl.glNormal3f(1, 0, 0);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) i / (float) (xGrid - 1), 0);
                     gl.glVertex3f(rightVerts[i][0], -0.5f, rightVerts[i][2]);
                 }
                 gl.glEnd();
@@ -245,45 +367,45 @@ public class AthensTerrain extends Mesh
                 gl.glBegin(GL2.GL_QUADS);
                 {
                     gl.glNormal3f(0, 0, 1);
-                    gl.glTexCoord2f(0, 0);
-                    gl.glVertex3f(botVerts[i][0], botVerts[i][1], botVerts[i][2]);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), botVerts[i][1]+0.5f-BLEED);
+                    gl.glVertex3f(botVerts[i][0], botVerts[i][1]-BLEED, botVerts[i][2]);
                     
                     gl.glNormal3f(0, 0, 1);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), 0);
                     gl.glVertex3f(botVerts[i][0], -0.5f, botVerts[i][2]);
                     
                     gl.glNormal3f(0, 0, 1);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), 0);
                     gl.glVertex3f(botVerts[i+1][0], -0.5f, botVerts[i+1][2]);
                     
                     gl.glNormal3f(0, 0, 1);
-                    gl.glTexCoord2f(0, 0);
-                    gl.glVertex3f(botVerts[i+1][0], botVerts[i+1][1], botVerts[i+1][2]);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), botVerts[i+1][1]+0.5f-BLEED);
+                    gl.glVertex3f(botVerts[i+1][0], botVerts[i+1][1]-BLEED, botVerts[i+1][2]);
                 }
                 gl.glEnd();
                 gl.glBegin(GL2.GL_QUADS);
                 {
                     gl.glNormal3f(0, 0, -1);
-                    gl.glTexCoord2f(0, 0);
-                    gl.glVertex3f(topVerts[i][0], topVerts[i][1], topVerts[i][2]);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), topVerts[i][1]+0.5f-BLEED);
+                    gl.glVertex3f(topVerts[i][0], topVerts[i][1]-BLEED, topVerts[i][2]);
                     
                     gl.glNormal3f(0, 0, -1);
-                    gl.glTexCoord2f(0, 0);
-                    gl.glVertex3f(topVerts[i+1][0], topVerts[i+1][1], topVerts[i+1][2]);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), topVerts[i+1][1]+0.5f-BLEED);
+                    gl.glVertex3f(topVerts[i+1][0], topVerts[i+1][1]-BLEED, topVerts[i+1][2]);
                     
                     gl.glNormal3f(0, 0, -1);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) (i+1) / (float) (yGrid - 1), 0);
                     gl.glVertex3f(topVerts[i+1][0], -0.5f, topVerts[i+1][2]);
                     
                     gl.glNormal3f(0, 0, -1);
-                    gl.glTexCoord2f(0, 0);
+                    gl.glTexCoord2f((float) i / (float) (yGrid - 1), 0);
                     gl.glVertex3f(topVerts[i][0], -0.5f, topVerts[i][2]);
                 }
                 gl.glEnd();
             }
-        }
-        gl.glEndList();
+            gl.glEndList();
 
-        loaded.set(true);
+            this.loaded.set(true);
+        }
     }
 }

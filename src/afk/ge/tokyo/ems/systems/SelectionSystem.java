@@ -4,6 +4,7 @@ import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
 import afk.ge.ems.ISystem;
+import static afk.ge.tokyo.FlagSources.*;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Display;
 import afk.ge.tokyo.ems.components.Mouse;
@@ -34,7 +35,7 @@ public class SelectionSystem implements ISystem
     @Override
     public void update(float t, float dt)
     {
-        if (!engine.getFlag("mouse", MouseEvent.BUTTON1))
+        if (!engine.getFlag(MOUSE, MouseEvent.BUTTON1))
         {
             return;
         }

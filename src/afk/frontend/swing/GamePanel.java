@@ -1,5 +1,6 @@
 package afk.frontend.swing;
 
+import afk.frontend.swing.postgame.PostGamePanel;
 import afk.game.GameListener;
 import afk.game.GameMaster;
 import afk.ge.tokyo.GameResult;
@@ -16,7 +17,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -29,13 +29,14 @@ public class GamePanel extends JPanel
 {
     
     RootWindow parent;
-    Component glCanvas;
     JPanel view;
     JPanel pnlControls;
+    Component glPanel = new JPanel();
     JLabel fps;
     JToggleButton btnPlayPause;
     JButton btnFaster;
     JButton btnSlower;
+    JButton btnBack;
     private JLabel lblSpeed;
     GameMaster gm;
     
@@ -43,23 +44,13 @@ public class GamePanel extends JPanel
     {
         this.parent = parent;
         gm = game;
-        
-        game.addGameListener(new GameListener() {
 
-            @Override
-            public void gameOver(GameResult result)
-            {
-                UUID winnerID = result.getWinner();
-                String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
-                JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
-            }
-        });
-
-        LayoutManager layout = new GamePanel_Layout();
+        LayoutManager layout = new GamePanel_Layout(); 
         this.setLayout(layout);
+        setup();
     }
     
-    void setup()
+    private void setup()
     {
         initComponents();
         addComponents();
@@ -69,25 +60,27 @@ public class GamePanel extends JPanel
     private void initComponents()
     {
         fps = new JLabel("FPS: x");
-        glCanvas = gm.getAWTComponent();
         view = new JPanel();
+        glPanel = gm.getAWTComponent();
         pnlControls = new JPanel();
         btnPlayPause = new JToggleButton("press");
         btnFaster = new JButton(">>");
         btnSlower = new JButton("<<");
         lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
+        btnBack = new JButton("Back");
     }
     
     private void addComponents()
     {
         view.setLayout(new ViewPanel_Layout());
-        view.add(glCanvas);
+        view.add(glPanel);
         
         pnlControls.add(fps);
         pnlControls.add(btnSlower);
         pnlControls.add(btnPlayPause);
         pnlControls.add(btnFaster);
         pnlControls.add(lblSpeed);
+        pnlControls.add(btnBack);
         add(view);
         add(pnlControls);
     }
@@ -175,6 +168,16 @@ public class GamePanel extends JPanel
         btnSlower.addActionListener(decreaseSpeed);
         btnSlower.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "increaseSpeed");
         btnSlower.getActionMap().put("increaseSpeed", decreaseSpeed);
+        
+        btnBack.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                gm.stop();
+                parent.recallMenuPanel(GamePanel.this);
+            }
+        });
     }
     
     private void setLblSpeed()
@@ -247,7 +250,7 @@ public class GamePanel extends JPanel
                 {
                     c.setBounds(insets.left, insets.top, (int) w, ((int) h - 50));
                     
-                    glCanvas.setSize(w, h);
+                    glPanel.setSize(w, h);
                     num2 += c.getSize().height;
                     System.out.println("dim1:   " + insets.left + "   " + insets.top + "   " + (int) w + " " + ((int) h - 50));
                 }
