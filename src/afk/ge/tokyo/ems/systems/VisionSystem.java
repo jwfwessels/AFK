@@ -88,7 +88,7 @@ public class VisionSystem implements ISystem
 
                     Controller controller = tnode.entity.get(Controller.class);
                     UUID id = null;
-                    if (controller == null)
+                    if (controller != null)
                     {
                         id = controller.id;
                     }

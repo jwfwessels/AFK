@@ -63,8 +63,21 @@ public class SaladBot extends TankRobot
         {
             clearActions();
             
-            moveBackward(5);
-            turnClockwise(10);
+            turnAntiClockwise(50);
+            
+            startTimer(50, new Runnable() {
+                @Override
+                public void run()
+                {
+                    if (getActionValue(MOVE_BACK) > 0)
+                    {
+                        moveForward(50);
+                    } else
+                    {
+                        moveBackward(50);
+                    }
+                }
+            });
         }
         
         public abstract void robotVisible(List<VisibleRobot> visibleBots);
@@ -72,25 +85,49 @@ public class SaladBot extends TankRobot
     
     public class HuntState extends SaladState
     {
+        private int _direction = 1;
+        
+        public HuntState()
+        {
+            System.out.println("Hunting time");
+        }
+        
         @Override
         public void act()
         {
-            turnClockwise(5);
-            moveForward(10);
+            int turnAmount = (int) (Math.random() * 30.0) + 30;
+            
+            if (_direction > 0)
+            {
+                turnClockwise(turnAmount);
+            }
+            else
+            {
+                turnAntiClockwise(turnAmount);
+            }
+            
+            moveForward(300);
         }
 
         @Override
         public void onIdle()
         {
+            System.out.println("Changing direction");
+            _direction = _direction * -1;
             act();
         }
 
         @Override
         public void robotVisible(List<VisibleRobot> visibleBots)
         {
-            VisibleRobot prey = visibleBots.get(0);
-            
-            setState(new KillState(prey));
+            if (visibleBots.size() > 0)
+            {
+                System.out.println("Saw a prawn");
+
+                VisibleRobot prey = visibleBots.get(0);
+
+                setState(new KillState(prey));
+            }
         }
     }
     
@@ -101,17 +138,21 @@ public class SaladBot extends TankRobot
         public KillState(VisibleRobot prey)
         {
             _prey = prey;
+            System.out.println("Time to kill");
         }
         
         @Override
         public void act()
         {
+            System.out.println("Blood thirst");
+            moveForward(50);
+            turnClockwise(50);
         }
 
         @Override
         public void onIdle()
         {
-            setState(new HuntState());
+            act();
         }
 
         @Override
@@ -131,7 +172,26 @@ public class SaladBot extends TankRobot
             if (!preyIsStillVisible)
             {
                 setState(new HuntState());
+                return;
             }
+            
+            startTimer(50, new Runnable() {
+                @Override
+                public void run()
+                {
+                    clearActions();
+                    target(_prey, 0.4f);
+                    
+                    startTimer(50, new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            clearActions();
+                            act();
+                        }
+                    });
+                }
+            });
         }
     }
 }

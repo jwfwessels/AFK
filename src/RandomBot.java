@@ -65,6 +65,6 @@ public class RandomBot extends TankRobot
             }
         });
 
-        moveForward(10);
+        moveForward(200);
     }
 }

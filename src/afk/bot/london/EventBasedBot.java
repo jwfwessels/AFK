@@ -1,5 +1,6 @@
 package afk.bot.london;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,13 +36,14 @@ public abstract class EventBasedBot extends AbstractRobot
             ticks--;
             if (ticks <= 0)
             {
-                r.run();
+                jobs.add(r);
                 return false;
             }
             return true;
         }
     }
     private HashMap<Integer, RobotTimer> timers = new HashMap<Integer, RobotTimer>();
+    private ArrayList<Runnable> jobs = new ArrayList<Runnable>();
 
     public EventBasedBot(int numActions)
     {
@@ -79,6 +81,11 @@ public abstract class EventBasedBot extends AbstractRobot
                 it.remove();
             }
         }
+        for (Runnable r : jobs)
+        {
+            r.run();
+        }
+        jobs.clear();
 
         for (int d = 0; d < events.sonar.distance.length; d++)
         {
@@ -153,7 +160,7 @@ public abstract class EventBasedBot extends AbstractRobot
         timers.put(timerID, new RobotTimer(runnable, ticks));
         return timerID;
     }
-    
+
     protected void cancelTimer(int timerID)
     {
         if (timers.containsKey(timerID))
@@ -166,7 +173,7 @@ public abstract class EventBasedBot extends AbstractRobot
     {
         timers.clear();
     }
-    
+
     /**
      * Called at the start of the game. User must give the robot's first
      * commands here.
