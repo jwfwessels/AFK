@@ -58,6 +58,7 @@ public class Tokyo implements GameEngine, Runnable
     private boolean debug = false;
     private boolean debugPressed = false;
     private Entity cameraEntity;
+    private boolean quellTheUndead = false;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
@@ -199,10 +200,14 @@ public class Tokyo implements GameEngine, Runnable
     {
         Vec3 focusPoint = Vec3.VEC3_ZERO;
         float distance;
+        float speed;
+        float pitch;
         if (gameState.winner == null)
         {
             System.out.println("DRAW :(");
             distance = BOARD_SIZE;
+            speed = 45;
+            pitch = 30;
         } else
         {
             System.out.println("WINNER " + gameState.winner);
@@ -214,10 +219,12 @@ public class Tokyo implements GameEngine, Runnable
                     break;
                 }
             }
-            distance = 10;
+            distance = 12;
+            speed = 60;
+            pitch = 25;
         }
         cameraEntity.removeComponent(NoClipCamera.class);
-        cameraEntity.addComponent(new SpinnyCamera(0, 60, 30, distance, focusPoint));
+        cameraEntity.addComponent(new SpinnyCamera(0, speed, pitch, distance, focusPoint));
         for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
         {
             System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
@@ -301,10 +308,11 @@ public class Tokyo implements GameEngine, Runnable
                     {
                         gameOver();
                     }
-                } else if (gameState.gameOver
+                } else if (gameState.gameOver && !quellTheUndead
                         && engine.getFlag(MOUSE, MouseEvent.BUTTON1))
                 {
                     notifyGameOver();
+                    quellTheUndead = true;
                 }
                 t += DELTA;
                 logicAccumulator -= logicDelta;

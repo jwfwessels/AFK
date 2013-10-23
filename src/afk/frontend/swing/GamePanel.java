@@ -17,7 +17,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -53,7 +52,7 @@ public class GamePanel extends JPanel
             {
                 UUID winnerID = result.getWinner();
                 String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
-                JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
+                //JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
                 GamePanel.this.parent.destroyMe(GamePanel.this);
                 GamePanel.this.parent.showPanel(
                         new PostGamePanel(GamePanel.this.parent, result, gm), "postGame");
