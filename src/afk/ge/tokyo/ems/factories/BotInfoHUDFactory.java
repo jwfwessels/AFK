@@ -18,7 +18,8 @@ public class BotInfoHUDFactory implements Factory<BotInfoHUDFactoryRequest>
     {
         Entity entity = new Entity();
         
-        entity.addComponent(new HUD(request.x, request.y));
+        entity.addComponent(new HUD(request.top, request.right,
+                request.bottom, request.left));
         entity.addComponent(new HUDImage());
         entity.addComponent(new BotInfoHUD(request.bot));
         

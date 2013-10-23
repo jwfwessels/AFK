@@ -1,13 +1,9 @@
 package afk.gfx.athens;
 
-import afk.gfx.GfxEntity;
-import afk.gfx.Resource;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,7 +19,6 @@ public class AthensTest
 {
     public JFrame testFrame;
     public Athens instance;
-    public JLabel testLabel;
     
     public AthensTest()
     {
@@ -44,9 +39,7 @@ public class AthensTest
     {
         testFrame = new JFrame("test");
         testFrame.setSize(128, 128);
-        testLabel = new JLabel();
         instance = new Athens(false);
-        instance.setFPSComponent(testLabel);
         testFrame.add(instance.getAWTComponent());
         testFrame.setVisible(true);
     }

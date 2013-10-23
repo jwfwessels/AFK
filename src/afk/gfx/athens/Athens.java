@@ -75,7 +75,6 @@ public class Athens implements GraphicsEngine
 //    private GLJPanel glCanvas;
     private Animator animator;
     private float fps = 0.0f;
-    private JLabel fpsComp;
     private Vec3 bgColour = new Vec3(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f);
     private boolean init = false;
 
@@ -243,12 +242,7 @@ public class Athens implements GraphicsEngine
         float delta = nanos / (float) NANOS_PER_SECOND;
         lastFPS += delta;
 
-        if (fpsComp != null && lastFPS >= fpsInterval)
-        {
-            fps = (1.0f / delta);
-            fpsComp.setText(String.format("FPS: %.0f", fps));
-            lastFPS = 0;
-        }
+        fps = (1.0f / delta);
 
         resourceManager.update(gl);
         /// FIXME: this should go somewhere else
@@ -489,12 +483,6 @@ public class Athens implements GraphicsEngine
     public float getFPS()
     {
         return fps;
-    }
-
-    @Override
-    public void setFPSComponent(Component comp)
-    {
-        fpsComp = (JLabel) comp;
     }
 
     @Override

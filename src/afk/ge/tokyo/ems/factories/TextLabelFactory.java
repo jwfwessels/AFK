@@ -20,7 +20,8 @@ public class TextLabelFactory implements Factory<TextLabelFactoryRequest>
         
         entity.addComponent(new HUDImage());
         entity.addComponent(new TextLabel(request.text));
-        entity.addComponent(new HUD(request.x, request.y));
+        entity.addComponent(new HUD(request.top, request.right,
+                request.bottom, request.left));
         
         return entity;
     }
