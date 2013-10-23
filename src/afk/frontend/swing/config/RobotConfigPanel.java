@@ -80,9 +80,9 @@ public class RobotConfigPanel extends JPanel
         btnBrowse = new JButton("Browse");
 
         pnlSettings = new JPanel();
-        lblRName = new JLabel("Robot Name");
+        lblRName = new JLabel("Name");
         txtName = new JTextField("Name");
-        lblRColour = new JLabel("Robot Colour");
+        lblRColour = new JLabel("Colour");
         cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");
