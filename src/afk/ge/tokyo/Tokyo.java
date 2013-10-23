@@ -117,9 +117,9 @@ public class Tokyo implements GameEngine, Runnable
         // TODO: put this somewhere else?
         cameraEntity = new Entity();
         Camera camera = new Camera(
-                new Vec3(20f, 20f, 20f),
-                new Vec3(0f, 0f, 0f),
-                new Vec3(0f, 1f, 0f));
+                new Vec3(BOARD_SIZE, 60, 0), // eye
+                new Vec3(0f, -10f, 0f), // at
+                new Vec3(0f, 1f, 0f)); // up
         cameraEntity.addComponent(camera);
         cameraEntity.addComponent(new NoClipCamera(1, 5, 0.2f));
         engine.addEntity(cameraEntity);
