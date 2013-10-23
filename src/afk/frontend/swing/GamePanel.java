@@ -83,6 +83,8 @@ public class GamePanel extends JPanel
         btnSlower = new JButton("<<");
         lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
         btnBack = new JButton("Back");
+        
+        lblSpeed.setName("label");
     }
     
     private void addComponents()

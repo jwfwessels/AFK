@@ -137,13 +137,11 @@
                 <color value="#000F" type="BACKGROUND"/>
                 <color value="#CCCCCC" type="FOREGROUND"/>
             </state>
-            <object  class="afk.frontend.swing.AFKLabelPainter" id="labelPainter"/>
-            <defaultsProperty key="Label.first" type="idref" value="grey1"/>
-            <defaultsProperty key="Label.second" type="idref" value="grey4"/>
-            <painter method="labelBackground" idref="labelPainter" />
+
+
         </style>
         
-        <bind style="labelStyle" type="name" key="label"/>
+        <bind style="labelStyle" type="region" key="label"/>
         
        <style id="fileChooserStyle">
             <object  class="afk.frontend.swing.AFKFileChooserPainter" id="fileChooserPainter"/>

@@ -27,7 +27,7 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
          Color background;
          Color foreground;
          
-         setFont(new Font("Constantia", 0, 16));
+         setFont(new Font("Constantia", 0, 14));
 
          // check if this cell represents the current DnD drop location
         /* JList.DropLocation dropLocation = list.getDropLocation();
@@ -46,6 +46,7 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
              foreground = new Color(0, 0, 0);*/
              background = new Color(153, 153, 153);  //204
              foreground = new Color(0, 0, 0);
+             this.setOpaque(true);
          } 
          
          // unselected, and not the DnD drop location
@@ -57,6 +58,7 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
              foreground = new Color(204, 204, 204);
          }
 
+         
          setBackground(background);
          setForeground(foreground);
 

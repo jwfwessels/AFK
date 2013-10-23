@@ -179,7 +179,7 @@ public class MenuPanel extends JPanel
         pnlRobotError = new JPanel();
         txtErrorConsole = new JTextArea();
         txtErrorConsole.setEditable(false);
-        txtErrorConsole.setForeground(new Color(154, 00, 00));
+        txtErrorConsole.setForeground(new Color(255, 00, 00));
         pnlRobotError.setLayout(new BorderLayout());
 
         configMenu = new JPopupMenu();
