@@ -37,7 +37,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
@@ -311,7 +310,7 @@ public class MenuPanel extends JPanel
                         gm.stop();
                         UUID winnerID = result.getWinner();
                         String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
-                        JOptionPane.showMessageDialog(MenuPanel.this.parent, winner + " won!");
+//                        JOptionPane.showMessageDialog(MenuPanel.this.parent, winner + " won!");
                         MenuPanel.this.parent.destroyGame();
                         MenuPanel.this.parent.showPanel(
                                 new PostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
@@ -348,7 +347,7 @@ public class MenuPanel extends JPanel
                         gm.stop();
                         UUID winnerID = result.getWinner();
                         String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
-                        JOptionPane.showMessageDialog(MenuPanel.this.parent, winner + " won!");
+//                        JOptionPane.showMessageDialog(MenuPanel.this.parent, winner + " won!");
                         MenuPanel.this.parent.destroyGame();
                         MenuPanel.this.parent.showPanel(
                                 new PostGamePanel(MenuPanel.this.parent, result, gm), "postGame");
