@@ -22,6 +22,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
     private Map<UUID, Integer> scores = new HashMap<UUID, Integer>();
     private Robot[][] groups = null;
+    private boolean finalRound = false;
     private int currentGroup = 0;
     private int currentRound = 0;
     private int botsThisRounds = 0;
@@ -91,7 +92,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             score += result.getScore(bots[i]);
             scores.put(bots[i], score);
         }
-        if (bots.length == 2)
+        if (finalRound)
         {
             tournamentOver();
         } else
@@ -183,7 +184,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             {
                 // if stealing causes one of the other groups to fall below minimum group size,
                 // then the situation is a fail
-                if (groupSizes[i] == MIN_GROUP_SIZE + 1)
+                if (groupSizes[i] < MIN_GROUP_SIZE + 1)
                 {
                     // we've tried all we can :(
                     System.err.println("Warning: Group sizes cannot conform to specifications.");
@@ -220,6 +221,8 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     {
         botsThisRounds = robots.size();
         groups = makeGroups();
+        finalRound = (groups.length == 1
+                && groups[0].length <= MAX_GROUP_SIZE/2);
         robots.clear();
         currentGroup = 0;
         currentRound++;
