@@ -48,6 +48,8 @@ public class Tokyo implements GameEngine, Runnable
     private RobotEngine botEngine;
     private RobotFactory robotFactory;
     private GenericFactory genericFactory;
+    private TextLabelFactory labelFactory;
+    private BotInfoHUDFactory botInfoHUDFactory;
     private ScoreBoard scoreboard;
     private GameState gameState;
     private GameMaster game;
@@ -60,6 +62,8 @@ public class Tokyo implements GameEngine, Runnable
 
         genericFactory = new GenericFactory();
         robotFactory = new RobotFactory(botEngine.getConfigManager(), genericFactory);
+        labelFactory = new TextLabelFactory();
+        botInfoHUDFactory = new BotInfoHUDFactory();
 
         System.out.println("MAX_FRAMETIME = " + MAX_FRAMETIME);
         System.out.println("DELTA = " + DELTA);
@@ -88,7 +92,9 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new VisionSystem());
         engine.addLogicSystem(new SonarSystem());
         engine.addLogicSystem(new RobotStateFeedbackSystem());
-        //engine.addLogicSystem(new TextLabelSystem());
+        
+        engine.addLogicSystem(new TextLabelSystem());
+        engine.addLogicSystem(new BotInfoHUDSystem(botEngine.getConfigManager()));
         engine.addLogicSystem(new GameStateSystem());
 
         engine.addSystem(new InputSystem(gfxEngine));
@@ -150,8 +156,12 @@ public class Tokyo implements GameEngine, Runnable
 
             for (int i = 0; i < participants.length; i++)
             {
-                engine.addEntity(robotFactory.create(
-                        new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i])));
+                Entity botEntity = robotFactory.create(
+                        new RobotFactoryRequest(participants[i], SPAWN_POINTS[i], BOT_COLOURS[i]));
+                engine.addEntity(botEntity);
+                engine.addEntity(botInfoHUDFactory.create(
+                        new BotInfoHUDFactoryRequest(botEntity,
+                        10, 10 + i*(BotInfoHUDSystem.PANEL_HEIGHT+10))));
                 scoreboard.scores.put(participants[i].getId(), 0);
             }
             new Thread(this).start();
@@ -179,6 +189,8 @@ public class Tokyo implements GameEngine, Runnable
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
+        
+//        engine.addEntity(labelFactory.create(new TextLabelFactoryRequest("Test", 50, 50)));
     }
 
     private void gameOverDebug()

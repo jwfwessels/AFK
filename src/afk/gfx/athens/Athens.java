@@ -1,6 +1,6 @@
 package afk.gfx.athens;
 
-import afk.ge.tokyo.ems.components.ImageComponent;
+import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.gfx.AbstractCamera;
@@ -25,11 +25,11 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
-import javax.swing.JLabel;
 import static afk.gfx.GfxUtils.*;
 import afk.gfx.HUDCamera;
 import java.io.IOException;
 import afk.gfx.Resource;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,16 +46,14 @@ public class Athens implements GraphicsEngine
     protected ResourceManager resourceManager;
     protected TypeFactory typeFactory;
     protected Map<Renderable, AthensEntity> entities = new LinkedHashMap<Renderable, AthensEntity>();
-    protected Map<ImageComponent, AthensHUD> huds = new LinkedHashMap<ImageComponent, AthensHUD>();
+    protected Map<HUDImage, AthensHUD> huds = new HashMap<HUDImage, AthensHUD>();
     protected List<Renderable> removed = new ArrayList<Renderable>();
-    protected List<ImageComponent> removedHUD = new ArrayList<ImageComponent>();
+    protected List<HUDImage> removedHUD = new ArrayList<HUDImage>();
     protected List<AthensEntity> entitiesDebug = new ArrayList<AthensEntity>();
     private int w_width, w_height;
     private boolean[] keys = new boolean[NUM_KEYS];
     private long frameCount = 0;
     private long lastUpdate;
-    private float lastFPS = 0.0f;
-    private float fpsInterval = 1.0f;
     AbstractCamera camera;
     HUDCamera hudCamera;
     Mat4 monkeyWorld, skyboxWorld;
@@ -74,9 +72,10 @@ public class Athens implements GraphicsEngine
 //    private GLJPanel glCanvas;
     private Animator animator;
     private float fps = 0.0f;
-    private JLabel fpsComp;
     private Vec3 bgColour = new Vec3(87.0f / 256.0f, 220.0f / 256.0f, 225.0f / 256.0f);
     private boolean init = false;
+    
+    private AthensEntity skybox;
 
     public Athens(boolean autodraw)
     {
@@ -240,14 +239,8 @@ public class Athens implements GraphicsEngine
         long nanos = nTime - lastUpdate;
         lastUpdate = nTime;
         float delta = nanos / (float) NANOS_PER_SECOND;
-        lastFPS += delta;
 
-        if (fpsComp != null && lastFPS >= fpsInterval)
-        {
-            fps = (1.0f / delta);
-            fpsComp.setText(String.format("FPS: %.0f", fps));
-            lastFPS = 0;
-        }
+        fps = (1.0f / delta);
 
         resourceManager.update(gl);
         /// FIXME: this should go somewhere else
@@ -264,6 +257,7 @@ public class Athens implements GraphicsEngine
             }
             if (hud.isUpdated())
             {
+                hud.bind(gl);
                 hud.setup(gl);
             }
         }
@@ -300,7 +294,7 @@ public class Athens implements GraphicsEngine
         }
         removed.clear();
 
-        for (ImageComponent r : removedHUD)
+        for (HUDImage r : removedHUD)
         {
             huds.remove(r);
         }
@@ -316,9 +310,14 @@ public class Athens implements GraphicsEngine
     {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-        gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_BLEND);
+        
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        
+        skybox.draw(gl, camera, sun);
+        
+        gl.glEnable(GL.GL_DEPTH_TEST);
 
         renderScene(gl, camera);
 
@@ -359,12 +358,9 @@ public class Athens implements GraphicsEngine
         gl.glEnable(GL.GL_CULL_FACE);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
-        // set background colour to white
-        // TODO: allow this to be set through an interface
         gl.glClearColor(bgColour.getX(), bgColour.getY(), bgColour.getZ(), 0);
 
         // initialize camera
-        // TODO: allow this to be done through an interface and let additional cameras be set
         camera = new PerspectiveCamera(
                 new Vec3(10f, 10f, 10f),
                 new Vec3(0f, 0f, 0f),
@@ -373,7 +369,13 @@ public class Athens implements GraphicsEngine
 
         hudCamera = new HUDCamera(0, w_height, 0, w_width);
         hudCamera.updateView();
-
+        
+        skybox = new AthensEntity();
+        //skybox.attachResource(resourceManager.getResource(Resource.TEXTURE_CUBE, "skybox/night"));
+        skybox.attachResource(resourceManager.getResource(Resource.SHADER, "grad_skybox"));
+        skybox.attachResource(resourceManager.getResource(Resource.PRIMITIVE_MESH, "skybox"));
+        skybox.scale = new Vec3(1.5f);
+        
         // initial setup of matrices
         updateProjection(w_width, w_height);
         updateView();
@@ -465,11 +467,7 @@ public class Athens implements GraphicsEngine
     {
         camera.updateView();
 
-        // shift skybox with camera
-        skyboxWorld = new Mat4(1.0f);
-        skyboxWorld = Matrices.translate(skyboxWorld, camera.eye);
-        // also scale it a bit so it doesn't intersect with near clip
-        skyboxWorld = Matrices.scale(skyboxWorld, new Vec3(1.5f, 1.5f, 1.5f));
+        skybox.position = camera.eye;
     }
 
     private void updateSun()
@@ -487,12 +485,6 @@ public class Athens implements GraphicsEngine
     public float getFPS()
     {
         return fps;
-    }
-
-    @Override
-    public void setFPSComponent(Component comp)
-    {
-        fpsComp = (JLabel) comp;
     }
 
     @Override
@@ -522,7 +514,7 @@ public class Athens implements GraphicsEngine
     }
 
     @Override
-    public GfxHUD getGfxHUD(ImageComponent image)
+    public GfxHUD getGfxHUD(HUDImage image)
     {
         AthensHUD hud = huds.get(image);
         if (hud == null)
@@ -544,11 +536,11 @@ public class Athens implements GraphicsEngine
                 removed.add(e.getKey());
             }
         }
-        for (Map.Entry<ImageComponent, AthensHUD> h : huds.entrySet())
+        for (Map.Entry<HUDImage, AthensHUD> e : huds.entrySet())
         {
-            if (!h.getValue().used)
+            if (!e.getValue().used)
             {
-                removedHUD.add(h.getKey());
+                removedHUD.add(e.getKey());
             }
         }
     }

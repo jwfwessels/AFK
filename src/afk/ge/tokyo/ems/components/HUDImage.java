@@ -6,18 +6,13 @@ import java.awt.image.BufferedImage;
  *
  * @author Daniel
  */
-public class ImageComponent
+public class HUDImage
 {
     private BufferedImage image = null;
     private boolean updated = true;
 
-    public ImageComponent()
+    public HUDImage()
     {
-    }
-
-    public ImageComponent(BufferedImage image)
-    {
-        this.image = image;
     }
 
     public void setImage(BufferedImage image)
