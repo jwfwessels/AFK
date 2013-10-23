@@ -90,6 +90,10 @@ public class RobotConfigPanel extends JPanel
 
     public void addComponents()
     {
+        lblRColour.setName("label");
+        lblRConfig.setName("label");
+        lblRName.setName("label");
+        
         pnlModel.setLayout(new ModelPanel_Layout());
         pnlModel.add(btnPrev);
         pnlModel.add(pnlCanvas);

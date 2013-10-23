@@ -156,10 +156,6 @@ public class MenuPanel extends JPanel
         fileChooser = new JFileChooser(".");
         fileChooser.setDialogTitle("Load Bot");
         fileChooser.setFileFilter(new FileNameExtensionFilter(".class, .jar", "class", "jar"));
-        System.out.println(fileChooser.getComponent(0).toString());
-        System.out.println(fileChooser.getComponent(1).toString());
-        System.out.println(fileChooser.getComponent(2).toString());
-        System.out.println(fileChooser.getComponent(3).toString());
         
         fileChooser.setFileView(new FileView(){
             public Icon getIcon(File f)
@@ -167,6 +163,11 @@ public class MenuPanel extends JPanel
                 return FileSystemView.getFileSystemView().getSystemIcon(f);
             }
         });
+        
+        System.out.println(fileChooser.getComponent(0).toString());
+        System.out.println(fileChooser.getComponent(1).toString());
+        System.out.println(fileChooser.getComponent(2).toString());
+        System.out.println(fileChooser.getComponent(3).toString());
         
 
         lstAvailableBots = new JList();
