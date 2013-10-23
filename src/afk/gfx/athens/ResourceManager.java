@@ -111,6 +111,8 @@ public class ResourceManager
                     return new BillboardQuad();
                 else if (Quad.NAME.equalsIgnoreCase(name))
                     return new Quad();
+                else if ("skybox".equalsIgnoreCase(name))
+                    return new SkyBox();
                 else
                 {
                     // TODO: throw something
