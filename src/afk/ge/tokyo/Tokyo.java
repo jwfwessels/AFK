@@ -30,6 +30,7 @@ import java.util.UUID;
  */
 public class Tokyo implements GameEngine, Runnable
 {
+    public static final int NUM_BOULDERS = 20;
 
     private Engine engine;
     private boolean running = true;
@@ -188,11 +189,26 @@ public class Tokyo implements GameEngine, Runnable
     {
         engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
         ObstacleFactory factory = new ObstacleFactory();
+        
+        float halfBoardSize = Tokyo.BOARD_SIZE / 2;
 
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, Tokyo.BOARD_SIZE / 2), new Vec3(Tokyo.BOARD_SIZE, 20, 0.5f), "wall", false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
-        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-Tokyo.BOARD_SIZE / 2, 0, 0), new Vec3(0.5f, 20, Tokyo.BOARD_SIZE), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -halfBoardSize), new Vec3(BOARD_SIZE, 20, 0.5f), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, halfBoardSize), new Vec3(BOARD_SIZE, 20, 0.5f), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(halfBoardSize, 0, 0), new Vec3(0.5f, 20, BOARD_SIZE), "wall", false)));
+        engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-halfBoardSize, 0, 0), new Vec3(0.5f, 20, BOARD_SIZE), "wall", false)));
+        
+        float boulderBounds = halfBoardSize-10;
+        
+        BoulderFactory boulderFactory = new BoulderFactory();
+        BoulderFactoryRequest boulderRequest = new BoulderFactoryRequest(
+                "wall",
+                -boulderBounds, boulderBounds, -boulderBounds, boulderBounds,
+                2f, 7f, 0.3f, SPAWN_POINTS, 10, 20);
+        
+        for (int i = 0; i < NUM_BOULDERS; i++)
+        {
+            engine.addEntity(boulderFactory.create(boulderRequest));
+        }
         
 //        engine.addEntity(labelFactory.create(new TextLabelFactoryRequest("Test", 50, 50)));
     }
