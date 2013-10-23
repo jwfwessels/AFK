@@ -131,15 +131,28 @@
         <bind style="listStyle" type="region" key="List"/>
         
        <style id="labelStyle">
-            <insets top="5" bottom="5" left="5" right="5"/>
-            <font name="Copperplate Gothic Bold" size="18"/>
+            <insets top="5" bottom="5" left="5" right="5" />
+            <font name="Copperplate Gothic Bold" size="18" />
             <state>
-                <color value="#000F" type="BACKGROUND"/>
-                <color value="#CCCCCC" type="FOREGROUND"/>
+                <color value="#000F" type="BACKGROUND" />
+                <color value="#CCCCCC" type="FOREGROUND" />
             </state>
         </style>
         
-        <bind style="labelStyle" type="region" key="label"/>
+        <bind style="labelStyle" type="region" key="label" />
+        
+        <style id="fileChooserStyle">
+            <imageIcon id="upFolderIcon" path="UpFolder.png" />
+            <imageIcon id="upFolderIconPressed" path="UpFolder_Pressed.png" />
+            <imageIcon id="homeIcon" path="Home.png" />
+            <imageIcon id="homeIconPressed" path="HomePressed.png" />
+            <state>
+                <property key="FileChooser.upFolderIcon" value="upFolderIcon" />
+                <property key="FileChooser.homeFolderIcon" value="homeIcon" />
+            </state>  
+        </style>
+        
+        <bind style="fileChooserStyle" type="region" key="fileChooser"/>
         
         <style id="textFieldStyle">
             <insets top="5" bottom="5" left="5" right="5"/>
