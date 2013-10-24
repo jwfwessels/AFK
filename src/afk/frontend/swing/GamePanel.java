@@ -1,9 +1,6 @@
 package afk.frontend.swing;
 
-import afk.frontend.swing.postgame.PostGamePanel;
-import afk.game.GameListener;
 import afk.game.GameMaster;
-import afk.game.GameResult;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -12,9 +9,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.UUID;
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,7 +24,7 @@ import javax.swing.KeyStroke;
  */
 public class GamePanel extends JPanel
 {
-    
+
     RootWindow parent;
     JPanel view;
     JPanel pnlControls;
@@ -41,67 +36,69 @@ public class GamePanel extends JPanel
     JButton btnBack;
     private JLabel lblSpeed;
     GameMaster gm;
-    
+    ImageIcon pauseIcon;
+    ImageIcon playIcon;
+
     public GamePanel(RootWindow parent, GameMaster game)
     {
         this.parent = parent;
         gm = game;
 
-        LayoutManager layout = new GamePanel_Layout(); 
+        LayoutManager layout = new GamePanel_Layout();
         this.setLayout(layout);
         setup();
     }
-    
+
     private void setup()
     {
         initComponents();
         addComponents();
         styleComponents();
     }
-    
+
     private void initComponents()
     {
         fps = new JLabel("FPS: x");
         view = new JPanel();
         glPanel = gm.getAWTComponent();
         pnlControls = new JPanel();
-        
+
         ImageIcon faster = createImageIcon("icons/FasterIcon.png", "Speed Up");
         ImageIcon slower = createImageIcon("icons/SlowerIcon.png", "Slow Down");
-        
-        ImageIcon pause = createImageIcon("icons/PauseIcon.png", "Play");
-        
+
+        pauseIcon = createImageIcon("icons/PauseIcon.png", "Play");
+        playIcon = createImageIcon("icons/PlayIcon.png", "Pause");
+
         btnPlayPause = new JToggleButton();
-        btnPlayPause.setIcon(pause);
+        btnPlayPause.setIcon(pauseIcon);
         btnFaster = new JButton();
         btnSlower = new JButton();
         btnFaster.setIcon(faster);
         btnSlower.setIcon(slower);
         lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
         btnBack = new JButton("Back");
-        
+
         lblSpeed.setName("label");
     }
-    
-    protected ImageIcon createImageIcon(String path, String description) 
+
+    protected ImageIcon createImageIcon(String path, String description)
     {
         java.net.URL imgURL = getClass().getResource(path);
-        if (imgURL != null) 
+        if (imgURL != null)
         {
             return new ImageIcon(imgURL, description);
-        } 
-        else 
+        } else
         {
             System.err.println("Couldn't find file: " + path);
             return null;
         }
     }
-    
+
     private void addComponents()
     {
         view.setLayout(new ViewPanel_Layout());
         view.add(glPanel);
-        
+
         pnlControls.add(fps);
         pnlControls.add(btnSlower);
         pnlControls.add(btnPlayPause);
@@ -123,30 +120,16 @@ public class GamePanel extends JPanel
         lblSpeed.setBackground(Color.LIGHT_GRAY);
         btnPlayPause.setSelected(true);
         //btnPlayPause.setText("Pause");
-        
+
         ActionListener playPauseAction = new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String state;
-                if (btnPlayPause.isSelected())
-                {
-                    ImageIcon pause = createImageIcon("icons/PauseIcon.png", "Play");
-                    btnPlayPause.setIcon(pause);
-                    state = "Puased";
-                    
-                } 
-                else
-                {
-                    ImageIcon play = createImageIcon("icons/PlayIcon.png", "Pause");
-                    btnPlayPause.setIcon(play);                    
-                    state = "Playing";
-                }
-                gm.playPause();
+                playPausePressed();
             }
         };
-        
+
         btnPlayPause.addActionListener(playPauseAction);
         btnPlayPause.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "playPause");
         btnPlayPause.getActionMap().put("playPause", new AbstractAction()
@@ -154,22 +137,12 @@ public class GamePanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                String state;
-                if (btnPlayPause.isSelected())
-                {
-                    btnPlayPause.setText("Play");
-                    state = "Puased";
-                } else
-                {
-                    btnPlayPause.setText("Pause");
-                    state = "Playing";
-                }
                 btnPlayPause.setSelected(!btnPlayPause.isSelected());
-                gm.playPause();
+                playPausePressed();
             }
         });
-        
-        
+
+
         AbstractAction increaseSpeed = new AbstractAction()
         {
             @Override
@@ -179,12 +152,12 @@ public class GamePanel extends JPanel
                 setLblSpeed();
             }
         };
-        
+
         btnFaster.addActionListener(increaseSpeed);
         btnFaster.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "increaseSpeed");
         btnFaster.getActionMap().put("increaseSpeed", increaseSpeed);
-        
-        
+
+
         AbstractAction decreaseSpeed = new AbstractAction()
         {
             @Override
@@ -194,13 +167,13 @@ public class GamePanel extends JPanel
                 setLblSpeed();
             }
         };
-        
+
         btnSlower.addActionListener(decreaseSpeed);
         btnSlower.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "increaseSpeed");
         btnSlower.getActionMap().put("increaseSpeed", decreaseSpeed);
-        
-        btnBack.addActionListener(new ActionListener() {
 
+        btnBack.addActionListener(new ActionListener()
+        {
             @Override
             public void actionPerformed(ActionEvent e)
             {
@@ -209,7 +182,19 @@ public class GamePanel extends JPanel
             }
         });
     }
-    
+
+    private void playPausePressed()
+    {
+        if (btnPlayPause.isSelected())
+        {
+            btnPlayPause.setIcon(pauseIcon);
+        } else
+        {
+            btnPlayPause.setIcon(playIcon);
+        }
+        gm.playPause();
+    }
+
     private void setLblSpeed()
     {
         float speed = gm.getGameSpeed();
@@ -221,45 +206,45 @@ public class GamePanel extends JPanel
             lblSpeed.setText("speed: " + 1 + "/" + (int) (1 / speed));
         }
     }
-    
+
     class GamePanel_Layout implements LayoutManager
     {
-        
+
         int panelWidth = 800;
         int panelHeight = 600;
         int w = 0;
         int h = 0;
-        
+
         @Override
         public void addLayoutComponent(String name, Component comp)
         {
         }
-        
+
         @Override
         public void removeLayoutComponent(Component comp)
         {
         }
-        
+
         @Override
         public Dimension preferredLayoutSize(Container parent)
         {
             Dimension dim = new Dimension(0, 0);
-            
+
             Insets insets = parent.getInsets();
-            
+
             dim.width = panelWidth + insets.left + insets.right;
             dim.height = panelHeight + insets.top + insets.bottom;
-            
+
             return dim;
         }
-        
+
         @Override
         public Dimension minimumLayoutSize(Container parent)
         {
             Dimension dim = new Dimension(0, 0);
             return dim;
         }
-        
+
         @Override
         public void layoutContainer(Container parent)
         {
@@ -268,7 +253,7 @@ public class GamePanel extends JPanel
             {
                 w = parent.getSize().width;
                 h = parent.getSize().height;
-                
+
                 int num1 = 0;
                 int num2 = 0;
                 Component c;
@@ -279,7 +264,7 @@ public class GamePanel extends JPanel
                 if (c.isVisible())
                 {
                     c.setBounds(insets.left, insets.top, (int) w, ((int) h - 50));
-                    
+
                     glPanel.setSize(w, h);
                     num2 += c.getSize().height;
                     System.out.println("dim1:   " + insets.left + "   " + insets.top + "   " + (int) w + " " + ((int) h - 50));
@@ -296,51 +281,51 @@ public class GamePanel extends JPanel
             }
         }
     }
-    
+
     class ViewPanel_Layout implements LayoutManager
     {
-        
+
         int panelWidth = view.getWidth();
         int panelHeight = view.getHeight();
-        
+
         @Override
         public void addLayoutComponent(String name, Component comp)
         {
         }
-        
+
         @Override
         public void removeLayoutComponent(Component comp)
         {
         }
-        
+
         @Override
         public Dimension preferredLayoutSize(Container parent)
         {
             Dimension dim = new Dimension(0, 0);
-            
+
             Insets insets = parent.getInsets();
-            
+
             dim.width = panelWidth + insets.left + insets.right;
             dim.height = panelHeight + insets.top + insets.bottom;
-            
+
             return dim;
         }
-        
+
         @Override
         public Dimension minimumLayoutSize(Container parent)
         {
             Dimension dim = new Dimension(600, 800);
             return dim;
         }
-        
+
         @Override
         public void layoutContainer(Container parent)
         {
             Insets insets = parent.getInsets();
-            
+
             int w = parent.getSize().width;
             int h = parent.getSize().height;
-            
+
             int numW = 0;
             int numH = 0;
             int hVal;
@@ -354,7 +339,7 @@ public class GamePanel extends JPanel
             {
                 c.setBounds(0, 0, w, h);
             }
-            
+
         }
     }
 }
