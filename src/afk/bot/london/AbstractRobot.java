@@ -2,6 +2,7 @@ package afk.bot.london;
 
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
+import afk.ge.ems.Constants;
 import java.util.UUID;
 
 /**
@@ -12,6 +13,14 @@ public abstract class AbstractRobot implements Robot
 {
 
     private static int numBots = 0;
+    public static final String MOTOR_TOP_SPEED = "Motor.topSpeed";
+    public static final String MOTOR_ANGULAR_VELOCITY = "Motor.angularVelocity";
+    public static final String LIFE_MAX_HP = "Life.maxHp";
+    public static final String TURRET_ANGULAR_VELOCITY = "Turret.angularVelocity";
+    public static final String BARREL_ANGULAR_VELOCITY = "Barrel.angularVelocity";
+    public static final String VISION_DIST = "Vision.dist";
+    public static final String VISION_FOVY = "Vision.fovy";
+    public static final String VISION_FOVX = "Vision.fovx";
     private int[] actions;
     protected RobotEvent events;
     private UUID id;
@@ -73,6 +82,24 @@ public abstract class AbstractRobot implements Robot
         }
         config.setProperty(id, key, value);
     }
+    
+    private String getProperty(String key)
+    {
+        if (config == null)
+        {
+            throw new RuntimeException("Error: No config manager!");
+        }
+        return config.getProperty(id, key);
+    }
+    
+    private Object getConstant(String key)
+    {
+        if (config == null)
+        {
+            throw new RuntimeException("Error: No config manager!");
+        }
+        return config.getConstant(id, key);
+    }
 
     @Override
     public final UUID getId()
@@ -81,25 +108,111 @@ public abstract class AbstractRobot implements Robot
     }
 
     @Override
-    public int getBotNum()
+    public final int getBotNum()
     {
         return botNum;
     }
 
-    protected final void setActionValue(int index, int value)
+    /**
+     * Get the top speed of the robot in units per game tick.
+     * @return the top speed of the robot.
+     */
+    public final float getTopSpeed()
     {
-        if (value < 0)
-        {
-            throw new RuntimeException("Robot attempted a negative value");
-        }
-        actions[index] = value;
+        return (Float)getConstant(MOTOR_TOP_SPEED);
     }
     
+    /**
+     * Get the angular velocity (rotation speed) of the robot in degrees
+     * per game tick.
+     * @return the angular velocity of the robot.
+     */
+    public final float getAngularVelocity()
+    {
+        return (Float)getConstant(MOTOR_ANGULAR_VELOCITY);
+    }
+    
+    /**
+     * Get the maximum life of the robot.
+     * @return the maximum life of the robot.
+     */
+    public final float getMaxLife()
+    {
+        return (Float)getConstant(LIFE_MAX_HP);
+    }
+    
+    /**
+     * Get the angular velocity of the robot's turret.
+     * @return the angular velocity of the robot's turret.
+     */
+    public final float getTurretAngularVelocity()
+    {
+        return (Float)getConstant(TURRET_ANGULAR_VELOCITY);
+    }
+    
+    /**
+     * Get the angular velocity of the robot's barrel.
+     * @return the angular velocity of the robot's barrel.
+     */
+    public final float getBarrelAngularVelocity()
+    {
+        return (Float)getConstant(BARREL_ANGULAR_VELOCITY);
+    }
+    
+    /**
+     * Get how far the robot can see.
+     * @return the view distance of the robot.
+     */
+    public final float getViewDistance()
+    {
+        return (Float)getConstant(VISION_DIST);
+    }
+    
+    /**
+     * Get the vertical field of view of the robot in degrees.
+     * @return the vertical field of view of the robot.
+     */
+    public final float getVerticalFOV()
+    {
+        return (Float)getConstant(VISION_FOVY);
+    }
+    
+    /**
+     * Get the horizontal field of view of the robot in degrees.
+     * @return the horizontal field of view of the robot.
+     */
+    public final float getHorizontalFOV()
+    {
+        return (Float)getConstant(VISION_FOVX);
+    }
+    
+    /**
+     * Instruct the robot to apply action to be run for a certain number
+     * of ticks.
+     * @param index the index of the action to set.
+     * @param ticks the number of ticks to apply the action for.
+     */
+    protected final void setActionValue(int index, int ticks)
+    {
+        if (ticks < 0)
+        {
+            throw new RuntimeException("Robot attempted to travel back in time!");
+        }
+        actions[index] = ticks;
+    }
+    
+    /**
+     * Get the number of ticks an action is still running for.
+     * e.g. getActionValue(MOVE_FORWARD) would tell you how much further your
+     * tank will move forward with its current instructions.
+     * @param index
+     * @return 
+     */
     protected final int getActionValue(int index)
     {
         return actions[index];
-    }
 
+    }
     @Override
     public final boolean[] getActions()
     {
