@@ -10,9 +10,12 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  *
@@ -28,6 +31,7 @@ public class TournamentPostGamePanel extends JPanel
     private TournamentTree tTree;
     private TournamentGameResult result;
     private GameMaster gm;
+    private Timer timer;
     
 
     public TournamentPostGamePanel(RootWindow parent, TournamentGameResult result, GameMaster gm)
@@ -54,6 +58,26 @@ public class TournamentPostGamePanel extends JPanel
         lblTitle = new JLabel("Tournament Tree");
         btnNextGame = new JButton("Continue");
         tTree = new TournamentTree(result);
+        timer = new Timer(5000, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                gm.nextGame();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+        
+        tTree.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                timer.stop();
+            }
+            
+        });
     }
 
     private void addComponents()
