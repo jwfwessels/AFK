@@ -29,8 +29,8 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
          Color background;
          Color foreground;
 
-         FontUIResource tempFont = CustomFonts.createFont();
-
+         FontUIResource tempFont = CustomFonts.createFont("fonts/MyriadPro-Regular.otf");
+         
          setFont(tempFont);
          // check if this cell represents the current DnD drop location
         /* JList.DropLocation dropLocation = list.getDropLocation();

@@ -16,12 +16,12 @@ import javax.swing.plaf.FontUIResource;
  */
 public class CustomFonts 
 {
-    public static FontUIResource createFont() 
+    public static FontUIResource createFont(String path) 
     {
         Font font = null;
         try
         {
-            font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("fonts/MyriadPro-Regular.otf"));
+            font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(path));
             FontUIResource fontResource = new FontUIResource(font.deriveFont(Font.PLAIN, 14));
             return fontResource;
         }
