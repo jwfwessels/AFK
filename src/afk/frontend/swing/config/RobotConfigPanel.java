@@ -37,14 +37,14 @@ public class RobotConfigPanel extends JPanel
     private JPanel pnlModel;
     private Component pnlCanvas;
     private Component glCanvas;
-    private JButton btnPrev;
-    private JButton btnNext;
-    private JButton btnBrowse;
+    //private JButton btnPrev;
+    //private JButton btnNext;
+    //private JButton btnBrowse;
     private JPanel pnlSettings;
     private JLabel lblRName;
     private JTextField txtName;
-    private JLabel lblRColour;
-    private JComboBox cmbColour; // Change to colour picker
+    //private JLabel lblRColour;
+    ///private JComboBox cmbColour; // Change to colour picker
     private JButton btnBack;
     private JButton btnSave;
     private GraphicsEngine gfxEngine;
@@ -67,7 +67,7 @@ public class RobotConfigPanel extends JPanel
 
     public void initComponents()
     {
-        lblRConfig = new JLabel("Robot Configuration");
+        lblRConfig = new JLabel("Configuration");
 
         pnlModel = new JPanel();
 
@@ -75,33 +75,37 @@ public class RobotConfigPanel extends JPanel
 
         pnlCanvas = gfxEngine.getAWTComponent();
 //        pnlCanvas = new JPanel();
-        btnPrev = new JButton("<");
+        /*btnPrev = new JButton("<");
         btnNext = new JButton(">");
-        btnBrowse = new JButton("Browse");
+        btnBrowse = new JButton("Browse");*/
 
         pnlSettings = new JPanel();
-        lblRName = new JLabel("Robot Name");
+        lblRName = new JLabel("Name:");
         txtName = new JTextField("Name");
-        lblRColour = new JLabel("Robot Colour");
-        cmbColour = new JComboBox<String>();
+        //lblRColour = new JLabel("Colour");
+        //cmbColour = new JComboBox<String>();
         btnBack = new JButton("Back");
         btnSave = new JButton("Save");
     }
 
     public void addComponents()
     {
+        //lblRColour.setName("label");
+        lblRConfig.setName("label");
+        lblRName.setName("label");
+        
         pnlModel.setLayout(new ModelPanel_Layout());
-        pnlModel.add(btnPrev);
+        //pnlModel.add(btnPrev);
         pnlModel.add(pnlCanvas);
-        pnlModel.add(btnNext);
-        pnlModel.add(btnBrowse);
+        //pnlModel.add(btnNext);
+        //pnlModel.add(btnBrowse);
         //add glCanvas to pnlCanvas
 
         pnlSettings.setLayout(new SettingsPanel_Layout());
         pnlSettings.add(lblRName);
         pnlSettings.add(txtName);
-        pnlSettings.add(lblRColour);
-        pnlSettings.add(cmbColour);
+        //pnlSettings.add(lblRColour);
+        //pnlSettings.add(cmbColour);
         pnlSettings.add(btnBack);
         pnlSettings.add(btnSave);
 
@@ -112,8 +116,9 @@ public class RobotConfigPanel extends JPanel
 
     public void styleComponents()
     {
-        pnlModel.setBorder(new LineBorder(Color.yellow));
+        /*pnlModel.setBorder(new LineBorder(Color.yellow));
         pnlSettings.setBorder(new LineBorder(Color.blue));
+        */
         this.setLayout(new RobotConfigPanel_Layout());
 
 
@@ -234,7 +239,7 @@ public class RobotConfigPanel extends JPanel
             {
                 hVal = (h / 10) / 2;
                 c.setSize(new Dimension(120, (int) hVal));
-                c.setBounds((w / 2) - (c.getWidth() / 2), insets.top, 120, (int) hVal);
+                c.setBounds((w / 2) - (c.getWidth() / 2), insets.top, 240, (int) hVal);
                 numH += hVal;
             }
 
@@ -314,7 +319,7 @@ public class RobotConfigPanel extends JPanel
 
             //btnPrev
 
-            c = parent.getComponent(0);
+            /*c = parent.getComponent(0);
 
             if (c.isVisible())
             {
@@ -323,25 +328,25 @@ public class RobotConfigPanel extends JPanel
                 c.setSize(new Dimension((int) wVal, (int) hVal));
                 c.setBounds(insets.left, (h / 2) - c.getHeight() / 2, wVal, hVal);
                 numW += wVal;
-            }
+            }*/
 
             //pnlCanvas
 
-            c = parent.getComponent(1);
+            c = parent.getComponent(0);
 
             if (c.isVisible())
             {
-                wVal = (int) ((w / 8) * 6);
+                //wVal = (int) ((w / 8) * 6);
                 hVal = (int) ((h / 8) * 6);
-                c.setSize(new Dimension((int) wVal, (int) hVal));
-                c.setBounds(numW, (h / 2) - c.getHeight() / 2, wVal, hVal);
-                numW += wVal;
+                c.setSize(new Dimension((int) w, (int) hVal));
+                c.setBounds(numW, (h / 2) - c.getHeight() / 2, w, hVal);
+                numW += w;
                 numH += hVal + (h / 2) - c.getHeight() / 2;
             }
 
             //btnNext
 
-            c = parent.getComponent(2);
+            /*c = parent.getComponent(2);
 
             if (c.isVisible())
             {
@@ -350,19 +355,19 @@ public class RobotConfigPanel extends JPanel
                 c.setSize(new Dimension((int) wVal, (int) hVal));
                 c.setBounds(numW, (h / 2) - c.getHeight() / 2, wVal, hVal);
                 numW += wVal;
-            }
+            }*/
 
             //btnBrowse
 
-            c = parent.getComponent(3);
+            /*c = parent.getComponent(3);
 
             if (c.isVisible())
             {
                 hVal = (int) (h - numH);
-                wVal = (int) (w / 5);
+                wVal = (int) (w / 3);
                 c.setSize(new Dimension((int) wVal, (int) hVal));
                 c.setBounds(((w / 2) - (c.getWidth() / 2)), numH, wVal, hVal);
-            }
+            }*/
         }
     }
 
@@ -410,7 +415,7 @@ public class RobotConfigPanel extends JPanel
             int w = parent.getSize().width;
             int h = parent.getSize().height;
 
-            int numW = w / 18;
+            int numW = w / 8;
             int numH = h / 8;
             int hVal;
             int wVal;
@@ -425,7 +430,7 @@ public class RobotConfigPanel extends JPanel
                 hVal = (int) ((h / 9) * 2);
                 wVal = (int) (w / 4);
                 c.setBounds(numW, numH, wVal, hVal);
-                numW += wVal + (w / 8);
+                numW += wVal + (w / 12);
             }
 
             //txtName
@@ -435,7 +440,7 @@ public class RobotConfigPanel extends JPanel
             if (c.isVisible())
             {
                 hVal = (int) ((h / 9) * 2);
-                wVal = (int) (w / 4);
+                wVal = (int) (w / 2);
                 c.setBounds(numW, numH, wVal, hVal);
                 numW += wVal + (w / 8);
                 numH += hVal + (h / 18);
@@ -443,7 +448,7 @@ public class RobotConfigPanel extends JPanel
 
             //lblRColour
 
-            numW = w / 18;
+            /*numW = w / 18;
 
             c = parent.getComponent(2);
 
@@ -466,13 +471,13 @@ public class RobotConfigPanel extends JPanel
                 c.setBounds(numW, numH, wVal, hVal);
                 numW += wVal + (w / 8);
                 numH += hVal + (h / 18);
-            }
+            }*/
 
             //btnBack
 
             numW = w / 18;
 
-            c = parent.getComponent(4);
+            c = parent.getComponent(2);
 
             if (c.isVisible())
             {
@@ -485,7 +490,7 @@ public class RobotConfigPanel extends JPanel
 
             //btnSave
 
-            c = parent.getComponent(5);
+            c = parent.getComponent(3);
 
             if (c.isVisible())
             {

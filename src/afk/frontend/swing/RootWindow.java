@@ -18,6 +18,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.plaf.synth.SynthLookAndFeel;
 
 /**
  *
@@ -32,6 +34,7 @@ public class RootWindow extends JFrame implements Frontend
     private MenuPanel menuPanel;
     private RobotConfigPanel configPanel;
     private GamePanel gamePanel;
+    
 
     @Override
     public void showMain()
@@ -72,7 +75,23 @@ public class RootWindow extends JFrame implements Frontend
             }
         });
     }
-
+    
+    /*private static void initLookAndFeel() 
+    {
+        SynthLookAndFeel lookAndFeel = new SynthLookAndFeel();
+        
+        try 
+        {
+            lookAndFeel.load(RootWindow.class.getResourceAsStream(LAF_FILE), RootWindow.class);
+            UIManager.setLookAndFeel(lookAndFeel);
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+        }
+        System.out.println("SYNTH INIT DONE");
+    }*/
+    
     private void initComponents()
     {
         try
@@ -113,9 +132,11 @@ public class RootWindow extends JFrame implements Frontend
 
     private void styleComponents()
     {
+        //initLookAndFeel();
         try
         {
 //            this.getContentPane().setBackground(Color.BLUE);
+            
         } catch (Exception err)
         {
             JOptionPane.showMessageDialog(null, "Styling components for rootWindow failed:\n" + err);

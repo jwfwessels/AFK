@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<synth>   
+        <!-- COLOURS -->
+        
+        <!-- #333333 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey1">
+            <int>51</int>
+            <int>51</int>
+            <int>51</int>
+        </object>
+
+        <!-- #444444 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey2">
+            <int>68</int>
+            <int>68</int>
+            <int>68</int>
+        </object>
+
+        <!-- #555555 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey3">
+            <int>85</int>
+            <int>85</int>
+            <int>85</int>
+        </object>
+
+        <!-- #666666 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey4">
+            <int>102</int>
+            <int>102</int>
+            <int>102</int>
+        </object>
+
+        <!-- #777777 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey5">
+            <int>119</int>
+            <int>119</int>
+            <int>119</int>
+        </object>
+
+        <!-- #888888 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey6">
+            <int>136</int>
+            <int>136</int>
+            <int>136</int>
+        </object>
+
+        <!-- #999999 -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey7">
+            <int>153</int>
+            <int>153</int>
+            <int>153</int>
+        </object>
+
+        <!-- #AAAAAA -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey8">
+            <int>170</int>
+            <int>170</int>
+            <int>170</int>
+        </object>
+
+        <!-- #BBBBBB -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey9">
+            <int>187</int>
+            <int>187</int>
+            <int>187</int>
+        </object>
+
+        <!-- #CCCCCC -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey10">
+            <int>204</int>
+            <int>204</int>
+            <int>204</int>
+        </object>
+
+        <!-- #DDDDDD -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey11">
+            <int>221</int>
+            <int>221</int>
+            <int>221</int>
+        </object>
+
+        <!-- #EEEEEE -->
+        <object class="javax.swing.plaf.ColorUIResource" id="grey12">
+            <int>238</int>
+            <int>238</int>
+            <int>238</int>
+        </object>
+
+        <!-- FONTS -->
+        <object id="copperplateGothicBold" class="afk.frontend.swing.CustomFonts" method="createFont">
+            <string>fonts/CopperplateBold.ttf</string>
+        </object>
+        
+        <object id="myriadPro_reg" class="afk.frontend.swing.CustomFonts" method="createFont">
+            <string>fonts/MyriadPro-Regular.otf</string>
+        </object>
+        
+
+        
+        <!-- STYLES -->
+        
+        <style id="mainStyle">
+            <opaque value="TRUE"/>
+            <font idref="myriadPro_reg"/>
+            <state>
+                <color value="#333333" type="BACKGROUND"/>
+                <color value="#CCCCCC" type="FOREGROUND"/>
+            </state>
+    	</style>
+        
+    	<bind style="mainStyle" type="region" key=".*"/>
+        
+        <style id="panelStyle">
+            <insets top="2" bottom="5" left="5" right="5"/>
+            <object  class="afk.frontend.swing.AFKPanelPainter" id="panPainter"/>
+            <defaultsProperty key="Panel.first" type="idref" value="grey1"/>
+            <defaultsProperty key="Panel.second" type="idref" value="grey2"/>
+            <painter method="panelBackground" idref="panPainter"/>
+        </style>
+
+        <bind style="panelStyle" type="region" key="Panel"/>
+        
+        <style id="buttonStyle">
+            <property key="Button.margin" type="insets" value="5 5 5 5"/>
+            <font idref="copperplateGothicBold"/>
+            <object  class="afk.frontend.swing.AFKButtonPainter" id="buttonPainter"/>
+            <defaultsProperty key="Button.first" type="idref" value="grey3"/>
+            <defaultsProperty key="Button.second" type="idref" value="grey5"/>
+            <defaultsProperty key="Button.third" type="idref" value="grey1"/>
+            <painter method="buttonBackground" idref="buttonPainter"/>
+            <painter method="buttonBorder" idref="buttonPainter" /> 
+        </style>
+        
+        <bind style="buttonStyle" type="region" key="Button"/>
+        
+        <style id="toggleButtonStyle">
+            <property key="Button.margin" type="insets" value="5 5 5 5"/>
+            <font idref="copperplateGothicBold"/>
+            <object  class="afk.frontend.swing.AFKToggleButtonPainter" id="toggleButtonPainter"/>
+            <defaultsProperty key="Button.first" type="idref" value="grey3"/>
+            <defaultsProperty key="Button.second" type="idref" value="grey5"/>
+            <defaultsProperty key="Button.third" type="idref" value="grey1"/>
+            <painter method="toggleButtonBackground" idref="toggleButtonPainter"/>
+            <painter method="toggleButtonBorder" idref="toggleButtonPainter" /> 
+        </style>
+        
+        <bind style="toggleButtonStyle" type="region" key="ToggleButton"/>
+        
+        <style id="listStyle">
+            <insets top="5" bottom="5" left="5" right="5"/>
+            <object  class="afk.frontend.swing.AFKListPainter" id="listPainter"/>
+            <defaultsProperty key="List.first" type="idref" value="grey1"/>
+            <defaultsProperty key="List.second" type="idref" value="grey4"/>
+            <painter method="listBorder" idref="listPainter" />
+        </style>
+        
+        <bind style="listStyle" type="region" key="List"/>
+        
+       <style id="labelStyle">
+            <insets top="5" bottom="5" left="5" right="5" />
+            <font idref="copperplateGothicBold" />
+            <state>
+                <color value="#000F" type="BACKGROUND" />
+                <color value="#CCCCCC" type="FOREGROUND" />
+            </state>
+        </style>
+        
+        <bind style="labelStyle" type="region" key="label" />
+        
+        <style id="fileChooserStyle">
+            <imageIcon id="upFolderIcon" path="icons/UpFolder.png" />
+            <imageIcon id="upFolderIconPressed" path="icons/UpFolder_Pressed.png" />
+            <imageIcon id="homeIcon" path="icons/Home.png" />
+            <imageIcon id="homeIconPressed" path="icons/HomePressed.png" />
+            <state>
+                <property key="FileChooser.upFolderIcon" value="upFolderIcon" />
+                <property key="FileChooser.homeFolderIcon" value="homeIcon" />
+            </state>  
+        </style>
+        
+        <bind style="fileChooserStyle" type="region" key="fileChooser"/>
+        
+        <style id="textFieldStyle">
+            <insets top="5" bottom="5" left="5" right="5"/>
+            <object  class="afk.frontend.swing.AFKTextFieldPainter" id="textFieldPainter"/>
+            <defaultsProperty key="TextField.first" type="idref" value="grey4"/>
+            <defaultsProperty key="TextField.second" type="idref" value="grey6"/>
+            <defaultsProperty key="TextField.third" type="idref" value="grey12"/>
+            <state>
+                <color value="#333333" type="FOREGROUND"/>
+            </state>
+            <painter method="textFieldBackground" idref="textFieldPainter" />
+            <painter method="textFieldBorder" idref="textFieldPainter" />
+        </style>
+        
+        <bind style="textFieldStyle" type="region" key="textField"/>
+        
+        <style id="comboBoxStyle">
+           <insets top="2" bottom="2" left="2" right="2"/>
+            <object  class="afk.frontend.swing.AFKComboBoxPainter" id="comboBoxPainter"/>
+            <defaultsProperty key="ComboBox.first" type="idref" value="grey2"/>
+            <defaultsProperty key="ComboBox.second" type="idref" value="grey3"/>
+            <state>
+                <color value="#333333" type="FOREGROUND"/>
+            </state>
+            <painter method="comboBoxBackground" idref="comboBoxPainter" />
+            <painter method="comboBoxBorder" idref="comboBoxPainter" />
+        </style>
+        
+        <bind style="comboBoxStyle" type="region" key="comboBox"/>
+        
+        <style id="scrollBarTrackStyle">
+            <insets top="2" bottom="2" left="2" right="2"/>
+            <object  class="afk.frontend.swing.AFKScrollBarPainter" id="scrollBarPainter"/>
+            <defaultsProperty key="ScrollBar.first" type="idref" value="grey2"/>
+            <defaultsProperty key="ScrollBar.second" type="idref" value="grey3"/>
+            <painter method="scrollBarTrackBackground" idref="scrollBarPainter" />
+            <painter method="scrollBarTrackBorder" idref="scrollBarPainter" />
+        </style>
+        
+        <bind style="scrollBarTrackStyle" type="region" key="scrollBarTrack"/>
+        
+        <style id="scrollBarThumbStyle">
+            <insets top="2" bottom="2" left="2" right="2"/>
+            <object  class="afk.frontend.swing.AFKScrollBarPainter" id="scrollBarPainter"/>
+            <defaultsProperty key="ScrollBar.first" type="idref" value="grey1"/>
+            <defaultsProperty key="ScrollBar.second" type="idref" value="grey2"/>
+            <defaultsProperty key="ScrollBar.third" type="idref" value="grey3"/>
+            <defaultsProperty key="ScrollBar.fourth" type="idref" value="grey4"/>
+            <defaultsProperty key="ScrollBar.fifth" type="idref" value="grey5"/>
+            <defaultsProperty key="ScrollBar.sixth" type="idref" value="grey6"/>
+            <painter method="scrollBarThumbBackground" idref="scrollBarPainter" />
+            <painter method="scrollBarThumbBorder" idref="scrollBarPainter" />
+        </style>
+        
+        <bind style="scrollBarThumbStyle" type="region" key="scrollBarThumb"/>
+        
+        <style id="scrollBarArrowStyle">
+            <state>
+                <imagePainter method="arrowButtonForeground" path="icons/scroll_up.png"  direction="north" stretch="fill" sourceInsets="0 0 0 0"/>
+                <imagePainter method="arrowButtonForeground" path="icons/scroll_down.png"  direction="south" stretch="fill" sourceInsets="0 0 0 0"/>
+                <imagePainter method="arrowButtonForeground" path="icons/scroll_left.png"  direction="west" stretch="fill" sourceInsets="0 0 0 0"/>
+                <imagePainter method="arrowButtonForeground" path="icons/scroll_right.png" direction="east" stretch="fill" sourceInsets="0 0 0 0"/>
+            </state>
+        </style>
+        
+        <bind style="scrollBarArrowStyle" type="region" key="ArrowButton" />
+
+</synth>
