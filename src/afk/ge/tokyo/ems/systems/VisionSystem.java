@@ -93,7 +93,7 @@ public class VisionSystem implements ISystem
                         id = controller.id;
                     }
 
-                    thetas.add(new VisibleRobot(theta[0], theta[1], id));
+                    thetas.add(new VisibleRobot(theta[0], theta[1], theta[2], id));
                 }
             }
             vnode.controller.events.visibleBots = thetas;
@@ -151,7 +151,7 @@ public class VisionSystem implements ISystem
         {
             return new float[]
             {
-                relativeBearing, relativeElevation
+                relativeBearing, relativeElevation, d.getLength()
             };
         }
 
