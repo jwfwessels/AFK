@@ -51,8 +51,8 @@ public class TournamentPostGamePanel extends JPanel
 
     private void initComponents()
     {
-        lblTitle = new JLabel("Game Result");
-        btnNextGame = new JButton("NextGame");
+        lblTitle = new JLabel("Tournament Tree");
+        btnNextGame = new JButton("Continue");
         tTree = new TournamentTree(result);
     }
 
@@ -132,7 +132,6 @@ public class TournamentPostGamePanel extends JPanel
             int topHeight = 50;
             int bottomHeight = 50;
             int centerHeight = h-(topHeight+bottomHeight);
-            int centerWidth = (w*2)/3;
 
             //pnlTop
 
@@ -142,12 +141,12 @@ public class TournamentPostGamePanel extends JPanel
                 c.setBounds(0, 0, w, topHeight);
             }
 
-            // scorelist
+            // tree!
 
             c = parent.getComponent(1);
             if (c.isVisible())
             {
-                c.setBounds(w/2-centerWidth/2, topHeight, centerWidth, centerHeight);
+                c.setBounds(0, topHeight, w, centerHeight);
             }
             
             //pnlBottom
