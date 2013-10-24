@@ -24,6 +24,10 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
      {
          setText(value instanceof File ? ((File)value).getName() : value.toString());
 
+         if(value instanceof File)
+         {
+             setIcon(javax.swing.filechooser.FileSystemView.getFileSystemView().getSystemIcon((File)value));
+         }
          this.setName("listCell");
          
          Color background;
