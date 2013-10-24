@@ -2,11 +2,13 @@ package afk.game;
 
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
-import afk.ge.tokyo.GameResult;
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.UUID;
 
 /**
@@ -21,7 +23,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     private Map<UUID, Robot> allRobots = new HashMap<UUID, Robot>();
     private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
     private Map<UUID, Integer> scores = new HashMap<UUID, Integer>();
-    private Robot[][] groups = null;
+    private List<Robot[][]> groupStack = new ArrayList<Robot[][]>();
     private boolean finalRound = false;
     private int currentGroup = 0;
     private int currentRound = 0;
@@ -44,7 +46,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         }
         return null;
     }
-
+    
     @Override
     public void addRobotInstance(Robot robot)
     {
@@ -97,13 +99,13 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             tournamentOver();
         } else
         {
-            displayScores(result);
+            displayScores(new TournamentGameResult(result, groupStack, currentGroup));
 //            nextGame();
         }
     }
 
     @Override
-    public void displayScores(GameResult result)
+    public void displayScores(TournamentGameResult result)
     {
         for (GameListener listener : listeners)
         {
@@ -148,57 +150,12 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     {
         int numBots = robots.size();
 
-        if (numBots < MIN_GROUP_SIZE)
-        {
-            Robot[][] robotGroups = new Robot[1][numBots];
-            Iterator<Robot> it = robots.values().iterator();
-            for (int i = 0; i < numBots; i++)
-            {
-                robotGroups[0][i] = it.next();
-            }
-            return robotGroups;
-        }
-
-        int leftOvers = numBots % MAX_GROUP_SIZE;
-        int numGroups = numBots / MAX_GROUP_SIZE;
-
-        // if there are leftovers we need an extra group for them
-        if (leftOvers > 0)
-        {
-            numGroups++;
-        }
-
-        // initial setup of groups. all have maxGroupSize number of bots in them...
-        int[] groupSizes = new int[numGroups];
-        for (int i = 0; i < numGroups; i++)
-        {
-            groupSizes[i] = MAX_GROUP_SIZE;
-        }
-        // ... except the last one if there are leftovers
-        if (leftOvers > 0)
-        {
-            groupSizes[numGroups - 1] = leftOvers;
-
-            // steal some if there are not enough bots in the last group
-            for (int i = 0; groupSizes[numGroups - 1] < MIN_GROUP_SIZE; i = (i + 1) % (numGroups - 1))
-            {
-                // if stealing causes one of the other groups to fall below minimum group size,
-                // then the situation is a fail
-                if (groupSizes[i] < MIN_GROUP_SIZE + 1)
-                {
-                    // we've tried all we can :(
-                    System.err.println("Warning: Group sizes cannot conform to specifications.");
-                    break;
-                }
-                groupSizes[i]--;
-                groupSizes[numGroups - 1]++;
-            }
-        }
+        int[] groupSizes = calculateGroupSizes(numBots);
 
         // put the robots in the groups
-        Robot[][] robotGroups = new Robot[numGroups][];
+        Robot[][] robotGroups = new Robot[groupSizes.length][];
         Iterator<Robot> it = robots.values().iterator();
-        for (int i = 0; i < numGroups; i++)
+        for (int i = 0; i < groupSizes.length; i++)
         {
             robotGroups[i] = new Robot[groupSizes[i]];
             for (int j = 0; j < groupSizes[i]; j++)
@@ -220,9 +177,10 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     private void nextRound()
     {
         botsThisRounds = robots.size();
-        groups = makeGroups();
+        Robot[][] groups = makeGroups();
         finalRound = (groups.length == 1
                 && groups[0].length <= MAX_GROUP_SIZE/2);
+        groupStack.add(groups);
         robots.clear();
         currentGroup = 0;
         currentRound++;
@@ -236,10 +194,11 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             currentGame.stop();
         }
         currentGroup++;
-        if (groups == null || currentGroup >= groups.length)
+        if (groupStack.isEmpty()|| currentGroup >= groupStack.get(groupStack.size()-1).length)
         {
             nextRound();
         }
+        Robot[][] groups = groupStack.get(groupStack.size()-1);
         currentGame = new SingleGame(config);
         currentGame.addGameListener(this);
         for (int i = 0; i < groups[currentGroup].length; i++)
@@ -251,6 +210,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
 
     private void printGroups()
     {
+        Robot[][] groups = groupStack.get(groupStack.size()-1);
         System.out.print("[ ");
         for (int i = 0; i < groups.length; i++)
         {
@@ -310,5 +270,48 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         {
             currentGame.decreaseSpeed();
         }
+    }
+
+    public int[] calculateGroupSizes(int numBots)
+    {
+        if (numBots < MIN_GROUP_SIZE)
+        {
+            return new int[]{numBots};
+        }
+        
+        int leftOvers = numBots % MAX_GROUP_SIZE;
+        int numGroups = numBots / MAX_GROUP_SIZE;
+        // if there are leftovers we need an extra group for them
+        if (leftOvers > 0)
+        {
+            numGroups++;
+        }
+        // initial setup of groups. all have maxGroupSize number of bots in them...
+        int[] groupSizes = new int[numGroups];
+        for (int i = 0; i < numGroups; i++)
+        {
+            groupSizes[i] = MAX_GROUP_SIZE;
+        }
+        // ... except the last one if there are leftovers
+        if (leftOvers > 0)
+        {
+            groupSizes[numGroups - 1] = leftOvers;
+
+            // steal some if there are not enough bots in the last group
+            for (int i = 0; groupSizes[numGroups - 1] < MIN_GROUP_SIZE; i = (i + 1) % (numGroups - 1))
+            {
+                // if stealing causes one of the other groups to fall below minimum group size,
+                // then the situation is a fail
+                if (groupSizes[i] < MIN_GROUP_SIZE + 1)
+                {
+                    // we've tried all we can :(
+                    System.err.println("Warning: Group sizes cannot conform to specifications.");
+                    break;
+                }
+                groupSizes[i]--;
+                groupSizes[numGroups - 1]++;
+            }
+        }
+        return groupSizes;
     }
 }

@@ -2,7 +2,8 @@ package afk.frontend.swing.postgame;
 
 import afk.frontend.swing.RootWindow;
 import afk.game.GameMaster;
-import afk.ge.tokyo.GameResult;
+import afk.game.GameResult;
+import afk.game.TournamentGameResult;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -25,12 +26,12 @@ public class TournamentPostGamePanel extends JPanel
     private JPanel pnlTop, pnlBottom;
     private JLabel lblTitle;
     private JButton btnNextGame;
-    private RobotScoreList scoreList;
-    private GameResult result;
+    private TournamentTree tTree;
+    private TournamentGameResult result;
     private GameMaster gm;
     
 
-    public TournamentPostGamePanel(RootWindow parent, GameResult result, GameMaster gm)
+    public TournamentPostGamePanel(RootWindow parent, TournamentGameResult result, GameMaster gm)
     {
         this.result = result;
         this.gm = gm;
@@ -53,7 +54,7 @@ public class TournamentPostGamePanel extends JPanel
     {
         lblTitle = new JLabel("Game Result");
         btnNextGame = new JButton("NextGame");
-        scoreList = new RobotScoreList(result, gm);
+        tTree = new TournamentTree(result);
     }
 
     private void addComponents()
@@ -61,7 +62,7 @@ public class TournamentPostGamePanel extends JPanel
         pnlTop = new JPanel();
         pnlTop.add(lblTitle);
         add(pnlTop);
-        add(scoreList);
+        add(tTree);
         pnlBottom = new JPanel();
         pnlBottom.add(btnNextGame);
         add(pnlBottom);

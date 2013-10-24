@@ -1,7 +1,5 @@
 package afk.game;
 
-import afk.ge.tokyo.GameResult;
-
 /**
  * 
  * @author Daniel
@@ -24,5 +22,5 @@ public interface GameListener
      * Called to display tournament tree and results between matches.
      * @param result the result of the game.
      */
-    public void displayScores(GameResult result);
+    public void displayScores(TournamentGameResult result);
 }

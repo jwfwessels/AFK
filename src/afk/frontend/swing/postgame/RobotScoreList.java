@@ -1,19 +1,19 @@
 package afk.frontend.swing.postgame;
 
 import afk.game.GameMaster;
-import afk.ge.tokyo.GameResult;
+import afk.game.GameResult;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.UUID;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 /**
  *
  * @author daniel
  */
-public class RobotScoreList extends JPanel
+public class RobotScoreList extends JComponent
 {
 
     private final int pad = 10;

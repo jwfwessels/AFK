@@ -3,7 +3,7 @@ package afk.frontend.swing;
 import afk.frontend.swing.postgame.PostGamePanel;
 import afk.game.GameListener;
 import afk.game.GameMaster;
-import afk.ge.tokyo.GameResult;
+import afk.game.GameResult;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;

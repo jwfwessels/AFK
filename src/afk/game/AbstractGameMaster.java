@@ -1,6 +1,5 @@
 package afk.game;
 
-import afk.ge.tokyo.GameResult;
 import java.util.ArrayList;
 import java.util.Collection;
 

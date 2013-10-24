@@ -1,5 +1,6 @@
 package afk.ge.tokyo;
 
+import afk.game.GameResult;
 import afk.bot.Robot;
 import afk.bot.RobotEngine;
 import afk.game.GameMaster;

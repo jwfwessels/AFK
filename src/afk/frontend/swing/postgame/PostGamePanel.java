@@ -3,7 +3,7 @@ package afk.frontend.swing.postgame;
 import afk.bot.RobotConfigManager;
 import afk.frontend.swing.RootWindow;
 import afk.game.GameMaster;
-import afk.ge.tokyo.GameResult;
+import afk.game.GameResult;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;

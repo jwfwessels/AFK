@@ -1,4 +1,4 @@
-package afk.ge.tokyo;
+package afk.game;
 
 import afk.frontend.swing.postgame.RobotScoreList;
 import java.util.Arrays;
@@ -20,6 +20,12 @@ public class GameResult
     {
         this.winner = winner;
         this.scores = scores;
+    }
+
+    public GameResult(final GameResult other)
+    {
+        this.winner = other.winner;
+        this.scores = other.scores;
     }
 
     public UUID getWinner()

@@ -12,7 +12,8 @@ import afk.frontend.swing.postgame.TournamentPostGamePanel;
 import afk.game.GameListener;
 import afk.game.SingleGame;
 import afk.game.TournamentGame;
-import afk.ge.tokyo.GameResult;
+import afk.game.GameResult;
+import afk.game.TournamentGameResult;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -323,9 +324,9 @@ public class MenuPanel extends JPanel
                     }
 
                     @Override
-                    public void displayScores(GameResult result)
+                    public void displayScores(TournamentGameResult result)
                     {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        
                     }
                 });
                 startGame(gm);
@@ -360,7 +361,7 @@ public class MenuPanel extends JPanel
                     }
 
                     @Override
-                    public void displayScores(GameResult result)
+                    public void displayScores(TournamentGameResult result)
                     {
                         MenuPanel.this.parent.destroyGame();
                         MenuPanel.this.parent.showPanel(

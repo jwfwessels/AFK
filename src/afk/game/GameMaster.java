@@ -2,7 +2,6 @@ package afk.game;
 
 import afk.bot.Robot;
 import afk.bot.RobotException;
-import afk.ge.tokyo.GameResult;
 import java.awt.Component;
 import java.util.UUID;
 
