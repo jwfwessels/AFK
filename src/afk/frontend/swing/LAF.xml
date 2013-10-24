@@ -239,9 +239,8 @@
             <state>
                 <imagePainter method="arrowButtonForeground" path="icons/scroll_up.png"  direction="north" stretch="fill" sourceInsets="0 0 0 0"/>
                 <imagePainter method="arrowButtonForeground" path="icons/scroll_down.png"  direction="south" stretch="fill" sourceInsets="0 0 0 0"/>
-                <!--<imagePainter method="arrowButtonForeground" path="icons/scrollBar-down.png" center="true" direction="south" />
-                <imagePainter method="arrowButtonForeground" path="icons/scrollBar-left.png" center="true" direction="west" />
-                <imagePainter method="arrowButtonForeground" path="icons/scrollBar-right.png" center="true" direction="east" />-->
+                <imagePainter method="arrowButtonForeground" path="icons/scroll_left.png"  direction="west" stretch="fill" sourceInsets="0 0 0 0"/>
+                <imagePainter method="arrowButtonForeground" path="icons/scroll_right.png" direction="east" stretch="fill" sourceInsets="0 0 0 0"/>
             </state>
         </style>
         
