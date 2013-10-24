@@ -123,7 +123,18 @@
         
         <bind style="buttonStyle" type="region" key="Button"/>
         
-        <bind style="buttonStyle" type="region" key="ToggleButton"/>
+        <style id="toggleButtonStyle">
+            <property key="Button.margin" type="insets" value="5 5 5 5"/>
+            <font name="Copperplate Gothic Bold" size="16"/>
+            <object  class="afk.frontend.swing.AFKToggleButtonPainter" id="toggleButtonPainter"/>
+            <defaultsProperty key="Button.first" type="idref" value="grey3"/>
+            <defaultsProperty key="Button.second" type="idref" value="grey5"/>
+            <defaultsProperty key="Button.third" type="idref" value="grey1"/>
+            <painter method="toggleButtonBackground" idref="toggleButtonPainter"/>
+            <painter method="toggleButtonBorder" idref="toggleButtonPainter" /> 
+        </style>
+        
+        <bind style="toggleButtonStyle" type="region" key="ToggleButton"/>
         
         <style id="listStyle">
             <insets top="5" bottom="5" left="5" right="5"/>
