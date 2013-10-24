@@ -26,8 +26,6 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     private List<GameResult[]> results = new ArrayList<GameResult[]>();
     private boolean finalRound = false;
     private int currentGroup = 0;
-    private int currentRound = 0;
-    private int botsThisRounds = 0;
     // TODO: these should be user specified some time
     public static final int MIN_GROUP_SIZE = 3;
     public static final int MAX_GROUP_SIZE = 4;
@@ -100,6 +98,11 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             tournamentOver();
         } else
         {
+            currentGroup++;
+            if (groupStack.isEmpty()|| currentGroup >= getTopGroup().length)
+            {
+                nextRound();
+            }
             displayScores(new TournamentGameResult(result, groupStack, results,
                     robots.values().toArray(new Robot[0]), currentGroup));
 //            nextGame();
@@ -173,14 +176,14 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     public void start()
     {
         robots.putAll(allRobots);
-//        displayScores(new TournamentGameResult(null, scores, groupStack, results,
-//                    robots.values().toArray(new Robot[0]), currentGroup));
-        nextGame();
+        nextRound();
+        displayScores(new TournamentGameResult(null, scores, groupStack, results,
+                    robots.values().toArray(new Robot[0]), currentGroup));
+        //nextGame();
     }
 
     private void nextRound()
     {
-        botsThisRounds = robots.size();
         Robot[][] groups = makeGroups();
         finalRound = (groups.length == 1
                 && groups[0].length <= MAX_GROUP_SIZE/2);
@@ -189,7 +192,6 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         groupStack.add(groups);
         robots.clear();
         currentGroup = 0;
-        currentRound++;
     }
 
     @Override
@@ -199,12 +201,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         {
             currentGame.stop();
         }
-        currentGroup++;
-        if (groupStack.isEmpty()|| currentGroup >= groupStack.get(groupStack.size()-1).length)
-        {
-            nextRound();
-        }
-        Robot[][] groups = groupStack.get(groupStack.size()-1);
+        Robot[][] groups = getTopGroup();
         currentGame = new SingleGame(config);
         currentGame.addGameListener(this);
         for (int i = 0; i < groups[currentGroup].length; i++)
@@ -216,7 +213,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
 
     private void printGroups()
     {
-        Robot[][] groups = groupStack.get(groupStack.size()-1);
+        Robot[][] groups = getTopGroup();
         System.out.print("[ ");
         for (int i = 0; i < groups.length; i++)
         {
@@ -319,5 +316,10 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             }
         }
         return groupSizes;
+    }
+
+    private Robot[][] getTopGroup()
+    {
+        return groupStack.get(groupStack.size()-1);
     }
 }

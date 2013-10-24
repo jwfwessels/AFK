@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,12 +31,16 @@ public class TournamentTree extends JComponent
     public static final int ICON_PADDING = 10;
     public static final int GROUP_PADDING = 20;
     public static final int ROUND_PADDING = 50;
+    private int roundNumber;
+    private int gameNum;
 
     public TournamentTree(TournamentGameResult result)
     {
         this.result = result;
-        robots = result.getGroups();
-        robotsThrough = result.getRobotsThrough();
+        this.robots = result.getGroups();
+        this.robotsThrough = result.getRobotsThrough();
+        this.roundNumber = robots.length - 1;
+        this.gameNum = result.getCurrentGame();
     }
 
     @Override
@@ -49,7 +54,8 @@ public class TournamentTree extends JComponent
         ArrayList<BufferedImage[]> groupImages = new ArrayList<BufferedImage[]>();
         ArrayList<Integer> roundWidths = new ArrayList<Integer>();
         ArrayList<Integer> roundHeights = new ArrayList<Integer>();
-        
+
+        // generate images for existing groups
         for (int i = 0; i < robots.length; i++)
         {
             int rw = 0;
@@ -70,15 +76,26 @@ public class TournamentTree extends JComponent
             groupImages.add(gi);
         }
 
-        int botsLeft = robots[robots.length-1].length*2;
 
+        int botsLeft = robots[robots.length - 1].length * 2;
+        // You may THINK this if statement says
+        // "If there are 2 bots and AND if there are 2 bots"
+        // but really its something else entirely.
+        
+        // talk to past Dan, he'll know
+        if (botsLeft == 2 && robots[robots.length - 1][0].length == 2)
+        {
+            botsLeft = 1;
+        }
+
+        // generate images for future matches
         int rtIndex = 0;
-        while (botsLeft > 2)
+        while (botsLeft > 1)
         {
             int[] groups = TournamentGame.calculateGroupSizes(botsLeft);
-            
+
             BufferedImage[] gi = new BufferedImage[groups.length];
-            
+
             int rw = 0;
             int rh = GROUP_PADDING;
             for (int i = 0; i < groups.length; i++)
@@ -98,26 +115,24 @@ public class TournamentTree extends JComponent
             }
             roundWidths.add(rw);
             roundHeights.add(rh);
-            botsLeft = groups.length*2;
             groupImages.add(gi);
+            botsLeft = botsLeft == 2 ? 1 : groups.length * 2;
+
         }
-        
+
         BufferedImage img;
-        
-        Robot[] bots = new Robot[2];
-        for (int i = 0; i < 2 && rtIndex < robotsThrough.length; i++, rtIndex++)
+
+        img = drawGroup(new Robot[]
         {
-            bots[i] = robotsThrough[rtIndex];
-        }
-        img = drawGroup(bots);
-        groupImages.add(new BufferedImage[]{img});
+            rtIndex < robotsThrough.length ? robotsThrough[rtIndex] : null
+        });
+        groupImages.add(new BufferedImage[]
+        {
+            img
+        });
         roundWidths.add(img.getWidth());
-        roundHeights.add(2*GROUP_PADDING + img.getHeight());
-        
-        img = drawGroup(new Robot[]{rtIndex < robotsThrough.length ? robotsThrough[rtIndex] : null});
-        groupImages.add(new BufferedImage[]{img});
-        roundWidths.add(img.getWidth());
-        roundHeights.add(2*GROUP_PADDING + img.getHeight());
+        roundHeights.add(2 * GROUP_PADDING + img.getHeight());
+
 
         int x = ROUND_PADDING;
         int y = 0;
@@ -129,7 +144,13 @@ public class TournamentTree extends JComponent
             for (int j = 0; j < gi.length; j++)
             {
                 g.setColor(Color.GREEN);
-                g.fillRect(x, y, gi[j].getWidth(), gi[j].getHeight());
+                if (i == roundNumber && j == gameNum)
+                {
+                    g.fillRect(x, y, gi[j].getWidth(), gi[j].getHeight());
+                } else
+                {
+                    g.drawRect(x, y, gi[j].getWidth(), gi[j].getHeight());
+                }
                 g.drawImage(gi[j], null,
                         x, y);
                 y += gi[j].getHeight() + GROUP_PADDING;
@@ -146,8 +167,8 @@ public class TournamentTree extends JComponent
     {
         final int ICON_SPACE = (ICON_SIZE + ICON_PADDING);
         int w = (int) Math.ceil(bots.length * 0.5f) * ICON_SPACE + ICON_PADDING;
-        int h = bots.length == 1 ? ICON_PADDING*2 + ICON_SIZE :
-                ICON_SPACE * 2 + ICON_PADDING;
+        int h = bots.length == 1 ? ICON_PADDING * 2 + ICON_SIZE
+                : ICON_SPACE * 2 + ICON_PADDING;
 
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
 
@@ -165,8 +186,7 @@ public class TournamentTree extends JComponent
                 if (bots[i] != null)
                 {
                     drawBot(g, x, y, bots[i]);
-                }
-                else
+                } else
                 {
                     g.setColor(Color.MAGENTA);
                     g.drawRect(x, y, ICON_SIZE, ICON_SIZE);
