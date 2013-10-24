@@ -4,6 +4,8 @@ import static afk.gfx.Resource.HEIGHTMAP_MESH;
 import afk.gfx.athens.AthensTerrain;
 import afk.gfx.athens.Mesh;
 import com.hackoeur.jglm.Vec3;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -26,11 +28,12 @@ public class EditableAthensTerrain extends AthensTerrain
     public void load(GL2 gl)
             throws IOException
     {
-        super.load(gl);
-
         this.heightmap = ImageIO.read(
                 new File("textures/heightmaps/" + name + ".png"));
 
+        xGrid = heightmap.getWidth();
+        yGrid = heightmap.getHeight();
+        
         vertices = new float[xGrid][yGrid][3];
         normals = new float[xGrid][yGrid][3];
 
@@ -44,6 +47,16 @@ public class EditableAthensTerrain extends AthensTerrain
         sides.load(gl);
 
         loaded.set(true);
+    }
+
+    public BufferedImage getHeightmap()
+    {
+        return heightmap;
+    }
+    
+    public void update()
+    {
+        calculateHeightmap();
     }
 
     @Override

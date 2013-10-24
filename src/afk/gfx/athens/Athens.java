@@ -512,6 +512,12 @@ public class Athens implements GraphicsEngine
         entity.used = true;
         return entity;
     }
+    
+    public void injectAthensEntity(AthensEntity entity, Renderable renderable)
+    {
+        entities.put(renderable, entity);
+        entity.used = true;
+    }
 
     @Override
     public GfxHUD getGfxHUD(HUDImage image)
@@ -594,4 +600,10 @@ public class Athens implements GraphicsEngine
     {
         bgColour = colour;
     }
+
+    public ResourceManager getResourceManager()
+    {
+        return resourceManager;
+    }
+    
 }

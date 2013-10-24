@@ -36,6 +36,7 @@ public class TypeFactory
         factories.put("smallTankBarrel", new SmallTankBarrelFactory());
         factories.put("projectile", new ProjectileFactory());
         factories.put("wall", new WallFactory());
+        factories.put("sphere", new SphereFactory());
         factories.put("floor", new FloorFactory());
         factories.put("particle", new ParticleFactory());
     }
@@ -208,6 +209,20 @@ public class TypeFactory
         {
             AthensEntity gfxEntity = createEntity(GfxEntity.NORMAL);
             gfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "cube"));
+            gfxEntity.attachResource(resourceManager.getResource(SHADER, "primatives"));
+            
+            return gfxEntity;
+        }
+        
+    }
+    private class SphereFactory implements TypeFactoryThing
+    {
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity gfxEntity = createEntity(GfxEntity.NORMAL);
+            gfxEntity.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "sphere"));
             gfxEntity.attachResource(resourceManager.getResource(SHADER, "primatives"));
             
             return gfxEntity;

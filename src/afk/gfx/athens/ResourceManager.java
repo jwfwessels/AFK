@@ -2,6 +2,7 @@ package afk.gfx.athens;
 
 import afk.gfx.Resource;
 import static afk.gfx.Resource.*;
+import afk.rome.EditableAthensTerrain;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -119,6 +120,10 @@ public class ResourceManager
                 }
             break;
             case HEIGHTMAP_MESH:
+                if (name.startsWith("?"))
+                {
+                    return new EditableAthensTerrain(name.substring(1));
+                }
                 return new AthensTerrain(name);
             case TEXTURE_2D:
                 return new Texture2D(name);

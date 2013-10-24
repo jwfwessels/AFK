@@ -109,6 +109,9 @@ public class AthensTerrain extends Mesh
 
         this.heightmap = ImageIO.read(
                 new File("textures/heightmaps/" + name + ".png"));
+        
+        xGrid = heightmap.getWidth();
+        yGrid = heightmap.getHeight();
 
         vertices = new float[xGrid][yGrid][3];
         normals = new float[xGrid][yGrid][3];
@@ -340,8 +343,6 @@ public class AthensTerrain extends Mesh
 
     protected void calculateHeightmap()
     {
-        xGrid = heightmap.getWidth();
-        yGrid = heightmap.getHeight();
 
         final float QUAD_WIDTH = 1.0f / (float) (xGrid - 1);
         final float QUAD_LENGTH = 1.0f / (float) (yGrid - 1);
