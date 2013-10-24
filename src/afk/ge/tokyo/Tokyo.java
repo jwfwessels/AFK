@@ -4,6 +4,7 @@ import afk.bot.Robot;
 import afk.bot.RobotEngine;
 import afk.game.GameMaster;
 import afk.ge.GameEngine;
+import afk.ge.ems.Constants;
 import afk.gfx.GraphicsEngine;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;

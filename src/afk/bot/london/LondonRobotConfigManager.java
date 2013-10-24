@@ -1,6 +1,7 @@
 package afk.bot.london;
 
 import afk.bot.RobotConfigManager;
+import afk.ge.ems.Constants;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,6 +54,13 @@ public class LondonRobotConfigManager implements RobotConfigManager
     public boolean isInitComplete()
     {
         return init;
+    }
+
+    @Override
+    public Object getConstant(UUID id, String name)
+    {
+        String type = getProperty(id, "type");
+        return Constants.getConstant(type, name);
     }
     
 }

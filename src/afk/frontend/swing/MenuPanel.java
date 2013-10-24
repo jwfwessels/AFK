@@ -49,7 +49,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class MenuPanel extends JPanel
 {
 
-    private static String RELETIVE_ROBOT_DIRECTORY = "build/classes";
+    private static String RELATIVE_ROBOT_DIRECTORY = "build/classes";
     RootWindow parent;
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
@@ -94,7 +94,7 @@ public class MenuPanel extends JPanel
      */
     public void loadExistingRobots()
     {
-        File robotDir = new File(RELETIVE_ROBOT_DIRECTORY);
+        File robotDir = new File(RELATIVE_ROBOT_DIRECTORY);
         for (File tempFile : robotDir.listFiles())
         {
             try
