@@ -8,10 +8,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,11 +32,16 @@ public class TournamentTree extends JComponent
     private GameResult[][] results;
     private int[][] nextGroups;
     public static final int ICON_SIZE = 48;
-    public static final int ICON_PADDING = 10;
+    public static final int ICON_PADDING = 20;
+    public static final int TEXT_OFFSET = 10;
     public static final int GROUP_PADDING = 20;
     public static final int ROUND_PADDING = 50;
     private int roundNumber;
     private int gameNum;
+    
+    private int mx, my;
+    private int dx, dy;
+    private float zoom = 1.0f;
 
     public TournamentTree(TournamentGameResult result)
     {
@@ -41,6 +50,34 @@ public class TournamentTree extends JComponent
         this.robotsThrough = result.getRobotsThrough();
         this.roundNumber = robots.length - 1;
         this.gameNum = result.getCurrentGame();
+        
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                mx = e.getX();
+                my = e.getY();
+            }
+            
+        });
+        
+        addMouseMotionListener(new MouseMotionAdapter() {
+
+            @Override
+            public void mouseDragged(MouseEvent e)
+            {
+                int nx = e.getX();
+                int ny = e.getY();
+                dx += nx-mx;
+                dy += ny-my;
+                mx = nx;
+                my = ny;
+                repaint();
+            }
+            
+        });
+        
     }
 
     @Override
@@ -133,7 +170,9 @@ public class TournamentTree extends JComponent
         roundWidths.add(img.getWidth());
         roundHeights.add(2 * GROUP_PADDING + img.getHeight());
 
-
+        AffineTransform originalTransform = g.getTransform();
+        g.translate(dx, dy);
+        
         int x = ROUND_PADDING;
         int y = 0;
         for (int i = 0; i < groupImages.size(); i++)
@@ -161,6 +200,8 @@ public class TournamentTree extends JComponent
                 y = top + roundHeights.get(i) / 2 - roundHeights.get(i + 1) / 2;
             }
         }
+        
+        g.setTransform(originalTransform);
     }
 
     public BufferedImage drawGroup(Robot[] bots)

@@ -2,7 +2,6 @@ package afk.frontend.swing.postgame;
 
 import afk.frontend.swing.RootWindow;
 import afk.game.GameMaster;
-import afk.game.GameResult;
 import afk.game.TournamentGameResult;
 import java.awt.Component;
 import java.awt.Container;
