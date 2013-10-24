@@ -141,7 +141,7 @@ public class MenuPanel extends JPanel
         lblAvailable.setName("label");
 
         //pnlBotSelButtons = new JPanel();
-        pnlBotSelButtons = new AFKPanel();
+        pnlBotSelButtons = new JPanel();
         pnlBotSelButtons.setName("PanelBotSel");
         //pnlBotSelButtons.setLayout(new GridLayout(5, 1, 50, 50));
 
