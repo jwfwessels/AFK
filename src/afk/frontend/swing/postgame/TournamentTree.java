@@ -222,6 +222,16 @@ public class TournamentTree extends JComponent
             BufferedImage[] gi = groupImages.get(i);
             int top = y;
             y += GROUP_PADDING;
+            g.setColor(LINE_COLOUR);
+            if (i < groupImages.size()-1)
+            {
+                g.drawLine(
+                        x+roundWidths.get(i), y+gi[0].getHeight()/2,
+                        x+roundWidths.get(i)+ROUND_PADDING/2, y+gi[0].getHeight()/2);
+                g.drawLine(
+                        x+roundWidths.get(i)+ROUND_PADDING/2, y+gi[0].getHeight()/2,
+                        x+roundWidths.get(i)+ROUND_PADDING/2, top + roundHeights.get(i) / 2);
+            }
             for (int j = 0; j < gi.length; j++)
             {
                 g.setColor(FILL_COLOUR);
@@ -233,10 +243,22 @@ public class TournamentTree extends JComponent
                         x, y);
                 y += gi[j].getHeight() + GROUP_PADDING;
             }
+            g.setColor(LINE_COLOUR);
+            if (i < groupImages.size()-1)
+            {
+                g.drawLine(
+                        x+roundWidths.get(i), y-gi[gi.length-1].getHeight()/2-GROUP_PADDING-1,
+                        x+roundWidths.get(i)+ROUND_PADDING/2, y-gi[gi.length-1].getHeight()/2-GROUP_PADDING-1);
+                g.drawLine(x+roundWidths.get(i)+ROUND_PADDING/2, top + roundHeights.get(i) / 2,
+                        x+roundWidths.get(i)+ROUND_PADDING, top + roundHeights.get(i) / 2);
+                g.drawLine(
+                        x+roundWidths.get(i)+ROUND_PADDING/2, y-gi[gi.length-1].getHeight()/2-GROUP_PADDING-1,
+                        x+roundWidths.get(i)+ROUND_PADDING/2, top + roundHeights.get(i) / 2);
+            }
             x += roundWidths.get(i) + ROUND_PADDING;
             if (i < groupImages.size() - 1)
             {
-                y = top + roundHeights.get(i) / 2 - roundHeights.get(i + 1) / 2;
+                y = top + (roundHeights.get(i) / 2 - roundHeights.get(i + 1) / 2);
             }
         }
 
