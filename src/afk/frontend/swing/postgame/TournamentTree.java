@@ -115,7 +115,7 @@ public class TournamentTree extends JComponent
         g.clearRect(0, 0, getWidth(), getHeight());
 
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
         ArrayList<BufferedImage[]> groupImages = new ArrayList<BufferedImage[]>();
         ArrayList<Integer> roundWidths = new ArrayList<Integer>();
