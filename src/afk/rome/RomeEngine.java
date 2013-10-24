@@ -50,7 +50,7 @@ public class RomeEngine implements Runnable
         engine.addEntity(cameraEntity);
         engine.addGlobal(camera);
         
-        engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
+        
         
     }
 
