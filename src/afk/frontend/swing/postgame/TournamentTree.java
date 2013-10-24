@@ -6,8 +6,10 @@ import afk.game.TournamentGame;
 import afk.game.TournamentGameResult;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -25,7 +27,7 @@ public class TournamentTree extends JComponent
 {
 
     public static final Color BG_COLOUR = new Color(0x444444);
-    private final Font FONT = new Font("Myriad Pro", Font.BOLD, 14);
+    private final Font FONT = new Font("Myriad Pro", Font.PLAIN, 12);
     private TournamentGameResult result;
     private Robot[][][] robots;
     private Robot[] robotsThrough;
@@ -38,9 +40,8 @@ public class TournamentTree extends JComponent
     public static final int ROUND_PADDING = 50;
     private int roundNumber;
     private int gameNum;
-    
     private int mx, my;
-    private int dx, dy;
+    private float dx, dy;
     private float zoom = 1.0f;
 
     public TournamentTree(TournamentGameResult result)
@@ -50,34 +51,59 @@ public class TournamentTree extends JComponent
         this.robotsThrough = result.getRobotsThrough();
         this.roundNumber = robots.length - 1;
         this.gameNum = result.getCurrentGame();
-        
-        addMouseListener(new MouseAdapter() {
 
+        addMouseListener(new MouseAdapter()
+        {
             @Override
             public void mousePressed(MouseEvent e)
             {
                 mx = e.getX();
                 my = e.getY();
             }
-            
         });
-        
-        addMouseMotionListener(new MouseMotionAdapter() {
 
+        addMouseMotionListener(new MouseMotionAdapter()
+        {
             @Override
             public void mouseDragged(MouseEvent e)
             {
                 int nx = e.getX();
                 int ny = e.getY();
-                dx += nx-mx;
-                dy += ny-my;
+                dx += nx - mx;
+                dy += ny - my;
                 mx = nx;
                 my = ny;
                 repaint();
             }
-            
         });
-        
+
+        addMouseWheelListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e)
+            {
+                double r = e.getPreciseWheelRotation();
+                float x1 = (e.getX()-dx)/zoom;
+                float y1 = (e.getY()-dy)/zoom;
+                if (r > 0)
+                {
+                    zoom *= 0.9f * r;
+                } else if (r < 0)
+                {
+                    zoom *= 1.1f * -r;
+                    if (zoom > 1)
+                    {
+                        zoom = 1;
+                    }
+                }
+                float x2 = (e.getX()-dx)/zoom;
+                float y2 = (e.getY()-dy)/zoom;
+                dx += (x2-x1)*zoom;
+                dy += (y2-y1)*zoom;
+                repaint();
+            }
+        });
+
     }
 
     @Override
@@ -87,6 +113,9 @@ public class TournamentTree extends JComponent
 
         g.setBackground(BG_COLOUR);
         g.clearRect(0, 0, getWidth(), getHeight());
+
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
         ArrayList<BufferedImage[]> groupImages = new ArrayList<BufferedImage[]>();
         ArrayList<Integer> roundWidths = new ArrayList<Integer>();
@@ -118,7 +147,7 @@ public class TournamentTree extends JComponent
         // You may THINK this if statement says
         // "If there are 2 bots and AND if there are 2 bots"
         // but really its something else entirely.
-        
+
         // talk to past Dan, he'll know
         if (botsLeft == 2 && robots[robots.length - 1][0].length == 2)
         {
@@ -172,7 +201,8 @@ public class TournamentTree extends JComponent
 
         AffineTransform originalTransform = g.getTransform();
         g.translate(dx, dy);
-        
+        g.scale(zoom, zoom);
+
         int x = ROUND_PADDING;
         int y = 0;
         for (int i = 0; i < groupImages.size(); i++)
@@ -184,9 +214,6 @@ public class TournamentTree extends JComponent
             {
                 g.setColor(Color.GREEN);
                 if (i == roundNumber && j == gameNum)
-                {
-                    g.fillRect(x, y, gi[j].getWidth(), gi[j].getHeight());
-                } else
                 {
                     g.drawRect(x, y, gi[j].getWidth(), gi[j].getHeight());
                 }
@@ -200,7 +227,7 @@ public class TournamentTree extends JComponent
                 y = top + roundHeights.get(i) / 2 - roundHeights.get(i + 1) / 2;
             }
         }
-        
+
         g.setTransform(originalTransform);
     }
 
@@ -214,6 +241,9 @@ public class TournamentTree extends JComponent
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
 
         Graphics2D g = img.createGraphics();
+        
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
         try
         {
@@ -247,8 +277,11 @@ public class TournamentTree extends JComponent
         g.fillRect(x, y, ICON_SIZE, ICON_SIZE);
 
         g.setFont(FONT);
+        FontMetrics fm = g.getFontMetrics(FONT);
 
         g.setColor(Color.CYAN);
-        g.drawString(robot.toString(), x, y);
+        String text = robot.toString();
+
+        g.drawString(text, x + ICON_SIZE / 2 - fm.stringWidth(text) / 2, y + ICON_SIZE + TEXT_OFFSET);
     }
 }
