@@ -109,6 +109,8 @@ public class RomeEngine implements Runnable
                     float r = (ballState.scale.getX()*img.getWidth())/BOARD_SIZE;
                     boolean shift = engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_SHIFT);
                     float h = 0.5f;
+                    if (shift)
+                        h = avg(x,y,r,img);
                     Graphics2D g = img.createGraphics();
                     g.setPaint(new RadialGradientPaint(new Point2D.Float(x,y),
                             r, new float[]{0.5f,1.0f},
@@ -116,13 +118,48 @@ public class RomeEngine implements Runnable
                             ? new Color[]{new Color(0f,0f,0f, STRENGTH),new Color(0f,0f,0f,0f)}
                             : (
                             shift
-                            ? new Color[]{new Color(h,h,h,STRENGTH),new Color(h,h,h,0f)}
+                            ? new Color[]{new Color(h,h,h,0.1f),new Color(h,h,h,0f)}
                             : new Color[]{new Color(1f,1f,1f,STRENGTH),new Color(1f,1f,1f,0f)})
                     ));
                     g.fillOval((int)(x-r), (int)(y-r), (int)(r*2), (int)(r*2));
                     g.dispose();
                     terrain.update();
                 }
+            }
+            
+            private float avg(float x, float y, float r, BufferedImage img)
+            {
+                int w = (int)(r*2);
+                int h = w;
+                int xi = (int)(x-r);
+                int yi = (int)(y-r);
+                if (xi < 0)
+                {
+                    xi = 0;
+                    w += xi;
+                }
+                if (yi < 0)
+                {
+                    yi = 0;
+                    h += yi;
+                }
+                if (xi+w >= img.getWidth())
+                {
+                    w = (img.getWidth()-xi)-1;
+                }
+                if (yi+h >= img.getHeight())
+                {
+                    h = (img.getHeight()-yi)-1;
+                }
+                int[] pixels = img.getRGB(xi, yi, w, h,
+                        null, 0, h);
+                
+                float sum = 0;
+                for (int i = 0; i < pixels.length; i++)
+                {
+                    sum += (float)(pixels[i] & 0xFF)/256.0f;
+                }
+                return sum/pixels.length;
             }
 
             @Override
