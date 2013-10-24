@@ -10,6 +10,7 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.plaf.FontUIResource;
 
 /**
  *
@@ -26,9 +27,10 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
          
          Color background;
          Color foreground;
-         
-         setFont(new Font("Constantia", 0, 14));
 
+         FontUIResource tempFont = CustomFonts.createFont();
+
+         setFont(tempFont);
          // check if this cell represents the current DnD drop location
         /* JList.DropLocation dropLocation = list.getDropLocation();
          if (dropLocation != null && !dropLocation.isInsert() && dropLocation.getIndex() == index) 

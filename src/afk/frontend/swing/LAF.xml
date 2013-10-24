@@ -86,9 +86,12 @@
             <int>238</int>
         </object>
         
+        <!-- FONTS -->
+        <object id="myriadPro_reg" class="afk.frontend.swing.CustomFonts" method="createFont" />
+        
         <style id="mainStyle">
             <opaque value="TRUE"/>
-            <font name="Constantia" size="16"/>
+            <font name="myriadPro_reg" size="16"/>
             <state>
                 <color value="#333333" type="BACKGROUND"/>
                 <color value="#CCCCCC" type="FOREGROUND"/>

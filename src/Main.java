@@ -1,6 +1,10 @@
 
 import afk.frontend.Frontend;
 import afk.frontend.swing.RootWindow;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.swing.UIManager;
 import javax.swing.plaf.synth.SynthLookAndFeel;
 
