@@ -40,20 +40,13 @@ public class AFKScrollBarPainter extends SynthPainter
     @Override
     public void paintScrollBarBorder(SynthContext context, Graphics g, int x, int y, int w, int h, int orientation)
     {
-       /* Graphics2D g2 = (Graphics2D) g;
         
-        Stroke borderStroke;
-        borderStroke = new BasicStroke(1);
-        
-        g2.setStroke(borderStroke);
-        g2.setPaint(UIManager.getColor("ScrollBar.first"));
-        g2.drawRect(x, y, w-1, h-1);*/
     }
     
     @Override
     public void paintScrollBarThumbBackground(SynthContext context, Graphics g, int x, int y, int w, int h, int orientation)
     {        
-        Color col1 = UIManager.getColor("ScrollBar.sixth");
+        Color col1 = UIManager.getColor("ScrollBar.third");
         g.setColor(col1);
         g.fillRect(x, y, w, h); 
     }
@@ -75,7 +68,7 @@ public class AFKScrollBarPainter extends SynthPainter
     public void paintScrollBarTrackBackground(SynthContext context, Graphics g, int x, int y, int w, int h)
     {
         
-        Color col1 = UIManager.getColor("ScrollBar.third");
+        Color col1 = UIManager.getColor("ScrollBar.sixth");
         g.setColor(col1);
         g.fillRect(x, y, w, h); 
     }
@@ -84,7 +77,7 @@ public class AFKScrollBarPainter extends SynthPainter
     public void paintScrollBarTrackBackground(SynthContext context, Graphics g, int x, int y, int w, int h, int orientation)
     {
 
-        Color col1 = UIManager.getColor("ScrollBar.third");
+        Color col1 = UIManager.getColor("ScrollBar.sixth");
         g.setColor(col1);
         g.fillRect(x, y, w, h);
     }

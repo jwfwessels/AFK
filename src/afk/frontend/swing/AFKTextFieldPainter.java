@@ -10,6 +10,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.plaf.synth.SynthContext;
 import javax.swing.plaf.synth.SynthPainter;
@@ -26,6 +27,9 @@ public class AFKTextFieldPainter extends SynthPainter
             Color col1 = UIManager.getColor("TextField.second");
             g.setColor(col1);
             g.fillRect(x, y, w, h);
+            
+            JTextField temp = (JTextField)context.getComponent();
+            temp.setSelectedTextColor(UIManager.getColor("TextField.third"));
     }
         
     @Override
