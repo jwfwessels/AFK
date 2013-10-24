@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.UUID;
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -63,13 +65,36 @@ public class GamePanel extends JPanel
         view = new JPanel();
         glPanel = gm.getAWTComponent();
         pnlControls = new JPanel();
-        btnPlayPause = new JToggleButton("press");
-        btnFaster = new JButton(">>");
-        btnSlower = new JButton("<<");
+        
+        ImageIcon faster = createImageIcon("icons/FasterIcon.png", "Speed Up");
+        ImageIcon slower = createImageIcon("icons/SlowerIcon.png", "Slow Down");
+        
+        ImageIcon pause = createImageIcon("icons/PauseIcon.png", "Play");
+        
+        btnPlayPause = new JToggleButton();
+        btnPlayPause.setIcon(pause);
+        btnFaster = new JButton();
+        btnSlower = new JButton();
+        btnFaster.setIcon(faster);
+        btnSlower.setIcon(slower);
         lblSpeed = new JLabel("speed: " + (int) gm.getGameSpeed());
         btnBack = new JButton("Back");
         
         lblSpeed.setName("label");
+    }
+    
+    protected ImageIcon createImageIcon(String path, String description) 
+    {
+        java.net.URL imgURL = getClass().getResource(path);
+        if (imgURL != null) 
+        {
+            return new ImageIcon(imgURL, description);
+        } 
+        else 
+        {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
     }
     
     private void addComponents()
@@ -97,7 +122,7 @@ public class GamePanel extends JPanel
         fps.setBounds(0, 0, 50, 25);
         lblSpeed.setBackground(Color.LIGHT_GRAY);
         btnPlayPause.setSelected(true);
-        btnPlayPause.setText("Pause");
+        //btnPlayPause.setText("Pause");
         
         ActionListener playPauseAction = new ActionListener()
         {
@@ -107,12 +132,15 @@ public class GamePanel extends JPanel
                 String state;
                 if (btnPlayPause.isSelected())
                 {
-                    btnPlayPause.setText("Play");
+                    ImageIcon pause = createImageIcon("icons/PauseIcon.png", "Play");
+                    btnPlayPause.setIcon(pause);
                     state = "Puased";
                     
-                } else
+                } 
+                else
                 {
-                    btnPlayPause.setText("Pause");
+                    ImageIcon play = createImageIcon("icons/PlayIcon.png", "Pause");
+                    btnPlayPause.setIcon(play);                    
                     state = "Playing";
                 }
                 gm.playPause();
