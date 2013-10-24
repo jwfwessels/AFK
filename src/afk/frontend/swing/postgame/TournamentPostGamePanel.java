@@ -23,6 +23,7 @@ import javax.swing.Timer;
  */
 public class TournamentPostGamePanel extends JPanel
 {
+    public static final int TIMEOUT = 5000;
 
     private RootWindow parent;
     private JPanel pnlTop, pnlBottom;
@@ -58,7 +59,7 @@ public class TournamentPostGamePanel extends JPanel
         lblTitle = new JLabel("Tournament Tree");
         btnNextGame = new JButton("Continue");
         tTree = new TournamentTree(result);
-        timer = new Timer(5000, new ActionListener() {
+        timer = new Timer(TIMEOUT, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e)

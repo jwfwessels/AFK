@@ -33,6 +33,7 @@ import java.util.UUID;
 public class Tokyo implements GameEngine, Runnable
 {
     public static final int NUM_BOULDERS = 20;
+    public static final double END_OF_GAME_DELAY = 6.0;
 
     private Engine engine;
     private boolean running = true;
@@ -62,6 +63,7 @@ public class Tokyo implements GameEngine, Runnable
     private boolean debugPressed = false;
     private Entity cameraEntity;
     private boolean quellTheUndead = false;
+    private Double ttl = null;
 
     public Tokyo(GraphicsEngine gfxEngine, RobotEngine botEngine, GameMaster game)
     {
@@ -243,6 +245,7 @@ public class Tokyo implements GameEngine, Runnable
         }
         cameraEntity.removeComponent(NoClipCamera.class);
         cameraEntity.addComponent(new SpinnyCamera(0, speed, pitch, distance, focusPoint));
+        ttl = END_OF_GAME_DELAY;
         for (Map.Entry<UUID, Integer> score : scoreboard.scores.entrySet())
         {
             System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
@@ -327,12 +330,13 @@ public class Tokyo implements GameEngine, Runnable
                         gameOver();
                     }
                 } else if (gameState.gameOver && !quellTheUndead
-                        && engine.getFlag(MOUSE, MouseEvent.BUTTON1))
+                        && (engine.getFlag(MOUSE, MouseEvent.BUTTON1) || (ttl != null && ttl <= 0)))
                 {
                     notifyGameOver();
                     quellTheUndead = true;
                 }
                 t += DELTA;
+                ttl -= DELTA;
                 logicAccumulator -= logicDelta;
             }
         }
