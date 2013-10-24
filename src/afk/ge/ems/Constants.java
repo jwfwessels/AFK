@@ -29,14 +29,9 @@ public class Constants
         }
         add(map, entity);
 
-        for (Entity e : entity.getDependents())
-        {
-            add(map, e);
-        }
-        
         //// DEBUG
         System.out.println("##### CONSTANTS FOR [" + type + "] #####");
-        for (Map.Entry<String,Object> e : map.entrySet())
+        for (Map.Entry<String, Object> e : map.entrySet())
         {
             System.out.println("-> " + e.getKey() + " := " + e.getValue());
         }
@@ -68,14 +63,22 @@ public class Constants
             {
                 ex.printStackTrace(System.err);
             }
+
+            for (Entity e : entity.getDependents())
+            {
+                add(map, e);
+            }
+
         }
     }
 
     /**
      * Get the value of a constant.
+     *
      * @param type the type to which the constant corresponds.
      * @param name the name of the constant.
-     * @return the value of the constant, null if either the type or the constant do not exist.
+     * @return the value of the constant, null if either the type or the
+     * constant do not exist.
      */
     public static Object getConstant(String type, String name)
     {
