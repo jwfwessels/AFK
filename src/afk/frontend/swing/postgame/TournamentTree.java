@@ -1,13 +1,15 @@
 package afk.frontend.swing.postgame;
 
 import afk.bot.Robot;
+import afk.game.GameResult;
+import afk.game.TournamentGame;
 import afk.game.TournamentGameResult;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.swing.JComponent;
 
 /**
@@ -18,8 +20,12 @@ public class TournamentTree extends JComponent
 {
 
     public static final Color BG_COLOUR = new Color(0x444444);
+    private final Font FONT = new Font("Myriad Pro", Font.BOLD, 14);
     private TournamentGameResult result;
     private Robot[][][] robots;
+    private Robot[] robotsThrough;
+    private GameResult[][] results;
+    private int[][] nextGroups;
     public static final int ICON_SIZE = 48;
     public static final int ICON_PADDING = 10;
     public static final int GROUP_PADDING = 20;
@@ -29,6 +35,7 @@ public class TournamentTree extends JComponent
     {
         this.result = result;
         robots = result.getGroups();
+        robotsThrough = result.getRobotsThrough();
     }
 
     @Override
@@ -38,40 +45,99 @@ public class TournamentTree extends JComponent
 
         g.setBackground(BG_COLOUR);
         g.clearRect(0, 0, getWidth(), getHeight());
-        
-        BufferedImage[][] groupImages = new BufferedImage[robots.length][];
-        int[] roundWidths = new int[robots.length];
-        int[] roundHeights = new int[robots.length];
+
+        ArrayList<BufferedImage[]> groupImages = new ArrayList<BufferedImage[]>();
+        ArrayList<Integer> roundWidths = new ArrayList<Integer>();
+        ArrayList<Integer> roundHeights = new ArrayList<Integer>();
         
         for (int i = 0; i < robots.length; i++)
         {
-            roundWidths[i] = 0;
-            roundHeights[i] = GROUP_PADDING;
-            groupImages[i] = new BufferedImage[robots[i].length];
+            int rw = 0;
+            int rh = GROUP_PADDING;
+            BufferedImage[] gi = new BufferedImage[robots[i].length];
             for (int j = 0; j < robots[i].length; j++)
             {
-                groupImages[i][j] = drawGroup(robots[i][j]);
-                int w = groupImages[i][j].getWidth();
-                if (w > roundWidths[i])
-                    roundWidths[i] = w;
-                roundHeights[i] += GROUP_PADDING + groupImages[i][j].getHeight();
+                gi[j] = drawGroup(robots[i][j]);
+                int w = gi[j].getWidth();
+                if (w > rw)
+                {
+                    rw = w;
+                }
+                rh += GROUP_PADDING + gi[j].getHeight();
             }
+            roundWidths.add(rw);
+            roundHeights.add(rh);
+            groupImages.add(gi);
+        }
+
+        int botsLeft = robots[robots.length-1].length*2;
+
+        int rtIndex = 0;
+        while (botsLeft > 2)
+        {
+            int[] groups = TournamentGame.calculateGroupSizes(botsLeft);
+            
+            BufferedImage[] gi = new BufferedImage[groups.length];
+            
+            int rw = 0;
+            int rh = GROUP_PADDING;
+            for (int i = 0; i < groups.length; i++)
+            {
+                Robot[] bots = new Robot[groups[i]];
+                for (int j = 0; j < groups[i] && rtIndex < robotsThrough.length; j++, rtIndex++)
+                {
+                    bots[j] = robotsThrough[rtIndex];
+                }
+                gi[i] = drawGroup(bots);
+                int w = gi[i].getWidth();
+                if (w > rw)
+                {
+                    rw = w;
+                }
+                rh += GROUP_PADDING + gi[i].getHeight();
+            }
+            roundWidths.add(rw);
+            roundHeights.add(rh);
+            botsLeft = groups.length*2;
+            groupImages.add(gi);
         }
         
+        BufferedImage img;
+        
+        Robot[] bots = new Robot[2];
+        for (int i = 0; i < 2 && rtIndex < robotsThrough.length; i++, rtIndex++)
+        {
+            bots[i] = robotsThrough[rtIndex];
+        }
+        img = drawGroup(bots);
+        groupImages.add(new BufferedImage[]{img});
+        roundWidths.add(img.getWidth());
+        roundHeights.add(2*GROUP_PADDING + img.getHeight());
+        
+        img = drawGroup(new Robot[]{rtIndex < robotsThrough.length ? robotsThrough[rtIndex] : null});
+        groupImages.add(new BufferedImage[]{img});
+        roundWidths.add(img.getWidth());
+        roundHeights.add(2*GROUP_PADDING + img.getHeight());
+
         int x = ROUND_PADDING;
         int y = 0;
-        for (int i = 0; i < robots.length; i++)
+        for (int i = 0; i < groupImages.size(); i++)
         {
-            for (int j = 0; j < robots[i].length; j++)
+            BufferedImage[] gi = groupImages.get(i);
+            int top = y;
+            y += GROUP_PADDING;
+            for (int j = 0; j < gi.length; j++)
             {
-                g.drawImage(groupImages[i][j], null,
+                g.setColor(Color.GREEN);
+                g.fillRect(x, y, gi[j].getWidth(), gi[j].getHeight());
+                g.drawImage(gi[j], null,
                         x, y);
-                y += groupImages[i][j].getHeight()+GROUP_PADDING;
+                y += gi[j].getHeight() + GROUP_PADDING;
             }
-            x += roundWidths[i]+ROUND_PADDING;
-            if (i < robots.length-1)
+            x += roundWidths.get(i) + ROUND_PADDING;
+            if (i < groupImages.size() - 1)
             {
-                y = roundHeights[i]/2 - roundHeights[i+1]/2;
+                y = top + roundHeights.get(i) / 2 - roundHeights.get(i + 1) / 2;
             }
         }
     }
@@ -80,7 +146,8 @@ public class TournamentTree extends JComponent
     {
         final int ICON_SPACE = (ICON_SIZE + ICON_PADDING);
         int w = (int) Math.ceil(bots.length * 0.5f) * ICON_SPACE + ICON_PADDING;
-        int h = ICON_SPACE * 2 + ICON_PADDING;
+        int h = bots.length == 1 ? ICON_PADDING*2 + ICON_SIZE :
+                ICON_SPACE * 2 + ICON_PADDING;
 
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
 
@@ -91,12 +158,19 @@ public class TournamentTree extends JComponent
             int x, y;
             for (int i = 0; i < bots.length; i++)
             {
-                y = (i/2)*ICON_SPACE;
-                x = (i%2)*ICON_SPACE;
-                
+                y = ICON_PADDING + (i % 2) * ICON_SPACE;
+                x = ICON_PADDING + (i / 2) * ICON_SPACE;
+
                 // TODO: debug
-                g.setColor(Color.MAGENTA);
-                g.fillRect(x, y, ICON_SIZE, ICON_SIZE);
+                if (bots[i] != null)
+                {
+                    drawBot(g, x, y, bots[i]);
+                }
+                else
+                {
+                    g.setColor(Color.MAGENTA);
+                    g.drawRect(x, y, ICON_SIZE, ICON_SIZE);
+                }
             }
         } finally
         {
@@ -104,5 +178,16 @@ public class TournamentTree extends JComponent
         }
 
         return img;
+    }
+
+    private void drawBot(Graphics2D g, int x, int y, Robot robot)
+    {
+        g.setColor(Color.MAGENTA);
+        g.fillRect(x, y, ICON_SIZE, ICON_SIZE);
+
+        g.setFont(FONT);
+
+        g.setColor(Color.CYAN);
+        g.drawString(robot.toString(), x, y);
     }
 }

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.UUID;
 
 /**
@@ -24,6 +23,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     private Map<UUID, Robot> robots = new HashMap<UUID, Robot>();
     private Map<UUID, Integer> scores = new HashMap<UUID, Integer>();
     private List<Robot[][]> groupStack = new ArrayList<Robot[][]>();
+    private List<GameResult[]> results = new ArrayList<GameResult[]>();
     private boolean finalRound = false;
     private int currentGroup = 0;
     private int currentRound = 0;
@@ -83,6 +83,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     @Override
     public void gameOver(GameResult result)
     {
+        results.get(results.size()-1)[currentGroup] = result;
         UUID[] bots = result.getTop();
         for (int i = 0; i < bots.length; i++)
         {
@@ -99,7 +100,8 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
             tournamentOver();
         } else
         {
-            displayScores(new TournamentGameResult(result, groupStack, currentGroup));
+            displayScores(new TournamentGameResult(result, groupStack, results,
+                    robots.values().toArray(new Robot[0]), currentGroup));
 //            nextGame();
         }
     }
@@ -171,6 +173,8 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
     public void start()
     {
         robots.putAll(allRobots);
+//        displayScores(new TournamentGameResult(null, scores, groupStack, results,
+//                    robots.values().toArray(new Robot[0]), currentGroup));
         nextGame();
     }
 
@@ -180,6 +184,8 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         Robot[][] groups = makeGroups();
         finalRound = (groups.length == 1
                 && groups[0].length <= MAX_GROUP_SIZE/2);
+        GameResult[] theseResults = new GameResult[groups.length];
+        results.add(theseResults);
         groupStack.add(groups);
         robots.clear();
         currentGroup = 0;
@@ -272,7 +278,7 @@ public class TournamentGame extends AbstractGameMaster implements GameListener
         }
     }
 
-    public int[] calculateGroupSizes(int numBots)
+    public static int[] calculateGroupSizes(int numBots)
     {
         if (numBots < MIN_GROUP_SIZE)
         {
