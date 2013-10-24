@@ -10,29 +10,17 @@ import java.util.UUID;
  */
 public interface Robot
 {
-    /**
-     * Sets the specified flag to the specified value.
-     * @param index the index of the flag to set.
-     * @param value the value to set the flag to.
-     */
-    public void setFlag(int index, boolean value);
 
     /**
      * Sets all flags to there default "false" position.
      */
-    public void clearFlags();
+    public void clearActions();
 
     /**
-     * Sets the feedback object.
-     * @param event 
-     */
-    public void feedback(RobotEvent event);
-
-    /**
-     * Gets a copy of the action flag array.
+     * Gets a copy of the action array.
      * @return 
      */
-    public boolean[] getActionFlags();
+    public boolean[] getActions();
     
     /**
      * Sets the events for this tick.
@@ -45,6 +33,12 @@ public interface Robot
      * @return 
      */
     public UUID getId();
+    
+    /**
+     * Get the robot's number.
+     * @return the robot's number.
+     */
+    public int getBotNum();
 
     /**
      * Main execution method of the robot implemented by the user. This is

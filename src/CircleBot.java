@@ -1,5 +1,6 @@
 import afk.bot.london.TankRobot;
-import afk.bot.london.VisibleBot;
+import afk.bot.london.VisibleRobot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -9,11 +10,9 @@ import afk.bot.london.VisibleBot;
  */
 public class CircleBot extends TankRobot
 {
+    private int AVOIDANCE = 50;
+    private int IDLE_MOVEMENT = 10;
 
-    int movement = 0;
-    int rotation = 0;
-    boolean turning = true;
-    private float thetaAngle;
     boolean antiBot;
 
     public CircleBot()
@@ -24,57 +23,46 @@ public class CircleBot extends TankRobot
     }
 
     @Override
-    public void run()
+    public void start()
     {
-        if (!events.visibleBots.isEmpty())
-        {
-            VisibleBot visible = events.visibleBots.get(0);
-            float bearing = visible.bearing;
-            float elevation = visible.elevation-events.barrel;
-            float diff = bearing*bearing+elevation*elevation;
-            final float give = 0.6f;
+        idle();
+    }
 
-            if (Float.compare(diff, give*give) < 0)
-            {
-                attack();
-                return;
-            }
-            
-            if (Float.compare(bearing, 0) < 0)
-            {
-                aimAntiClockwise();
-            }
-            if (Float.compare(bearing, 0) > 0)
-            {
-                aimClockwise();
-            }
+    @Override
+    public void hitObject()
+    {
+        if (getActionValue(MOVE_BACK) > 0) moveForward(AVOIDANCE);
+        else moveBackward(AVOIDANCE);
+    }
 
-            if (Float.compare(elevation, 0) < 0)
-            {
-                aimDown();
-            }
-            if (Float.compare(elevation, 0) > 0)
-            {
-                aimUp();
-            }
-        } else
-        {
+    @Override
+    public void gotHit()
+    {
+        idle();
+    }
 
-            if (events.hitWall)
-            {
-                if (antiBot)
-                {
-//                    moveBackwards();
-                    turnAntiClockwise();
-                } else
-                {
-//                    moveBackwards();
-                    turnClockwise();
-                }
-            } else
-            {
-                moveForward();
-            }
-        }
+    @Override
+    public void didHit()
+    {
+        idle();
+    }
+
+    @Override
+    public void sonarWarning(float[] distance)
+    {
+        if (antiBot) turnAntiClockwise(90);
+        else turnClockwise(90);
+    }
+
+    @Override
+    public void robotVisible(List<VisibleRobot> visibleBots)
+    {
+        target(visibleBots.get(0), 0.6f);
+    }
+
+    @Override
+    public void idle()
+    {
+        moveForward(IDLE_MOVEMENT);
     }
 }

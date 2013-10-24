@@ -35,4 +35,12 @@ public interface RobotConfigManager
      * @param value the value to set the property to.
      */
     public void setProperty(UUID id, String name, String value);
+    
+    /**
+     * Get the value of a constant.
+     * @param the id of the robot.
+     * @param name the name of the constant.
+     * @return the value of the constant, null if the constant does not exist.
+     */
+    public Object getConstant(UUID id, String name);
 }

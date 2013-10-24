@@ -1,7 +1,6 @@
 package afk.ge.tokyo.ems.systems;
 
-import afk.bot.london.RobotEvent;
-import afk.bot.london.VisibleBot;
+import afk.bot.london.VisibleRobot;
 import afk.ge.BBox;
 import afk.ge.ems.Engine;
 import afk.ge.ems.Entity;
@@ -18,6 +17,7 @@ import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.support.FastMath;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -45,7 +45,7 @@ public class VisionSystem implements ISystem
 
         for (VisionNode vnode : vnodes)
         {
-            List<VisibleBot> thetas = new ArrayList<VisibleBot>();
+            List<VisibleRobot> thetas = new ArrayList<VisibleRobot>();
             targetloop:
             for (TargetableNode tnode : tnodes)
             {
@@ -53,7 +53,7 @@ public class VisionSystem implements ISystem
                 {
                     continue;
                 }
-                
+
                 State state = Utils.getWorldState(vnode.entity);
 
                 float[] theta = isVisible(
@@ -80,19 +80,26 @@ public class VisionSystem implements ISystem
                             continue targetloop;
                         }
                     }
-                    
+
                     if (HeightmapLoader.getIntersection(state.pos, tnode.state.pos, 0.1f, hnode.heightmap) != null)
                     {
                         continue targetloop;
                     }
 
-                    thetas.add(new VisibleBot(theta[0], theta[1]));
+                    Controller controller = tnode.entity.getComponent(Controller.class);
+                    UUID id = null;
+                    if (controller != null)
+                    {
+                        id = controller.id;
+                    }
+
+                    thetas.add(new VisibleRobot(theta[0], theta[1], theta[2], id));
                 }
             }
             vnode.controller.events.visibleBots = thetas;
         }
     }
-    
+
     public boolean sameBot(VisionNode a, Entity b)
     {
         Controller controller = b.getComponent(Controller.class);
@@ -135,8 +142,8 @@ public class VisionSystem implements ISystem
 
         float[] them = getAngles(d);
 
-        float relativeBearing = (float)Math.toDegrees(them[0] - me[0]);
-        float relativeElevation = (float)Math.toDegrees(them[1] - me[1]);
+        float relativeBearing = (float) Math.toDegrees(them[0] - me[0]);
+        float relativeElevation = (float) Math.toDegrees(them[1] - me[1]);
 
         float halfFOVX = fovx * 0.5f;
         float halfFOVY = fovy * 0.5f;
@@ -144,7 +151,7 @@ public class VisionSystem implements ISystem
         {
             return new float[]
             {
-                relativeBearing, relativeElevation
+                relativeBearing, relativeElevation, d.getLength()
             };
         }
 

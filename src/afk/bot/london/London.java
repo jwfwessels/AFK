@@ -60,7 +60,7 @@ public class London implements RobotEngine
         {
             throw new RuntimeException("Robot " + id + " does not exist in this engine.");
         }
-        robot.clearFlags();
+        //robot.clearFlags();
         robot.run();
     }
 
@@ -73,7 +73,7 @@ public class London implements RobotEngine
     @Override
     public boolean[] getFlags(UUID id)
     {
-        return robots.get(id).getActionFlags();
+        return robots.get(id).getActions();
     }
 
     @Override

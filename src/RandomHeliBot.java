@@ -1,6 +1,7 @@
 
 import afk.bot.london.HeliRobot;
-import afk.bot.london.VisibleBot;
+import afk.bot.london.VisibleRobot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -11,10 +12,8 @@ import afk.bot.london.VisibleBot;
 public class RandomHeliBot extends HeliRobot
 {
 
-    private int movement = 0;
-    private int rotation = 0;
-    private boolean turning = true;
-    private int retaliating = 0;
+    private float GIVE = 1.4f;
+    private int AVOIDANCE = 50;
 
     public RandomHeliBot()
     {
@@ -29,126 +28,67 @@ public class RandomHeliBot extends HeliRobot
     }
 
     @Override
-    public void run()
+    public void start()
     {
-        if (events.hitWall)
-        {
-            turning = false;
-            movement = 50;
-            rotation = 45;
-            if (retaliating != 0)
-            {
-                retaliating = -retaliating;
-            } else
-            {
-                retaliating = -1;
-            }
-        }
-        if (!events.visibleBots.isEmpty())
-        {
-            VisibleBot visible = events.visibleBots.get(0);
-            float bearing = visible.bearing;
-            float elevation = visible.elevation - events.barrel;
-            float diff = bearing * bearing + elevation * elevation;
-            final float give = 0.6f;
-
-            if (Float.compare(diff, give * give) < 0)
-            {
-                attack();
-                return;
-            }
-
-            if (Float.compare(bearing, 0) < 0)
-            {
-                aimAntiClockwise();
-            }
-            if (Float.compare(bearing, 0) > 0)
-            {
-                aimClockwise();
-            }
-
-            if (Float.compare(elevation, 0) < 0)
-            {
-                aimDown();
-            }
-            if (Float.compare(elevation, 0) > 0)
-            {
-                aimUp();
-            }
-        } else if (retaliating != 0)
-        {
-            retaliate();
-        } else if (turning)
-        {
-            turn();
-        } else
-        {
-            move();
-        }
+        idle();
     }
 
-    private void turn()
+    @Override
+    public void hitObject()
     {
-        if (rotation > 0)
+        clearActions();
+        cancelAllTimers();
+        if (getActionValue(MOVE_BACK) > 0)
         {
-            turnAntiClockwise();
-            rotation--;
+            moveForward(AVOIDANCE);
         } else
         {
-            rotation = (int) (Math.random() * 360);
-            turning = false;
+            moveBackward(AVOIDANCE);
         }
-    }
-
-    private void move()
-    {
-        if (movement > 0)
+        startTimer(AVOIDANCE / 3, new Runnable()
         {
-            moveForward();
-            movement--;
-        } else
-        {
-            movement = (int) (Math.random() * 800);
-            turning = true;
-        }
-    }
-
-    private void retaliate()
-    {
-        if (turning)
-        {
-            if (rotation > 0)
+            @Override
+            public void run()
             {
-                if (retaliating == 1)
+                if (Math.random() > 0.5)
                 {
-                    turnClockwise();
+                    turnClockwise(180);
                 } else
                 {
-                    turnAntiClockwise();
+                    turnAntiClockwise(180);
                 }
-                rotation--;
-            } else
-            {
-                retaliating = 0;
-                turning = !turning;
             }
-        } else
-        {
-            if (movement > 0)
+        });
+    }
+
+    @Override
+    public void robotVisible(List<VisibleRobot> visibleBots)
+    {
+        clearActions();
+        cancelAllTimers();
+        target(visibleBots.get(0), GIVE);
+    }
+
+    @Override
+    public void idle()
+    {
+        startTimer((int) (Math.random() * 300), new Runnable() {
+
+            @Override
+            public void run()
             {
-                if (retaliating == 1)
+                int amount = (int) (Math.random() * 180);
+                moveForward(amount);
+                if (Math.random() > 0.5)
                 {
-                    moveForward();
+                    turnClockwise(amount);
                 } else
                 {
-                    moveBackwards();
+                    turnAntiClockwise(amount);
                 }
-                movement--;
-            } else
-            {
-                retaliating = 0;
-                turning = !turning;
             }
-        }
+        });
+
+        moveForward((int) (Math.random() * 300));
     }
 }

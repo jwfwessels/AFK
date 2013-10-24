@@ -13,6 +13,7 @@ import static afk.gfx.GfxEntity.*;
  */
 public class TypeFactory
 {
+    public static final int NUM_BOULDER_TYPES = 1;
     /// TEMPORARY (maybe) CLASS UNTIL CONFIG ENGINE/DATABASE/SYSTEM/WHATEVER ACTUALLY HAPPENS
     /// (so sort of a placeholder then)
     
@@ -38,6 +39,8 @@ public class TypeFactory
         factories.put("wall", new WallFactory());
         factories.put("floor", new FloorFactory());
         factories.put("particle", new ParticleFactory());
+        for (int i = 0; i < NUM_BOULDER_TYPES; i++)
+            factories.put("boulder_"+i, new BoulderFactory(i));
     }
     
     public AthensEntity createInstance(String type)
@@ -307,6 +310,28 @@ public class TypeFactory
             particle.attachResource(resourceManager.getResource(SHADER, "texturedParticle"));
             particle.attachResource(resourceManager.getResource(PRIMITIVE_MESH, "billboard"));
             particle.attachResource(resourceManager.getResource(TEXTURE_2D, "explosion"));
+            
+            return particle;
+        }
+        
+    }
+    private class BoulderFactory implements TypeFactoryThing
+    {
+        int i;
+
+        public BoulderFactory(int i)
+        {
+            this.i = i;
+        }
+
+        @Override
+        public AthensEntity create()
+        {
+            AthensEntity particle = createEntity(GfxEntity.NORMAL);
+            
+            particle.attachResource(resourceManager.getResource(SHADER, "textured"));
+            particle.attachResource(resourceManager.getResource(WAVEFRONT_MESH, "boulder_"+i));
+            particle.attachResource(resourceManager.getResource(TEXTURE_2D, "boulder_"+i));
             
             return particle;
         }

@@ -2,7 +2,7 @@ package afk.bot.london;
 
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
-import java.util.Arrays;
+import afk.ge.ems.Constants;
 import java.util.UUID;
 
 /**
@@ -11,19 +11,31 @@ import java.util.UUID;
  */
 public abstract class AbstractRobot implements Robot
 {
-    private boolean[] actionFlags;
+
+    private static int numBots = 0;
+    public static final String MOTOR_TOP_SPEED = "Motor.topSpeed";
+    public static final String MOTOR_ANGULAR_VELOCITY = "Motor.angularVelocity";
+    public static final String LIFE_MAX_HP = "Life.maxHp";
+    public static final String TURRET_ANGULAR_VELOCITY = "Turret.angularVelocity";
+    public static final String BARREL_ANGULAR_VELOCITY = "Barrel.angularVelocity";
+    public static final String VISION_DIST = "Vision.dist";
+    public static final String VISION_FOVY = "Vision.fovy";
+    public static final String VISION_FOVX = "Vision.fovx";
+    private int[] actions;
     protected RobotEvent events;
     private UUID id;
+    private int botNum;
     private RobotConfigManager config;
 
     public AbstractRobot(int numActions)
     {
-        actionFlags = new boolean[numActions];
+        actions = new int[numActions];
         events = new RobotEvent();
 
         id = UUID.randomUUID();
+        botNum = numBots++;
     }
-    
+
     @Override
     public final void setConfigManager(RobotConfigManager config)
     {
@@ -41,25 +53,27 @@ public abstract class AbstractRobot implements Robot
     {
         setName(getClass().getSimpleName());
     }
-    
+
     /**
      * Set the type of this robot. e.g. small tank, large helicopter, etc.
-     * @param type 
+     *
+     * @param type
      */
     protected final void setType(String type)
     {
         setProperty("type", type);
     }
-    
+
     /**
      * Set the name of this robot. e.g. "The Karl Device" or "Mega J"
-     * @param name 
+     *
+     * @param name
      */
     protected final void setName(String name)
     {
         setProperty("name", name);
     }
-    
+
     private void setProperty(String key, String value)
     {
         if (config == null)
@@ -67,6 +81,24 @@ public abstract class AbstractRobot implements Robot
             throw new RuntimeException("Error: No config manager!");
         }
         config.setProperty(id, key, value);
+    }
+    
+    private String getProperty(String key)
+    {
+        if (config == null)
+        {
+            throw new RuntimeException("Error: No config manager!");
+        }
+        return config.getProperty(id, key);
+    }
+    
+    private Object getConstant(String key)
+    {
+        if (config == null)
+        {
+            throw new RuntimeException("Error: No config manager!");
+        }
+        return config.getConstant(id, key);
     }
 
     @Override
@@ -76,50 +108,149 @@ public abstract class AbstractRobot implements Robot
     }
 
     @Override
-    public final void setFlag(int index, boolean value)
+    public final int getBotNum()
     {
-        if (index <= actionFlags.length && index >= 0)
+        return botNum;
+    }
+
+    /**
+     * Get the top speed of the robot in units per game tick.
+     * @return the top speed of the robot.
+     */
+    public final float getTopSpeed()
+    {
+        return (Float)getConstant(MOTOR_TOP_SPEED);
+    }
+    
+    /**
+     * Get the angular velocity (rotation speed) of the robot in degrees
+     * per game tick.
+     * @return the angular velocity of the robot.
+     */
+    public final float getAngularVelocity()
+    {
+        return (Float)getConstant(MOTOR_ANGULAR_VELOCITY);
+    }
+    
+    /**
+     * Get the maximum life of the robot.
+     * @return the maximum life of the robot.
+     */
+    public final float getMaxLife()
+    {
+        return (Float)getConstant(LIFE_MAX_HP);
+    }
+    
+    /**
+     * Get the angular velocity of the robot's turret.
+     * @return the angular velocity of the robot's turret.
+     */
+    public final float getTurretAngularVelocity()
+    {
+        return (Float)getConstant(TURRET_ANGULAR_VELOCITY);
+    }
+    
+    /**
+     * Get the angular velocity of the robot's barrel.
+     * @return the angular velocity of the robot's barrel.
+     */
+    public final float getBarrelAngularVelocity()
+    {
+        return (Float)getConstant(BARREL_ANGULAR_VELOCITY);
+    }
+    
+    /**
+     * Get how far the robot can see.
+     * @return the view distance of the robot.
+     */
+    public final float getViewDistance()
+    {
+        return (Float)getConstant(VISION_DIST);
+    }
+    
+    /**
+     * Get the vertical field of view of the robot in degrees.
+     * @return the vertical field of view of the robot.
+     */
+    public final float getVerticalFOV()
+    {
+        return (Float)getConstant(VISION_FOVY);
+    }
+    
+    /**
+     * Get the horizontal field of view of the robot in degrees.
+     * @return the horizontal field of view of the robot.
+     */
+    public final float getHorizontalFOV()
+    {
+        return (Float)getConstant(VISION_FOVX);
+    }
+    
+    /**
+     * Instruct the robot to apply action to be run for a certain number
+     * of ticks.
+     * @param index the index of the action to set.
+     * @param ticks the number of ticks to apply the action for.
+     */
+    protected final void setActionValue(int index, int ticks)
+    {
+        if (ticks < 0)
         {
-            actionFlags[index] = value;
+            throw new RuntimeException("Robot attempted to travel back in time!");
+        }
+        actions[index] = ticks;
+    }
+    
+    /**
+     * Get the number of ticks an action is still running for.
+     * e.g. getActionValue(MOVE_FORWARD) would tell you how much further your
+     * tank will move forward with its current instructions.
+     * @param index
+     * @return 
+     */
+    protected final int getActionValue(int index)
+    {
+        return actions[index];
+
+    }
+    @Override
+    public final boolean[] getActions()
+    {
+        boolean[] flags = new boolean[actions.length];
+        for (int i = 0; i < actions.length; i++)
+        {
+            flags[i] = actions[i] > 0;
+        }
+        return flags;
+    }
+
+    @Override
+    public final void clearActions()
+    {
+        for (int x = 0; x < actions.length; x++)
+        {
+            actions[x] = 0;
         }
     }
 
     @Override
-    public void setEvents(RobotEvent events)
-    {
-        this.events = events;
-    }
-
-    @Override
-    public final boolean[] getActionFlags()
-    {
-        return Arrays.copyOf(actionFlags, actionFlags.length);
-    }
-
-    @Override
-    public final void clearFlags()
-    {
-        for (int x = 0; x < actionFlags.length; x++)
-        {
-            actionFlags[x] = false;
-        }
-    }
-
-    @Override
-    public final void feedback(RobotEvent event)
+    public final void setEvents(RobotEvent event)
     {
         this.events = event;
     }
-    
+
     private String primitiveToString()
     {
         return getClass().getSimpleName();
     }
-    
+
     private String complexToString()
     {
         String name = config.getProperty(getId(), "name");
-        if (name == null || name.trim().isEmpty()) name = primitiveToString();
+        if (name == null || name.trim().isEmpty())
+        {
+            name = primitiveToString();
+        }
         return name;
     }
 

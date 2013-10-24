@@ -15,7 +15,7 @@ public class RobotEvent
      * List of visible bots as angles from where tank is facing. Empty if there
      * are none.
      */
-    public List<VisibleBot> visibleBots = new ArrayList<VisibleBot>();
+    public List<VisibleRobot> visibleBots = new ArrayList<VisibleRobot>();
     /**
      * Information from the robot's sonar;
      */

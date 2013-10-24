@@ -111,12 +111,12 @@ public class SonarSystem implements ISystem
                     }
                 }
             }
-            node.controller.events.sonar.left = mins[0];
-            node.controller.events.sonar.right = maxs[0];
-            node.controller.events.sonar.up = maxs[1];
-            node.controller.events.sonar.down = mins[1];
-            node.controller.events.sonar.front = maxs[2];
-            node.controller.events.sonar.back = mins[2];
+            node.controller.events.sonar.distance[0] = maxs[0];
+            node.controller.events.sonar.distance[1] = maxs[1];
+            node.controller.events.sonar.distance[2] = maxs[2];
+            node.controller.events.sonar.distance[3] = mins[0];
+            node.controller.events.sonar.distance[4] = mins[1];
+            node.controller.events.sonar.distance[5] = mins[2];
         }
     }
 

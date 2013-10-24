@@ -1,19 +1,17 @@
 
 import afk.bot.london.TankRobot;
-import afk.bot.london.VisibleBot;
+import afk.bot.london.VisibleRobot;
+import java.util.List;
 
 
 /**
- * Sample robot class, same as randomBot but makes use of SomeClass class
+ * Sample robot class, same as randomBot but makes use of RandomClass class
  * Use for testing Jar loading
  * @author Jessica
  *
  */
 public class JarBot extends TankRobot
 {
-    //int movement = 0;
-    //int rotation = 0;
-    //boolean turning = true;
     RandomClass manager = new RandomClass();
 
     public JarBot()
@@ -22,58 +20,58 @@ public class JarBot extends TankRobot
     }
 
     @Override
-    public void run()
+    public void start()
     {
-        if (events.hitWall)
-        {
-            manager.setMovement(200);
-            manager.setRotation(180);
-            manager.setTurning(true);
-        }
-        
-        if (!events.visibleBots.isEmpty())
-        {
-            VisibleBot visible = events.visibleBots.get(0);
-            float bearing = visible.bearing;
-            float elevation = visible.elevation-events.barrel;
-            float diff = bearing*bearing+elevation*elevation;
-            final float give = 0.6f;
+        idle();
+    }
 
-            if (Float.compare(diff, give*give) < 0)
-            {
-                attack();
-                return;
-            }
-            
-            if (Float.compare(bearing, 0) < 0)
-            {
-                aimAntiClockwise();
-            }
-            if (Float.compare(bearing, 0) > 0)
-            {
-                aimClockwise();
-            }
+    @Override
+    public void hitObject()
+    {
+        manager.setMovement(200);
+        manager.setRotation(180);
+        manager.setTurning(true);
+    }
 
-            if (Float.compare(elevation, 0) < 0)
-            {
-                aimDown();
-            }
-            if (Float.compare(elevation, 0) > 0)
-            {
-                aimUp();
-            }
-        } else if (manager.getTurning())
+    @Override
+    public void gotHit()
+    {
+        idle();
+    }
+
+    @Override
+    public void didHit()
+    {
+        idle();
+    }
+
+    @Override
+    public void sonarWarning(float[] distance)
+    {
+        idle();
+    }
+
+    @Override
+    public void robotVisible(List<VisibleRobot> visibleBots)
+    {
+        target(visibleBots.get(0), 0.6f);
+    }
+
+    @Override
+    public void idle()
+    {
+        if (manager.getTurning())
         {
             if(manager.turn())
             {
-                turnAntiClockwise();
+                turnAntiClockwise(1);
             }
         }
         else
         {
             if(manager.move())
             {
-                moveForward();
+                moveForward(1);
             }
         }
     }

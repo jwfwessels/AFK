@@ -1,9 +1,16 @@
 package afk.bot.london;
 
+import afk.bot.Aimable;
+import afk.bot.Attackable;
+import afk.bot.Movable;
+import afk.bot.Strafable;
+import afk.bot.Turnable;
+
 /**
  * @author Jessica
  */
-public abstract class HeliRobot extends AbstractRobot
+public abstract class HeliRobot extends EventBasedBot implements Aimable,
+        Attackable, Movable, Turnable, Strafable
 {
 
     public static final int NUM_ACTIONS = 13;
@@ -17,7 +24,6 @@ public abstract class HeliRobot extends AbstractRobot
     public static final int AIM_ANTICLOCK = 6;
     public static final int AIM_UP = 7;
     public static final int AIM_DOWN = 8;
-    
     public static final int MOVE_LEFT = 9;
     public static final int MOVE_RIGHT = 10;
     public static final int MOVE_UP = 11;
@@ -41,89 +47,84 @@ public abstract class HeliRobot extends AbstractRobot
         setType("heli");
     }
 
-    /**
-     * Moves the helicopter forward this game tick.
-     */
-    protected final void moveForward()
+    @Override
+    public final void moveForward(int amount)
     {
-        setFlag(MOVE_FRONT, true);
-        setFlag(MOVE_BACK, false);
+        setActionValue(MOVE_FRONT, amount);
+        setActionValue(MOVE_BACK, 0);
     }
 
-    /**
-     * Moves the helicopter backward this game tick.
-     */
-    protected final void moveBackwards()
+    @Override
+    public final void moveBackward(int amount)
     {
-        setFlag(MOVE_BACK, true);
-        setFlag(MOVE_FRONT, false);
-    }
-    
-    /**
-     * Moves the helicopter left this game tick;
-     */
-    protected final void moveLeft()
-    {
-        setFlag(MOVE_LEFT, true);
-        setFlag(MOVE_RIGHT, false);
-    }
-    
-    /**
-     * Moves the helicopter right this game tick;
-     */
-    protected final void moveRight()
-    {
-        setFlag(MOVE_RIGHT, true);
-        setFlag(MOVE_LEFT, false);
+        setActionValue(MOVE_BACK, amount);
+        setActionValue(MOVE_FRONT, 0);
     }
 
-    /**
-     * Turns the helicopter clockwise this game tick.
-     */
-    protected final void turnClockwise()
+    @Override
+    public final void strafeLeft(int amount)
     {
-        setFlag(TURN_CLOCK, true);
-        setFlag(TURN_ANTICLOCK, false);
+        setActionValue(MOVE_LEFT, amount);
+        setActionValue(MOVE_RIGHT, 0);
     }
 
-    /**
-     * Turns the helicopter anticlockwise this game tick.
-     */
-    protected final void turnAntiClockwise()
+    @Override
+    public final void strafeRight(int amount)
     {
-        setFlag(TURN_ANTICLOCK, true);
-        setFlag(TURN_CLOCK, false);
+        setActionValue(MOVE_RIGHT, amount);
+        setActionValue(MOVE_LEFT, 0);
+    }
+    
+    @Override
+    public final void turnClockwise(int amount)
+    {
+        setActionValue(TURN_CLOCK, amount);
+        setActionValue(TURN_ANTICLOCK, 0);
     }
 
-    /**
-     * Attempts to fire a projectile this game tick.
-     */
-    protected final void attack()
+    @Override
+    public final void turnAntiClockwise(int amount)
     {
-        setFlag(ATTACK_ACTION, true);
+        setActionValue(TURN_ANTICLOCK, amount);
+        setActionValue(TURN_CLOCK, 0);
     }
-    
-    protected final void aimClockwise()
+
+    @Override
+    public final void attack()
     {
-        setFlag(AIM_CLOCK, true);
-        setFlag(AIM_ANTICLOCK, false);
+        setActionValue(ATTACK_ACTION, 1);
     }
-    
-    protected final void aimAntiClockwise()
+
+    @Override
+    public final void aimClockwise(int amount)
     {
-        setFlag(AIM_ANTICLOCK, true);
-        setFlag(AIM_CLOCK, false);
+        setActionValue(AIM_CLOCK, amount);
+        setActionValue(AIM_ANTICLOCK, 0);
     }
-    
-    protected final void aimUp()
+
+    @Override
+    public final void aimAntiClockwise(int amount)
     {
-        setFlag(AIM_UP, true);
-        setFlag(AIM_DOWN, false);
+        setActionValue(AIM_ANTICLOCK, amount);
+        setActionValue(AIM_CLOCK, 0);
     }
-    
-    protected final void aimDown()
+
+    @Override
+    public final void aimUp(int amount)
     {
-        setFlag(AIM_DOWN, true);
-        setFlag(AIM_UP, false);
+        setActionValue(AIM_UP, amount);
+        setActionValue(AIM_DOWN, 0);
+    }
+
+    @Override
+    public final void aimDown(int amount)
+    {
+        setActionValue(AIM_DOWN, amount);
+        setActionValue(AIM_UP, 0);
+    }
+
+    public final void target(VisibleRobot target, float give)
+    {
+        RobotUtils.target(this, this, target, events, give);
     }
 }

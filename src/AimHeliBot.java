@@ -1,6 +1,7 @@
 
 import afk.bot.london.HeliRobot;
-import afk.bot.london.VisibleBot;
+import afk.bot.london.VisibleRobot;
+import java.util.List;
 
 /**
  * Sample class of what coded bot will look like
@@ -20,47 +21,47 @@ public class AimHeliBot extends HeliRobot
     public void init()
     {
         super.init();
-        setName("Whirlybird");
+        setName("Hovering Duck");
     }
 
     @Override
-    public void run()
+    public void gotHit()
     {
-        if (!events.visibleBots.isEmpty())
-        {
-            VisibleBot visible = events.visibleBots.get(0);
-            System.out.println("elevation: " + visible.elevation);
-            System.out.println("barrel: " + events.barrel);
-            float bearing = visible.bearing;
-            float elevation = visible.elevation-events.barrel;
-            float diff = bearing*bearing+elevation*elevation;
-            final float give = 1.5f;
-            System.out.println("diff0ld: " + diff + "      " + 0.6f*0.6f);
-            System.out.println("diffnew: " + diff + "      " + give*give);
-            if (Float.compare(diff, give*give) < 0)
-            {
-                attack();
-                return;
-            }
-            
-            if (Float.compare(bearing, 0) < 0)
-            {
-                aimAntiClockwise();
-            }
-            if (Float.compare(bearing, 0) > 0)
-            {
-                aimClockwise();
-            }
+        System.out.println("I got hit!");
+    }
 
-            if (Float.compare(elevation, 0) < 0)
-            {
-                aimDown();
-            }
-            if (Float.compare(elevation, 0) > 0)
-            {
-                aimUp();
-            }
-            return;
-        }
+    @Override
+    public void didHit()
+    {
+        System.out.println("I hit someone!");
+    }
+
+    @Override
+    public void start()
+    {
+    }
+
+    @Override
+    public void hitObject()
+    {
+    }
+
+    @Override
+    public void sonarWarning(float[] distance)
+    {
+    }
+
+    @Override
+    public void robotVisible(List<VisibleRobot> visibleBots)
+    {
+        VisibleRobot visible = visibleBots.get(0);
+        System.out.println("elevation: " + visible.elevation);
+        System.out.println("barrel: " + events.barrel);
+        target(visible, 0.6f);
+    }
+
+    @Override
+    public void idle()
+    {
     }
 }

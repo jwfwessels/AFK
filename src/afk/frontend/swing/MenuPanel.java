@@ -54,7 +54,7 @@ import javax.swing.plaf.synth.SynthLookAndFeel;
 public class MenuPanel extends JPanel
 {
 
-    private static String RELETIVE_ROBOT_DIRECTORY = "build/classes";
+    private static String RELATIVE_ROBOT_DIRECTORY = "build/classes";
     RootWindow parent;
     JPanel pnlBotSelButtons;
     JPanel pnlAvailable;
@@ -88,8 +88,8 @@ public class MenuPanel extends JPanel
         this.parent = parent;
 
         LayoutManager layout = new MenuPanel_Layout();
-
-        botLoader = new LondonRobotLoader();
+        
+        botLoader = new LondonRobotLoader(this.getClass().getClassLoader());
         config = new LondonRobotConfigManager();
         this.setLayout(layout);
     }
@@ -99,7 +99,7 @@ public class MenuPanel extends JPanel
      */
     public void loadExistingRobots()
     {
-        File robotDir = new File(RELETIVE_ROBOT_DIRECTORY);
+        File robotDir = new File(RELATIVE_ROBOT_DIRECTORY);
         for (File tempFile : robotDir.listFiles())
         {
             try

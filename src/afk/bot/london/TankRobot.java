@@ -1,9 +1,26 @@
 package afk.bot.london;
 
+import afk.bot.Aimable;
+import afk.bot.Attackable;
+import afk.bot.Movable;
+import afk.bot.Turnable;
+import static afk.bot.london.HeliRobot.AIM_ANTICLOCK;
+import static afk.bot.london.HeliRobot.AIM_CLOCK;
+import static afk.bot.london.HeliRobot.AIM_DOWN;
+import static afk.bot.london.HeliRobot.AIM_UP;
+import static afk.bot.london.HeliRobot.ATTACK_ACTION;
+import static afk.bot.london.HeliRobot.MOVE_BACK;
+import static afk.bot.london.HeliRobot.MOVE_FRONT;
+import static afk.bot.london.HeliRobot.MOVE_LEFT;
+import static afk.bot.london.HeliRobot.MOVE_RIGHT;
+import static afk.bot.london.HeliRobot.TURN_ANTICLOCK;
+import static afk.bot.london.HeliRobot.TURN_CLOCK;
+
 /**
  * @author Jessica
  */
-public abstract class TankRobot extends AbstractRobot
+public abstract class TankRobot extends EventBasedBot implements Movable,
+        Turnable, Aimable, Attackable
 {
 
     public static final int NUM_ACTIONS = 9;
@@ -35,72 +52,71 @@ public abstract class TankRobot extends AbstractRobot
     {
         super(numActions);
     }
-
-    /**
-     * Moves the tank forward this game tick.
-     */
-    protected final void moveForward()
+    
+    @Override
+    public final void moveForward(int amount)
     {
-        setFlag(MOVE_FRONT, true);
-        setFlag(MOVE_BACK, false);
+        setActionValue(MOVE_FRONT, amount);
+        setActionValue(MOVE_BACK, 0);
     }
 
-    /**
-     * Moves the tank backward this game tick.
-     */
-    protected final void moveBackwards()
+    @Override
+    public final void moveBackward(int amount)
     {
-        setFlag(MOVE_BACK, true);
-        setFlag(MOVE_FRONT, false);
-    }
-
-    /**
-     * Turns the tank clockwise this game tick.
-     */
-    protected final void turnClockwise()
-    {
-        setFlag(TURN_CLOCK, true);
-        setFlag(TURN_ANTICLOCK, false);
-    }
-
-    /**
-     * Turns the tank anticlockwise this game tick.
-     */
-    protected final void turnAntiClockwise()
-    {
-        setFlag(TURN_ANTICLOCK, true);
-        setFlag(TURN_CLOCK, false);
-    }
-
-    /**
-     * Attempts to fire a projectile this game tick.
-     */
-    protected final void attack()
-    {
-        setFlag(ATTACK_ACTION, true);
+        setActionValue(MOVE_BACK, amount);
+        setActionValue(MOVE_FRONT, 0);
     }
     
-    protected final void aimClockwise()
+    @Override
+    public final void turnClockwise(int amount)
     {
-        setFlag(AIM_CLOCK, true);
-        setFlag(AIM_ANTICLOCK, false);
+        setActionValue(TURN_CLOCK, amount);
+        setActionValue(TURN_ANTICLOCK, 0);
     }
-    
-    protected final void aimAntiClockwise()
+
+    @Override
+    public final void turnAntiClockwise(int amount)
     {
-        setFlag(AIM_ANTICLOCK, true);
-        setFlag(AIM_CLOCK, false);
+        setActionValue(TURN_ANTICLOCK, amount);
+        setActionValue(TURN_CLOCK, 0);
     }
-    
-    protected final void aimUp()
+
+    @Override
+    public final void attack()
     {
-        setFlag(AIM_UP, true);
-        setFlag(AIM_DOWN, false);
+        setActionValue(ATTACK_ACTION, 1);
     }
-    
-    protected final void aimDown()
+
+    @Override
+    public final void aimClockwise(int amount)
     {
-        setFlag(AIM_DOWN, true);
-        setFlag(AIM_UP, false);
+        setActionValue(AIM_CLOCK, amount);
+        setActionValue(AIM_ANTICLOCK, 0);
+    }
+
+    @Override
+    public final void aimAntiClockwise(int amount)
+    {
+        setActionValue(AIM_ANTICLOCK, amount);
+        setActionValue(AIM_CLOCK, 0);
+    }
+
+    @Override
+    public final void aimUp(int amount)
+    {
+        setActionValue(AIM_UP, amount);
+        setActionValue(AIM_DOWN, 0);
+    }
+
+    @Override
+    public final void aimDown(int amount)
+    {
+        setActionValue(AIM_DOWN, amount);
+        setActionValue(AIM_UP, 0);
+    }
+
+    public final void target(VisibleRobot target, float give)
+    {
+        RobotUtils.target(this, this, target, events, give);
     }
 }
