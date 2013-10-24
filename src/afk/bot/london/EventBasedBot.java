@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * A Robot that is primarily driven through events.
+ * 
  * @author Jw
  */
 public abstract class EventBasedBot extends AbstractRobot
@@ -14,7 +15,7 @@ public abstract class EventBasedBot extends AbstractRobot
 
     private int numActions;
     private boolean first = true;
-    private float sonarWarningDistance = 3.0f;
+    private float sonarWarningThreshold = 3.0f;
     private long time;
     private boolean idle;
     private int numTimers = 0;
@@ -89,7 +90,7 @@ public abstract class EventBasedBot extends AbstractRobot
 
         for (int d = 0; d < events.sonar.distance.length; d++)
         {
-            if (events.sonar.distance[d] < sonarWarningDistance)
+            if (events.sonar.distance[d] < sonarWarningThreshold)
             {
                 idle = false;
                 sonarWarning(events.sonar.distance);
@@ -129,6 +130,8 @@ public abstract class EventBasedBot extends AbstractRobot
         {
             idle();
         }
+        
+        onTick();
 
         time++;
     }
@@ -137,11 +140,11 @@ public abstract class EventBasedBot extends AbstractRobot
      * Sets the sonar warning distance for sonar events. Sonar warning events
      * are handled by the sonarWarning(int) method.
      *
-     * @param sonarWarningDistance the new sonar warning distance.
+     * @param threshold the new sonar warning distance.
      */
-    protected final void setSonarWarningDistance(float sonarWarningDistance)
+    protected final void setSonarWarningThreshold(float threshold)
     {
-        this.sonarWarningDistance = sonarWarningDistance;
+        this.sonarWarningThreshold = threshold;
     }
 
     /**
@@ -149,30 +152,60 @@ public abstract class EventBasedBot extends AbstractRobot
      *
      * @return the number of ticks since the start of the game.
      */
-    protected long getTime()
+    protected final long currentTime()
     {
         return time;
     }
 
-    protected int startTimer(int ticks, Runnable runnable)
+    /**
+     * Start a new timer. The runnable will execute after the specified
+     * number of ticks have passed.
+     * @param ticks number of ticks to run the timer for.
+     * @param runnable the runnable to be executed after the timer ends.
+     * @return an identification number that can be used to cancel or query the timer.
+     */
+    protected final int startTimer(int ticks, Runnable runnable)
     {
         int timerID = numTimers++;
         timers.put(timerID, new RobotTimer(runnable, ticks));
         return timerID;
     }
 
-    protected void cancelTimer(int timerID)
+    /**
+     * Cancels a timer.
+     * @param timerID the identification number of the timer.
+     */
+    protected final void cancelTimer(int timerID)
     {
         if (timers.containsKey(timerID))
         {
             timers.remove(timerID);
         }
     }
+    
+    /**
+     * Reads the number of ticks left on a timer.
+     * @param timerID the identification number of the timer.
+     * @return the number of ticks left on the timer, -1 if the timer does not exist.
+     */
+    protected final int readTimer(int timerID)
+    {
+        if (timers.containsKey(timerID))
+        {
+            return timers.get(timerID).ticks;
+        }
+        return -1;
+    }
 
-    protected void clearTimers()
+    /**
+     * Stops all existing timers.
+     */
+    protected final void cancelAllTimers()
     {
         timers.clear();
     }
+    
+    ////// THE FOLLOWING FUNCTIONS ARE TO BE OVERRIDDEN BY THE USERS ///////
 
     /**
      * Called at the start of the game. User must give the robot's first
@@ -200,7 +233,7 @@ public abstract class EventBasedBot extends AbstractRobot
     }
 
     /**
-     * Called when the robot successfully landed a shot on another robot.
+     * Called when the robot successfully lands a shot on another robot.
      */
     protected void didHit()
     {
@@ -208,9 +241,9 @@ public abstract class EventBasedBot extends AbstractRobot
     }
 
     /**
-     * Called when one of the sonars reads a measurment below the given
-     * threshold. The threshold can be set through
-     * setSonarWarningDistance(float).
+     * Called when at least one of the sonars reads a measurment below
+     * the sonar warning threshold. The threshold can be set through
+     * setSonarWarningThreshold(float).
      *
      * @param distance the distances of the sonar in each direction. Distance
      * indices can be found in afk.bot.london.Sonar.
@@ -232,7 +265,18 @@ public abstract class EventBasedBot extends AbstractRobot
 
     /**
      * Called when no events were triggered during the tick AND the robot has no
-     * commands left to execute,
+     * commands left to execute.
      */
-    protected abstract void idle();
+    protected void idle()
+    {
+        
+    }
+    
+    /**
+     * Called every game tick.
+     */
+    protected void onTick()
+    {
+        
+    }
 }

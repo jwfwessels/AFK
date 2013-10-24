@@ -37,7 +37,7 @@ public class RandomHeliBot extends HeliRobot
     public void hitObject()
     {
         clearActions();
-        clearTimers();
+        cancelAllTimers();
         if (getActionValue(MOVE_BACK) > 0)
         {
             moveForward(AVOIDANCE);
@@ -65,7 +65,7 @@ public class RandomHeliBot extends HeliRobot
     public void robotVisible(List<VisibleRobot> visibleBots)
     {
         clearActions();
-        clearTimers();
+        cancelAllTimers();
         target(visibleBots.get(0), GIVE);
     }
 
