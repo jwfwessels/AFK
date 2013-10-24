@@ -7,6 +7,7 @@ package afk.frontend.swing;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.io.File;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -21,7 +22,7 @@ public class AFKListCellRenderer extends JLabel implements ListCellRenderer
      @Override
      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
      {
-         setText(value.toString());
+         setText(value instanceof File ? ((File)value).getName() : value.toString());
 
          this.setName("listCell");
          
