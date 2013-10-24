@@ -9,7 +9,6 @@ import com.hackoeur.jglm.Vec3;
  */
 public class BoulderFactoryRequest implements FactoryRequest
 {
-    protected String type;
     protected float minX, maxX, minZ, maxZ;
     protected float minScale, maxScale;
     protected float groundSink;
@@ -17,9 +16,8 @@ public class BoulderFactoryRequest implements FactoryRequest
     protected float avoidance;
     protected float tiltAmount;
 
-    public BoulderFactoryRequest(String type, float minX, float maxX, float minZ, float maxZ, float minScale, float maxScale, float groundSink, Vec3[] avoidPoints, float avoidance, float tiltAmount)
+    public BoulderFactoryRequest(float minX, float maxX, float minZ, float maxZ, float minScale, float maxScale, float groundSink, Vec3[] avoidPoints, float avoidance, float tiltAmount)
     {
-        this.type = type;
         this.minX = minX;
         this.maxX = maxX;
         this.minZ = minZ;

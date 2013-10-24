@@ -6,6 +6,7 @@ import afk.ge.tokyo.ems.components.BBoxComponent;
 import afk.ge.tokyo.ems.components.Renderable;
 import afk.ge.tokyo.ems.components.State;
 import afk.ge.tokyo.ems.components.TerrainDisplacement;
+import afk.gfx.athens.TypeFactory;
 import com.hackoeur.jglm.Vec3;
 import com.hackoeur.jglm.Vec4;
 import static java.lang.Math.*;
@@ -65,7 +66,8 @@ public class BoulderFactory implements Factory<BoulderFactoryRequest>
         
         entity.addComponent(new TerrainDisplacement(-request.groundSink));
         entity.addComponent(new BBoxComponent(new Vec3(0.5f), new Vec3(0, 0.5f, 0)));
-        entity.addComponent(new Renderable(request.type, new Vec3(0.75f, 0.75f, 0.75f), 1.0f));
+        int type = (int)(random()* TypeFactory.NUM_BOULDER_TYPES);
+        entity.addComponent(new Renderable("boulder_"+type, new Vec3(0.75f, 0.75f, 0.75f), 1.0f));
         
         return entity;
     }

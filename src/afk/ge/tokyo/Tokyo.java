@@ -201,7 +201,6 @@ public class Tokyo implements GameEngine, Runnable
         
         BoulderFactory boulderFactory = new BoulderFactory();
         BoulderFactoryRequest boulderRequest = new BoulderFactoryRequest(
-                "wall",
                 -boulderBounds, boulderBounds, -boulderBounds, boulderBounds,
                 2f, 7f, 0.5f, SPAWN_POINTS, 10, 20);
         
