@@ -170,13 +170,9 @@ public class MenuPanel extends JPanel
             {
                 return FileSystemView.getFileSystemView().getSystemIcon(f);
             }
-        });
+        });  
         
-        System.out.println(fileChooser.getComponent(0).toString());
-        System.out.println(fileChooser.getComponent(1).toString());
-        System.out.println(fileChooser.getComponent(2).toString());
-        System.out.println(fileChooser.getComponent(3).toString());
-        
+        setJList(fileChooser);
 
         lstAvailableBots = new JList();
         lstSelectedBots = new JList();
@@ -195,6 +191,27 @@ public class MenuPanel extends JPanel
         
         lstAvailableBots.setCellRenderer(new AFKListCellRenderer());
         lstSelectedBots.setCellRenderer(new AFKListCellRenderer());
+    }
+    
+    public boolean setJList(Container c)
+    {
+        Component[] cmps = c.getComponents();
+        for (Component cmp : cmps)
+        {
+            if (cmp instanceof JList)
+            {
+                //modifyJList((JList)cmp);
+                System.out.println(cmp.toString());
+                ((JList)cmp).setCellRenderer(new AFKListCellRenderer());
+                //((FilePane)cmp).setViewType(0);
+                return true;
+            }
+            if (cmp instanceof Container)
+            {
+                if(setJList((Container) cmp)) return true;
+            }
+        }
+        return false;
     }
     
     private void addComponents()
