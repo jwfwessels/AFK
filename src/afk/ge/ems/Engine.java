@@ -187,6 +187,11 @@ public class Engine implements EntityListener, FlagManager
             }
         }
     }
+    
+    public boolean containsSystem(ISystem system)
+    {
+        return systems.contains(system) || logicSystems.contains(system);
+    }
 
     public void updateLogic(float t, float dt)
     {

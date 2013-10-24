@@ -3,30 +3,24 @@ package afk.game;
 import afk.bot.Robot;
 import afk.bot.RobotConfigManager;
 import afk.bot.RobotEngine;
-import afk.bot.RobotException;
-import afk.bot.RobotLoader;
 import afk.bot.london.London;
 import afk.ge.GameEngine;
-import afk.ge.tokyo.GameResult;
 import afk.ge.tokyo.Tokyo;
 import afk.gfx.GraphicsEngine;
 import afk.gfx.athens.Athens;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
 
 /**
  *
  * @author Daniel
  */
-public class SingleGame implements GameMaster
+public class SingleGame extends AbstractGameMaster
 {
 
     private GameEngine gameEngine;
     private GraphicsEngine gfxEngine;
     private RobotEngine botEngine;
-    private Collection<GameListener> listeners = new ArrayList<GameListener>();
 
     public SingleGame(RobotConfigManager config)
     {
@@ -72,27 +66,25 @@ public class SingleGame implements GameMaster
     }
 
     @Override
-    public void start() 
+    public void start()
     {
         gameEngine.startGame();
+        for (GameListener listener : listeners)
+        {
+            listener.newGame(this);
+        }
+    }
+
+    @Override
+    public void nextGame()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void stop()
     {
         gameEngine.stopGame();
-    }
-
-    @Override
-    public void addGameListener(GameListener listener)
-    {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void removeGameListener(GameListener listener)
-    {
-        listeners.remove(listener);
     }
 
     @Override
@@ -117,14 +109,5 @@ public class SingleGame implements GameMaster
     public void decreaseSpeed()
     {
         gameEngine.decreaseSpeed();
-    }
-
-    @Override
-    public void gameOver(GameResult result)
-    {
-        for (GameListener l : listeners)
-        {
-            l.gameOver(result);
-        }
     }
 }

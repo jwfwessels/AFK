@@ -35,6 +35,8 @@ public interface GameMaster
      */
     public void start();
     
+    public void nextGame();
+    
     /**
      * Stop the game.
      */

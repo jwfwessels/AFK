@@ -17,7 +17,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -30,9 +29,9 @@ public class GamePanel extends JPanel
 {
     
     RootWindow parent;
-    Component glCanvas;
     JPanel view;
     JPanel pnlControls;
+    Component glPanel = new JPanel();
     JLabel fps;
     JToggleButton btnPlayPause;
     JButton btnFaster;
@@ -45,22 +44,8 @@ public class GamePanel extends JPanel
     {
         this.parent = parent;
         gm = game;
-        
-        game.addGameListener(new GameListener() {
 
-            @Override
-            public void gameOver(GameResult result)
-            {
-                UUID winnerID = result.getWinner();
-                String winner = (winnerID == null) ? "Nobody" : gm.getRobotName(winnerID);
-                JOptionPane.showMessageDialog(GamePanel.this.parent, winner + " won!");
-                GamePanel.this.parent.destroyMe(GamePanel.this);
-                GamePanel.this.parent.showPanel(
-                        new PostGamePanel(GamePanel.this.parent, result, gm), "postGame");
-            }
-        });
-
-        LayoutManager layout = new GamePanel_Layout();
+        LayoutManager layout = new GamePanel_Layout(); 
         this.setLayout(layout);
         setup();
     }
@@ -75,8 +60,8 @@ public class GamePanel extends JPanel
     private void initComponents()
     {
         fps = new JLabel("FPS: x");
-        glCanvas = gm.getAWTComponent();
         view = new JPanel();
+        glPanel = gm.getAWTComponent();
         pnlControls = new JPanel();
         btnPlayPause = new JToggleButton("press");
         btnFaster = new JButton(">>");
@@ -90,7 +75,7 @@ public class GamePanel extends JPanel
     private void addComponents()
     {
         view.setLayout(new ViewPanel_Layout());
-        view.add(glCanvas);
+        view.add(glPanel);
         
         pnlControls.add(fps);
         pnlControls.add(btnSlower);
@@ -267,7 +252,7 @@ public class GamePanel extends JPanel
                 {
                     c.setBounds(insets.left, insets.top, (int) w, ((int) h - 50));
                     
-                    glCanvas.setSize(w, h);
+                    glPanel.setSize(w, h);
                     num2 += c.getSize().height;
                     System.out.println("dim1:   " + insets.left + "   " + insets.top + "   " + (int) w + " " + ((int) h - 50));
                 }

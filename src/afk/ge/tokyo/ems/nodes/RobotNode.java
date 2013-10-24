@@ -9,7 +9,7 @@ import afk.ge.tokyo.ems.components.State;
  *
  * @author Daniel
  */
-public class RobotStateFeedbackNode extends Node
+public class RobotNode extends Node
 {
     public RobotToken robot;
     public Controller controller;

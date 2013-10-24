@@ -145,6 +145,7 @@ public class RootWindow extends JFrame implements Frontend
 
     public void destroyMe(Component card)
     {
+        System.out.println("component.destroyMe: " + card);
         CardLayout cl = (CardLayout) contentPane.getLayout();
         cl.removeLayoutComponent(card);
         contentPane.remove(card);
@@ -167,8 +168,15 @@ public class RootWindow extends JFrame implements Frontend
         gamePanel = new GamePanel(this, game);
 
         showPanel(gamePanel, "game");
-        gamePanel.glCanvas.requestFocus();
 
+    }
+
+    public void destroyGame()
+    {
+        if (gamePanel != null)
+        {
+            destroyMe(gamePanel);
+        }
     }
 
     public void showConfigPanel(Robot robot)
