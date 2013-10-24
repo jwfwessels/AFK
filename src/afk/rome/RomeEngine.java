@@ -11,6 +11,7 @@ import static afk.ge.tokyo.Tokyo.MAX_FRAMETIME;
 import static afk.ge.tokyo.Tokyo.NANOS_PER_SECOND;
 import afk.ge.tokyo.ems.components.Camera;
 import afk.ge.tokyo.ems.components.Display;
+import afk.ge.tokyo.ems.components.Heightmap;
 import afk.ge.tokyo.ems.components.Mouse;
 import afk.ge.tokyo.ems.components.NoClipCamera;
 import afk.ge.tokyo.ems.components.Renderable;
@@ -51,7 +52,7 @@ public class RomeEngine implements Runnable
     private boolean running;
     private float t = 0.0f;
     private EditableAthensTerrain terrain;
-    private Entity ball;
+    private Entity ball, hmEntity;
 
     public RomeEngine(Athens athens)
     {
@@ -59,7 +60,7 @@ public class RomeEngine implements Runnable
         genericFactory = new GenericFactory();
         
         ball = new Entity();
-        ball.addComponent(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, new Vec3(1)));
+        ball.addComponent(new State(Vec3.VEC3_ZERO, Vec4.VEC4_ZERO, new Vec3(5)));
         ball.addComponent(new Renderable("sphere", GfxEntity.MAGENTA, 0.5f));
         engine.addEntity(ball);
 
@@ -85,16 +86,16 @@ public class RomeEngine implements Runnable
                         = SelectionSystem.mouseToWorld(display, camera, mouse);
                 
                 HeightmapNode n = engine.getNodeList(HeightmapNode.class).get(0);
-                Vec3 p = HeightmapLoader.getIntersection(mp[1], mp[0], 0.2f, n.heightmap);
+                Vec3 p = HeightmapLoader.getIntersection(mp[1], mp[0], 0.1f, n.heightmap);
                 if (p == null) p = Vec3.VEC3_ZERO;
                 State ballState = ball.getComponent(State.class);
                 ballState.pos = p;
                 
-                if (engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_DOWN))
+                if (engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_Z))
                 {
                     ballState.scale = ballState.scale.add(new Vec3(-0.1f));
                 }
-                if (engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_UP))
+                if (engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_X))
                 {
                     ballState.scale = ballState.scale.add(new Vec3(01f));
                 }
@@ -102,17 +103,23 @@ public class RomeEngine implements Runnable
                 if (engine.getFlag(FlagSources.MOUSE, MouseEvent.BUTTON1))
                 {
                     BufferedImage img = terrain.getHeightmap();
+                    hmEntity.getComponent(Heightmap.class).heightmap = terrain.getHeightmap();
                     float x = ((p.getX()+BOARD_SIZE/2)/BOARD_SIZE)*img.getWidth();
                     float y = ((p.getZ()+BOARD_SIZE/2)/BOARD_SIZE)*img.getHeight();
                     float r = (ballState.scale.getX()*img.getWidth())/BOARD_SIZE;
+                    boolean shift = engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_SHIFT);
+                    float h = 0.5f;
                     Graphics2D g = img.createGraphics();
                     g.setPaint(new RadialGradientPaint(new Point2D.Float(x,y),
                             r, new float[]{0.5f,1.0f},
                             engine.getFlag(FlagSources.KEYBOARD, KeyEvent.VK_CONTROL)
                             ? new Color[]{new Color(0f,0f,0f, STRENGTH),new Color(0f,0f,0f,0f)}
-                            : new Color[]{new Color(1f,1f,1f,STRENGTH),new Color(1f,1f,1f,0f)}
+                            : (
+                            shift
+                            ? new Color[]{new Color(h,h,h,STRENGTH),new Color(h,h,h,0f)}
+                            : new Color[]{new Color(1f,1f,1f,STRENGTH),new Color(1f,1f,1f,0f)})
                     ));
-                    g.fillOval((int)x, (int)y, (int)(r*2), (int)(r*2));
+                    g.fillOval((int)(x-r), (int)(y-r), (int)(r*2), (int)(r*2));
                     g.dispose();
                     terrain.update();
                 }
@@ -157,10 +164,10 @@ public class RomeEngine implements Runnable
 
         floorGfxEntity.addChild(floorSidesEntity);
         
-        Entity entity = new HeightmapFactory().create(new HeightmapFactoryRequest(hm));
-        engine.addEntity(entity);
+        hmEntity = new HeightmapFactory().create(new HeightmapFactoryRequest(hm));
+        engine.addEntity(hmEntity);
         
-        athens.injectAthensEntity(floorGfxEntity, entity.getComponent(Renderable.class));
+        athens.injectAthensEntity(floorGfxEntity, hmEntity.getComponent(Renderable.class));
     }
 
     public void start()

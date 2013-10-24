@@ -1,6 +1,7 @@
 package afk.rome;
 
 import afk.gfx.athens.Athens;
+import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -34,7 +35,9 @@ public class Rome
         engine = new RomeEngine(athens);
         engine.start();
         
-        frame.add(athens.getAWTComponent());
+        Component glCanvas = athens.getAWTComponent();
+        frame.add(glCanvas);
+        glCanvas.requestFocus();
         
         frame.setSize(800, 600);
         frame.setVisible(true);
