@@ -4,6 +4,8 @@ import afk.bot.Robot;
 import afk.game.GameResult;
 import afk.game.TournamentGame;
 import afk.game.TournamentGameResult;
+import afk.ge.MultiplyFilter;
+import afk.ge.tokyo.Tokyo;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -16,7 +18,13 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 /**
@@ -27,6 +35,9 @@ public class TournamentTree extends JComponent
 {
 
     public static final Color BG_COLOUR = new Color(0x444444);
+    public static final Color TEXT_COLOUR = new Color(0xD1D2D4);
+    public static final Color LINE_COLOUR = new Color(0xFFFFFF);
+    public static final Color FILL_COLOUR = new Color(0x333333);
     private final Font FONT = new Font("Myriad Pro", Font.PLAIN, 12);
     private TournamentGameResult result;
     private Robot[][][] robots;
@@ -34,8 +45,8 @@ public class TournamentTree extends JComponent
     private GameResult[][] results;
     private int[][] nextGroups;
     public static final int ICON_SIZE = 48;
-    public static final int ICON_PADDING = 20;
-    public static final int TEXT_OFFSET = 10;
+    public static final int ICON_PADDING = 25;
+    public static final int TEXT_BASELINE = 15;
     public static final int GROUP_PADDING = 20;
     public static final int ROUND_PADDING = 50;
     private int roundNumber;
@@ -43,6 +54,7 @@ public class TournamentTree extends JComponent
     private int mx, my;
     private float dx, dy;
     private float zoom = 1.0f;
+    private Map<String, BufferedImage> icons = new HashMap<String, BufferedImage>();
 
     public TournamentTree(TournamentGameResult result)
     {
@@ -129,7 +141,7 @@ public class TournamentTree extends JComponent
             BufferedImage[] gi = new BufferedImage[robots[i].length];
             for (int j = 0; j < robots[i].length; j++)
             {
-                gi[j] = drawGroup(robots[i][j]);
+                gi[j] = drawGroup(robots[i][j], i == roundNumber && j == gameNum);
                 int w = gi[j].getWidth();
                 if (w > rw)
                 {
@@ -171,7 +183,7 @@ public class TournamentTree extends JComponent
                 {
                     bots[j] = robotsThrough[rtIndex];
                 }
-                gi[i] = drawGroup(bots);
+                gi[i] = drawGroup(bots, false);
                 int w = gi[i].getWidth();
                 if (w > rw)
                 {
@@ -191,7 +203,7 @@ public class TournamentTree extends JComponent
         img = drawGroup(new Robot[]
         {
             rtIndex < robotsThrough.length ? robotsThrough[rtIndex] : null
-        });
+        }, false);
         groupImages.add(new BufferedImage[]
         {
             img
@@ -212,10 +224,10 @@ public class TournamentTree extends JComponent
             y += GROUP_PADDING;
             for (int j = 0; j < gi.length; j++)
             {
-                g.setColor(Color.GREEN);
+                g.setColor(FILL_COLOUR);
                 if (i == roundNumber && j == gameNum)
                 {
-                    g.drawRect(x, y, gi[j].getWidth(), gi[j].getHeight());
+                    g.fillRect(x, y, gi[j].getWidth(), gi[j].getHeight());
                 }
                 g.drawImage(gi[j], null,
                         x, y);
@@ -231,7 +243,7 @@ public class TournamentTree extends JComponent
         g.setTransform(originalTransform);
     }
 
-    public BufferedImage drawGroup(Robot[] bots)
+    public BufferedImage drawGroup(Robot[] bots, boolean current)
     {
         final int ICON_SPACE = (ICON_SIZE + ICON_PADDING);
         int w = (int) Math.ceil(bots.length * 0.5f) * ICON_SPACE + ICON_PADDING;
@@ -253,14 +265,13 @@ public class TournamentTree extends JComponent
                 y = ICON_PADDING + (i % 2) * ICON_SPACE;
                 x = ICON_PADDING + (i / 2) * ICON_SPACE;
 
-                // TODO: debug
                 if (bots[i] != null)
                 {
-                    drawBot(g, x, y, bots[i]);
+                    drawBot(g, x, y, bots[i], current ? i : -1);
                 } else
                 {
-                    g.setColor(Color.MAGENTA);
-                    g.drawRect(x, y, ICON_SIZE, ICON_SIZE);
+                    g.setColor(FILL_COLOUR);
+                    g.fillRect(x, y, ICON_SIZE, ICON_SIZE);
                 }
             }
         } finally
@@ -271,17 +282,43 @@ public class TournamentTree extends JComponent
         return img;
     }
 
-    private void drawBot(Graphics2D g, int x, int y, Robot robot)
+    private void drawBot(Graphics2D g, int x, int y, Robot robot, int i)
     {
+        g.setColor(LINE_COLOUR);
+        g.fillRoundRect(x-1, y-1, ICON_SIZE+2, ICON_SIZE+2, 4, 4);
+        BufferedImageOp op = i < 0 ? null
+                : new MultiplyFilter(new Color(
+                    Tokyo.BOT_COLOURS[i].getX(),
+                    Tokyo.BOT_COLOURS[i].getY(),
+                    Tokyo.BOT_COLOURS[i].getZ()));
         g.setColor(Color.MAGENTA);
-        g.fillRect(x, y, ICON_SIZE, ICON_SIZE);
+        try
+        {
+            g.drawImage(getIcon(robot.getConfigManager().getProperty(robot.getId(), "type")), op, x, y);
+        } catch (IOException ex)
+        {
+            ex.printStackTrace(System.err);
+            g.setColor(Color.MAGENTA);
+            g.fillRect(x, y, ICON_SIZE, ICON_SIZE);
+        }
 
         g.setFont(FONT);
         FontMetrics fm = g.getFontMetrics(FONT);
 
-        g.setColor(Color.CYAN);
+        g.setColor(TEXT_COLOUR);
         String text = robot.toString();
 
-        g.drawString(text, x + ICON_SIZE / 2 - fm.stringWidth(text) / 2, y + ICON_SIZE + TEXT_OFFSET);
+        g.drawString(text, x + ICON_SIZE / 2 - fm.stringWidth(text) / 2, y + ICON_SIZE + TEXT_BASELINE);
+    }
+    
+    private BufferedImage getIcon(String type) throws IOException
+    {
+        BufferedImage icon = icons.get(type);
+        if (icon == null)
+        {
+            icon = ImageIO.read(new File("textures/icons/" + type + ".png"));
+            icons.put(type, icon);
+        }
+        return icon;
     }
 }
