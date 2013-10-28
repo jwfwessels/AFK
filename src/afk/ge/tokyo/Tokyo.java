@@ -53,9 +53,9 @@ import java.util.UUID;
  */
 public class Tokyo implements GameEngine, Runnable
 {
+
     public static final int NUM_BOULDERS = 20;
     public static final double END_OF_GAME_DELAY = 6.0;
-
     private Engine engine;
     private boolean running = true;
     private boolean paused = false;
@@ -124,7 +124,7 @@ public class Tokyo implements GameEngine, Runnable
         engine.addLogicSystem(new VisionSystem());
         engine.addLogicSystem(new SonarSystem());
         engine.addLogicSystem(new RobotStateFeedbackSystem());
-        
+
         engine.addLogicSystem(new TextLabelSystem());
         engine.addLogicSystem(new BotInfoHUDSystem(botEngine.getConfigManager()));
         engine.addLogicSystem(new GameStateSystem());
@@ -137,7 +137,7 @@ public class Tokyo implements GameEngine, Runnable
 
         engine.addGlobal(scoreboard = new ScoreBoard());
         engine.addGlobal(gameState = new GameState());
-        
+
         debugSystem = new DebugSystem(botEngine, new DebugRenderSystem(gfxEngine));
 
         // TODO: put this somewhere else?
@@ -191,7 +191,7 @@ public class Tokyo implements GameEngine, Runnable
                 engine.addEntity(botEntity);
                 engine.addEntity(botInfoHUDFactory.create(
                         new BotInfoHUDFactoryRequest(botEntity,
-                        10, 10 + i*(BotInfoHUDSystem.PANEL_HEIGHT+10))));
+                        10, 10 + i * (BotInfoHUDSystem.PANEL_HEIGHT + 10))));
                 scoreboard.scores.put(participants[i].getId(), 0);
             }
             new Thread(this).start();
@@ -214,26 +214,26 @@ public class Tokyo implements GameEngine, Runnable
     {
         engine.addEntity(new HeightmapFactory().create(new HeightmapFactoryRequest("hm2")));
         ObstacleFactory factory = new ObstacleFactory();
-        
+
         float halfBoardSize = Tokyo.BOARD_SIZE / 2;
 
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, -halfBoardSize), new Vec3(BOARD_SIZE, 20, 0.5f), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(0, 0, halfBoardSize), new Vec3(BOARD_SIZE, 20, 0.5f), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(halfBoardSize, 0, 0), new Vec3(0.5f, 20, BOARD_SIZE), "wall", false)));
         engine.addEntity(factory.create(new ObstacleFactoryRequest(new Vec3(-halfBoardSize, 0, 0), new Vec3(0.5f, 20, BOARD_SIZE), "wall", false)));
-        
-        float boulderBounds = halfBoardSize-10;
-        
+
+        float boulderBounds = halfBoardSize - 10;
+
         BoulderFactory boulderFactory = new BoulderFactory();
         BoulderFactoryRequest boulderRequest = new BoulderFactoryRequest(
                 -boulderBounds, boulderBounds, -boulderBounds, boulderBounds,
                 2f, 7f, 0.5f, SPAWN_POINTS, 10, 20);
-        
+
         for (int i = 0; i < NUM_BOULDERS; i++)
         {
             engine.addEntity(boulderFactory.create(boulderRequest));
         }
-        
+
 //        engine.addEntity(labelFactory.create(new TextLabelFactoryRequest("Test", 50, 50)));
     }
 
@@ -272,7 +272,7 @@ public class Tokyo implements GameEngine, Runnable
             System.out.println(score.getKey() + " scored " + score.getValue() + " points.");
         }
     }
-    
+
     private void notifyGameOver()
     {
         game.gameOver(new GameResult(gameState.winner, scoreboard.scores));
@@ -315,13 +315,13 @@ public class Tokyo implements GameEngine, Runnable
         double logicAccumulator = 0.0f;
         while (running)
         {
-            if (engine.getFlag(KEYBOARD, KeyEvent.VK_CONTROL) &&
-                    engine.getFlag(KEYBOARD, KeyEvent.VK_Z)
+            if (engine.getFlag(KEYBOARD, KeyEvent.VK_CONTROL)
+                    && engine.getFlag(KEYBOARD, KeyEvent.VK_Z)
                     && !engine.containsSystem(debugSystem))
             {
                 engine.addSystem(debugSystem);
             }
-            
+
             double newTime = System.nanoTime();
             double frameTime = (newTime - currentTime) / NANOS_PER_SECOND;
             if (frameTime > MAX_FRAMETIME)
