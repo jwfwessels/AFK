@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- package afk.frontend.swing.postgame;
+package afk.frontend.swing.postgame;
 
 import afk.bot.Robot;
 import afk.game.GameResult;
@@ -76,6 +76,7 @@ public class TournamentTree extends JComponent
     private float dx, dy;
     private float zoom = 1.0f;
     private Map<String, BufferedImage> icons = new HashMap<String, BufferedImage>();
+    private boolean first = true;
 
     public TournamentTree(TournamentGameResult result)
     {
@@ -116,8 +117,8 @@ public class TournamentTree extends JComponent
             public void mouseWheelMoved(MouseWheelEvent e)
             {
                 double r = e.getPreciseWheelRotation();
-                float x1 = (e.getX()-dx)/zoom;
-                float y1 = (e.getY()-dy)/zoom;
+                float x1 = (e.getX() - dx) / zoom;
+                float y1 = (e.getY() - dy) / zoom;
                 if (r > 0)
                 {
                     zoom *= 0.9f * r;
@@ -129,10 +130,10 @@ public class TournamentTree extends JComponent
                         zoom = 1;
                     }
                 }
-                float x2 = (e.getX()-dx)/zoom;
-                float y2 = (e.getY()-dy)/zoom;
-                dx += (x2-x1)*zoom;
-                dy += (y2-y1)*zoom;
+                float x2 = (e.getX() - dx) / zoom;
+                float y2 = (e.getY() - dy) / zoom;
+                dx += (x2 - x1) * zoom;
+                dy += (y2 - y1) * zoom;
                 repaint();
             }
         });
@@ -232,26 +233,60 @@ public class TournamentTree extends JComponent
         roundWidths.add(img.getWidth());
         roundHeights.add(2 * GROUP_PADDING + img.getHeight());
 
+
+
+        int x = ROUND_PADDING;
+        int y = 0;
+
+        // center camera on active game if this is the first repaint
+        if (first)
+        {
+            for (int i = 0; i <= roundNumber; i++)
+            {
+                BufferedImage[] gi = groupImages.get(i);
+                int top = y;
+                y += GROUP_PADDING;
+                for (int j = 0; j < gi.length; j++)
+                {
+                    if (i == roundNumber && j == gameNum)
+                    {
+                        dx = getWidth()/2 - x - gi[j].getWidth()/2;
+                        dy = getHeight()/2 - y - gi[j].getHeight()/2;
+                        break;
+                    }
+                    y += gi[j].getHeight() + GROUP_PADDING;
+                }
+                x += roundWidths.get(i) + ROUND_PADDING;
+                if (i < groupImages.size() - 1)
+                {
+                    y = top + (roundHeights.get(i) / 2 - roundHeights.get(i + 1) / 2);
+                }
+            }
+            first = false;
+        }
+
+        // this is where the actual drawing takes place!
         AffineTransform originalTransform = g.getTransform();
         g.translate(dx, dy);
         g.scale(zoom, zoom);
 
-        int x = ROUND_PADDING;
-        int y = 0;
+        x = ROUND_PADDING;
+        y = 0;
+
         for (int i = 0; i < groupImages.size(); i++)
         {
             BufferedImage[] gi = groupImages.get(i);
             int top = y;
             y += GROUP_PADDING;
             g.setColor(LINE_COLOUR);
-            if (i < groupImages.size()-1)
+            if (i < groupImages.size() - 1)
             {
                 g.drawLine(
-                        x+roundWidths.get(i), y+gi[0].getHeight()/2,
-                        x+roundWidths.get(i)+ROUND_PADDING/2, y+gi[0].getHeight()/2);
+                        x + roundWidths.get(i), y + gi[0].getHeight() / 2,
+                        x + roundWidths.get(i) + ROUND_PADDING / 2, y + gi[0].getHeight() / 2);
                 g.drawLine(
-                        x+roundWidths.get(i)+ROUND_PADDING/2, y+gi[0].getHeight()/2,
-                        x+roundWidths.get(i)+ROUND_PADDING/2, top + roundHeights.get(i) / 2);
+                        x + roundWidths.get(i) + ROUND_PADDING / 2, y + gi[0].getHeight() / 2,
+                        x + roundWidths.get(i) + ROUND_PADDING / 2, top + roundHeights.get(i) / 2);
             }
             for (int j = 0; j < gi.length; j++)
             {
@@ -265,16 +300,16 @@ public class TournamentTree extends JComponent
                 y += gi[j].getHeight() + GROUP_PADDING;
             }
             g.setColor(LINE_COLOUR);
-            if (i < groupImages.size()-1)
+            if (i < groupImages.size() - 1)
             {
                 g.drawLine(
-                        x+roundWidths.get(i), y-gi[gi.length-1].getHeight()/2-GROUP_PADDING-1,
-                        x+roundWidths.get(i)+ROUND_PADDING/2, y-gi[gi.length-1].getHeight()/2-GROUP_PADDING-1);
-                g.drawLine(x+roundWidths.get(i)+ROUND_PADDING/2, top + roundHeights.get(i) / 2,
-                        x+roundWidths.get(i)+ROUND_PADDING, top + roundHeights.get(i) / 2);
+                        x + roundWidths.get(i), y - gi[gi.length - 1].getHeight() / 2 - GROUP_PADDING - 1,
+                        x + roundWidths.get(i) + ROUND_PADDING / 2, y - gi[gi.length - 1].getHeight() / 2 - GROUP_PADDING - 1);
+                g.drawLine(x + roundWidths.get(i) + ROUND_PADDING / 2, top + roundHeights.get(i) / 2,
+                        x + roundWidths.get(i) + ROUND_PADDING, top + roundHeights.get(i) / 2);
                 g.drawLine(
-                        x+roundWidths.get(i)+ROUND_PADDING/2, y-gi[gi.length-1].getHeight()/2-GROUP_PADDING-1,
-                        x+roundWidths.get(i)+ROUND_PADDING/2, top + roundHeights.get(i) / 2);
+                        x + roundWidths.get(i) + ROUND_PADDING / 2, y - gi[gi.length - 1].getHeight() / 2 - GROUP_PADDING - 1,
+                        x + roundWidths.get(i) + ROUND_PADDING / 2, top + roundHeights.get(i) / 2);
             }
             x += roundWidths.get(i) + ROUND_PADDING;
             if (i < groupImages.size() - 1)
@@ -296,7 +331,7 @@ public class TournamentTree extends JComponent
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
 
         Graphics2D g = img.createGraphics();
-        
+
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -328,12 +363,12 @@ public class TournamentTree extends JComponent
     private void drawBot(Graphics2D g, int x, int y, Robot robot, int i)
     {
         g.setColor(LINE_COLOUR);
-        g.fillRoundRect(x-1, y-1, ICON_SIZE+2, ICON_SIZE+2, 4, 4);
+        g.fillRoundRect(x - 1, y - 1, ICON_SIZE + 2, ICON_SIZE + 2, 4, 4);
         BufferedImageOp op = i < 0 ? null
                 : new MultiplyFilter(new Color(
-                    Tokyo.BOT_COLOURS[i].getX(),
-                    Tokyo.BOT_COLOURS[i].getY(),
-                    Tokyo.BOT_COLOURS[i].getZ()));
+                Tokyo.BOT_COLOURS[i].getX(),
+                Tokyo.BOT_COLOURS[i].getY(),
+                Tokyo.BOT_COLOURS[i].getZ()));
         g.setColor(Color.MAGENTA);
         try
         {
@@ -353,7 +388,7 @@ public class TournamentTree extends JComponent
 
         g.drawString(text, x + ICON_SIZE / 2 - fm.stringWidth(text) / 2, y + ICON_SIZE + TEXT_BASELINE);
     }
-    
+
     private BufferedImage getIcon(String type) throws IOException
     {
         BufferedImage icon = icons.get(type);
