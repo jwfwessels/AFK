@@ -317,6 +317,10 @@ public class Tokyo implements GameEngine, Runnable
             {
                 engine.update(t, DELTA);
                 accumulator -= DELTA;
+                if (ttl != null)
+                {
+                    ttl -= DELTA;
+                }
             }
 
             //any function called in this block run at the current speedMultiplier speed
@@ -336,7 +340,6 @@ public class Tokyo implements GameEngine, Runnable
                     quellTheUndead = true;
                 }
                 t += DELTA;
-                ttl -= DELTA;
                 logicAccumulator -= logicDelta;
             }
         }
