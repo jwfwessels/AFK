@@ -124,6 +124,7 @@ public class TournamentPostGamePanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                timer.stop();
                 gm.nextGame();
             }
         });
