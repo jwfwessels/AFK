@@ -22,6 +22,7 @@
 package afk.gfx;
 
 import afk.ge.BBox;
+import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.tokyo.ems.components.Renderable;
 import com.hackoeur.jglm.Vec3;
 import java.awt.Component;
