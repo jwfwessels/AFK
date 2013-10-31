@@ -19,9 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- package afk.gfx;
+package afk.gfx;
 
-import afk.ge.tokyo.ems.components.HUDImage;
 import afk.ge.BBox;
 import afk.ge.tokyo.ems.components.Renderable;
 import com.hackoeur.jglm.Vec3;
@@ -119,9 +118,34 @@ public interface GraphicsEngine
      */
     public int getHeight();
     
+    /**
+     * Prime the graphics engine for drawing objects to the scene.
+     * This should be called before getting GfxEntity objects.
+     */
     public void prime();
+    
+    /**
+     * Gets a GfxEntity object corresponding to the given renderable object.
+     * The object returned can be used to update the attributes of the
+     * underlying graphics entity before being drawn to the screen.
+     * This function will flag the GfxEntity to be drawn in the next frame.
+     * @param renderable the renderable
+     * @return the GfxEntity object corresponding to the given renderable.
+     */
     public GfxEntity getGfxEntity(Renderable renderable);
+    
+    /**
+     * Similar to getGfxEntity but returns a GfxHUD object.
+     * @param image the image component corresponding to the returned GfxHUD.
+     * @return the GfxHUD object corresponding to the given image.
+     */
     public GfxHUD getGfxHUD(HUDImage image);
+    
+    /**
+     * Should be called after updating all the necessary GfxEntity objects.
+     * Causes any GfxEntity objects not requested to be drawn to be cleaned up
+     * in the next cycle.
+     */
     public void post();
 
     /**
@@ -136,12 +160,24 @@ public interface GraphicsEngine
      */
     public void setCamera(AbstractCamera camera);
     
+    /**
+     * Similar to getGfxEnity but for drawing BBox wireframes.
+     * @param bbox
+     * @return 
+     */
     public GfxEntity getDebugEntity(BBox bbox);
+    
+    /**
+     * Similar to getGfxEntity but for drawing arbitrary lines.
+     * @param line
+     * @return 
+     */
     public GfxEntity getDebugEntity(Vec3[] line);
     
     /**
      * Set the background colour.
-     * @param colour 
+     * @param colour a vector representing the red, green, and blue values
+     * to be used as the background colour.
      */
     public void setBackground(Vec3 colour);
 }
