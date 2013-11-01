@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Triforce
+ * Copyright (c) 2013 Triforce - in association with the University of Pretoria and Epi-Use <Advance/>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
